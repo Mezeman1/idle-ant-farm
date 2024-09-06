@@ -38,7 +38,7 @@ export const useGameStore = defineStore('gameStore', {
     prestigeShop: [
       {id: 'storageUpgrade', name: 'Storage Upgrade', description: 'Increase max storage by 20%', cost: 10},
       {id: 'productionBoost', name: 'Production Boost', description: 'Increase production speed by 20%', cost: 15},
-      {id: 'queenEfficiency', name: 'Queen Efficiency', description: 'Queens produce 10% more larvae', cost: 20},
+      {id: 'queenEfficiency', name: 'Queen Efficiency', description: 'Queens produce 50% more larvae', cost: 20},
     ],
 
 
@@ -115,7 +115,7 @@ export const useGameStore = defineStore('gameStore', {
           this.larvaeProductionRate *= 1.2
           this.collectionRatePerAnt *= 1.2
         } else if (upgradeId === 'queenEfficiency') {
-          this.larvaeProductionRate *= 1.1
+          this.larvaeProductionRate *= 1.5
         }
       })
     },
