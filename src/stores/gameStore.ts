@@ -319,6 +319,7 @@ export const useGameStore = defineStore('gameStore', {
       localStorage.removeItem('idleGameState')
 
       this.applyPrestigeUpgrades()
+      useAdventureStore().stopBattle()
       console.log('Game reset')
     },
 
