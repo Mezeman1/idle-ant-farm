@@ -4,7 +4,7 @@
       <!-- Ant Army Side -->
       <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
         <img
-          src="/path-to-ant-image.png"
+          src=""
           alt="Ant Army"
           class="w-24 h-24"
         >
@@ -29,7 +29,7 @@
       <!-- Enemy Bug Side -->
       <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
         <img
-          src="/path-to-bug-image.png"
+          src=""
           alt="Enemy Bug"
           class="w-24 h-24"
         >
