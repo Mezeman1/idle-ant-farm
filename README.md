@@ -1,8 +1,11 @@
-# Vue 3, TypeScript & Tailwind CSS Starter
+# Idle Ant Farm
 
-> A simple, Vue 3 starter with TypeScript support
-
-[Demo/Installation](https://vue3-typescript-tailwind-starter.vercel.app/)
+> First time creating an idle game.
+> This is a simple idle game where you can buy ants and they will generate resources for you.
+> I tried making it a bit more interesting by also adding visual representation of the ants and resources.
+> Future updates will add a lot more things to do and more interesting mechanics.
+>
+> I love idle games, so I will probably keep working on this for a while.
 
 ## Features
 
@@ -12,6 +15,8 @@
 - Simple store with global state
 - Vue Router
 - ESLint
+- Pinia
+- Vite
 
 ## Project setup and usage
 
@@ -56,7 +61,3 @@ This repo was adapted from [Unihen](https://twitter.com/uninen)'s [vite-ts-tailw
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
-
----
-
-Follow [@vincentdoerig](https://twitter.com/vincentdoerig) on Twitter.
