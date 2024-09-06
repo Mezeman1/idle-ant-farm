@@ -9,14 +9,30 @@
 
 ## Features
 
-- Vue 3
-- TypeScript
-- Tailwind CSS
-- Simple store with global state
-- Vue Router
-- ESLint
-- Pinia
-- Vite
+> Quick note: This is a work in progress, so some features are not yet implemented.
+> And also, the current features are going to be improved and expanded.
+
+- Resources:
+  - Seeds
+  - Larvae
+  - Ants
+  - Queens
+- Prestige system with prestige shop
+  - Prestige points
+  - Prestige shop
+  - Prestige upgrades (coming soon)
+  - Prestige bonuses (coming soon)
+  - Prestige challenges (coming soon)
+  - Prestige achievements (coming soon)
+- Adventure mode
+  - Fight enemies
+  - Get loot
+  - Level up (coming soon)
+  - Unlock new areas (coming soon)
+  - Unlock new enemies (coming soon)
+  - Unlock new loot (coming soon)
+  - Loot upgrades (coming soon)
+  - Inventory (coming soon)
 
 ## Project setup and usage
 

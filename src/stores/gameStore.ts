@@ -300,7 +300,7 @@ export const useGameStore = defineStore('gameStore', {
       const adventureStore = useAdventureStore()
       if (this.ants === 0) return
       adventureStore.armyMaxHealth = this.ants * 10
-      adventureStore.armyHealth = adventureStore.armyHealth
+      adventureStore.armyHealth = adventureStore.armyHealth ? Math.min(adventureStore.armyHealth, adventureStore.armyMaxHealth) : adventureStore.armyMaxHealth
       adventureStore.armyAttack = this.ants * 2
       adventureStore.armyDefense = this.ants
     },

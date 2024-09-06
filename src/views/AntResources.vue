@@ -108,7 +108,7 @@
         Storage
       </p>
       <div class="flex items-center justify-between w-full">
-        <p>Max Seeds: {{ gameStore.maxSeeds }}</p>
+        <p>Max Seeds: {{ formatNumber(gameStore.maxSeeds) }}</p>
         <button
           :disabled="gameStore.seeds < gameStore.seedStorageUpgradeCost"
           class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
@@ -118,7 +118,7 @@
         </button>
       </div>
       <div class="flex items-center justify-between w-full">
-        <p>Max Larvae: {{ gameStore.maxLarvae }}</p>
+        <p>Max Larvae: {{ formatNumber(gameStore.maxLarvae) }}</p>
         <button
           :disabled="gameStore.seeds < gameStore.larvaeStorageUpgradeCost"
           class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
