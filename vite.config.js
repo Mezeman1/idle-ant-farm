@@ -8,4 +8,5 @@ export default {
       '@': '/src',
     },
   },
+  base: '/idle-ant-farm/',
 }
