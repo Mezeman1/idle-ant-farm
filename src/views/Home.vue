@@ -1,0 +1,131 @@
+<template>
+  <div
+    v-if="gameStore.loaded"
+    class="relative h-screen w-screen overflow-hidden"
+  >
+    <AntSimulation
+      :ant-count="gameStore.ants"
+      :queen-count="gameStore.queens"
+      :larvae-count="gameStore.larvae"
+    />
+
+    <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
+      <!-- Minimize/Maximize Button -->
+      <button
+        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded m-2 border-2"
+        @click="isMinimized = !isMinimized"
+      >
+        {{ isMinimized ? 'Show UI' : 'Hide UI' }}
+      </button>
+      <div
+        v-show="!isMinimized"
+        class="bg-white p-4 rounded shadow-lg flex flex-col space-y-2 m-2"
+      >
+        <!--        Navigation       -->
+        <div
+          class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700"
+        >
+          <ul class="flex flex-wrap -mb-px">
+            <li class="me-2">
+              <button
+                :class="activeTab === 'resources' ? activeTabClasses : defaultTabClasses"
+                class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                @click.prevent="setActiveTab('resources')"
+              >
+                Resources
+              </button>
+            </li>
+
+            <li class="me-2">
+              <button
+                :disabled="gameStore.ants === 0"
+                :class="activeTab === 'adventure' ? activeTabClasses : defaultTabClasses"
+                class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 disabled:cursor-not-allowed"
+                @click.prevent="setActiveTab('adventure')"
+              >
+                Adventure
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <AntResources v-show="activeTab === 'resources'" />
+          <Adventure v-show="activeTab === 'adventure'" />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import {onBeforeUnmount, onMounted, ref, watch} from 'vue'
+import {useGameStore} from '../stores/gameStore'
+import AntSimulation from '../components/AntSimulation.vue'
+import {storeToRefs} from 'pinia'
+import AntResources from './AntResources.vue'
+import Adventure from './Adventure.vue'
+import {useWindowSize} from '@vueuse/core'
+
+const gameStore = useGameStore()
+const isMinimized = ref(false) // Minimized state
+const activeTab = ref('resources')
+
+// Classes for active and default tabs
+const activeTabClasses = 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500'
+const defaultTabClasses = 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
+const {width, height} = useWindowSize()
+// Function to set the active tab
+const setActiveTab = (tab) => {
+  activeTab.value = tab
+}
+
+const element = ref({
+  x: 20,
+  y: 20,
+  width: width,
+  height: height / 2,
+  isActive: false,
+})
+
+// Function to handle game state saving before window unload
+const handleBeforeUnload = () => {
+  gameStore.saveGameState() // Save game state before leaving
+}
+
+onMounted(() => {
+  gameStore.loadGameState() // Load game state and calculate offline progress
+  gameStore.startGameLoop() // Start the game loop
+
+  // Add event listeners for window close
+  window.addEventListener('beforeunload', handleBeforeUnload)
+})
+
+onBeforeUnmount(() => {
+  gameStore.saveGameState() // Save game state before leaving
+  gameStore.stopGameLoop() // Stop the game loop
+
+  // Remove event listeners for window close
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+})
+
+const {
+  ants,
+} = storeToRefs(gameStore)
+
+watch(ants, () => {
+  gameStore.setupAdventureStats()
+}, {
+  immediate: true,
+})
+</script>
+
+
+<style scoped>
+canvas {
+  display: block;
+}
+
+div {
+  z-index: 10;
+}
+</style>
