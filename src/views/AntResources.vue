@@ -174,13 +174,13 @@
         Prestige
       </p>
       <div class="flex items-center justify-between w-full">
-        <p>Prestige Points: {{ gameStore.prestigePoints }}</p>
+        <p>Prestige Points: {{ formatNumber(gameStore.prestigePoints) }}</p>
         <button
           :disabled="gameStore.calculatePrestigePoints() < 1"
           class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
           @click="gameStore.prestige"
         >
-          Prestige for {{ gameStore.calculatePrestigePoints() }} Points
+          Prestige for {{ formatNumber(gameStore.calculatePrestigePoints()) }} Points
         </button>
       </div>
       <div class="prestige-shop">
@@ -201,7 +201,7 @@
               class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
               @click="gameStore.buyUpgrade(upgrade.id)"
             >
-              Buy for {{ upgrade.cost }} Points
+              Buy for {{ formatNumber(upgrade.cost) }} Points
             </button>
           </li>
         </ul>

@@ -116,6 +116,7 @@ export const useGameStore = defineStore('gameStore', {
 
       if (upgrade && this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost
+        this.prestigeShop.find(u => u.id === upgradeId).cost *= 1.5 // Increase cost by 50%
         this.purchasedUpgrades.push(upgradeId)
         this.applyPrestigeUpgrade(upgradeId)
         console.log(`Purchased upgrade: ${upgrade.name}`)
@@ -301,6 +302,13 @@ export const useGameStore = defineStore('gameStore', {
         purchasedUpgrades: this.purchasedUpgrades, // Save purchased upgrades
         attackPerAnt: this.attackPerAnt,
         lastSavedTime: Date.now(),
+
+        // save prestige shop costs
+        storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 10,
+        productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 15,
+        queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 20,
+        autoLarvaePrestigeCost: this.prestigeShop.find(u => u.id === 'autoLarvae')?.cost ?? 25,
+        betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 100,
       }
 
       try {
@@ -335,6 +343,15 @@ export const useGameStore = defineStore('gameStore', {
           this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
           this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
           this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
+
+          // Load prestige shop costs
+          this.prestigeShop.map(shop => {
+            if (shop.id === 'storageUpgrade') shop.cost = savedState.storagePrestigeCost
+            if (shop.id === 'productionBoost') shop.cost = savedState.productionPrestigeCost
+            if (shop.id === 'queenEfficiency') shop.cost = savedState.queenPrestigeCost
+            if (shop.id === 'autoLarvae') shop.cost = savedState.autoLarvaePrestigeCost
+            if (shop.id === 'betterAnts') shop.cost = savedState.betterAntsPrestigeCost
+          })
 
           console.log('Game state loaded from IndexedDB')
 
