@@ -2,7 +2,7 @@
   "name": "vue3-ts-tailwind-starter",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode localhost",
     "build": "vite build",
     "start": "npm run dev",
     "lint": "eslint . --ext .js,.ts,.vue",

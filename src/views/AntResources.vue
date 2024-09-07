@@ -19,6 +19,12 @@
           >
             Upgrade storage ({{ formatNumber(gameStore.seedStorageUpgradeCost) }} seeds)
           </button>
+          <p
+            v-if="gameStore.maxSeeds < gameStore.seedStorageUpgradeCost"
+            class="text-xs"
+          >
+            If only there was a way to increase your seed storage...
+          </p>
         </div>
 
         <!-- Right Column: Collect Button -->
@@ -51,6 +57,12 @@
           >
             Upgrade storage ({{ formatNumber(gameStore.larvaeStorageUpgradeCost) }} seeds)
           </button>
+          <p
+            v-if="gameStore.maxSeeds < gameStore.larvaeStorageUpgradeCost"
+            class="text-xs"
+          >
+            If only there was a way to increase your seed storage...
+          </p>
         </div>
         <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
           <button

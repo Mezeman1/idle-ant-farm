@@ -46,11 +46,24 @@
                 Adventure
               </button>
             </li>
+            <li
+              v-if="debugMode"
+              class="me-2"
+            >
+              <button
+                :class="activeTab === 'debugger' ? activeTabClasses : defaultTabClasses"
+                class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 disabled:cursor-not-allowed"
+                @click.prevent="setActiveTab('debugger')"
+              >
+                Debugger
+              </button>
+            </li>
           </ul>
         </div>
         <div>
           <AntResources v-show="activeTab === 'resources'" />
           <Adventure v-show="activeTab === 'adventure'" />
+          <Debugger v-show="activeTab === 'debugger'" />
         </div>
       </div>
     </div>
@@ -65,6 +78,7 @@ import {storeToRefs} from 'pinia'
 import AntResources from './AntResources.vue'
 import Adventure from './Adventure.vue'
 import {useWindowSize} from '@vueuse/core'
+import Debugger from './Debugger.vue'
 
 const gameStore = useGameStore()
 const isMinimized = ref(false) // Minimized state
@@ -79,13 +93,7 @@ const setActiveTab = (tab) => {
   activeTab.value = tab
 }
 
-const element = ref({
-  x: 20,
-  y: 20,
-  width: width,
-  height: height / 2,
-  isActive: false,
-})
+const debugMode = import.meta.env.MODE === 'localhost'
 
 // Function to handle game state saving before window unload
 const handleBeforeUnload = () => {

@@ -24,7 +24,7 @@ export const useGameStore = defineStore('gameStore', {
 
     // Production rates and costs
     larvaeProductionRate: 10, // Larvae produced per queen per minute
-    collectionRatePerAnt: 50, // Seeds collected per ant per minute
+    collectionRatePerAnt: 60, // Seeds collected per ant per minute
     seedCostPerLarva: 10, // Cost in seeds to create one larva
     seedCostPerAnt: 50, // Cost in seeds to create one ant
     larvaCostPerAnt: 1, // Cost in larvae to create one ant
@@ -98,25 +98,30 @@ export const useGameStore = defineStore('gameStore', {
       if (upgrade && this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost
         this.purchasedUpgrades.push(upgradeId)
+        this.applyPrestigeUpgrade(upgradeId)
         console.log(`Purchased upgrade: ${upgrade.name}`)
       } else {
         console.log('Not enough prestige points or invalid upgrade.')
       }
     },
 
+    // Apply a purchased upgrade
+    applyPrestigeUpgrade(upgradeId) {
+      if (upgradeId === 'storageUpgrade') {
+        this.maxSeeds *= 1.2 // Increase seed storage
+        this.maxLarvae *= 1.2 // Increase larvae storage
+      } else if (upgradeId === 'productionBoost') {
+        this.larvaeProductionRate *= 1.2
+        this.collectionRatePerAnt *= 1.2
+      } else if (upgradeId === 'queenEfficiency') {
+        this.larvaeProductionRate *= 1.5
+      }
+    },
+
     // Apply purchased upgrades to the game
     applyPrestigeUpgrades() {
       this.purchasedUpgrades.forEach(upgradeId => {
-        console.log('Applying upgrade:', upgradeId)
-        if (upgradeId === 'storageUpgrade') {
-          this.maxSeeds *= 1.2 // Increase seed storage
-          this.maxLarvae *= 1.2 // Increase larvae storage
-        } else if (upgradeId === 'productionBoost') {
-          this.larvaeProductionRate *= 1.2
-          this.collectionRatePerAnt *= 1.2
-        } else if (upgradeId === 'queenEfficiency') {
-          this.larvaeProductionRate *= 1.5
-        }
+        this.applyPrestigeUpgrade(upgradeId)
       })
     },
 
@@ -306,7 +311,7 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     // Function to reset the game state (excluding prestige-related data)
-    resetGameState() {
+    resetGameState(debug = false) {
       this.larvae = 0
       this.ants = 0
       this.seeds = 10
@@ -317,6 +322,11 @@ export const useGameStore = defineStore('gameStore', {
       this.larvaeStorageUpgradeCost = 100
       this.lastSavedTime = Date.now()
       localStorage.removeItem('idleGameState')
+
+      if (debug) {
+        this.prestigePoints = 0
+        this.purchasedUpgrades = []
+      }
 
       this.applyPrestigeUpgrades()
       useAdventureStore().stopBattle()
