@@ -17,6 +17,13 @@
       >
         {{ isMinimized ? 'Show UI' : 'Hide UI' }}
       </button>
+
+      <button
+        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
+        @click="gameStore.saveGameState()"
+      >
+        Save
+      </button>
       <div
         v-show="!isMinimized"
         class="bg-white p-4 rounded shadow-lg flex flex-col space-y-2 m-2 bg-opacity-30"

@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-
+import { set, get, del } from 'idb-keyval'
 import {itemRegistry} from '../types/itemRegistry' // Import your item registry
 
 export const useInventoryStore = defineStore('inventoryStore', {
@@ -29,27 +29,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
       this.saveInventoryState() // Save after modifying inventory
     },
 
-    // Load inventory state and reapply effects
-    loadInventoryState() {
-      const savedInventory = localStorage.getItem('inventory')
-      if (savedInventory) {
-        const parsedInventory = JSON.parse(savedInventory)
-        this.inventory = parsedInventory.inventory.map(item => {
-          const registryItem = itemRegistry[item.id]
-          if (registryItem) {
-            if (registryItem.type === 'passive') {
-              this.applyItemEffect(registryItem) // Reapply the item's effect if needed
-            }
-
-            return {...registryItem, amount: item.amount}
-          } else {
-            console.error(`Item ${item.id} not found in registry`)
-            return item // If not found in registry, still load the raw item
-          }
-        }) ?? []
-      }
-    },
-
     // Apply the effect of an item (passive or buffs)
     applyItemEffect(item) {
       console.log('Applying item effect', item)
@@ -58,19 +37,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
       }
 
       return false
-    },
-
-    // Save inventory state to local storage
-    saveInventoryState() {
-      const inventoryToSave = {
-        inventory: this.inventory.map(item => ({
-          id: item.id,
-          amount: item.amount,
-        })),
-
-        maxInventory: this.maxInventory,
-      }
-      localStorage.setItem('inventory', JSON.stringify(inventoryToSave))
     },
 
     useItem(itemId) {
@@ -101,10 +67,64 @@ export const useInventoryStore = defineStore('inventoryStore', {
       }
     },
 
-    // Reset inventory state
-    resetInventoryState() {
-      this.inventory = []
-      localStorage.removeItem('inventory')
+    // Save inventory state to IndexedDB
+    async saveInventoryState() {
+      const inventoryToSave = {
+        inventory: this.inventory.map(item => ({
+          id: item.id,
+          amount: item.amount,
+        })),
+        maxInventory: this.maxInventory,
+      }
+
+      try {
+        await set('inventory', inventoryToSave)
+        console.log('Inventory saved to IndexedDB')
+      } catch (error) {
+        console.error('Error saving inventory:', error)
+      }
+    },
+
+    // Load inventory state from IndexedDB and reapply effects
+    async loadInventoryState() {
+      try {
+        const savedInventory = await get('inventory')
+        if (savedInventory) {
+          this.inventory = savedInventory.inventory.map(item => {
+            const registryItem = itemRegistry[item.id]
+            if (registryItem) {
+              if (registryItem.type === 'passive') {
+                this.applyItemEffect(registryItem) // Reapply the item's effect
+              }
+
+              return { ...registryItem, amount: item.amount }
+            } else {
+              console.error(`Item ${item.id} not found in registry`)
+              return item // Load the raw item if not found in registry
+            }
+          }) ?? []
+
+          this.maxInventory = savedInventory.maxInventory ?? this.maxInventory
+          console.log('Inventory loaded from IndexedDB')
+        } else {
+          console.log('No inventory found in IndexedDB')
+        }
+      } catch (error) {
+        console.error('Error loading inventory:', error)
+      }
+    },
+
+    // Reset inventory state and clear from IndexedDB
+    async resetInventoryState() {
+      try {
+        await del('inventory')
+        this.inventory = []
+        this.maxInventory = 120 // Reset to default value or what you'd prefer
+
+        console.log('Inventory reset and cleared from IndexedDB')
+      } catch (error) {
+        console.error('Error resetting inventory:', error)
+      }
     },
 
     getItemById(itemId) {

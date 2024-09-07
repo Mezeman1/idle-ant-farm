@@ -3,7 +3,7 @@ import {useGameStore} from './gameStore'
 import {useToast} from 'vue-toast-notification'
 import {useInventoryStore} from './inventoryStore'
 import {itemRegistry} from '../types/itemRegistry'
-
+import { set, get, del } from 'idb-keyval'
 export const useAdventureStore = defineStore('adventureStore', {
     state: () => ({
       armyHealth: 100,
@@ -313,44 +313,65 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.enemySpawned = true
       },
 
-      saveAdventureState() {
+      // Save adventure state using IndexedDB
+      async saveAdventureState() {
         const adventureState = {
           armyHealth: this.armyHealth,
           armyMaxHealth: this.armyMaxHealth,
           armyAttack: this.armyAttack,
           armyDefense: this.armyDefense,
           armyRegen: this.armyRegen,
-
           killCounts: this.killCounts,
         }
 
-        localStorage.setItem('adventure', JSON.stringify(adventureState))
-      },
-
-      // Load the state from localStorage
-      loadAdventureState() {
-        const adventure = localStorage.getItem('adventure')
-        if (adventure) {
-          const parsedAdventure = JSON.parse(adventure)
-
-          this.armyHealth = parsedAdventure.armyHealth ?? this.armyHealth
-          this.armyMaxHealth = parsedAdventure.armyMaxHealth ?? this.armyMaxHealth
-          this.armyAttack = parsedAdventure.armyAttack ?? this.armyAttack
-          this.armyDefense = parsedAdventure.armyDefense ?? this.armyDefense
-          this.armyRegen = parsedAdventure.armyRegen ?? this.armyRegen
-
-          this.killCounts = parsedAdventure.killCounts ?? this.killCounts
+        try {
+          await set('adventure', JSON.parse(JSON.stringify(adventureState)))
+          console.log('Adventure state saved to IndexedDB')
+        } catch (error) {
+          console.error('Error saving adventure state:', error)
         }
       },
 
-      // Reset the state and clear localStorage
-      resetAdventureState() {
-        localStorage.removeItem('adventure')
-        this.armyHealth = 100
-        this.armyMaxHealth = 100
-        this.armyAttack = 10
-        this.armyDefense = 5
-        this.armyRegen = 5
+      // Load adventure state using IndexedDB
+      async loadAdventureState() {
+        try {
+          const adventureState = await get('adventure')
+          if (adventureState) {
+            this.armyHealth = adventureState.armyHealth ?? this.armyHealth
+            this.armyMaxHealth = adventureState.armyMaxHealth ?? this.armyMaxHealth
+            this.armyAttack = adventureState.armyAttack ?? this.armyAttack
+            this.armyDefense = adventureState.armyDefense ?? this.armyDefense
+            this.armyRegen = adventureState.armyRegen ?? this.armyRegen
+            this.killCounts = adventureState.killCounts ?? this.killCounts
+
+            console.log('Adventure state loaded from IndexedDB')
+          } else {
+            console.log('No adventure state found in IndexedDB')
+          }
+        } catch (error) {
+          console.error('Error loading adventure state:', error)
+        }
+      },
+
+      // Reset adventure state and clear IndexedDB
+      async resetAdventureState() {
+        try {
+          await del('adventure')
+          this.armyHealth = 100
+          this.armyMaxHealth = 100
+          this.armyAttack = 10
+          this.armyDefense = 5
+          this.armyRegen = 5
+          this.killCounts = {
+            grasshopperKills: 0,
+            beetleKills: 0,
+            waspKills: 0,
+          }
+
+          console.log('Adventure state reset and cleared from IndexedDB')
+        } catch (error) {
+          console.error('Error resetting adventure state:', error)
+        }
       },
     },
   },

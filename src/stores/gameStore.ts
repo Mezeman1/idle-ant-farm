@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
 import {useAdventureStore} from './adventureStore'
 import {useInventoryStore} from './inventoryStore'
-
+import { set, get, del } from 'idb-keyval'
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
     loaded: false,
@@ -285,8 +285,8 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
 
-    // Save game state to local storage
-    saveGameState() {
+    // Save game state to IndexedDB
+    async saveGameState() {
       const gameState = {
         ants: this.ants,
         seeds: this.seeds,
@@ -300,44 +300,87 @@ export const useGameStore = defineStore('gameStore', {
         purchasedUpgrades: this.purchasedUpgrades, // Save purchased upgrades
         lastSavedTime: Date.now(),
       }
-      localStorage.setItem('idleGameState', JSON.stringify(gameState))
 
-      const inventoryStore = useInventoryStore()
-      inventoryStore.saveInventoryState()
+      try {
+        await set('idleGameState', JSON.parse(JSON.stringify(gameState)))
+        console.log('Game state saved to IndexedDB')
 
-      const adventureStore = useAdventureStore()
-      adventureStore.saveAdventureState()
-    },
-
-    // Load game state from local storage and calculate offline progress
-    loadGameState() {
-      const savedState = localStorage.getItem('idleGameState')
-      if (savedState) {
-        const parsedState = JSON.parse(savedState)
-
-        this.ants = parsedState.ants ?? this.ants
-        this.seeds = parsedState.seeds ?? this.seeds
-        this.queens = parsedState.queens ?? this.queens
-        this.larvae = parsedState.larvae ?? this.larvae
-        this.maxSeeds = parsedState.maxSeeds ?? this.maxSeeds  // Will be recalculated on upgrades
-        this.maxLarvae = parsedState.maxLarvae ?? this.maxLarvae  // Will be recalculated on upgrades
-        this.seedStorageUpgradeCost = parsedState.seedStorageUpgradeCost ?? this.seedStorageUpgradeCost
-        this.larvaeStorageUpgradeCost = parsedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
-        this.prestigePoints = parsedState.prestigePoints ?? this.prestigePoints
-        this.purchasedUpgrades = parsedState.purchasedUpgrades ?? this.purchasedUpgrades  // Load purchased upgrades
-        this.lastSavedTime = parsedState.lastSavedTime ?? this.lastSavedTime
-
+        // Save other store states
         const inventoryStore = useInventoryStore()
-        inventoryStore.loadInventoryState()
+        await inventoryStore.saveInventoryState()
 
         const adventureStore = useAdventureStore()
-        adventureStore.loadAdventureState()
+        await adventureStore.saveAdventureState()
+      } catch (error) {
+        console.error('Error saving game state:', error)
       }
+    },
 
-      // this.applyPrestigeUpgrades();  // Recalculate based on upgrades
-      this.calculateOfflineProgress()
-      this.setupAdventureStats()
-      this.loaded = true
+    // Load game state from IndexedDB and calculate offline progress
+    async loadGameState() {
+      try {
+        const savedState = await get('idleGameState')
+        if (savedState) {
+          this.ants = savedState.ants ?? this.ants
+          this.seeds = savedState.seeds ?? this.seeds
+          this.queens = savedState.queens ?? this.queens
+          this.larvae = savedState.larvae ?? this.larvae
+          this.maxSeeds = savedState.maxSeeds ?? this.maxSeeds
+          this.maxLarvae = savedState.maxLarvae ?? this.maxLarvae
+          this.seedStorageUpgradeCost = savedState.seedStorageUpgradeCost ?? this.seedStorageUpgradeCost
+          this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
+          this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
+          this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
+          this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
+
+          console.log('Game state loaded from IndexedDB')
+
+          // Load other store states
+          const inventoryStore = useInventoryStore()
+          await inventoryStore.loadInventoryState()
+
+          const adventureStore = useAdventureStore()
+          await adventureStore.loadAdventureState()
+        }
+
+        // Recalculate based on upgrades, apply offline progress
+        this.calculateOfflineProgress()
+        this.setupAdventureStats()
+        this.loaded = true
+      } catch (error) {
+        console.error('Error loading game state:', error)
+      }
+    },
+
+    // Reset the game state (excluding prestige-related data) and clear from IndexedDB
+    async resetGameState(debug = false) {
+      try {
+        await del('idleGameState') // Clear IndexedDB entry
+        this.larvae = 0
+        this.ants = 0
+        this.seeds = 10
+        this.queens = 1
+        this.maxSeeds = this.initialMaxSeeds
+        this.maxLarvae = this.initialMaxLarvae
+        this.seedStorageUpgradeCost = 500
+        this.larvaeStorageUpgradeCost = 100
+        this.lastSavedTime = Date.now()
+
+        if (debug) {
+          this.prestigePoints = 0
+          this.purchasedUpgrades = []
+        }
+
+        // Reset other stores
+        const inventoryStore = useInventoryStore()
+        await inventoryStore.resetInventoryState()
+
+        this.applyPrestigeUpgrades()
+        useAdventureStore().stopBattle()
+        console.log('Game reset and cleared from IndexedDB')
+      } catch (error) {
+        console.error('Error resetting game state:', error)
+      }
     },
 
     setupAdventureStats() {
@@ -347,31 +390,6 @@ export const useGameStore = defineStore('gameStore', {
       adventureStore.armyHealth = adventureStore.armyHealth ? Math.min(adventureStore.armyHealth, adventureStore.armyMaxHealth) : adventureStore.armyMaxHealth
       adventureStore.armyAttack = this.ants * this.attackPerAnt
       adventureStore.armyDefense = this.ants * this.defensePerAnt
-    },
-
-    // Function to reset the game state (excluding prestige-related data)
-    resetGameState(debug = false) {
-      this.larvae = 0
-      this.ants = 0
-      this.seeds = 10
-      this.queens = 1
-      this.maxSeeds = this.initialMaxSeeds
-      this.maxLarvae = this.initialMaxLarvae
-      this.seedStorageUpgradeCost = 500
-      this.larvaeStorageUpgradeCost = 100
-      this.lastSavedTime = Date.now()
-      localStorage.removeItem('idleGameState')
-
-      if (debug) {
-        this.prestigePoints = 0
-        this.purchasedUpgrades = []
-      }
-
-      useInventoryStore().resetInventoryState()
-
-      this.applyPrestigeUpgrades()
-      useAdventureStore().stopBattle()
-      console.log('Game reset')
     },
 
     // Number formatting helper function
