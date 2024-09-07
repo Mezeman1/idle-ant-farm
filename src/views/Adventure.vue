@@ -1,5 +1,23 @@
 <template>
   <div>
+    <div class="flex flex-col my-2">
+      <label
+        for="area"
+        class="text-md font-semibold"
+      >Select Area:</label>
+      <select
+        v-model="adventureStore.currentArea"
+        class="flex-1 bg-white border border-gray-300 rounded-lg shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+      >
+        <option
+          v-for="wave in adventureStore.enemyWaves"
+          :key="wave.name"
+          :disabled="!wave.unlocked"
+        >
+          {{ wave.name }}
+        </option>
+      </select>
+    </div>
     <div class="grid grid-cols-2 gap-4 mb-4">
       <!-- Ant Army Side -->
       <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">

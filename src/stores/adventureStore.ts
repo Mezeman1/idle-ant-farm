@@ -18,63 +18,130 @@ export const useAdventureStore = defineStore('adventureStore', {
       bugDefense: 0,
       bugRegen: 2,
 
-      currentArea: 1,
-      enemyWaves: {
-        1: [
-          {
-            name: 'Grasshopper', health: 100, attack: 8, defense: 4, regen: 2, dropOptions: [
-              {
-                name: 'Seeds',
-                chance: 0.5,
-                amountBetween: [100, 500],
-              },
-              {
-                name: 'Grasshopper Leg',
-                chance: 0.2,
-                amountBetween: [1, 2],
-              },
-            ],
-          },
-          {
-            name: 'Beetle',
-            health: 150,
-            attack: 10,
-            defense: 5,
-            regen: 3,
-            dropOptions: [
-              {
-                name: 'Seeds',
-                chance: 0.5,
-                amountBetween: [100, 500],
-              },
-              {
-                name: 'Ant Strength Potion',
-                chance: 0.1,
-                amountBetween: [1, 2],
-              },
-            ],
-          },
-          {
-            name: 'Wasp',
-            health: 120,
-            attack: 12,
-            defense: 6,
-            regen: 2,
-            dropOptions: [
-              {
-                name: 'Seeds',
-                chance: 0.5,
-                amountBetween: [100, 500],
-              },
-              {
-                name: 'Queen Crown',
-                chance: 0.05,
-                amountBetween: [1, 1],
-              },
-            ],
-          },
-        ],
-      },
+      currentArea: 'Wasteland',
+      enemyWaves: [
+        {
+          name: 'Wasteland',
+          enemies: [
+            {
+              name: 'Grasshopper', health: 100, attack: 8, defense: 4, regen: 2, dropOptions: [
+                {
+                  name: 'Seeds',
+                  chance: 0.5,
+                  amountBetween: [100, 500],
+                },
+                {
+                  name: 'Grasshopper Leg',
+                  chance: 0.2,
+                  amountBetween: [1, 2],
+                },
+              ],
+            },
+            {
+              name: 'Beetle',
+              health: 150,
+              attack: 10,
+              defense: 5,
+              regen: 3,
+              dropOptions: [
+                {
+                  name: 'Seeds',
+                  chance: 0.5,
+                  amountBetween: [100, 500],
+                },
+                {
+                  name: 'Ant Strength Potion',
+                  chance: 0.1,
+                  amountBetween: [1, 2],
+                },
+              ],
+            },
+            {
+              name: 'Wasp',
+              health: 120,
+              attack: 12,
+              defense: 6,
+              regen: 2,
+              dropOptions: [
+                {
+                  name: 'Seeds',
+                  chance: 0.5,
+                  amountBetween: [100, 500],
+                },
+                {
+                  name: 'Queen Crown',
+                  chance: 0.05,
+                  amountBetween: [1, 1],
+                },
+              ],
+            },
+          ],
+          unlocked: true,
+        },
+        {
+          name: 'Forest',
+          enemies: [
+            {
+              name: 'Spider',
+              health: 200,
+              attack: 15,
+              defense: 8,
+              regen: 4,
+              dropOptions: [
+                {
+                  name: 'Seeds',
+                  chance: 0.5,
+                  amountBetween: [100, 500],
+                },
+                {
+                  name: 'Spider Silk',
+                  chance: 0.3,
+                  amountBetween: [1, 2],
+                },
+              ],
+            },
+            {
+              name: 'Centipede',
+              health: 250,
+              attack: 18,
+              defense: 10,
+              regen: 5,
+              dropOptions: [
+                {
+                  name: 'Seeds',
+                  chance: 0.5,
+                  amountBetween: [100, 500],
+                },
+                {
+                  name: 'Centipede Leg',
+                  chance: 0.2,
+                  amountBetween: [1, 2],
+                },
+              ],
+            },
+            {
+              name: 'Moth',
+              health: 180,
+              attack: 14,
+              defense: 7,
+              regen: 3,
+              dropOptions: [
+                {
+                  name: 'Seeds',
+                  chance: 0.5,
+                  amountBetween: [100, 500],
+                },
+                {
+                  name: 'Moth Dust',
+                  chance: 0.1,
+                  amountBetween: [1, 2],
+                },
+              ],
+            },
+          ],
+          unlocked: true,
+        },
+      ],
       currentEnemy: null,
 
       enemySpawned: false,
@@ -83,6 +150,13 @@ export const useAdventureStore = defineStore('adventureStore', {
       lastFrameTime: 0,
       accumulatedTime: 0,  // To accumulate time between frames
       combatTick: 1000,    // Combat happens every 1000ms (1 second)
+
+      // Kill counts
+      killCounts: {
+        grasshopperKills: 0,
+        beetleKills: 0,
+        waspKills: 0,
+      },
     }),
 
     actions: {
@@ -164,6 +238,9 @@ export const useAdventureStore = defineStore('adventureStore', {
       handleEnemyDefeat() {
         this.enemySpawned = false
 
+        // Update kill counts
+        this.killCounts[this.currentEnemy.name.toLowerCase().replace(/\s+/g, '') + 'Kills'] += 1
+
         // Handle loot
         this.currentEnemy.dropOptions?.forEach((drop) => {
           if (Math.random() < drop.chance) {
@@ -216,7 +293,12 @@ export const useAdventureStore = defineStore('adventureStore', {
       },
 
       spawnRandomEnemy() {
-        const enemies = this.enemyWaves[this.currentArea]
+        const enemies = this.enemyWaves.find(wave => wave.name === this.currentArea)?.enemies
+        if (!enemies) {
+          console.error('No enemies found for the current area')
+          return
+        }
+
         const randomIndex = Math.floor(Math.random() * enemies.length)
         const enemy = enemies[randomIndex]
         this.currentEnemy = enemy
@@ -238,6 +320,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           armyAttack: this.armyAttack,
           armyDefense: this.armyDefense,
           armyRegen: this.armyRegen,
+
+          killCounts: this.killCounts,
         }
 
         localStorage.setItem('adventure', JSON.stringify(adventureState))
@@ -254,6 +338,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           this.armyAttack = parsedAdventure.armyAttack ?? this.armyAttack
           this.armyDefense = parsedAdventure.armyDefense ?? this.armyDefense
           this.armyRegen = parsedAdventure.armyRegen ?? this.armyRegen
+
+          this.killCounts = parsedAdventure.killCounts ?? this.killCounts
         }
       },
 
