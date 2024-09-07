@@ -66,14 +66,14 @@
         </div>
         <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
           <button
-            :disabled="gameStore.seeds < 10"
+            :disabled="gameStore.seeds < gameStore.seedCostPerLarva"
             class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.createLarvae"
           >
             Create Larvae ({{ formatNumber(gameStore.seedCostPerLarva) }} seeds)
           </button>
           <button
-            :disabled="gameStore.seeds < 10"
+            :disabled="gameStore.seeds < gameStore.seedCostPerLarva"
             class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.createMaxLarvae"
           >

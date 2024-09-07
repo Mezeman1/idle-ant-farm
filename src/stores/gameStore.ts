@@ -12,7 +12,11 @@ export const useGameStore = defineStore('gameStore', {
 
     // Resource caps
     maxSeeds: 1000, // Initial seed storage capacity
-    maxLarvae: 100, // Initial larvae storage capacity
+    maxLarvae: 10, // Initial larvae storage capacity
+
+    // Initial resource caps
+    initialMaxSeeds: 1000,
+    initialMaxLarvae: 10,
 
     // Upgrade variables
     seedStorageUpgradeCost: 500, // Initial cost to upgrade seed storage
@@ -23,9 +27,9 @@ export const useGameStore = defineStore('gameStore', {
     upgradeCostFactor: 1.3, // How much each upgrade increases the cost by (30%)
 
     // Production rates and costs
-    larvaeProductionRate: 10, // Larvae produced per queen per minute
+    larvaeProductionRate: 1, // Larvae produced per queen per minute
     collectionRatePerAnt: 60, // Seeds collected per ant per minute
-    seedCostPerLarva: 10, // Cost in seeds to create one larva
+    seedCostPerLarva: 100, // Cost in seeds to create one larva
     seedCostPerAnt: 50, // Cost in seeds to create one ant
     larvaCostPerAnt: 1, // Cost in larvae to create one ant
     antCostPerQueen: 100, // Ants required to buy one queen
@@ -316,8 +320,8 @@ export const useGameStore = defineStore('gameStore', {
       this.ants = 0
       this.seeds = 10
       this.queens = 1
-      this.maxSeeds = 1000
-      this.maxLarvae = 100
+      this.maxSeeds = this.initialMaxSeeds
+      this.maxLarvae = this.initialMaxLarvae
       this.seedStorageUpgradeCost = 500
       this.larvaeStorageUpgradeCost = 100
       this.lastSavedTime = Date.now()
