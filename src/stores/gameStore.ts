@@ -138,6 +138,7 @@ export const useGameStore = defineStore('gameStore', {
         this.autoLarvaeCreation = true
       } else if (upgradeId === 'betterAnts') {
         this.attackPerAnt *= 1.1
+        this.setupAdventureStats()
       }
     },
 
@@ -298,6 +299,7 @@ export const useGameStore = defineStore('gameStore', {
         larvaeStorageUpgradeCost: this.larvaeStorageUpgradeCost,
         prestigePoints: this.prestigePoints,
         purchasedUpgrades: this.purchasedUpgrades, // Save purchased upgrades
+        attackPerAnt: this.attackPerAnt,
         lastSavedTime: Date.now(),
       }
 
@@ -331,6 +333,7 @@ export const useGameStore = defineStore('gameStore', {
           this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
           this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
           this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
+          this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
           this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
 
           console.log('Game state loaded from IndexedDB')

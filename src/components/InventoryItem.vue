@@ -32,10 +32,18 @@ const itemFromRegistry = computed(() => useInventoryStore().getItemById(props.it
 
 const useItem = (itemId: number) => {
   const $toast = useToast()
+  const itemRegistry = useInventoryStore().getItemById(itemId)
   if (useInventoryStore().useItem(itemId)) {
     $toast.success('Item used successfully')
-  } else {
-    $toast.error('Failed to use item')
+    return
+  }
+
+  if (itemRegistry) {
+    if (itemRegistry.type === 'passive') {
+      $toast.error('You cannot use passive items')
+    } else {
+      $toast.error('Failed to use item')
+    }
   }
 }
 </script>

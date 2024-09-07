@@ -3,7 +3,8 @@ import {useGameStore} from './gameStore'
 import {useToast} from 'vue-toast-notification'
 import {useInventoryStore} from './inventoryStore'
 import {itemRegistry} from '../types/itemRegistry'
-import { set, get, del } from 'idb-keyval'
+import {del, get, set} from 'idb-keyval'
+
 export const useAdventureStore = defineStore('adventureStore', {
     state: () => ({
       armyHealth: 100,
@@ -95,7 +96,7 @@ export const useAdventureStore = defineStore('adventureStore', {
                 },
                 {
                   name: 'Spider Silk',
-                  chance: 0.3,
+                  chance: 0.05,
                   amountBetween: [1, 2],
                 },
               ],
@@ -322,6 +323,7 @@ export const useAdventureStore = defineStore('adventureStore', {
           armyDefense: this.armyDefense,
           armyRegen: this.armyRegen,
           killCounts: this.killCounts,
+          currentArea: this.currentArea,
         }
 
         try {
@@ -343,6 +345,7 @@ export const useAdventureStore = defineStore('adventureStore', {
             this.armyDefense = adventureState.armyDefense ?? this.armyDefense
             this.armyRegen = adventureState.armyRegen ?? this.armyRegen
             this.killCounts = adventureState.killCounts ?? this.killCounts
+            this.currentArea = adventureState.currentArea ?? this.currentArea
 
             console.log('Adventure state loaded from IndexedDB')
           } else {
