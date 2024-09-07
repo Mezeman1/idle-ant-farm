@@ -40,7 +40,7 @@ export const itemRegistry = {
     id: 'queen-crown',
     name: 'Queen’s Crown',
     type: 'passive',
-    description: 'Increases queen larvae production by 100%.',
+    description: 'Increases queen larvae production by 100%. (Does not stack)',
     effect: () => {
       console.log('Increasing queen larvae production by 100%')
       const gameStore = useGameStore()

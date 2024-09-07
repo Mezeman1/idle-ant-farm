@@ -21,9 +21,9 @@
           </div>
         </div>
         <div class="mt-4 text-center space-y-1">
-          <p><span class="font-semibold">⚔️ Attack:</span> {{ adventureStore.armyAttack }}</p>
-          <p><span class="font-semibold">🛡️ Defense:</span> {{ adventureStore.armyDefense }}</p>
-          <p><span class="font-semibold">❤️ HP Regen:</span> {{ adventureStore.armyRegen }}</p>
+          <p><span class="font-semibold">⚔️ Attack:</span> {{ formatNumber(adventureStore.armyAttack) }}</p>
+          <p><span class="font-semibold">🛡️ Defense:</span> {{ formatNumber(adventureStore.armyDefense) }}</p>
+          <p><span class="font-semibold">❤️ HP Regen:</span> {{ formatNumber(adventureStore.armyRegen) }}</p>
         </div>
       </div>
 
@@ -47,9 +47,9 @@
           </div>
         </div>
         <div class="mt-4 text-center space-y-1">
-          <p><span class="font-semibold">⚔️ Attack:</span> {{ adventureStore.bugAttack }}</p>
-          <p><span class="font-semibold">🛡️ Defense:</span> {{ adventureStore.bugDefense }}</p>
-          <p><span class="font-semibold">❤️ HP Regen:</span> {{ adventureStore.bugRegen }}</p>
+          <p><span class="font-semibold">⚔️ Attack:</span> {{ formatNumber(adventureStore.bugAttack) }}</p>
+          <p><span class="font-semibold">🛡️ Defense:</span> {{ formatNumber(adventureStore.bugDefense) }}</p>
+          <p><span class="font-semibold">❤️ HP Regen:</span> {{ formatNumber(adventureStore.bugRegen) }}</p>
         </div>
       </div>
     </div>
