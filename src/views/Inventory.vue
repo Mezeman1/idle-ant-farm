@@ -98,7 +98,6 @@ watch([amountOfColumns], () => {
 
 <style scoped lang="scss">
 .grid-stack {
-  background-color: #FAFAFF;
   border-style: dashed;
   padding: 10px;
   grid-gap: 10px; /* Add space between slots */
@@ -124,7 +123,7 @@ watch([amountOfColumns], () => {
 }
 
 .grid-stack-item-content.empty-slot {
-  background-color: #f5f5f5; /* Light background for empty slots */
+  background-color: rgba(245, 245, 245, 0.5); /* Light background for empty slots */
 }
 
 .grid-stack-item-content:hover {

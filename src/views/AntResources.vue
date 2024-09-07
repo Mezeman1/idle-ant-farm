@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-1 gap-4 p-4 max-h-half-screen overflow-y-auto">
     <!-- Seeds Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
+    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <p class="font-bold text-lg">
         Seeds
       </p>
@@ -40,7 +40,7 @@
     </div>
 
     <!-- Larvae Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
+    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <p class="font-bold text-lg">
         Larvae
       </p>
@@ -84,7 +84,7 @@
     </div>
 
     <!-- Ant Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
+    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <p class="font-bold text-lg">
         Ants
       </p>
@@ -116,7 +116,7 @@
     </div>
 
     <!-- Queen Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
+    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <p class="font-bold text-lg">
         Queens
       </p>
@@ -147,7 +147,7 @@
     </div>
 
     <!-- Prestige Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
+    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <p class="font-bold text-lg">
         Prestige
       </p>

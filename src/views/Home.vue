@@ -12,14 +12,14 @@
     <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
       <!-- Minimize/Maximize Button -->
       <button
-        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded m-2 border-2"
+        class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
         @click="isMinimized = !isMinimized"
       >
         {{ isMinimized ? 'Show UI' : 'Hide UI' }}
       </button>
       <div
         v-show="!isMinimized"
-        class="bg-white p-4 rounded shadow-lg flex flex-col space-y-2 m-2"
+        class="bg-white p-4 rounded shadow-lg flex flex-col space-y-2 m-2 bg-opacity-30"
       >
         <!--        Navigation       -->
         <div
