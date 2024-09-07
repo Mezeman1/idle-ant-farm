@@ -73,9 +73,15 @@ export const useInventoryStore = defineStore('inventoryStore', {
       if (item && item.amount > 0) {
         if (item.amount === 0) this.inventory = this.inventory.filter(i => i.id !== itemId)
         // Apply the item's effect
-        this.applyItemEffect(item) ? item.amount -= 1 : null
+        if (this.applyItemEffect(item)) {
+          item.amount -= 1
+          this.saveInventoryState() // Save after using an item
+
+          return true
+        }
+
+        return false
       }
-      this.saveInventoryState() // Save after using an item
     },
 
     // Reset inventory state

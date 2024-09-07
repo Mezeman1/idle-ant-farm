@@ -2,7 +2,7 @@
   <button
     v-tooltip="itemFromRegistry?.description"
     class="p-2 flex flex-col h-full cursor-pointer"
-    @click="useInventoryStore().useItem(item.id)"
+    @click="useItem(item.id)"
   >
     <div class="w-full text-right">
       {{ formatNumber(item.amount) }}
@@ -17,6 +17,7 @@
 import {useGameStore} from '../stores/gameStore'
 import {useInventoryStore} from '../stores/inventoryStore'
 import {computed} from 'vue'
+import {useToast} from 'vue-toast-notification'
 
 const props = defineProps<{
   item: {
@@ -28,6 +29,15 @@ const props = defineProps<{
 
 const formatNumber = useGameStore().formatNumber
 const itemFromRegistry = computed(() => useInventoryStore().getItemById(props.item.id))
+
+const useItem = (itemId: number) => {
+  const $toast = useToast()
+  if (useInventoryStore().useItem(itemId)) {
+    $toast.success('Item used successfully')
+  } else {
+    $toast.error('Failed to use item')
+  }
+}
 </script>
 
 <style scoped>
