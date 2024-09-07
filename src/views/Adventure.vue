@@ -12,7 +12,7 @@
           <p class="text-lg font-bold">
             Ant Army
           </p>
-          <p>Health: {{ adventureStore.armyHealth }} / {{ adventureStore.armyMaxHealth }}</p>
+          <p>Health: {{ formatNumber(adventureStore.armyHealth) }} / {{ formatNumber(adventureStore.armyMaxHealth) }}</p>
           <div class="progress-container">
             <div
               class="progress-bar"
@@ -38,7 +38,7 @@
           <p class="text-lg font-bold">
             {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }}
           </p>
-          <p>Health: {{ adventureStore.bugHealth }} / {{ adventureStore.bugMaxHealth }}</p>
+          <p>Health: {{ formatNumber(adventureStore.bugHealth) }} / {{ formatNumber(adventureStore.bugMaxHealth) }}</p>
           <div class="progress-container">
             <div
               class="progress-bar"
@@ -68,7 +68,9 @@
 
 <script setup lang="ts">
 import {useAdventureStore} from '../stores/adventureStore'
+import {useGameStore} from '../stores/gameStore'
 
+const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
 </script>
 
