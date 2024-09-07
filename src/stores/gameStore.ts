@@ -80,10 +80,16 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     calculatePrestigePoints() {
-      const pointsFromSeeds = Math.floor(Math.log10(this.seeds)) // Logarithmic scale for seeds
-      const pointsFromAnts = Math.floor(this.ants / 100) // 1 point per 100 ants
-      const pointsFromQueens = (this.queens - 1) * 5 // 5 points per queen
+      // Logarithmic scale for seeds with a minimum reward
+      let pointsFromSeeds = Math.max(Math.floor(Math.log10(this.seeds + 1) / 2), 1) // Slow down seed contribution by dividing log result by 2
+      if (pointsFromSeeds === 1) pointsFromSeeds = 0 // Minimum 1 point from seeds
+      // Increase ant threshold to reward 1 point per 200 ants instead of 50 or 100
+      const pointsFromAnts = Math.floor(this.ants / 200) // 1 point per 200 ants
 
+      // Increase queen contribution to 10 points per queen after the first one
+      const pointsFromQueens = Math.max((this.queens - 1) * 2, 0) // 2 points per extra queen after the first
+
+      // Combine all points together
       return pointsFromSeeds + pointsFromAnts + pointsFromQueens
     },
 
