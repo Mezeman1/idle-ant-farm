@@ -13,11 +13,12 @@
             Ant Army
           </p>
           <p>Health: {{ adventureStore.armyHealth }} / {{ adventureStore.armyMaxHealth }}</p>
-          <progress
-            class="w-full h-4 rounded"
-            :value="adventureStore.armyHealth"
-            :max="adventureStore.armyMaxHealth"
-          />
+          <div class="progress-container">
+            <div
+              class="progress-bar"
+              :style="{ width: (adventureStore.armyHealth / adventureStore.armyMaxHealth) * 100 + '%' }"
+            />
+          </div>
         </div>
         <div class="mt-4 text-center space-y-1">
           <p><span class="font-semibold">⚔️ Attack:</span> {{ adventureStore.armyAttack }}</p>
@@ -38,11 +39,12 @@
             {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }}
           </p>
           <p>Health: {{ adventureStore.bugHealth }} / {{ adventureStore.bugMaxHealth }}</p>
-          <progress
-            class="w-full h-4 rounded"
-            :value="adventureStore.bugHealth"
-            :max="adventureStore.bugMaxHealth"
-          />
+          <div class="progress-container">
+            <div
+              class="progress-bar"
+              :style="{ width: (adventureStore.bugHealth / adventureStore.bugMaxHealth) * 100 + '%' }"
+            />
+          </div>
         </div>
         <div class="mt-4 text-center space-y-1">
           <p><span class="font-semibold">⚔️ Attack:</span> {{ adventureStore.bugAttack }}</p>
@@ -71,17 +73,20 @@ const adventureStore = useAdventureStore()
 </script>
 
 <style scoped>
-progress::-webkit-progress-bar {
+/* Progress bar container */
+.progress-container {
+  width: 100%;
+  height: 16px;
   background-color: #f3f4f6; /* Light gray background */
   border-radius: 8px;
+  overflow: hidden;
+  position: relative;
 }
 
-progress::-webkit-progress-value {
+/* Progress bar */
+.progress-bar {
+  height: 100%;
   background-color: #34d399; /* Green progress fill */
-  border-radius: 8px;
-}
-
-progress {
-  appearance: none;
+  transition: width 0.5s ease; /* Smooth transition for progress changes */
 }
 </style>

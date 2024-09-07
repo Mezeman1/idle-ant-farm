@@ -282,6 +282,9 @@ export const useGameStore = defineStore('gameStore', {
 
       const inventoryStore = useInventoryStore()
       inventoryStore.saveInventoryState()
+
+      const adventureStore = useAdventureStore()
+      adventureStore.saveAdventureState()
     },
 
     // Load game state from local storage and calculate offline progress
@@ -304,6 +307,9 @@ export const useGameStore = defineStore('gameStore', {
 
         const inventoryStore = useInventoryStore()
         inventoryStore.loadInventoryState()
+
+        const adventureStore = useAdventureStore()
+        adventureStore.loadAdventureState()
       }
 
       // this.applyPrestigeUpgrades();  // Recalculate based on upgrades
