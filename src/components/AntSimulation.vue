@@ -9,7 +9,19 @@
       <p>Queens: {{ queens.length }} Max: {{ maxQueens }}</p>
       <p>Larvae: {{ larvae.length }} Max: {{ maxLarvae }}</p>
       <p>FPS: {{ fps.toFixed(1) }}</p>
-      <p>Average Frame Time: {{ avgFrameTime.toFixed(2) }} ms</p>
+      <p class="mb-2">
+        Average Frame Time: {{ avgFrameTime.toFixed(2) }} ms
+      </p>
+
+      <p class="text-2xs">
+        Note:
+        <br>
+        The number of entities above is limited to prevent performance issues.
+        <br>
+        These numbers have been optimized for performance.
+        <br>
+        These maxes have nothing to do with the actual game.
+      </p>
     </div>
   </div>
 </template>
