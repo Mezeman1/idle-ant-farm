@@ -84,10 +84,10 @@ export const useAdventureStore = defineStore('adventureStore', {
           enemies: [
             {
               name: 'Spider',
-              health: 200,
-              attack: 15,
-              defense: 8,
-              regen: 4,
+              health: 2000,
+              attack: 150,
+              defense: 80,
+              regen: 40,
               dropOptions: [
                 {
                   name: 'Seeds',
@@ -103,10 +103,10 @@ export const useAdventureStore = defineStore('adventureStore', {
             },
             {
               name: 'Centipede',
-              health: 250,
-              attack: 18,
-              defense: 10,
-              regen: 5,
+              health: 2500,
+              attack: 180,
+              defense: 100,
+              regen: 50,
               dropOptions: [
                 {
                   name: 'Seeds',
@@ -122,10 +122,10 @@ export const useAdventureStore = defineStore('adventureStore', {
             },
             {
               name: 'Moth',
-              health: 180,
-              attack: 14,
-              defense: 7,
-              regen: 3,
+              health: 1800,
+              attack: 140,
+              defense: 70,
+              regen: 30,
               dropOptions: [
                 {
                   name: 'Seeds',
