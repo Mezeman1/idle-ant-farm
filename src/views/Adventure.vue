@@ -87,9 +87,14 @@
 <script setup lang="ts">
 import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
+import {watch} from 'vue'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
+
+watch(() => adventureStore.currentArea, () => {
+  adventureStore.spawnRandomEnemy()
+})
 </script>
 
 <style scoped>
