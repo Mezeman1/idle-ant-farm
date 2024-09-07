@@ -400,15 +400,22 @@ export const useGameStore = defineStore('gameStore', {
         if (debug) {
           this.prestigePoints = 0
           this.purchasedUpgrades = []
+          this.healthPerAnt = 10
+          this.attackPerAnt = 2
+          this.defensePerAnt = 1
+
+          this.prestigeShop.map(shop => {
+            if (shop.id === 'storageUpgrade') shop.cost = 10
+            if (shop.id === 'productionBoost') shop.cost = 15
+            if (shop.id === 'queenEfficiency') shop.cost = 20
+            if (shop.id === 'autoLarvae') shop.cost = 25
+            if (shop.id === 'betterAnts') shop.cost = 100
+          })
+
+          // Reset other stores
+          const inventoryStore = useInventoryStore()
+          await inventoryStore.resetInventoryState()
         }
-
-        this.healthPerAnt = 10
-        this.attackPerAnt = 2
-        this.defensePerAnt = 1
-
-        // Reset other stores
-        const inventoryStore = useInventoryStore()
-        await inventoryStore.resetInventoryState()
 
         this.applyPrestigeUpgrades()
 
