@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import {useGameStore} from './gameStore'
 import {useToast} from 'vue-toast-notification'
+import {useInventoryStore} from './inventoryStore'
 
 export const useAdventureStore = defineStore('adventureStore', {
   state: () => ({
@@ -22,11 +23,11 @@ export const useAdventureStore = defineStore('adventureStore', {
         {
           name: 'Grasshopper', health: 100, attack: 8, defense: 4, regen: 2, dropOptions: [
             {name: 'Seeds', chance: 0.5, amountBetween: [100, 500]},
-            {name: 'Grasshopper Leg', chance: 0.2, amountBetween: [1, 2]},
+            {name: 'Grasshopper Leg', chance: 0.5, amountBetween: [1, 2]},
           ],
         },
-        {name: 'Beetle', health: 150, attack: 10, defense: 5, regen: 3},
-        {name: 'Wasp', health: 120, attack: 12, defense: 6, regen: 2},
+        // {name: 'Beetle', health: 150, attack: 10, defense: 5, regen: 3},
+        // {name: 'Wasp', health: 120, attack: 12, defense: 6, regen: 2},
       ],
     },
     currentEnemy: null,
@@ -40,10 +41,12 @@ export const useAdventureStore = defineStore('adventureStore', {
   }),
 
   actions: {
-    toggleBattle() {
-      if (this.isFighting) {
+    toggleBattle(shouldJustStart = false) {
+      if (this.isFighting && !shouldJustStart) {
+        console.log('Battle Stopped')
         this.stopBattle() // Stop if currently running
       } else {
+        console.log('Battle Started')
         this.startBattle() // Start if not running
       }
     },
@@ -125,6 +128,13 @@ export const useAdventureStore = defineStore('adventureStore', {
           if (drop.name === 'Seeds') {
             // Add seeds to inventory
             useGameStore().seeds += amount
+          } else if (drop.name === 'Grasshopper Leg') {
+            const inventoryStore = useInventoryStore()
+            inventoryStore.addItemToInventory({
+              id: 'grasshopper-leg', // Unique ID for the item
+              name: 'Grasshopper Leg',
+              amount,
+            })
           }
         }
       })

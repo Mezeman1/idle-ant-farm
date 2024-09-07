@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import {useAdventureStore} from './adventureStore'
+import {useInventoryStore} from './inventoryStore'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
@@ -278,6 +279,9 @@ export const useGameStore = defineStore('gameStore', {
         lastSavedTime: Date.now(),
       }
       localStorage.setItem('idleGameState', JSON.stringify(gameState))
+
+      const inventoryStore = useInventoryStore()
+      inventoryStore.saveInventoryState()
     },
 
     // Load game state from local storage and calculate offline progress
@@ -297,6 +301,9 @@ export const useGameStore = defineStore('gameStore', {
         this.prestigePoints = parsedState.prestigePoints ?? this.prestigePoints
         this.purchasedUpgrades = parsedState.purchasedUpgrades ?? this.purchasedUpgrades  // Load purchased upgrades
         this.lastSavedTime = parsedState.lastSavedTime ?? this.lastSavedTime
+
+        const inventoryStore = useInventoryStore()
+        inventoryStore.loadInventoryState()
       }
 
       // this.applyPrestigeUpgrades();  // Recalculate based on upgrades
@@ -331,6 +338,8 @@ export const useGameStore = defineStore('gameStore', {
         this.prestigePoints = 0
         this.purchasedUpgrades = []
       }
+
+      useInventoryStore().resetInventoryState()
 
       this.applyPrestigeUpgrades()
       useAdventureStore().stopBattle()

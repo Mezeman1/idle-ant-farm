@@ -32,7 +32,14 @@
   - Unlock new enemies (coming soon)
   - Unlock new loot (coming soon)
   - Loot upgrades (coming soon)
-  - Inventory (coming soon)
+  - Inventory ~~(coming soon)~~
+- Inventory
+  - Store loot
+  - Use loot (coming soon)
+  - Get bonuses (coming soon)
+  - Loot upgrades (coming soon)
+  - Inventory upgrades (coming soon)
+  -
 
 ## Project setup and usage
 

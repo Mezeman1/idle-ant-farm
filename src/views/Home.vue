@@ -49,6 +49,15 @@
                 Adventure
               </button>
             </li>
+            <li class="me-2">
+              <button
+                :class="activeTab === 'inventory' ? activeTabClasses : defaultTabClasses"
+                class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                @click.prevent="setActiveTab('inventory')"
+              >
+                Inventory
+              </button>
+            </li>
             <li
               v-if="debugMode"
               class="me-2"
@@ -66,6 +75,7 @@
         <div>
           <AntResources v-show="activeTab === 'resources'" />
           <Adventure v-show="activeTab === 'adventure'" />
+          <Inventory v-show="activeTab === 'inventory'" />
           <Debugger v-show="activeTab === 'debugger'" />
         </div>
       </div>
@@ -80,17 +90,19 @@ import AntSimulation from '../components/AntSimulation.vue'
 import {storeToRefs} from 'pinia'
 import AntResources from './AntResources.vue'
 import Adventure from './Adventure.vue'
-import {useWindowSize} from '@vueuse/core'
 import Debugger from './Debugger.vue'
+import {useAdventureStore} from '../stores/adventureStore'
+import {useToast} from 'vue-toast-notification'
+import Inventory from './Inventory.vue'
 
 const gameStore = useGameStore()
+const adventureStore = useAdventureStore()
 const isMinimized = ref(false) // Minimized state
 const activeTab = ref('resources')
 
 // Classes for active and default tabs
 const activeTabClasses = 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500'
 const defaultTabClasses = 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
-const {width, height} = useWindowSize()
 // Function to set the active tab
 const setActiveTab = (tab) => {
   activeTab.value = tab
@@ -124,7 +136,17 @@ const {
 } = storeToRefs(gameStore)
 
 watch(ants, () => {
-  gameStore.setupAdventureStats()
+  gameStore.setupAdventureStats() // Setup adventure stats
+  if (gameStore.ants > 10 && !adventureStore.isFighting) {
+    adventureStore.toggleBattle(
+      true,
+    ) // Start the game loop
+
+    const $toast = useToast()
+    $toast.info('Adventure started! Check the Adventure tab for more details.', {
+      duration: 5000,
+    })
+  }
 }, {
   immediate: true,
 })
