@@ -10,6 +10,9 @@
     <div class="text-3xs text-center break-words">
       {{ item.name }}
     </div>
+    <span class="text-3xs">
+      {{ itemFromRegistry.type }}
+    </span>
   </button>
 </template>
 
@@ -29,7 +32,6 @@ const props = defineProps<{
 
 const formatNumber = useGameStore().formatNumber
 const itemFromRegistry = computed(() => useInventoryStore().getItemById(props.item.id))
-
 const useItem = (itemId: number) => {
   const $toast = useToast()
   const itemRegistry = useInventoryStore().getItemById(itemId)

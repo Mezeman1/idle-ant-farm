@@ -139,6 +139,25 @@ export const useAdventureStore = defineStore('adventureStore', {
                 },
               ],
             },
+            {
+              name: 'Butterfly',
+              health: 3000,
+              attack: 200,
+              defense: 120,
+              regen: 60,
+              dropOptions: [
+                {
+                  name: 'Butterfly Wing',
+                  chance: 0.01,
+                  amountBetween: [1, 2],
+                },
+                {
+                  name: 'Butterfly Dust',
+                  chance: 0.05,
+                  amountBetween: [1, 1],
+                },
+              ],
+            },
           ],
           unlocked: true,
         },
@@ -150,7 +169,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       isFighting: false,    // Whether the combat is currently happening
       lastFrameTime: 0,
       accumulatedTime: 0,  // To accumulate time between frames
-      combatTick: 1000,    // Combat happens every 1000ms (1 second)
+      combatTick: 2000,    // Combat happens every 1000ms (1 second)
 
       // Kill counts
       killCounts: {
@@ -210,7 +229,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       },
 
       processCombat() {
-        if (this.isFighting) {
+        if (this.isFighting && this.enemySpawned) {
           // Combat logic here
           const armyDamage = Math.max(this.armyAttack - this.bugDefense, 1)
           this.bugHealth = Math.max(this.bugHealth - armyDamage, 0)
@@ -238,6 +257,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       handleEnemyDefeat() {
         this.enemySpawned = false
+        this.isFighting = false
 
         // Update kill counts
         this.killCounts[this.currentEnemy.name.toLowerCase().replace(/\s+/g, '') + 'Kills'] += 1
@@ -267,10 +287,15 @@ export const useAdventureStore = defineStore('adventureStore', {
             }
           }
         })
+
         // Spawn a new enemy
         setTimeout(() => {
           this.spawnRandomEnemy()
-        }, 3000)
+
+          setTimeout(() => {
+            this.isFighting = true
+          }, 1000)
+        }, 2000)
       },
 
       // Apply effects based on item type

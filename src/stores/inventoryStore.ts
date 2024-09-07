@@ -21,6 +21,8 @@ export const useInventoryStore = defineStore('inventoryStore', {
           if (registryItem.type === 'passive') {
             this.applyItemEffect(registryItem)
           }
+
+          this.sortInventory()
         } else {
           console.error(`Item ${item.id} not found in registry`)
         }
@@ -67,6 +69,16 @@ export const useInventoryStore = defineStore('inventoryStore', {
       }
     },
 
+    sortInventory() {
+      const sortBy =  [
+        'consumable',
+        'buff',
+        'passive',
+      ]
+
+      this.inventory.sort((a, b) => sortBy.indexOf(a.type) - sortBy.indexOf(b.type))
+    },
+
     // Save inventory state to IndexedDB
     async saveInventoryState() {
       const inventoryToSave = {
@@ -103,6 +115,8 @@ export const useInventoryStore = defineStore('inventoryStore', {
               return item // Load the raw item if not found in registry
             }
           }) ?? []
+
+          this.sortInventory()
 
           this.maxInventory = savedInventory.maxInventory ?? this.maxInventory
           console.log('Inventory loaded from IndexedDB')

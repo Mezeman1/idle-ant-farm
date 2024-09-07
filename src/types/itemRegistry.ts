@@ -22,7 +22,7 @@ export const itemRegistry = {
   'ant-strength-potion': {
     id: 'ant-strength-potion',
     name: 'Ant Strength Potion',
-    type: 'buff',
+    type: 'consumable',
     description: 'Increases army attack by 10% for 5 minutes.',
     effect: () => {
       console.log('Buffing army attack by 10% for 5 minutes')
@@ -87,6 +87,33 @@ export const itemRegistry = {
         return false
       }
       adventureStore.armyHealth += 100
+      return true
+    },
+  },
+  'butterfly-wing': {
+    id: 'butterfly-wing',
+    name: 'Butterfly Wing',
+    type: 'passive',
+    description: 'Health regeneration increased by 50%. (Does not stack)',
+    effect: () => {
+      console.log('Increasing health regeneration by 50%')
+      const adventureStore = useAdventureStore()
+      adventureStore.armyRegen *= 1.50 // Passive effect
+    },
+  },
+  'butterfly-dust': {
+    id: 'butterfly-dust',
+    name: 'Butterfly Dust',
+    type: 'consumable',
+    description: 'Heals the army by 200 points.',
+    effect: () => {
+      console.log('Healing army by 200 points')
+      const adventureStore = useAdventureStore()
+      if (adventureStore.armyHealth + 200 > adventureStore.armyMaxHealth) {
+        adventureStore.armyHealth = adventureStore.armyMaxHealth
+        return false
+      }
+      adventureStore.armyHealth += 200
       return true
     },
   },
