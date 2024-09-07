@@ -44,7 +44,7 @@ export const useGameStore = defineStore('gameStore', {
       { id: 'storageUpgrade', name: 'Storage Upgrade', description: 'Increase max storage by 20%', cost: 10 },
       { id: 'productionBoost', name: 'Production Boost', description: 'Increase production speed by 20%', cost: 15 },
       { id: 'queenEfficiency', name: 'Queen Efficiency', description: 'Queens produce 50% more larvae', cost: 20 },
-      { id: 'autoLarvae', name: 'Auto Larvae Creation', description: 'Automatically create larvae based on seeds', cost: 25 },
+      // { id: 'autoLarvae', name: 'Auto Larvae Creation', description: 'Automatically create larvae based on seeds', cost: 25 },
       { id: 'betterAnts', name: 'Stronger Ants', description: 'Increase ant strength by 10%', cost: 100 },
     ],
 
