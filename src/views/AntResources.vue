@@ -2,9 +2,15 @@
   <div class="grid grid-cols-1 gap-4 p-4 max-h-half-screen overflow-y-auto">
     <!-- Seeds Section -->
     <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-      <p class="font-bold text-lg">
-        Seeds
-      </p>
+      <div>
+        <p class="font-bold text-lg">
+          Seeds
+        </p>
+        <p class="text-2xs">
+          You have a species of ants that collect seeds.
+        </p>
+      </div>
+
       <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
         <!-- Left Column: Seed Count and Upgrade -->
         <div class="flex flex-col gap-2 w-full md:w-auto">
@@ -41,9 +47,15 @@
 
     <!-- Larvae Section -->
     <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-      <p class="font-bold text-lg">
-        Larvae
-      </p>
+      <div>
+        <p class="font-bold text-lg">
+          Larvae
+        </p>
+        <p class="text-2xs">
+          Larvae are the main resource used to create ants.
+        </p>
+      </div>
+
       <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
         <div class="flex flex-col gap-2 w-full md:w-auto">
           <p class="text-sm">
@@ -85,9 +97,14 @@
 
     <!-- Ant Section -->
     <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-      <p class="font-bold text-lg">
-        Ants
-      </p>
+      <div>
+        <p class="font-bold text-lg">
+          Ants
+        </p>
+        <p class="text-2xs">
+          Ants collect seeds and fight bugs.
+        </p>
+      </div>
       <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
         <div class="flex flex-col gap-2 w-full md:w-auto">
           <p class="text-sm">
@@ -117,9 +134,14 @@
 
     <!-- Queen Section -->
     <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-      <p class="font-bold text-lg">
-        Queens
-      </p>
+      <div>
+        <p class="font-bold text-lg">
+          Queens
+        </p>
+        <p class="text-2xs">
+          Queens are the main producers of larvae.
+        </p>
+      </div>
       <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
         <div class="flex flex-col gap-2 w-full md:w-auto">
           <p class="text-sm">
