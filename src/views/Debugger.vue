@@ -29,6 +29,12 @@
       </button>
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        @click="gameStore.ants += 1000000"
+      >
+        Add 1000000 Ants
+      </button>
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
         @click="gameStore.queens += 10"
       >
         Add 10 Queens

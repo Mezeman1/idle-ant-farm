@@ -395,22 +395,22 @@ export const useGameStore = defineStore('gameStore', {
       adventureStore.armyDefense = this.ants * this.defensePerAnt
     },
 
-    // Number formatting helper function
+
     formatNumber(num: number): string {
       num = Math.round(num)
-      if (num < 1000) return num.toFixed(0)
 
-      const suffixes = ['', 'K', 'M', 'B', 'T', 'Q']
-      const exponent = Math.floor(Math.log10(Math.abs(num)) / 3)
-      if (exponent >= suffixes.length) {
-        const largeSuffixExponent = exponent - suffixes.length + 1
-        const largeSuffix = String.fromCharCode(65 + Math.floor((largeSuffixExponent - 1) / 26)) +
-          String.fromCharCode(65 + (largeSuffixExponent - 1) % 26)
+      // Use normal formatting for numbers below 1 million
+      if (num < 100e6) {
+        if (num < 1000) return num.toFixed(0)
+
+        const suffixes = ['', 'K', 'M']
+        const exponent = Math.floor(Math.log10(Math.abs(num)) / 3)
         const scaledNumber = num / Math.pow(1000, exponent)
-        return scaledNumber.toFixed(2) + largeSuffix
+        return scaledNumber.toFixed(2) + suffixes[exponent]
       }
-      const scaledNumber = num / Math.pow(1000, exponent)
-      return scaledNumber.toFixed(2) + suffixes[exponent]
+
+      // Use E notation for numbers 1 million and above
+      return num.toExponential(2)
     },
   },
 })
