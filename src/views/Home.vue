@@ -144,16 +144,6 @@ const {
 
 watch(ants, async () => {
   gameStore.setupAdventureStats() // Setup adventure stats
-  if (gameStore.ants > 10 && !adventureStore.isFighting) {
-    adventureStore.toggleBattle(
-      true,
-    ) // Start the game loop
-
-    const $toast = useToast()
-    $toast.info('Adventure started! Check the Adventure tab for more details.', {
-      duration: 5000,
-    })
-  }
 }, {
   immediate: true,
 })

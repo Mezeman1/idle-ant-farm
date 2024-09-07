@@ -1,7 +1,8 @@
 import {defineStore} from 'pinia'
 import {useAdventureStore} from './adventureStore'
 import {useInventoryStore} from './inventoryStore'
-import { set, get, del } from 'idb-keyval'
+import {del, get, set} from 'idb-keyval'
+
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
     loaded: false,
@@ -41,11 +42,11 @@ export const useGameStore = defineStore('gameStore', {
 
     // Prestige-related upgrades
     prestigeShop: [
-      { id: 'storageUpgrade', name: 'Storage Upgrade', description: 'Increase max storage by 20%', cost: 10 },
-      { id: 'productionBoost', name: 'Production Boost', description: 'Increase production speed by 20%', cost: 15 },
-      { id: 'queenEfficiency', name: 'Queen Efficiency', description: 'Queens produce 50% more larvae', cost: 20 },
+      {id: 'storageUpgrade', name: 'Storage Upgrade', description: 'Increase max storage by 20%', cost: 10},
+      {id: 'productionBoost', name: 'Production Boost', description: 'Increase production speed by 20%', cost: 15},
+      {id: 'queenEfficiency', name: 'Queen Efficiency', description: 'Queens produce 50% more larvae', cost: 20},
       // { id: 'autoLarvae', name: 'Auto Larvae Creation', description: 'Automatically create larvae based on seeds', cost: 25 },
-      { id: 'betterAnts', name: 'Stronger Ants', description: 'Increase ant strength by 10%', cost: 100 },
+      {id: 'betterAnts', name: 'Stronger Ants', description: 'Increase ant strength by 10%', cost: 100},
     ],
 
     // Prestige-related variables
@@ -300,7 +301,7 @@ export const useGameStore = defineStore('gameStore', {
         larvaeStorageUpgradeCost: this.larvaeStorageUpgradeCost,
         prestigePoints: this.prestigePoints,
         purchasedUpgrades: this.purchasedUpgrades, // Save purchased upgrades
-        attackPerAnt: this.attackPerAnt,
+
         lastSavedTime: Date.now(),
 
         // save prestige shop costs
@@ -309,6 +310,11 @@ export const useGameStore = defineStore('gameStore', {
         queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 20,
         autoLarvaePrestigeCost: this.prestigeShop.find(u => u.id === 'autoLarvae')?.cost ?? 25,
         betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 100,
+
+        // Save other store states
+        attackPerAnt: this.attackPerAnt,
+        healthPerAnt: this.healthPerAnt,
+        defensePerAnt: this.defensePerAnt,
       }
 
       try {
@@ -341,7 +347,7 @@ export const useGameStore = defineStore('gameStore', {
           this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
           this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
           this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
-          this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
+
           this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
 
           // Load prestige shop costs
@@ -352,6 +358,11 @@ export const useGameStore = defineStore('gameStore', {
             if (shop.id === 'autoLarvae') shop.cost = savedState.autoLarvaePrestigeCost
             if (shop.id === 'betterAnts') shop.cost = savedState.betterAntsPrestigeCost
           })
+
+          // Load other store states
+          this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
+          this.healthPerAnt = savedState.healthPerAnt ?? this.healthPerAnt
+          this.defensePerAnt = savedState.defensePerAnt ?? this.defensePerAnt
 
           console.log('Game state loaded from IndexedDB')
 
@@ -391,12 +402,19 @@ export const useGameStore = defineStore('gameStore', {
           this.purchasedUpgrades = []
         }
 
+        this.healthPerAnt = 10
+        this.attackPerAnt = 2
+        this.defensePerAnt = 1
+
         // Reset other stores
         const inventoryStore = useInventoryStore()
         await inventoryStore.resetInventoryState()
 
         this.applyPrestigeUpgrades()
-        useAdventureStore().stopBattle()
+
+        const adventureStore = useAdventureStore()
+        adventureStore.stopBattle()
+        await adventureStore.resetAdventureState()
         console.log('Game reset and cleared from IndexedDB')
       } catch (error) {
         console.error('Error resetting game state:', error)
