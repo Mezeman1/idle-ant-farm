@@ -23,6 +23,7 @@
     "tippy.js": "^6.3.7",
     "vue": "^3.2.31",
     "vue-router": "^4.0.12",
+    "vue-simple-context-menu": "^4.1.0",
     "vue-tippy": "^6.4.4",
     "vue-toast-notification": "^3.1.2"
   },

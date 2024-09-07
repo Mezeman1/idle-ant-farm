@@ -13,6 +13,9 @@ import ToastPlugin from 'vue-toast-notification'
 //import 'vue-toast-notification/dist/theme-default.css';
 import 'vue-toast-notification/dist/theme-sugar.css'
 
+import VueSimpleContextMenu from 'vue-simple-context-menu'
+import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'
+
 const app = createApp(App)
 
 const router = createRouter({
@@ -55,4 +58,7 @@ app.use(
     }, // => Global default options * see all props
   },
 )
+
+app.component('VueSimpleContextMenu', VueSimpleContextMenu)
+
 app.mount('#app')
