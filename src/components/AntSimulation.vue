@@ -123,7 +123,7 @@ const addQueens = (count: number) => {
       y: centerY + offsetY, // Position close to the larvae
       angle: Math.random() * 360,
       speed: 0.05 + Math.random() * 0.1, // Queens move slower
-      size: {width: 6, height: 3}, // Queens are bigger
+      size: {width: 8, height: 4}, // Queens are bigger
       type: 'queen',
       isPaused: false,
       pauseTimer: 0,
@@ -182,15 +182,7 @@ const drawEntities = (entities: AntEntity[]) => {
     ctx.value.rotate((entity.angle * Math.PI) / 180) // Rotate the entity in the correct direction
 
     if (entity.type === 'queen') {
-      // Make the queen 2x the size of an ant, just an oval now
-      const bodyWidth = entity.size.width / 1.5  // Queen's width, 2x the size of an ant
-      const bodyHeight = entity.size.height / 1.5 // Queen's height, 2x the size of an ant
-
-      // Draw the oval body (centered at 0, 0)
-      ctx.value.beginPath()
-      ctx.value.ellipse(0, 0, bodyWidth, bodyHeight, 0, 0, Math.PI * 2) // Simplified to just an oval
-      ctx.value.fill()
-      ctx.value.stroke()
+      ctx.value.fillRect(-entity.size.width, -entity.size.height, entity.size.width, entity.size.height)
     } else {
       // Draw ants (rectangle)
       ctx.value.fillRect(-entity.size.width / 2, -entity.size.height / 2, entity.size.width, entity.size.height)
@@ -212,7 +204,7 @@ const drawEntities = (entities: AntEntity[]) => {
     const pauseChance = entity.type === 'ant' ? 0.01 : 0.005
     if (!entity.hasInteracted && Math.random() < pauseChance) {
       entity.isPaused = true
-      entity.pauseTimer = randomInRange(50, 150)
+      entity.pauseTimer = entity.type === 'ant' ? randomInRange(50, 150) : randomInRange(200, 500)
       continue
     }
 
@@ -279,7 +271,7 @@ const drawLarvae = () => {
     ctx.value.save()
     ctx.value.translate(larva.x, larva.y)
     ctx.value.beginPath()
-    ctx.value.ellipse(0, 0, 2, 4, 0, 0, Math.PI * 2) // Taller oval shape (2x4)
+    ctx.value.ellipse(0, 0, 1, 3, 0, 0, Math.PI * 2) // Taller oval shape (2x4)
     ctx.value.fill()
     ctx.value.restore()
   }

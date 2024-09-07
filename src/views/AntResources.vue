@@ -1,39 +1,64 @@
 <template>
   <div class="grid grid-cols-1 gap-4 p-4 max-h-half-screen overflow-y-auto">
     <!-- Seeds Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col items-start space-y-2">
+    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <p class="font-bold text-lg">
         Seeds
       </p>
-      <div class="flex items-center justify-between w-full">
-        <p class="text-sm">
-          Count: {{ formatNumber(gameStore.seeds) }} ({{ formatNumber(gameStore.seedsPerSecond) }} /s)
-        </p>
-        <button
-          class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded shadow text-xs"
-          @click="gameStore.collectSeedsManually"
-        >
-          🌱 Collect
-        </button>
+      <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
+        <!-- Left Column: Seed Count and Upgrade -->
+        <div class="flex flex-col gap-2 w-full md:w-auto">
+          <p class="text-sm">
+            Count: {{ formatNumber(gameStore.seeds) }}/{{ formatNumber(gameStore.maxSeeds) }}
+            ({{ formatNumber(gameStore.seedsPerSecond) }} /s)
+          </p>
+          <button
+            :disabled="gameStore.seeds < gameStore.seedStorageUpgradeCost"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            @click="gameStore.upgradeSeedStorage"
+          >
+            Upgrade storage ({{ formatNumber(gameStore.seedStorageUpgradeCost) }} seeds)
+          </button>
+        </div>
+
+        <!-- Right Column: Collect Button -->
+        <div class="w-full md:w-auto md:ml-4">
+          <button
+            class="bg-yellow-500 hover:bg-yellow-600 text-white w-full md:w-auto px-3 py-1 rounded shadow text-xs"
+            @click="gameStore.collectSeedsManually"
+          >
+            Collect 🌱
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Larvae Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col items-start space-y-2">
+    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <p class="font-bold text-lg">
         Larvae
       </p>
-      <div class="flex items-center justify-between w-full">
-        <p class="text-sm">
-          Count: {{ formatNumber(gameStore.larvae) }} ({{ formatNumber(gameStore.larvaePerMinute) }} /min)
-        </p>
-        <div class="flex space-x-2">
+      <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
+        <div class="flex flex-col gap-2 w-full md:w-auto">
+          <p class="text-sm">
+            Count: {{ formatNumber(gameStore.larvae) }}/{{ formatNumber(gameStore.maxLarvae) }}
+            ({{ formatNumber(gameStore.larvaePerMinute) }} /min)
+          </p>
+          <button
+            :disabled="gameStore.seeds < gameStore.larvaeStorageUpgradeCost"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            @click="gameStore.upgradeLarvaeStorage"
+          >
+            Upgrade storage ({{ formatNumber(gameStore.larvaeStorageUpgradeCost) }} seeds)
+          </button>
+        </div>
+        <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
           <button
             :disabled="gameStore.seeds < 10"
             class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.createLarvae"
           >
-            ➕ Create
+            Create Larvae ({{ formatNumber(gameStore.seedCostPerLarva) }} seeds)
           </button>
           <button
             :disabled="gameStore.seeds < 10"
@@ -47,21 +72,25 @@
     </div>
 
     <!-- Ant Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col items-start space-y-2">
+    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <p class="font-bold text-lg">
         Ants
       </p>
-      <div class="flex items-center justify-between w-full">
-        <p class="text-sm">
-          Count: {{ formatNumber(gameStore.ants) }}
-        </p>
-        <div class="flex space-x-2">
+      <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
+        <div class="flex flex-col gap-2 w-full md:w-auto">
+          <p class="text-sm">
+            Count: {{ formatNumber(gameStore.ants) }}
+          </p>
+        </div>
+        <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
           <button
             :disabled="gameStore.larvae < 1 || gameStore.seeds < 50"
             class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.createAnts"
           >
-            ➕ Create
+            Create Ant ({{ formatNumber(gameStore.seedCostPerAnt) }} seeds, {{
+              formatNumber(gameStore.larvaCostPerAnt)
+            }} larvae)
           </button>
           <button
             :disabled="gameStore.larvae < 1 || gameStore.seeds < 50"
@@ -75,21 +104,24 @@
     </div>
 
     <!-- Queen Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col items-start space-y-2">
+    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <p class="font-bold text-lg">
         Queens
       </p>
-      <div class="flex items-center justify-between w-full">
-        <p class="text-sm">
-          Count: {{ formatNumber(gameStore.queens) }}
-        </p>
-        <div class="flex space-x-2">
+      <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
+        <div class="flex flex-col gap-2 w-full md:w-auto">
+          <p class="text-sm">
+            Count: {{ formatNumber(gameStore.queens) }}
+          </p>
+        </div>
+        <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
           <button
             :disabled="gameStore.ants < 100 || gameStore.seeds < 250"
             class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.buyQueen"
           >
-            👑 Buy
+            Buy Queen 👑 ({{ formatNumber(gameStore.seedCostPerQueen) }} seeds,
+            {{ formatNumber(gameStore.antCostPerQueen) }} ants)
           </button>
           <button
             :disabled="gameStore.ants < 100 || gameStore.seeds < 250"
@@ -99,33 +131,6 @@
             Max
           </button>
         </div>
-      </div>
-    </div>
-
-    <!-- Storage Upgrade Section -->
-    <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
-      <p class="font-bold text-lg">
-        Storage
-      </p>
-      <div class="flex items-center justify-between w-full">
-        <p>Max Seeds: {{ formatNumber(gameStore.maxSeeds) }}</p>
-        <button
-          :disabled="gameStore.seeds < gameStore.seedStorageUpgradeCost"
-          class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-          @click="gameStore.upgradeSeedStorage"
-        >
-          Upgrade ({{ formatNumber(gameStore.seedStorageUpgradeCost) }} seeds)
-        </button>
-      </div>
-      <div class="flex items-center justify-between w-full">
-        <p>Max Larvae: {{ formatNumber(gameStore.maxLarvae) }}</p>
-        <button
-          :disabled="gameStore.seeds < gameStore.larvaeStorageUpgradeCost"
-          class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-          @click="gameStore.upgradeLarvaeStorage"
-        >
-          Upgrade ({{ formatNumber(gameStore.larvaeStorageUpgradeCost) }} seeds)
-        </button>
       </div>
     </div>
 
@@ -170,7 +175,6 @@
     </div>
   </div>
 </template>
-
 
 <script setup lang="ts">
 import {useGameStore} from '../stores/gameStore'
