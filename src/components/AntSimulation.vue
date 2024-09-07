@@ -64,7 +64,7 @@ const larvae = ref<LarvaEntity[]>([])
 const maxLarvae = computed(() => Math.min(200, Math.floor(screenWidth.value / 5)))
 const maxAnts = computed(() => {
   // Max number of ants based on screen size
-  return Math.min(2000, Math.floor(screenWidth.value))
+  return Math.min(5000, Math.floor(screenWidth.value * 2))
 })
 const maxQueens = computed(() => {
   // Max number of queens based on screen size
