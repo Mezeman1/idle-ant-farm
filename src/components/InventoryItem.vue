@@ -1,7 +1,7 @@
 <template>
   <button
     v-tooltip="itemFromRegistry?.description"
-    class="p-2 flex flex-col h-full cursor-pointer"
+    class="p-2 flex flex-col items-center h-full w-full cursor-pointer"
     @click="useItem(item.id)"
   >
     <div class="w-full text-right">
