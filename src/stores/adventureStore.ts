@@ -30,13 +30,49 @@ export const useAdventureStore = defineStore('adventureStore', {
               },
               {
                 name: 'Grasshopper Leg',
-                chance: 0.5,
+                chance: 0.2,
                 amountBetween: [1, 2],
               },
             ],
           },
-          // {name: 'Beetle', health: 150, attack: 10, defense: 5, regen: 3},
-          // {name: 'Wasp', health: 120, attack: 12, defense: 6, regen: 2},
+          {
+            name: 'Beetle',
+            health: 150,
+            attack: 10,
+            defense: 5,
+            regen: 3,
+            dropOptions: [
+              {
+                name: 'Seeds',
+                chance: 0.5,
+                amountBetween: [100, 500],
+              },
+              {
+                name: 'Ant Strength Potion',
+                chance: 0.1,
+                amountBetween: [1, 2],
+              },
+            ],
+          },
+          {
+            name: 'Wasp',
+            health: 120,
+            attack: 12,
+            defense: 6,
+            regen: 2,
+            dropOptions: [
+              {
+                name: 'Seeds',
+                chance: 0.5,
+                amountBetween: [100, 500],
+              },
+              {
+                name: 'Queen Crown',
+                chance: 0.05,
+                amountBetween: [1, 1],
+              },
+            ],
+          },
         ],
       },
       currentEnemy: null,
