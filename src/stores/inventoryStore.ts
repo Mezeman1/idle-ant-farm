@@ -16,8 +16,8 @@ export const useInventoryStore = defineStore('inventoryStore', {
       } else {
         // Link item to itemRegistry and add to inventory
         const registryItem = itemRegistry[item.id]
+        this.inventory.push({...registryItem, amount: item.amount})
         if (registryItem && registryItem.type === 'passive') {
-          this.inventory.push({...registryItem, amount: item.amount})
           this.applyItemEffect(registryItem)
         } else {
           console.error(`Item ${item.id} not found in registry`)
