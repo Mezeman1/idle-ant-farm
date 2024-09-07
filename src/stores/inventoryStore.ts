@@ -78,6 +78,10 @@ export const useInventoryStore = defineStore('inventoryStore', {
       console.log('Using item', item)
       if (item && item.amount > 0) {
         if (item.amount === 0) this.inventory = this.inventory.filter(i => i.id !== itemId)
+        if (item.type === 'passive') {
+          return false
+        }
+
         // Apply the item's effect
         if (this.applyItemEffect(item)) {
           if (item.type === 'consumable' || item.type === 'buff') {

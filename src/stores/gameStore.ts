@@ -41,11 +41,20 @@ export const useGameStore = defineStore('gameStore', {
 
     // Prestige-related upgrades
     prestigeShop: [
-      {id: 'storageUpgrade', name: 'Storage Upgrade', description: 'Increase max storage by 20%', cost: 10},
-      {id: 'productionBoost', name: 'Production Boost', description: 'Increase production speed by 20%', cost: 15},
-      {id: 'queenEfficiency', name: 'Queen Efficiency', description: 'Queens produce 50% more larvae', cost: 20},
+      { id: 'storageUpgrade', name: 'Storage Upgrade', description: 'Increase max storage by 20%', cost: 10 },
+      { id: 'productionBoost', name: 'Production Boost', description: 'Increase production speed by 20%', cost: 15 },
+      { id: 'queenEfficiency', name: 'Queen Efficiency', description: 'Queens produce 50% more larvae', cost: 20 },
+      { id: 'autoLarvae', name: 'Auto Larvae Creation', description: 'Automatically create larvae based on seeds', cost: 25 },
+      { id: 'betterAnts', name: 'Stronger Ants', description: 'Increase ant strength by 10%', cost: 100 },
     ],
 
+    // Prestige-related variables
+    autoLarvaeCreation: false, // Auto-create larvae based on seeds
+
+    // Adventure-related variables
+    attackPerAnt: 2, // Attack value per ant
+    healthPerAnt: 10, // Health value per ant
+    defensePerAnt: 1, // Defense value per ant
 
     gameLoopInterval: null as ReturnType<typeof setInterval> | null,
   }),
@@ -71,10 +80,9 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     calculatePrestigePoints() {
-      // For example, 1 point for every 1,000 seeds collected
-      const pointsFromSeeds = Math.floor(this.seeds / 1000)
-      const pointsFromAnts = Math.floor(this.ants / 500) // 1 point per 500 ants
-      const pointsFromQueens = this.queens - 1 // 1 point per queen
+      const pointsFromSeeds = Math.floor(Math.log10(this.seeds)) // Logarithmic scale for seeds
+      const pointsFromAnts = Math.floor(this.ants / 100) // 1 point per 100 ants
+      const pointsFromQueens = (this.queens - 1) * 5 // 5 points per queen
 
       return pointsFromSeeds + pointsFromAnts + pointsFromQueens
     },
@@ -120,6 +128,10 @@ export const useGameStore = defineStore('gameStore', {
         this.collectionRatePerAnt *= 1.2
       } else if (upgradeId === 'queenEfficiency') {
         this.larvaeProductionRate *= 1.5
+      } else if (upgradeId === 'autoLarvae') {
+        this.autoLarvaeCreation = true
+      } else if (upgradeId === 'betterAnts') {
+        this.attackPerAnt *= 1.1
       }
     },
 
@@ -251,6 +263,10 @@ export const useGameStore = defineStore('gameStore', {
         this.gameLoopInterval = setInterval(() => {
           this.larvae = Math.min(this.larvae + this.larvaeProductionRate * this.queens / 60, this.maxLarvae)
           this.seeds = Math.min(this.seeds + (this.collectionRatePerAnt * this.ants) / 60, this.maxSeeds)
+
+          if (this.autoLarvaeCreation) {
+            this.createMaxLarvae()
+          }
         }, 1000)
       }
     },
@@ -321,10 +337,10 @@ export const useGameStore = defineStore('gameStore', {
     setupAdventureStats() {
       const adventureStore = useAdventureStore()
       if (this.ants === 0) return
-      adventureStore.armyMaxHealth = this.ants * 10
+      adventureStore.armyMaxHealth = this.ants * this.healthPerAnt
       adventureStore.armyHealth = adventureStore.armyHealth ? Math.min(adventureStore.armyHealth, adventureStore.armyMaxHealth) : adventureStore.armyMaxHealth
-      adventureStore.armyAttack = this.ants * 2
-      adventureStore.armyDefense = this.ants
+      adventureStore.armyAttack = this.ants * this.attackPerAnt
+      adventureStore.armyDefense = this.ants * this.defensePerAnt
     },
 
     // Function to reset the game state (excluding prestige-related data)
