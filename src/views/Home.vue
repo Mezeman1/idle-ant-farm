@@ -144,7 +144,6 @@ const {
 
 watch(ants, async () => {
   gameStore.setupAdventureStats() // Setup adventure stats
-  await adventureStore.loadAdventureState() // Load adventure state
   if (gameStore.ants > 10 && !adventureStore.isFighting) {
     adventureStore.toggleBattle(
       true,
