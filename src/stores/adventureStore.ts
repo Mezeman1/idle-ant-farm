@@ -343,6 +343,12 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       // Save adventure state to Firebase Firestore
       async saveAdventureState() {
+        const userId = await useGameStore().getUserId()
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
+
         const adventureState = {
           armyHealth: this.armyHealth,
           armyMaxHealth: this.armyMaxHealth,
@@ -351,6 +357,9 @@ export const useAdventureStore = defineStore('adventureStore', {
           armyRegen: this.armyRegen,
           killCounts: this.killCounts,
           currentArea: this.currentArea,
+
+          lastSavedTime: Date.now(),
+          userId: userId,
         }
 
         try {

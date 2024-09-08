@@ -83,12 +83,21 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
     // Save inventory state to Firebase Firestore
     async saveInventoryState() {
+      const userId = await useGameStore().getUserId()
+      if (!userId) {
+        console.error('User ID not found')
+        return
+      }
+
       const inventoryToSave = {
         inventory: this.inventory.map(item => ({
           id: item.id,
           amount: item.amount,
         })),
         maxInventory: this.maxInventory,
+
+        lastSavedTime: Date.now(),
+        userId: userId,
       }
 
       try {

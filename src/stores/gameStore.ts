@@ -456,6 +456,12 @@ export const useGameStore = defineStore('gameStore', {
 
     // Save game state to Firebase Firestore
     async saveGameState() {
+      const userId = await this.getUserId()
+      if (!userId) {
+        console.error('User ID not found')
+        return
+      }
+
       const gameState = {
         ants: this.ants,
         seeds: this.seeds,
@@ -468,6 +474,7 @@ export const useGameStore = defineStore('gameStore', {
         prestigePoints: this.prestigePoints,
         purchasedUpgrades: this.purchasedUpgrades,
         lastSavedTime: Date.now(),
+        userId: userId,
 
         storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 10,
         productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 15,
