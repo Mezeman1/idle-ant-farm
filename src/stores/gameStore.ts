@@ -129,7 +129,7 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     // Function to handle prestige/reset
-    prestige() {
+    async prestige() {
       const earnedPrestigePoints = this.calculatePrestigePoints()
       if (earnedPrestigePoints === 0) {
         console.log('Not enough resources to earn prestige points.')
@@ -140,7 +140,7 @@ export const useGameStore = defineStore('gameStore', {
       this.prestigePoints += earnedPrestigePoints
 
       // Reset game state except for prestige points and purchased upgrades
-      this.resetGameState()
+      await this.resetGameState()
 
       console.log(`Prestige successful! You earned ${earnedPrestigePoints} prestige points.`)
     },
@@ -162,6 +162,7 @@ export const useGameStore = defineStore('gameStore', {
 
     // Apply a purchased upgrade
     applyPrestigeUpgrade(upgradeId) {
+      console.log('Applying upgrade:', upgradeId)
       if (upgradeId === 'storageUpgrade') {
         this.maxSeeds *= 1.2 // Increase seed storage
         this.maxLarvae *= 1.2 // Increase larvae storage
@@ -310,9 +311,6 @@ export const useGameStore = defineStore('gameStore', {
             // Update resources with the current max storage limits for the elapsed time
             this.updateResources(deltaTime)
 
-            // Check if enough resources are available for storage upgrade (e.g., 500 seeds)
-            this.upgradeLarvaeStorage()
-
             // Accumulate the offline time since last auto action
             offlineTimeAccumulator += deltaTime
 
@@ -343,6 +341,7 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     // Start the game loop for real-time resource generation, respecting caps
+    // Start the game loop for real-time resource generation, respecting caps
     startGameLoop() {
       if (this.isGameLoopRunning) {
         return // Prevent multiple loops from being started
@@ -350,13 +349,30 @@ export const useGameStore = defineStore('gameStore', {
 
       this.isGameLoopRunning = true
       let lastFrameTime = performance.now()
+      let timeAccumulator = 0
+      let lastAutoCreationTime = 0 // Time tracking for throttling auto creations
+      const autoCreationInterval = 1 // Only allow auto-creation every second
 
       const gameLoop = (currentTime) => {
         const deltaTime = (currentTime - lastFrameTime) / 1000 // Time in seconds
-        lastFrameTime = currentTime
+        const updateInterval = 1 / 30 // Target update rate (e.g., 30 FPS)
 
-        this.updateResources(deltaTime)
-        this.handleAutoCreations()
+        timeAccumulator += deltaTime
+
+        if (timeAccumulator >= updateInterval) {
+          this.updateResources(updateInterval) // Update resources based on the target update rate
+
+          // Throttle auto-creations to once per second
+          if (currentTime - lastAutoCreationTime >= autoCreationInterval * 1000) {
+            this.handleAutoCreations()
+            lastAutoCreationTime = currentTime // Reset the auto-creation throttle timer
+          }
+
+          // Reset the time accumulator, subtracting the update interval to handle any leftover time
+          timeAccumulator -= updateInterval
+        }
+
+        lastFrameTime = currentTime
 
         if (this.isGameLoopRunning) {
           requestAnimationFrame(gameLoop)
@@ -508,6 +524,9 @@ export const useGameStore = defineStore('gameStore', {
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,
         autoQueenCreation: this.autoQueenCreation,
+
+        larvaeProductionRate: this.larvaeProductionRate,
+        collectionRatePerAnt: this.collectionRatePerAnt,
       }
 
       try {
@@ -572,6 +591,9 @@ export const useGameStore = defineStore('gameStore', {
           this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
           this.autoQueenCreation = savedState.autoQueenCreation ?? this.autoQueenCreation
 
+          this.larvaeProductionRate = savedState.larvaeProductionRate ?? this.larvaeProductionRate
+          this.collectionRatePerAnt = savedState.collectionRatePerAnt ?? this.collectionRatePerAnt
+
           // Load prestige shop costs
           this.prestigeShop.map(shop => {
             if (shop.id === 'storageUpgrade') shop.cost = savedState.storagePrestigeCost
@@ -626,16 +648,23 @@ export const useGameStore = defineStore('gameStore', {
         this.ants = 0
         this.seeds = 10
         this.queens = 1
+
+        this.larvaeProductionRate = 1
+        this.collectionRatePerAnt = 60
+
         this.maxSeeds = this.initialMaxSeeds
         this.maxLarvae = this.initialMaxLarvae
+
         this.seedStorageUpgradeCost = 500
         this.larvaeStorageUpgradeCost = 100
+
         this.lastSavedTime = Date.now()
 
         if (debug) {
           // Reset prestige-related data and stats for debugging
           this.prestigePoints = 0
           this.purchasedUpgrades = []
+
           this.healthPerAnt = 10
           this.attackPerAnt = 2
           this.defensePerAnt = 1
@@ -651,6 +680,10 @@ export const useGameStore = defineStore('gameStore', {
           // Reset other stores
           const inventoryStore = useInventoryStore()
           await inventoryStore.resetInventoryState()
+
+          this.autoQueenCreation = false
+          this.autoAntCreation = false
+          this.autoLarvaeCreation = false
         }
 
         this.applyPrestigeUpgrades()
