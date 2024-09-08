@@ -4,7 +4,7 @@
     class="relative h-screen w-screen overflow-hidden"
   >
     <AntSimulation
-      v-if="gameStore.loaded"
+      v-if="gameStore.loaded && showBackground"
       :ant-count="gameStore.ants"
       :queen-count="gameStore.queens"
       :larvae-count="gameStore.larvae"
@@ -17,6 +17,13 @@
         @click="isMinimized = !isMinimized"
       >
         {{ isMinimized ? 'Show UI' : 'Hide UI' }}
+      </button>
+
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded m-2 shadow"
+        @click="showBackground = !showBackground"
+      >
+        {{ showBackground ? 'Hide Background' : 'Show Background' }}
       </button>
 
       <button
@@ -155,6 +162,7 @@ import firebase from 'firebase/compat'
 
 const gameStore = useGameStore()
 const isMinimized = ref(false) // Minimized state
+const showBackground = ref(true) // Minimized background state
 const activeTab = ref('resources')
 
 // Classes for active and default tabs
