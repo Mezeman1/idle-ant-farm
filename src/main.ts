@@ -3,7 +3,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import App from './App.vue'
 import {routes} from './routes'
 import './index.css'
-import { VueFire, VueFireAuth } from 'vuefire'
+import {VueFire, VueFireAppCheck, VueFireAuth} from 'vuefire'
 // or
 import {plugin as VueTippy} from 'vue-tippy'
 import 'tippy.js/dist/tippy.css' // optional for styling
@@ -17,6 +17,7 @@ import 'vue-toast-notification/dist/theme-sugar.css'
 import VueSimpleContextMenu from 'vue-simple-context-menu'
 import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'
 import {firebaseApp, initFirebase} from './firebase'
+import {ReCaptchaV3Provider} from 'firebase/app-check'
 
 const app = createApp(App)
 
@@ -48,6 +49,10 @@ app.use(VueFire, {
   modules: [
     // we will see other modules later on
     VueFireAuth(),
+    VueFireAppCheck({
+      provider: new ReCaptchaV3Provider(import.meta.env.VITE_APP_RECAPTCHA_SITEKEY),
+      isTokenAutoRefreshEnabled: true,
+    }),
   ],
 })
 

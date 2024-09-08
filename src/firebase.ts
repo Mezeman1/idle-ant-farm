@@ -18,13 +18,13 @@ export const firebaseApp = firebase.initializeApp({
 const db = getFirestore()
 const analytics = getAnalytics()
 
-const appCheck = initializeAppCheck(firebaseApp, {
-  provider: new ReCaptchaV3Provider(import.meta.env.VITE_APP_RECAPTCHA_SITEKEY),
-
-  // Optional argument. If true, the SDK automatically refreshes App Check
-  // tokens as needed.
-  isTokenAutoRefreshEnabled: true,
-})
+// const appCheck = initializeAppCheck(firebaseApp, {
+//   provider: new ReCaptchaV3Provider(import.meta.env.VITE_APP_RECAPTCHA_SITEKEY),
+//
+//   // Optional argument. If true, the SDK automatically refreshes App Check
+//   // tokens as needed.
+//   isTokenAutoRefreshEnabled: true,
+// })
 const initFirebase = async () => {
   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 }
