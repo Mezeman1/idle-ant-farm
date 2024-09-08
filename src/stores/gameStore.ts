@@ -53,6 +53,7 @@ export const useGameStore = defineStore('gameStore', {
         description: 'Automatically create larvae based on seeds',
         cost: 25,
         oneTimePurchase: true,
+        applyOnPrestige: true,
       },
       {
         id: 'autoAnts',
@@ -60,6 +61,7 @@ export const useGameStore = defineStore('gameStore', {
         description: 'Automatically create ants based on larvae and seeds',
         cost: 50,
         oneTimePurchase: true,
+        applyOnPrestige: true,
       },
       {
         id: 'autoQueens',
@@ -67,12 +69,21 @@ export const useGameStore = defineStore('gameStore', {
         description: 'Automatically create queens based on ants and seeds',
         cost: 75,
         oneTimePurchase: true,
+        applyOnPrestige: true,
       },
       {
         id: 'betterAnts',
         name: 'Stronger Ants',
         description: 'Increase ant strength by 10%',
         cost: 100,
+        applyOnPrestige: false,
+      },
+      {
+        id: 'startWithAnts',
+        name: 'Start with Ants',
+        description: 'Start the game with ants!',
+        cost: 50,
+        applyOnPrestige: true,
       },
       {id: 'storageUpgrade', name: 'Storage Upgrade', description: 'Increase max storage by 20%', cost: 10},
       {id: 'productionBoost', name: 'Production Boost', description: 'Increase production speed by 20%', cost: 15},
@@ -101,6 +112,7 @@ export const useGameStore = defineStore('gameStore', {
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => (state.collectionRatePerAnt * state.ants) / 60,
     upgradePurchased: (state) => (upgradeId: string) => state.purchasedUpgrades.includes(upgradeId),
+    amountOfUpgrade: (state) => (upgradeId: string) => state.purchasedUpgrades.filter(id => id === upgradeId).length,
   },
 
   actions: {
@@ -150,7 +162,6 @@ export const useGameStore = defineStore('gameStore', {
         // Reset the game state for prestige without deleting the Firestore doc
         this.resetLocalGameState({ isDebug: false })
 
-
         await this.resetOtherStores(false)
 
         // Save the updated state to Firestore
@@ -177,34 +188,59 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     // Apply a purchased upgrade
-    applyPrestigeUpgrade(upgradeId) {
+    applyPrestigeUpgrade(upgradeId, fromPrestige = false) {
+      console.log('Try to apply upgrade:', upgradeId, fromPrestige)
+      const prestigeInShop = this.prestigeShop.find(u => u.id === upgradeId)
+      console.log('Prestige in shop:', prestigeInShop)
+      if (fromPrestige && prestigeInShop?.applyOnPrestige === false) {
+        console.log('Upgrade not applicable for prestige purchase:', upgradeId)
+        return
+      }
+
       console.log('Applying upgrade:', upgradeId)
-      if (upgradeId === 'storageUpgrade') {
-        this.maxSeeds *= 1.2 // Increase seed storage
-        this.maxLarvae *= 1.2 // Increase larvae storage
-      } else if (upgradeId === 'productionBoost') {
-        this.larvaeProductionRate *= 1.2
-        this.collectionRatePerAnt *= 1.2
-      } else if (upgradeId === 'queenEfficiency') {
-        this.larvaeProductionRate *= 1.5
-      } else if (upgradeId === 'autoLarvae') {
-        this.autoLarvaeCreation = true
-      } else if (upgradeId === 'betterAnts') {
-        this.attackPerAnt *= 1.1
-        this.setupAdventureStats()
-      } else if (upgradeId === 'autoAnts') {
-        this.autoAntCreation = true
-      } else if (upgradeId === 'autoQueens') {
-        this.autoQueenCreation = true
+      // Object map for handling upgrade logic
+      const upgrades = {
+        storageUpgrade: () => {
+          this.maxSeeds *= 1.2 // Increase seed storage
+          this.maxLarvae *= 1.2 // Increase larvae storage
+        },
+        productionBoost: () => {
+          this.larvaeProductionRate *= 1.2
+          this.collectionRatePerAnt *= 1.2
+        },
+        queenEfficiency: () => {
+          this.larvaeProductionRate *= 1.5
+        },
+        autoLarvae: () => {
+          this.autoLarvaeCreation = true
+        },
+        betterAnts: () => {
+          this.attackPerAnt *= 1.1
+          this.setupAdventureStats()
+        },
+        autoAnts: () => {
+          this.autoAntCreation = true
+        },
+        autoQueens: () => {
+          this.autoQueenCreation = true
+        },
+        startWithAnts: () => {
+          this.ants += 1
+        },
+      }
+
+      // Execute the appropriate upgrade or log an error if the upgrade ID is invalid
+      if (upgrades[upgradeId]) {
+        upgrades[upgradeId]()
       } else {
         console.log('Invalid upgrade ID:', upgradeId)
       }
     },
 
     // Apply purchased upgrades to the game
-    applyPrestigeUpgrades() {
+    applyPrestigeUpgrades(fromPrestige = false) {
       this.purchasedUpgrades.forEach(upgradeId => {
-        this.applyPrestigeUpgrade(upgradeId)
+        this.applyPrestigeUpgrade(upgradeId, fromPrestige)
       })
     },
 
@@ -655,6 +691,7 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     async resetGameState(debug = false) {
+      console.log('Resetting game state...')
       try {
         const userId = await this.getUserId()
         if (!userId) {
@@ -710,6 +747,8 @@ export const useGameStore = defineStore('gameStore', {
       if (isDebug) {
         this.resetDebugState()
       }
+
+      this.applyPrestigeUpgrades(true)
 
       // Reset auto-creation flags
       this.autoQueenCreation = false

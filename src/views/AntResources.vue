@@ -293,7 +293,7 @@
               class="flex items-center justify-between"
             >
               <div>
-                <p>{{ upgrade.name }}</p>
+                <p>{{ upgrade.name }} {{ !upgrade.oneTimePurchase && gameStore.amountOfUpgrade(upgrade.id) > 0 ? `(${gameStore.amountOfUpgrade(upgrade.id)})` : '' }}</p>
                 <p class="text-xs text-gray-500">
                   {{ upgrade.description }}
                 </p>
