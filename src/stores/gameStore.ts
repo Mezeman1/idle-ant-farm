@@ -601,7 +601,6 @@ export const useGameStore = defineStore('gameStore', {
         storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 10,
         productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 15,
         queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 20,
-        autoLarvaePrestigeCost: this.prestigeShop.find(u => u.id === 'autoLarvae')?.cost ?? 25,
         betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 100,
         startWithAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'startWithAnts')?.cost ?? 50,
 
@@ -686,7 +685,6 @@ export const useGameStore = defineStore('gameStore', {
         if (shop.id === 'storageUpgrade') shop.cost = savedState.storagePrestigeCost
         if (shop.id === 'productionBoost') shop.cost = savedState.productionPrestigeCost
         if (shop.id === 'queenEfficiency') shop.cost = savedState.queenPrestigeCost
-        if (shop.id === 'autoLarvae') shop.cost = savedState.autoLarvaePrestigeCost
         if (shop.id === 'betterAnts') shop.cost = savedState.betterAntsPrestigeCost
         if (shop.id === 'startWithAnts') shop.cost = savedState.startWithAntsPrestigeCost
       })
