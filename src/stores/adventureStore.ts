@@ -210,6 +210,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       // Stop the battle loop
       stopBattle() {
         this.isFighting = false
+        this.battleRunning = false
       },
 
       // Main battle loop with requestAnimationFrame

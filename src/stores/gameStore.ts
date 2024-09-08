@@ -130,19 +130,35 @@ export const useGameStore = defineStore('gameStore', {
 
     // Function to handle prestige/reset
     async prestige() {
-      const earnedPrestigePoints = this.calculatePrestigePoints()
-      if (earnedPrestigePoints === 0) {
-        console.log('Not enough resources to earn prestige points.')
-        return
+      try {
+        const userId = await this.getUserId()
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
+
+        // Calculate the earned prestige points
+        const earnedPrestigePoints = this.calculatePrestigePoints()
+        if (earnedPrestigePoints === 0) {
+          console.log('Not enough resources to earn prestige points.')
+          return
+        }
+
+        // Add earned prestige points
+        this.prestigePoints += earnedPrestigePoints
+
+        // Reset the game state for prestige without deleting the Firestore doc
+        this.resetLocalGameState({ isDebug: false })
+
+
+        await this.resetOtherStores(false)
+
+        // Save the updated state to Firestore
+        await this.saveGameState()
+        console.log(`Prestige successful! You earned ${earnedPrestigePoints} prestige points.`)
+      } catch (error) {
+        console.error('Error during prestige:', error)
       }
-
-      // Add earned prestige points to the total
-      this.prestigePoints += earnedPrestigePoints
-
-      // Reset game state except for prestige points and purchased upgrades
-      await this.resetGameState()
-
-      console.log(`Prestige successful! You earned ${earnedPrestigePoints} prestige points.`)
     },
 
     // Buy an upgrade from the prestige shop
@@ -489,15 +505,35 @@ export const useGameStore = defineStore('gameStore', {
       })
     },
 
-    // Save game state to Firebase Firestore
     async saveGameState() {
-      const userId = await this.getUserId()
-      if (!userId) {
-        console.error('User ID not found')
-        return
-      }
+      try {
+        const userId = await this.getUserId()
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
 
-      const gameState = {
+        const gameState = this.getGameState(userId)
+
+        await setDoc(doc(db, 'games', userId), gameState)
+
+        console.log('Game state saved to Firestore')
+
+        // Save other store states
+        await this.saveOtherStoreStates()
+
+        const $toast = useToast()
+        $toast.success('Game saved successfully')
+        this.lastSavedTime = Date.now()
+      } catch (error) {
+        console.error('Error saving game state to Firebase:', error)
+        const $toast = useToast()
+        $toast.error('Failed to save game state')
+      }
+    },
+
+    getGameState(userId) {
+      return {
         ants: this.ants,
         seeds: this.seeds,
         queens: this.queens,
@@ -509,7 +545,7 @@ export const useGameStore = defineStore('gameStore', {
         prestigePoints: this.prestigePoints,
         purchasedUpgrades: this.purchasedUpgrades,
         lastSavedTime: Date.now(),
-        userId: userId,
+        userId,
 
         storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 10,
         productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 15,
@@ -528,41 +564,24 @@ export const useGameStore = defineStore('gameStore', {
         larvaeProductionRate: this.larvaeProductionRate,
         collectionRatePerAnt: this.collectionRatePerAnt,
       }
+    },
 
+    async saveOtherStoreStates() {
       try {
-        const userId = await this.getUserId() // Assume you have a function that retrieves or generates a user ID
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
-
-        await setDoc(doc(db, 'games', userId), gameState).then(() => {
-          console.log('Game state saved to Firestore')
-        }).catch((error) => {
-          console.error('Error saving game state to Firestore:', error)
-        })
-
-        // Save other store states
         const inventoryStore = useInventoryStore()
         await inventoryStore.saveInventoryState()
 
         const adventureStore = useAdventureStore()
         await adventureStore.saveAdventureState()
-
-        const $toast = useToast()
-        $toast.success('Game saved successfully')
-        this.lastSavedTime = Date.now()
       } catch (error) {
-        console.error('Error saving game state to Firebase:', error)
+        console.error('Error saving other store states:', error)
       }
     },
 
-    // Load game state from Firebase Firestore and calculate offline progress
     async loadGameState() {
       this.loaded = false
-
       try {
-        const userId = await this.getUserId() // Get the user ID
+        const userId = await this.getUserId()
         if (!userId) {
           console.error('User ID not found')
           return
@@ -572,56 +591,16 @@ export const useGameStore = defineStore('gameStore', {
         const docSnap = await getDoc(docRef)
 
         if (docSnap.exists()) {
-          const savedState = docSnap.data()
-
-          this.ants = savedState.ants ?? this.ants
-          this.seeds = savedState.seeds ?? this.seeds
-          this.queens = savedState.queens ?? this.queens
-          this.larvae = savedState.larvae ?? this.larvae
-          this.maxSeeds = savedState.maxSeeds ?? this.maxSeeds
-          this.maxLarvae = savedState.maxLarvae ?? this.maxLarvae
-          this.seedStorageUpgradeCost = savedState.seedStorageUpgradeCost ?? this.seedStorageUpgradeCost
-          this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
-          this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
-          this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
-          this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
-
-          // Auto upgrades
-          this.autoLarvaeCreation = savedState.autoLarvaeCreation ?? this.autoLarvaeCreation
-          this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
-          this.autoQueenCreation = savedState.autoQueenCreation ?? this.autoQueenCreation
-
-          this.larvaeProductionRate = savedState.larvaeProductionRate ?? this.larvaeProductionRate
-          this.collectionRatePerAnt = savedState.collectionRatePerAnt ?? this.collectionRatePerAnt
-
-          // Load prestige shop costs
-          this.prestigeShop.map(shop => {
-            if (shop.id === 'storageUpgrade') shop.cost = savedState.storagePrestigeCost
-            if (shop.id === 'productionBoost') shop.cost = savedState.productionPrestigeCost
-            if (shop.id === 'queenEfficiency') shop.cost = savedState.queenPrestigeCost
-            if (shop.id === 'autoLarvae') shop.cost = savedState.autoLarvaePrestigeCost
-          })
-
-          // Load other store states
-          this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
-          this.healthPerAnt = savedState.healthPerAnt ?? this.healthPerAnt
-          this.defensePerAnt = savedState.defensePerAnt ?? this.defensePerAnt
-
+          this.loadStateFromFirebase(docSnap.data())
           console.log('Game state loaded from Firestore')
 
-          // Load other store states
-          const inventoryStore = useInventoryStore()
-          await inventoryStore.loadInventoryState()
-
-          const adventureStore = useAdventureStore()
-          await adventureStore.loadAdventureState()
+          await this.loadOtherStoreStates()
         } else {
           console.log('No saved game state found in Firestore')
         }
 
         // Recalculate based on upgrades, apply offline progress
         await this.calculateOfflineProgress()
-        console.log('Offline progress calculated')
         this.setupAdventureStats()
         this.loaded = true
         console.log('Game state loaded successfully')
@@ -630,74 +609,149 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
 
-    // Reset the game state (excluding prestige-related data) and clear from Firestore
+    loadStateFromFirebase(savedState) {
+      this.ants = savedState.ants ?? this.ants
+      this.seeds = savedState.seeds ?? this.seeds
+      this.queens = savedState.queens ?? this.queens
+      this.larvae = savedState.larvae ?? this.larvae
+      this.maxSeeds = savedState.maxSeeds ?? this.maxSeeds
+      this.maxLarvae = savedState.maxLarvae ?? this.maxLarvae
+      this.seedStorageUpgradeCost = savedState.seedStorageUpgradeCost ?? this.seedStorageUpgradeCost
+      this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
+      this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
+      this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
+      this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
+
+      this.autoLarvaeCreation = savedState.autoLarvaeCreation ?? this.autoLarvaeCreation
+      this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
+      this.autoQueenCreation = savedState.autoQueenCreation ?? this.autoQueenCreation
+
+      this.larvaeProductionRate = savedState.larvaeProductionRate ?? this.larvaeProductionRate
+      this.collectionRatePerAnt = savedState.collectionRatePerAnt ?? this.collectionRatePerAnt
+
+      // Load prestige shop costs
+      this.prestigeShop.forEach(shop => {
+        if (shop.id === 'storageUpgrade') shop.cost = savedState.storagePrestigeCost
+        if (shop.id === 'productionBoost') shop.cost = savedState.productionPrestigeCost
+        if (shop.id === 'queenEfficiency') shop.cost = savedState.queenPrestigeCost
+        if (shop.id === 'autoLarvae') shop.cost = savedState.autoLarvaePrestigeCost
+      })
+
+      this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
+      this.healthPerAnt = savedState.healthPerAnt ?? this.healthPerAnt
+      this.defensePerAnt = savedState.defensePerAnt ?? this.defensePerAnt
+    },
+
+    async loadOtherStoreStates() {
+      try {
+        const inventoryStore = useInventoryStore()
+        await inventoryStore.loadInventoryState()
+
+        const adventureStore = useAdventureStore()
+        await adventureStore.loadAdventureState()
+      } catch (error) {
+        console.error('Error loading other store states:', error)
+      }
+    },
+
     async resetGameState(debug = false) {
       try {
-        const userId = await this.getUserId() // Get the user ID
+        const userId = await this.getUserId()
         if (!userId) {
           console.error('User ID not found')
           return
         }
 
         // Clear the user's game state from Firestore
-        const docRef = doc(db, 'games', userId)
-        await deleteDoc(docRef) // Delete the document from Firestore
+        await this.clearGameStateFromFirestore(userId)
 
-        // Reset the local game state
-        this.larvae = 0
-        this.ants = 0
-        this.seeds = 10
-        this.queens = 1
+        // Reset the local game state, including prestige points if in debug mode
+        this.resetLocalGameState({ isDebug: debug })
 
-        this.larvaeProductionRate = 1
-        this.collectionRatePerAnt = 60
-
-        this.maxSeeds = this.initialMaxSeeds
-        this.maxLarvae = this.initialMaxLarvae
-
-        this.seedStorageUpgradeCost = 500
-        this.larvaeStorageUpgradeCost = 100
-
-        this.lastSavedTime = Date.now()
-
-        if (debug) {
-          // Reset prestige-related data and stats for debugging
-          this.prestigePoints = 0
-          this.purchasedUpgrades = []
-
-          this.healthPerAnt = 10
-          this.attackPerAnt = 2
-          this.defensePerAnt = 1
-
-          this.prestigeShop.map(shop => {
-            if (shop.id === 'storageUpgrade') shop.cost = 10
-            if (shop.id === 'productionBoost') shop.cost = 15
-            if (shop.id === 'queenEfficiency') shop.cost = 20
-            if (shop.id === 'autoLarvae') shop.cost = 25
-            if (shop.id === 'betterAnts') shop.cost = 100
-          })
-
-          // Reset other stores
-          const inventoryStore = useInventoryStore()
-          await inventoryStore.resetInventoryState()
-
-          this.autoQueenCreation = false
-          this.autoAntCreation = false
-          this.autoLarvaeCreation = false
-        }
-
+        // Apply any prestige-based bonuses
         this.applyPrestigeUpgrades()
 
-        // Reset the adventure store
-        const adventureStore = useAdventureStore()
-        adventureStore.stopBattle()
-        await adventureStore.resetAdventureState()
+        // Reset other stores (adventure, inventory, etc.)
+        await this.resetOtherStores(debug)
 
-        await this.saveGameState() // Save the reset state
+        // Save the reset state
+        await this.saveGameState()
         console.log('Game reset and cleared from Firestore')
       } catch (error) {
         console.error('Error resetting game state:', error)
       }
+    },
+
+    // Clear Firestore document
+    async clearGameStateFromFirestore(userId) {
+      const docRef = doc(db, 'games', userId)
+      await deleteDoc(docRef)
+      console.log('Game state cleared from Firestore')
+    },
+
+    // Reset the local game state, optionally resetting prestige-related data and debug state
+    resetLocalGameState({ isDebug }) {
+      this.larvae = 0
+      this.ants = 0
+      this.seeds = 10
+      this.queens = 1
+
+      this.larvaeProductionRate = 1
+      this.collectionRatePerAnt = 60
+
+      this.maxSeeds = this.initialMaxSeeds
+      this.maxLarvae = this.initialMaxLarvae
+
+      this.seedStorageUpgradeCost = 500
+      this.larvaeStorageUpgradeCost = 100
+
+      this.lastSavedTime = Date.now()
+
+      if (isDebug) {
+        this.resetDebugState()
+      }
+
+      // Reset auto-creation flags
+      this.autoQueenCreation = false
+      this.autoAntCreation = false
+      this.autoLarvaeCreation = false
+    },
+
+    resetPrestigeShopCosts() {
+      this.prestigeShop.forEach(shop => {
+        if (shop.id === 'storageUpgrade') shop.cost = 10
+        if (shop.id === 'productionBoost') shop.cost = 15
+        if (shop.id === 'queenEfficiency') shop.cost = 20
+        if (shop.id === 'autoLarvae') shop.cost = 25
+        if (shop.id === 'betterAnts') shop.cost = 100
+      })
+    },
+
+    resetDebugState() {
+      this.prestigePoints = 0
+      this.purchasedUpgrades = []
+
+      this.healthPerAnt = 10
+      this.attackPerAnt = 2
+      this.defensePerAnt = 1
+
+      this.resetPrestigeShopCosts()
+
+      this.autoQueenCreation = false
+      this.autoAntCreation = false
+      this.autoLarvaeCreation = false
+    },
+
+    async resetOtherStores(debug) {
+      if (debug) {
+        // Reset inventory store
+        const inventoryStore = useInventoryStore()
+        await inventoryStore.resetInventoryState()
+      }
+      // Reset adventure store
+      const adventureStore = useAdventureStore()
+      await adventureStore.resetAdventureState()
+      adventureStore.stopBattle()
     },
 
     setupAdventureStats() {
