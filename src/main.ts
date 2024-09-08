@@ -54,7 +54,6 @@ app.use(VueFire, {
 initFirebase()
 
 
-app.use(router)
 app.use(createPinia())
 app.use(ToastPlugin)
 
@@ -73,5 +72,5 @@ app.use(
 )
 
 app.component('VueSimpleContextMenu', VueSimpleContextMenu)
-
+app.use(router)
 app.mount('#app')

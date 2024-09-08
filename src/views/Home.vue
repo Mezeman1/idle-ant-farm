@@ -4,6 +4,7 @@
     class="relative h-screen w-screen overflow-hidden"
   >
     <AntSimulation
+      v-if="gameStore.loaded"
       :ant-count="gameStore.ants"
       :queen-count="gameStore.queens"
       :larvae-count="gameStore.larvae"
@@ -197,16 +198,17 @@ const handleBeforeUnload = () => {
 }
 
 onMounted(() => {
-  firebase.auth().onAuthStateChanged((user) => {
+  firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
-      gameStore.loadGameState() // Load game state and calculate offline progress
+      console.log('User logged in')
+      await gameStore.loadGameState() // Load game state and calculate offline progress
       gameStore.startGameLoop() // Start the game loop
     }
   })
 
   setInterval(() => {
     gameStore.saveGameState()
-  }, 60000) // Save game state every minute
+  }, 60000 * 5) // Save game state every minute
 
   // Add event listeners for window close
   window.addEventListener('beforeunload', handleBeforeUnload)

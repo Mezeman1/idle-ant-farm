@@ -287,38 +287,59 @@ export const useGameStore = defineStore('gameStore', {
         console.log('Not enough seeds to upgrade larvae storage.')
       }
     },
-
-    // Calculate offline progress based on elapsed time and respect caps
     calculateOfflineProgress() {
-      const currentTime = Date.now()
-      const timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Convert to seconds
+      return new Promise((resolve, reject) => {
+        try {
+          const currentTime = Date.now()
+          const timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
 
-      const tickDuration = 1 // 1 second for each game loop iteration
-      let remainingTime = timeElapsed
+          let remainingTime = timeElapsed
+          const tickDuration = 1 // Simulate in 1-second chunks of offline time
+          let offlineTimeAccumulator = 0 // Track offline time for auto-actions
 
-      // Simulate each second that passed while offline
-      while (remainingTime > 0) {
-        // Perform actions per second (larvae creation, seed collection, auto creation)
-        this.larvae = Math.min(this.larvae + this.larvaeProductionRate * this.queens / 60, this.maxLarvae)
-        this.seeds = Math.min(this.seeds + (this.collectionRatePerAnt * this.ants) / 60, this.maxSeeds)
+          const simulateOffline = () => {
+            if (remainingTime <= 0) {
+              // All offline progress has been simulated, resolve the promise
+              this.lastSavedTime = currentTime
+              resolve()
+              return
+            }
 
-        // Simulate auto-buyers (larvae, ants, queens)
-        if (this.autoLarvaeCreation) {
-          this.createMaxLarvae()
+            const deltaTime = Math.min(tickDuration, remainingTime) // Simulate in 1-second chunks or the remaining time
+
+            // Update resources with the current max storage limits for the elapsed time
+            this.updateResources(deltaTime)
+
+            // Check if enough resources are available for storage upgrade (e.g., 500 seeds)
+            this.upgradeLarvaeStorage()
+
+            // Accumulate the offline time since last auto action
+            offlineTimeAccumulator += deltaTime
+
+            // Call the createMax functions once for every 1 second of simulated offline time
+            if (offlineTimeAccumulator >= 1) {
+              if (this.autoLarvaeCreation) this.createMaxLarvae()
+              if (this.autoAntCreation) this.createMaxAnts()
+              if (this.autoQueenCreation) this.buyMaxQueens()
+
+              // Reduce the accumulator by 1 second after triggering the auto actions
+              offlineTimeAccumulator -= 1
+            }
+
+            // Reduce remaining time by the tick duration
+            remainingTime -= tickDuration
+
+            // Continue simulating in the next event loop cycle
+            setTimeout(simulateOffline, 0) // Allows for async behavior
+          }
+
+          // Start the simulation
+          simulateOffline()
+        } catch (error) {
+          // Reject the promise if an error occurs
+          reject(error)
         }
-        if (this.autoAntCreation) {
-          this.createMaxAnts()
-        }
-        if (this.autoQueenCreation) {
-          this.buyMaxQueens()
-        }
-
-        // Reduce remaining time
-        remainingTime -= tickDuration
-      }
-
-      // Update the last saved time after catching up
-      this.lastSavedTime = currentTime
+      })
     },
 
     // Start the game loop for real-time resource generation, respecting caps
@@ -334,28 +355,26 @@ export const useGameStore = defineStore('gameStore', {
         const deltaTime = (currentTime - lastFrameTime) / 1000 // Time in seconds
         lastFrameTime = currentTime
 
-        // Perform game updates based on deltaTime (e.g., resource generation)
-        this.larvae = Math.min(this.larvae + this.larvaeProductionRate * this.queens * deltaTime / 60, this.maxLarvae)
-        this.seeds = Math.min(this.seeds + (this.collectionRatePerAnt * this.ants * deltaTime) / 60, this.maxSeeds)
+        this.updateResources(deltaTime)
+        this.handleAutoCreations()
 
-        // Auto-larvae, auto-ants, auto-queens
-        if (this.autoLarvaeCreation) {
-          this.createMaxLarvae()
-        }
-        if (this.autoAntCreation) {
-          this.createMaxAnts()
-        }
-        if (this.autoQueenCreation) {
-          this.buyMaxQueens()
-        }
-
-        // Keep running the loop
         if (this.isGameLoopRunning) {
           requestAnimationFrame(gameLoop)
         }
       }
 
       requestAnimationFrame(gameLoop)
+    },
+
+    updateResources(deltaTime) {
+      this.larvae = Math.min(this.larvae + this.larvaeProductionRate * this.queens * deltaTime / 60, this.maxLarvae)
+      this.seeds = Math.min(this.seeds + this.collectionRatePerAnt * this.ants * deltaTime / 60, this.maxSeeds)
+    },
+
+    handleAutoCreations() {
+      if (this.autoLarvaeCreation) this.createMaxLarvae()
+      if (this.autoAntCreation) this.createMaxAnts()
+      if (this.autoQueenCreation) this.buyMaxQueens()
     },
 
     stopGameLoop() {
@@ -521,6 +540,8 @@ export const useGameStore = defineStore('gameStore', {
 
     // Load game state from Firebase Firestore and calculate offline progress
     async loadGameState() {
+      this.loaded = false
+
       try {
         const userId = await this.getUserId() // Get the user ID
         if (!userId) {
@@ -577,10 +598,11 @@ export const useGameStore = defineStore('gameStore', {
         }
 
         // Recalculate based on upgrades, apply offline progress
-        this.calculateOfflineProgress()
+        await this.calculateOfflineProgress()
+        console.log('Offline progress calculated')
         this.setupAdventureStats()
         this.loaded = true
-
+        console.log('Game state loaded successfully')
       } catch (error) {
         console.error('Error loading game state from Firestore:', error)
       }
@@ -656,7 +678,7 @@ export const useGameStore = defineStore('gameStore', {
 
 
     formatNumber(num: number): string {
-      num = Math.round(num)
+      num = Math.floor(num)
 
       // Use normal formatting for numbers below 1 million
       if (num < 100e6) {
