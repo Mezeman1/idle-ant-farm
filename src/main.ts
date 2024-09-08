@@ -3,6 +3,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import App from './App.vue'
 import {routes} from './routes'
 import './index.css'
+import { VueFire, VueFireAuth } from 'vuefire'
 // or
 import {plugin as VueTippy} from 'vue-tippy'
 import 'tippy.js/dist/tippy.css' // optional for styling
@@ -15,6 +16,7 @@ import 'vue-toast-notification/dist/theme-sugar.css'
 
 import VueSimpleContextMenu from 'vue-simple-context-menu'
 import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'
+import {firebaseApp, initFirebase} from './firebase'
 
 const app = createApp(App)
 
@@ -39,6 +41,17 @@ if (import.meta.hot) {
     router.replace('')
   })
 }
+
+app.use(VueFire, {
+  // imported above but could also just be created here
+  firebaseApp,
+  modules: [
+    // we will see other modules later on
+    VueFireAuth(),
+  ],
+})
+
+initFirebase()
 
 
 app.use(router)

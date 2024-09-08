@@ -4,7 +4,10 @@
       ref="canvas"
       class="w-full h-screen"
     />
-    <div class="absolute bottom-4 left-4 bg-white p-2 rounded shadow-lg">
+    <div
+      v-if="debugMode"
+      class="absolute bottom-4 left-4 bg-white p-2 rounded shadow-lg"
+    >
       <p>Ants: {{ ants.length }} Max: {{ maxAnts }}</p>
       <p>Queens: {{ queens.length }} Max: {{ maxQueens }}</p>
       <p>Larvae: {{ larvae.length }} Max: {{ maxLarvae }}</p>
@@ -34,6 +37,8 @@ const props = defineProps<{
   queenCount: number;
   larvaeCount: number;
 }>()
+
+const debugMode = import.meta.env.MODE === 'localhost'
 
 interface AntEntity {
   id: number;

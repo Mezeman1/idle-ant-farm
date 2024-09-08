@@ -16,6 +16,7 @@ module.exports = {
       },
       maxHeight: {
         'half-screen': '50vh',
+        'screen-3/4': '75vh',
       },
       fontSize: {
         '3xs': '.5rem',

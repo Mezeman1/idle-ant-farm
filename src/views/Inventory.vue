@@ -1,5 +1,5 @@
 <template>
-  <div class="max-h-half-screen overflow-y-auto">
+  <div>
     <p class="text-sm">
       Here we'll show the bonuses and effects of the items in the inventory.
     </p>

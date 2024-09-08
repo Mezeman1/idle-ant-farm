@@ -2,10 +2,16 @@ import {defineStore} from 'pinia'
 import {useAdventureStore} from './adventureStore'
 import {useInventoryStore} from './inventoryStore'
 import {del, get, set} from 'idb-keyval'
+import firebase from 'firebase/compat'
+import { getAuth, signInAnonymously } from 'firebase/auth'
+import {db} from '../firebase'
+import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore'
+import {useToast} from 'vue-toast-notification'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
     loaded: false,
+    loggedIn: false,
     larvae: 0,
     ants: 0,
     seeds: 10,
@@ -252,6 +258,7 @@ export const useGameStore = defineStore('gameStore', {
     calculateOfflineProgress() {
       const currentTime = Date.now()
       const timeElapsed = (currentTime - this.lastSavedTime) / 60000 // Convert to minutes
+      console.log('Time elapsed:', timeElapsed)
 
       // Calculate how much should be produced while offline
       const larvaeProduced = Math.min(Math.floor(timeElapsed * this.larvaeProductionRate * this.queens), this.maxLarvae - this.larvae)
@@ -288,38 +295,124 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
 
-    // Save game state to IndexedDB
+    // Get the user ID from the authentication service
+    async getUserId(): Promise<string | null> {
+      const auth = firebase.auth()
+      const user = auth.currentUser
+      if (user) {
+        this.loggedIn = true
+        return user.uid
+      } else {
+        console.error('User not found')
+        return null
+      }
+    },
+
+    async loginUsingGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      firebase.auth().useDeviceLanguage()
+      firebase.auth()
+        .signInWithPopup(provider)
+        .then(async (result) => {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const credential = result.credential as firebase.auth.OAuthCredential
+          const token = credential.accessToken
+          // The signed-in user info.
+          const user = result.user
+          console.log('Logged in as:', user?.displayName)
+
+
+          console.log('Trying to get user ID...')
+
+          const userId = await this.getUserId()
+          if (!userId) {
+            console.error('User ID not found')
+            return
+          }
+
+          this.loggedIn = true
+
+          await this.loadGameState()
+        }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code
+        const errorMessage = error.message
+        console.error('Error signing in:', errorCode, errorMessage)
+      })
+    },
+
+    loginAsGuest() {
+      signInAnonymously(getAuth()).then(async (result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = result.credential as firebase.auth.OAuthCredential
+        // The signed-in user info.
+        const user = result.user
+        console.log('Logged in as:', user?.uid)
+
+        console.log('Trying to get user ID...')
+
+        const userId = await this.getUserId()
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
+
+        this.loggedIn = true
+
+        await this.loadGameState()
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code
+        const errorMessage = error.message
+        console.error('Error signing in:', errorCode, errorMessage)
+      })
+    },
+
+    logout() {
+      firebase.auth().signOut().then(() => {
+        console.log('Logged out successfully')
+        this.loggedIn = false
+      }).catch((error) => {
+        console.error('Error signing out:', error)
+      })
+    },
+
+    // Save game state to Firebase Firestore
     async saveGameState() {
       const gameState = {
         ants: this.ants,
         seeds: this.seeds,
         queens: this.queens,
         larvae: this.larvae,
-        maxSeeds: this.maxSeeds, // These will be recalculated on load
-        maxLarvae: this.maxLarvae, // Recalculated on load
+        maxSeeds: this.maxSeeds,
+        maxLarvae: this.maxLarvae,
         seedStorageUpgradeCost: this.seedStorageUpgradeCost,
         larvaeStorageUpgradeCost: this.larvaeStorageUpgradeCost,
         prestigePoints: this.prestigePoints,
-        purchasedUpgrades: this.purchasedUpgrades, // Save purchased upgrades
-
+        purchasedUpgrades: this.purchasedUpgrades,
         lastSavedTime: Date.now(),
-
-        // save prestige shop costs
         storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 10,
         productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 15,
         queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 20,
         autoLarvaePrestigeCost: this.prestigeShop.find(u => u.id === 'autoLarvae')?.cost ?? 25,
         betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 100,
-
-        // Save other store states
         attackPerAnt: this.attackPerAnt,
         healthPerAnt: this.healthPerAnt,
         defensePerAnt: this.defensePerAnt,
       }
 
       try {
-        await set('idleGameState', JSON.parse(JSON.stringify(gameState)))
-        console.log('Game state saved to IndexedDB')
+        const userId = await this.getUserId() // Assume you have a function that retrieves or generates a user ID
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
+
+        await setDoc(doc(db, 'games', userId), gameState).then(() => {
+          console.log('Game state saved to Firestore')
+        }).catch((error) => {
+          console.error('Error saving game state to Firestore:', error)
+        })
 
         // Save other store states
         const inventoryStore = useInventoryStore()
@@ -327,16 +420,29 @@ export const useGameStore = defineStore('gameStore', {
 
         const adventureStore = useAdventureStore()
         await adventureStore.saveAdventureState()
+
+        const $toast = useToast()
+        $toast.success('Game saved successfully')
       } catch (error) {
-        console.error('Error saving game state:', error)
+        console.error('Error saving game state to Firebase:', error)
       }
     },
 
-    // Load game state from IndexedDB and calculate offline progress
+    // Load game state from Firebase Firestore and calculate offline progress
     async loadGameState() {
       try {
-        const savedState = await get('idleGameState')
-        if (savedState) {
+        const userId = await this.getUserId() // Get the user ID
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
+
+        const docRef = doc(db, 'games', userId)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          const savedState = docSnap.data()
+
           this.ants = savedState.ants ?? this.ants
           this.seeds = savedState.seeds ?? this.seeds
           this.queens = savedState.queens ?? this.queens
@@ -347,7 +453,6 @@ export const useGameStore = defineStore('gameStore', {
           this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
           this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
           this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
-
           this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
 
           // Load prestige shop costs
@@ -364,7 +469,7 @@ export const useGameStore = defineStore('gameStore', {
           this.healthPerAnt = savedState.healthPerAnt ?? this.healthPerAnt
           this.defensePerAnt = savedState.defensePerAnt ?? this.defensePerAnt
 
-          console.log('Game state loaded from IndexedDB')
+          console.log('Game state loaded from Firestore')
 
           // Load other store states
           const inventoryStore = useInventoryStore()
@@ -372,21 +477,34 @@ export const useGameStore = defineStore('gameStore', {
 
           const adventureStore = useAdventureStore()
           await adventureStore.loadAdventureState()
+        } else {
+          console.log('No saved game state found in Firestore')
         }
 
         // Recalculate based on upgrades, apply offline progress
         this.calculateOfflineProgress()
         this.setupAdventureStats()
         this.loaded = true
+
       } catch (error) {
-        console.error('Error loading game state:', error)
+        console.error('Error loading game state from Firestore:', error)
       }
     },
 
-    // Reset the game state (excluding prestige-related data) and clear from IndexedDB
+    // Reset the game state (excluding prestige-related data) and clear from Firestore
     async resetGameState(debug = false) {
       try {
-        await del('idleGameState') // Clear IndexedDB entry
+        const userId = await this.getUserId() // Get the user ID
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
+
+        // Clear the user's game state from Firestore
+        const docRef = doc(db, 'games', userId)
+        await deleteDoc(docRef) // Delete the document from Firestore
+
+        // Reset the local game state
         this.larvae = 0
         this.ants = 0
         this.seeds = 10
@@ -398,6 +516,7 @@ export const useGameStore = defineStore('gameStore', {
         this.lastSavedTime = Date.now()
 
         if (debug) {
+          // Reset prestige-related data and stats for debugging
           this.prestigePoints = 0
           this.purchasedUpgrades = []
           this.healthPerAnt = 10
@@ -419,10 +538,12 @@ export const useGameStore = defineStore('gameStore', {
 
         this.applyPrestigeUpgrades()
 
+        // Reset the adventure store
         const adventureStore = useAdventureStore()
         adventureStore.stopBattle()
         await adventureStore.resetAdventureState()
-        console.log('Game reset and cleared from IndexedDB')
+
+        console.log('Game reset and cleared from Firestore')
       } catch (error) {
         console.error('Error resetting game state:', error)
       }

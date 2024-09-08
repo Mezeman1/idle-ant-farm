@@ -1,6 +1,8 @@
 import {defineStore} from 'pinia'
-import { set, get, del } from 'idb-keyval'
-import {itemRegistry} from '../types/itemRegistry' // Import your item registry
+import {itemRegistry} from '../types/itemRegistry'
+import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
+import {db} from '../firebase'
+import {useGameStore} from './gameStore' // Import your item registry
 
 export const useInventoryStore = defineStore('inventoryStore', {
   state: () => ({
@@ -70,7 +72,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
     },
 
     sortInventory() {
-      const sortBy =  [
+      const sortBy = [
         'consumable',
         'buff',
         'passive',
@@ -79,7 +81,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
       this.inventory.sort((a, b) => sortBy.indexOf(a.type) - sortBy.indexOf(b.type))
     },
 
-    // Save inventory state to IndexedDB
+    // Save inventory state to Firebase Firestore
     async saveInventoryState() {
       const inventoryToSave = {
         inventory: this.inventory.map(item => ({
@@ -90,26 +92,47 @@ export const useInventoryStore = defineStore('inventoryStore', {
       }
 
       try {
-        await set('inventory', inventoryToSave)
-        console.log('Inventory saved to IndexedDB')
+        const gameStore = useGameStore() // Access the gameStore
+        const userId = await gameStore.getUserId() // Use gameStore's getUserId method
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
+
+        await setDoc(doc(db, 'inventory', userId), inventoryToSave).then(() => {
+          console.log('Inventory saved to Firestore')
+        }).catch((error) => {
+          console.error('Error saving inventory to Firestore:', error)
+        })
       } catch (error) {
-        console.error('Error saving inventory:', error)
+        console.error('Error saving inventory to Firebase:', error)
       }
     },
 
     // Load inventory state from IndexedDB and reapply effects
+    // Load inventory state from Firebase Firestore and reapply effects
     async loadInventoryState() {
       try {
-        const savedInventory = await get('inventory')
-        if (savedInventory) {
+        const gameStore = useGameStore() // Access the gameStore
+        const userId = await gameStore.getUserId() // Use gameStore's getUserId method
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
+
+        const docRef = doc(db, 'inventory', userId)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          const savedInventory = docSnap.data()
+
           this.inventory = savedInventory.inventory.map(item => {
             const registryItem = itemRegistry[item.id]
             if (registryItem) {
               if (registryItem.type === 'passive') {
                 this.applyItemEffect(registryItem) // Reapply the item's effect
               }
-
-              return { ...registryItem, amount: item.amount }
+              return {...registryItem, amount: item.amount}
             } else {
               console.error(`Item ${item.id} not found in registry`)
               return item // Load the raw item if not found in registry
@@ -117,25 +140,36 @@ export const useInventoryStore = defineStore('inventoryStore', {
           }) ?? []
 
           this.sortInventory()
-
           this.maxInventory = savedInventory.maxInventory ?? this.maxInventory
-          console.log('Inventory loaded from IndexedDB')
+
+          console.log('Inventory loaded from Firestore')
         } else {
-          console.log('No inventory found in IndexedDB')
+          console.log('No inventory found in Firestore')
         }
       } catch (error) {
-        console.error('Error loading inventory:', error)
+        console.error('Error loading inventory from Firestore:', error)
       }
     },
 
-    // Reset inventory state and clear from IndexedDB
+    // Reset inventory state and clear from Firebase Firestore
     async resetInventoryState() {
       try {
-        await del('inventory')
-        this.inventory = []
-        this.maxInventory = 120 // Reset to default value or what you'd prefer
+        const gameStore = useGameStore() // Access the gameStore
+        const userId = await gameStore.getUserId() // Use gameStore's getUserId method
+        if (!userId) {
+          console.error('User ID not found')
+          return
+        }
 
-        console.log('Inventory reset and cleared from IndexedDB')
+        // Clear the user's inventory state from Firestore
+        const docRef = doc(db, 'inventory', userId)
+        await deleteDoc(docRef) // Delete the document from Firestore
+
+        // Reset the local inventory state
+        this.inventory = []
+        this.maxInventory = 120 // Reset to default value
+
+        console.log('Inventory reset and cleared from Firestore')
       } catch (error) {
         console.error('Error resetting inventory:', error)
       }

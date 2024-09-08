@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-1 gap-4 p-4 max-h-half-screen overflow-y-auto">
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
     <!-- Seeds Section -->
     <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <div>
@@ -11,9 +11,9 @@
         </p>
       </div>
 
-      <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
+      <div class="flex flex-wrap items-start justify-between w-full space-y-2 ">
         <!-- Left Column: Seed Count and Upgrade -->
-        <div class="flex flex-col gap-2 w-full md:w-auto">
+        <div class="flex flex-col gap-2 w-full">
           <p class="text-sm">
             Count: {{ formatNumber(gameStore.seeds) }}/{{ formatNumber(gameStore.maxSeeds) }}
             ({{ formatNumber(gameStore.seedsPerSecond) }} /s)
@@ -34,9 +34,9 @@
         </div>
 
         <!-- Right Column: Collect Button -->
-        <div class="w-full md:w-auto md:ml-4">
+        <div class="w-full">
           <button
-            class="bg-yellow-500 hover:bg-yellow-600 text-white w-full md:w-auto px-3 py-1 rounded shadow text-xs"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white w-full px-3 py-1 rounded shadow text-xs"
             @click="gameStore.collectSeedsManually"
           >
             Collect 🌱
@@ -56,8 +56,8 @@
         </p>
       </div>
 
-      <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
-        <div class="flex flex-col gap-2 w-full md:w-auto">
+      <div class="flex flex-wrap items-start justify-between w-full space-y-2">
+        <div class="flex flex-col gap-2 w-full">
           <p class="text-sm">
             Count: {{ formatNumber(gameStore.larvae) }}/{{ formatNumber(gameStore.maxLarvae) }}
             ({{ formatNumber(gameStore.larvaePerMinute) }} /min)
@@ -76,17 +76,17 @@
             If only there was a way to increase your seed storage...
           </p>
         </div>
-        <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
+        <div class="w-full flex gap-2">
           <button
             :disabled="gameStore.seeds < gameStore.seedCostPerLarva"
-            class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.createLarvae"
           >
             Create Larvae ({{ formatNumber(gameStore.seedCostPerLarva) }} seeds)
           </button>
           <button
             :disabled="gameStore.seeds < gameStore.seedCostPerLarva"
-            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.createMaxLarvae"
           >
             Max
@@ -105,25 +105,25 @@
           Ants collect seeds and fight bugs.
         </p>
       </div>
-      <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
-        <div class="flex flex-col gap-2 w-full md:w-auto">
+      <div class="flex flex-wrap items-start justify-between w-full space-y-2">
+        <div class="flex flex-col gap-2 w-full">
           <p class="text-sm">
             Count: {{ formatNumber(gameStore.ants) }}
           </p>
         </div>
-        <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
+        <div class="w-full flex flex-wrap gap-2">
           <button
             :disabled="gameStore.larvae < 1 || gameStore.seeds < 50"
-            class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.createAnts"
           >
-            Create Ant ({{ formatNumber(gameStore.seedCostPerAnt) }} seeds, {{
+            Create Ant <br>({{ formatNumber(gameStore.seedCostPerAnt) }} seeds, {{
               formatNumber(gameStore.larvaCostPerAnt)
             }} larvae)
           </button>
           <button
             :disabled="gameStore.larvae < 1 || gameStore.seeds < 50"
-            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.createMaxAnts"
           >
             Max
@@ -142,8 +142,8 @@
           Queens are the main producers of larvae.
         </p>
       </div>
-      <div class="flex flex-wrap items-start justify-between w-full space-y-2 md:space-y-0">
-        <div class="flex flex-col gap-2 w-full md:w-auto">
+      <div class="flex flex-wrap items-start justify-between w-full space-y-2">
+        <div class="flex flex-col gap-2 w-full ">
           <p class="text-sm">
             Count: {{ formatNumber(gameStore.queens) }}
           </p>
@@ -151,7 +151,7 @@
         <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
           <button
             :disabled="gameStore.ants < 100 || gameStore.seeds < 250"
-            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.buyQueen"
           >
             Buy Queen 👑 ({{ formatNumber(gameStore.seedCostPerQueen) }} seeds,
@@ -159,7 +159,7 @@
           </button>
           <button
             :disabled="gameStore.ants < 100 || gameStore.seeds < 250"
-            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="gameStore.buyMaxQueens"
           >
             Max

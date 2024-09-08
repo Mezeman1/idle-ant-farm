@@ -4,6 +4,8 @@ import {useToast} from 'vue-toast-notification'
 import {useInventoryStore} from './inventoryStore'
 import {itemRegistry} from '../types/itemRegistry'
 import {del, get, set} from 'idb-keyval'
+import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
+import {db} from '../firebase'
 
 export const useAdventureStore = defineStore('adventureStore', {
     state: () => ({
@@ -339,7 +341,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.enemySpawned = true
       },
 
-      // Save adventure state using IndexedDB
+      // Save adventure state to Firebase Firestore
       async saveAdventureState() {
         const adventureState = {
           armyHealth: this.armyHealth,
@@ -352,18 +354,39 @@ export const useAdventureStore = defineStore('adventureStore', {
         }
 
         try {
-          await set('adventure', JSON.parse(JSON.stringify(adventureState)))
-          console.log('Adventure state saved to IndexedDB')
+          const gameStore = useGameStore() // Access the gameStore
+          const userId = await gameStore.getUserId() // Use gameStore's getUserId method
+          if (!userId) {
+            console.error('User ID not found')
+            return
+          }
+
+          await setDoc(doc(db, 'adventure', userId), adventureState).then(() => {
+            console.log('Adventure state saved to Firestore')
+          }).catch((error) => {
+            console.error('Error saving adventure state to Firestore:', error)
+          })
         } catch (error) {
-          console.error('Error saving adventure state:', error)
+          console.error('Error saving adventure state to Firebase:', error)
         }
       },
 
-      // Load adventure state using IndexedDB
+      // Load adventure state from Firebase Firestore
       async loadAdventureState() {
         try {
-          const adventureState = await get('adventure')
-          if (adventureState) {
+          const gameStore = useGameStore() // Access the gameStore
+          const userId = await gameStore.getUserId() // Use gameStore's getUserId method
+          if (!userId) {
+            console.error('User ID not found')
+            return
+          }
+
+          const docRef = doc(db, 'adventure', userId)
+          const docSnap = await getDoc(docRef)
+
+          if (docSnap.exists()) {
+            const adventureState = docSnap.data()
+
             this.armyHealth = adventureState.armyHealth ?? this.armyHealth
             this.armyMaxHealth = adventureState.armyMaxHealth ?? this.armyMaxHealth
             this.armyAttack = adventureState.armyAttack ?? this.armyAttack
@@ -372,19 +395,30 @@ export const useAdventureStore = defineStore('adventureStore', {
             this.killCounts = adventureState.killCounts ?? this.killCounts
             this.currentArea = adventureState.currentArea ?? this.currentArea
 
-            console.log('Adventure state loaded from IndexedDB')
+            console.log('Adventure state loaded from Firestore')
           } else {
-            console.log('No adventure state found in IndexedDB')
+            console.log('No adventure state found in Firestore')
           }
         } catch (error) {
-          console.error('Error loading adventure state:', error)
+          console.error('Error loading adventure state from Firestore:', error)
         }
       },
 
-      // Reset adventure state and clear IndexedDB
+      // Reset adventure state and clear from Firebase Firestore
       async resetAdventureState() {
         try {
-          await del('adventure')
+          const gameStore = useGameStore() // Access the gameStore
+          const userId = await gameStore.getUserId() // Use gameStore's getUserId method
+          if (!userId) {
+            console.error('User ID not found')
+            return
+          }
+
+          // Clear the user's adventure state from Firestore
+          const docRef = doc(db, 'adventure', userId)
+          await deleteDoc(docRef) // Delete the document from Firestore
+
+          // Reset the local adventure state
           this.armyHealth = 100
           this.armyMaxHealth = 100
           this.armyAttack = 10
@@ -396,7 +430,7 @@ export const useAdventureStore = defineStore('adventureStore', {
             waspKills: 0,
           }
 
-          console.log('Adventure state reset and cleared from IndexedDB')
+          console.log('Adventure state reset and cleared from Firestore')
         } catch (error) {
           console.error('Error resetting adventure state:', error)
         }

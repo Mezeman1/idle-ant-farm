@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="gameStore.loaded"
+    v-if="gameStore.loaded && gameStore.loggedIn"
     class="relative h-screen w-screen overflow-hidden"
   >
     <AntSimulation
@@ -23,6 +23,13 @@
         @click="gameStore.saveGameState()"
       >
         Save
+      </button>
+
+      <button
+        class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
+        @click="gameStore.logout()"
+      >
+        Log out
       </button>
       <div
         v-show="!isMinimized"
@@ -79,11 +86,49 @@
             </li>
           </ul>
         </div>
-        <div>
+        <div class="max-h-screen-3/4 overflow-y-auto">
           <AntResources v-show="activeTab === 'resources'" />
           <Adventure v-show="activeTab === 'adventure'" />
           <Inventory v-show="activeTab === 'inventory'" />
           <Debugger v-show="activeTab === 'debugger'" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-else>
+    <p
+      v-if="gameStore.loggedIn"
+      class="text-center text-2xl font-bold mt-20"
+    >
+      Loading...
+    </p>
+    <div v-else>
+      <AntSimulation
+        :queen-count="5"
+        :ant-count="250"
+        :larvae-count="200"
+      />
+      <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden flex flex-col items-center justify-center">
+        <div class="flex flex-col bg-white bg-opacity-50 p-4 shadow-lg rounded-lg">
+          <p>
+            Welcome to your Idle Ant Farm! 🐜
+          </p>
+          <button
+            v-if="!gameStore.loggedIn"
+            v-tooltip="'Will save your progress and allow you to play on multiple devices.'"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
+            @click="gameStore.loginUsingGoogle()"
+          >
+            Login using google
+          </button>
+          <button
+            v-if="!gameStore.loggedIn"
+            v-tooltip="'Will save progress for current session only, progress may be lost.'"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
+            @click="gameStore.loginAsGuest()"
+          >
+            Play as guest
+          </button>
         </div>
       </div>
     </div>
@@ -98,12 +143,10 @@ import {storeToRefs} from 'pinia'
 import AntResources from './AntResources.vue'
 import Adventure from './Adventure.vue'
 import Debugger from './Debugger.vue'
-import {useAdventureStore} from '../stores/adventureStore'
-import {useToast} from 'vue-toast-notification'
 import Inventory from './Inventory.vue'
+import firebase from 'firebase/compat'
 
 const gameStore = useGameStore()
-const adventureStore = useAdventureStore()
 const isMinimized = ref(false) // Minimized state
 const activeTab = ref('resources')
 
@@ -123,11 +166,20 @@ const handleBeforeUnload = () => {
 }
 
 onMounted(() => {
-  gameStore.loadGameState() // Load game state and calculate offline progress
-  gameStore.startGameLoop() // Start the game loop
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      gameStore.loadGameState() // Load game state and calculate offline progress
+      gameStore.startGameLoop() // Start the game loop
+    }
+  })
+
+  setInterval(() => {
+    gameStore.saveGameState()
+  }, 60000) // Save game state every minute
 
   // Add event listeners for window close
   window.addEventListener('beforeunload', handleBeforeUnload)
+  console.log('Game mounted')
 })
 
 onBeforeUnmount(() => {
@@ -150,12 +202,8 @@ watch(ants, async () => {
 </script>
 
 
-<style scoped>
-canvas {
-  display: block;
-}
-
-div {
-  z-index: 10;
+<style lang="scss">
+button {
+  min-height: 50px;
 }
 </style>

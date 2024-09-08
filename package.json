@@ -16,6 +16,7 @@
     "@vitejs/plugin-vue": "^2.2.2",
     "@vueuse/core": "^11.0.3",
     "draggable-resizable-vue3": "^1.0.94-beta",
+    "firebase": "^10.13.1",
     "gridstack": "^10.3.1",
     "idb-keyval": "^6.2.1",
     "pinia": "^2.2.2",
@@ -26,7 +27,8 @@
     "vue-router": "^4.0.12",
     "vue-simple-context-menu": "^4.1.0",
     "vue-tippy": "^6.4.4",
-    "vue-toast-notification": "^3.1.2"
+    "vue-toast-notification": "^3.1.2",
+    "vuefire": "^3.2.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.12.1",
