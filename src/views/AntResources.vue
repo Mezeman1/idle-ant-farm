@@ -47,13 +47,15 @@
 
     <!-- Larvae Section -->
     <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-      <div>
-        <p class="font-bold text-lg">
-          Larvae
-        </p>
-        <p class="text-2xs">
-          Larvae are the main resource used to create ants.
-        </p>
+      <div class="flex items-center">
+        <div>
+          <p class="font-bold text-lg">
+            Larvae
+          </p>
+          <p class="text-2xs">
+            Larvae are the main resource used to create ants.
+          </p>
+        </div>
       </div>
 
       <div class="flex flex-wrap items-start justify-between w-full space-y-2">
@@ -92,6 +94,36 @@
             Max
           </button>
         </div>
+
+        <div class="w-full flex">
+          <label
+            v-if="gameStore.upgradePurchased('autoLarvae')"
+            class="flex items-center cursor-pointer"
+          >
+            <span class="mr-3 text-xs text-gray-600">Auto creating</span>
+            <div class="relative">
+              <input
+                v-model="gameStore.autoLarvaeCreation"
+                type="checkbox"
+                class="sr-only"
+              >
+              <div
+                :class="{
+                  'bg-green-500': gameStore.autoLarvaeCreation,
+                  'bg-red-500': !gameStore.autoLarvaeCreation
+                }"
+                class="block w-10 h-6 rounded-full shadow-inner transition-colors"
+              />
+              <div
+                :class="{
+                  'translate-x-full': gameStore.autoLarvaeCreation,
+                  'translate-x-0': !gameStore.autoLarvaeCreation
+                }"
+                class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
+              />
+            </div>
+          </label>
+        </div>
       </div>
     </div>
 
@@ -129,6 +161,35 @@
             Max
           </button>
         </div>
+        <div class="w-full flex">
+          <label
+            v-if="gameStore.upgradePurchased('autoAnts')"
+            class="flex items-center cursor-pointer"
+          >
+            <span class="mr-3 text-xs text-gray-600">Auto creating</span>
+            <div class="relative">
+              <input
+                v-model="gameStore.autoAntCreation"
+                type="checkbox"
+                class="sr-only"
+              >
+              <div
+                :class="{
+                  'bg-green-500': gameStore.autoAntCreation,
+                  'bg-red-500': !gameStore.autoAntCreation
+                }"
+                class="block w-10 h-6 rounded-full shadow-inner transition-colors"
+              />
+              <div
+                :class="{
+                  'translate-x-full': gameStore.autoAntCreation,
+                  'translate-x-0': !gameStore.autoAntCreation
+                }"
+                class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
+              />
+            </div>
+          </label>
+        </div>
       </div>
     </div>
 
@@ -165,6 +226,36 @@
             Max
           </button>
         </div>
+
+        <div class="w-full flex">
+          <label
+            v-if="gameStore.upgradePurchased('autoQueens')"
+            class="flex items-center cursor-pointer"
+          >
+            <span class="mr-3 text-xs text-gray-600">Auto creating</span>
+            <div class="relative">
+              <input
+                v-model="gameStore.autoQueenCreation"
+                type="checkbox"
+                class="sr-only"
+              >
+              <div
+                :class="{
+                  'bg-green-500': gameStore.autoQueenCreation,
+                  'bg-red-500': !gameStore.autoQueenCreation
+                }"
+                class="block w-10 h-6 rounded-full shadow-inner transition-colors"
+              />
+              <div
+                :class="{
+                  'translate-x-full': gameStore.autoQueenCreation,
+                  'translate-x-0': !gameStore.autoQueenCreation
+                }"
+                class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
+              />
+            </div>
+          </label>
+        </div>
       </div>
     </div>
 
@@ -195,8 +286,15 @@
               <p class="text-xs text-gray-500">
                 {{ upgrade.description }}
               </p>
+              <p
+                v-if="upgrade.oneTimePurchase && gameStore.upgradePurchased(upgrade.id)"
+                class="text-xs text-blue-600"
+              >
+                Purchased
+              </p>
             </div>
             <button
+              v-if="!upgrade.oneTimePurchase || !gameStore.upgradePurchased(upgrade.id)"
               :disabled="gameStore.prestigePoints < upgrade.cost"
               class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
               @click="gameStore.buyUpgrade(upgrade.id)"

@@ -1,11 +1,10 @@
 import {defineStore} from 'pinia'
 import {useAdventureStore} from './adventureStore'
 import {useInventoryStore} from './inventoryStore'
-import {del, get, set} from 'idb-keyval'
 import firebase from 'firebase/compat'
-import { getAuth, signInAnonymously } from 'firebase/auth'
+import {getAuth, signInAnonymously} from 'firebase/auth'
 import {db} from '../firebase'
-import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore'
+import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
 import {useToast} from 'vue-toast-notification'
 
 export const useGameStore = defineStore('gameStore', {
@@ -48,15 +47,42 @@ export const useGameStore = defineStore('gameStore', {
 
     // Prestige-related upgrades
     prestigeShop: [
+      {
+        id: 'autoLarvae',
+        name: 'Auto Larvae Creation',
+        description: 'Automatically create larvae based on seeds',
+        cost: 25,
+        oneTimePurchase: true,
+      },
+      {
+        id: 'autoAnts',
+        name: 'Auto Ant Creation',
+        description: 'Automatically create ants based on larvae and seeds',
+        cost: 50,
+        oneTimePurchase: true,
+      },
+      {
+        id: 'autoQueens',
+        name: 'Auto Queen Creation',
+        description: 'Automatically create queens based on ants and seeds',
+        cost: 75,
+        oneTimePurchase: true,
+      },
+      {
+        id: 'betterAnts',
+        name: 'Stronger Ants',
+        description: 'Increase ant strength by 10%',
+        cost: 100,
+      },
       {id: 'storageUpgrade', name: 'Storage Upgrade', description: 'Increase max storage by 20%', cost: 10},
       {id: 'productionBoost', name: 'Production Boost', description: 'Increase production speed by 20%', cost: 15},
       {id: 'queenEfficiency', name: 'Queen Efficiency', description: 'Queens produce 50% more larvae', cost: 20},
-      // { id: 'autoLarvae', name: 'Auto Larvae Creation', description: 'Automatically create larvae based on seeds', cost: 25 },
-      {id: 'betterAnts', name: 'Stronger Ants', description: 'Increase ant strength by 10%', cost: 100},
     ],
 
     // Prestige-related variables
     autoLarvaeCreation: false, // Auto-create larvae based on seeds
+    autoAntCreation: false, // Auto-create ants based on larvae and seeds
+    autoQueenCreation: false, // Auto-create queens based on ants and seeds
 
     // Adventure-related variables
     attackPerAnt: 2, // Attack value per ant
@@ -73,6 +99,7 @@ export const useGameStore = defineStore('gameStore', {
     larvaePerSecond: (state) => (state.queens * state.larvaeProductionRate) / 60,
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => (state.collectionRatePerAnt * state.ants) / 60,
+    upgradePurchased: (state) => (upgradeId: string) => state.purchasedUpgrades.includes(upgradeId),
   },
 
   actions: {
@@ -147,6 +174,12 @@ export const useGameStore = defineStore('gameStore', {
       } else if (upgradeId === 'betterAnts') {
         this.attackPerAnt *= 1.1
         this.setupAdventureStats()
+      } else if (upgradeId === 'autoAnts') {
+        this.autoAntCreation = true
+      } else if (upgradeId === 'autoQueens') {
+        this.autoQueenCreation = true
+      } else {
+        console.log('Invalid upgrade ID:', upgradeId)
       }
     },
 
@@ -283,6 +316,14 @@ export const useGameStore = defineStore('gameStore', {
           if (this.autoLarvaeCreation) {
             this.createMaxLarvae()
           }
+
+          if (this.autoAntCreation) {
+            this.createMaxAnts()
+          }
+
+          if (this.autoQueenCreation) {
+            this.buyMaxQueens()
+          }
         }, 1000)
       }
     },
@@ -368,10 +409,16 @@ export const useGameStore = defineStore('gameStore', {
       })
     },
 
-    logout() {
+    async logout() {
+      // We don't need to save for anonymous users
+      if (firebase.auth().currentUser?.isAnonymous === false) {
+        await this.saveGameState()
+      }
+
       firebase.auth().signOut().then(() => {
         console.log('Logged out successfully')
         this.loggedIn = false
+        this.stopGameLoop()
       }).catch((error) => {
         console.error('Error signing out:', error)
       })
@@ -391,14 +438,20 @@ export const useGameStore = defineStore('gameStore', {
         prestigePoints: this.prestigePoints,
         purchasedUpgrades: this.purchasedUpgrades,
         lastSavedTime: Date.now(),
+
         storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 10,
         productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 15,
         queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 20,
         autoLarvaePrestigeCost: this.prestigeShop.find(u => u.id === 'autoLarvae')?.cost ?? 25,
         betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 100,
+
         attackPerAnt: this.attackPerAnt,
         healthPerAnt: this.healthPerAnt,
         defensePerAnt: this.defensePerAnt,
+
+        autoLarvaeCreation: this.autoLarvaeCreation,
+        autoAntCreation: this.autoAntCreation,
+        autoQueenCreation: this.autoQueenCreation,
       }
 
       try {
@@ -455,13 +508,17 @@ export const useGameStore = defineStore('gameStore', {
           this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
           this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
 
+          // Auto upgrades
+          this.autoLarvaeCreation = savedState.autoLarvaeCreation ?? this.autoLarvaeCreation
+          this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
+          this.autoQueenCreation = savedState.autoQueenCreation ?? this.autoQueenCreation
+
           // Load prestige shop costs
           this.prestigeShop.map(shop => {
             if (shop.id === 'storageUpgrade') shop.cost = savedState.storagePrestigeCost
             if (shop.id === 'productionBoost') shop.cost = savedState.productionPrestigeCost
             if (shop.id === 'queenEfficiency') shop.cost = savedState.queenPrestigeCost
             if (shop.id === 'autoLarvae') shop.cost = savedState.autoLarvaePrestigeCost
-            if (shop.id === 'betterAnts') shop.cost = savedState.betterAntsPrestigeCost
           })
 
           // Load other store states
@@ -543,6 +600,7 @@ export const useGameStore = defineStore('gameStore', {
         adventureStore.stopBattle()
         await adventureStore.resetAdventureState()
 
+        await this.saveGameState() // Save the reset state
         console.log('Game reset and cleared from Firestore')
       } catch (error) {
         console.error('Error resetting game state:', error)
