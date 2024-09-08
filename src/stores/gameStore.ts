@@ -32,6 +32,8 @@ export const useGameStore = defineStore('gameStore', {
     // Resource caps
     maxSeeds: 1000, // Initial seed storage capacity
     maxLarvae: 10, // Initial larvae storage capacity
+    maxAnts: 100, // Initial ant storage capacity
+    maxQueens: 10, // Initial queen storage capacity
 
     // Initial resource caps
     initialMaxSeeds: 1000,
@@ -105,7 +107,7 @@ export const useGameStore = defineStore('gameStore', {
       {
         id: 'storageUpgrade',
         name: 'Storage Upgrade',
-        description: 'Increase max storage by 20%',
+        description: 'Increase seed and larvae storage by 20% <br> Increase ant storage by 100% and queen storage by 50%',
         cost: 10,
         category: 'storage',
       },
@@ -238,6 +240,8 @@ export const useGameStore = defineStore('gameStore', {
         storageUpgrade: () => {
           this.maxSeeds *= 1.2 // Increase seed storage
           this.maxLarvae *= 1.2 // Increase larvae storage
+          this.maxAnts *= 2 // Increase ant storage
+          this.maxQueens *= 1.5 // Increase queen storage
         },
         productionBoost: () => {
           this.larvaeProductionRate *= 1.2
@@ -291,7 +295,7 @@ export const useGameStore = defineStore('gameStore', {
 
     // Function to create ants using larvae and seeds
     createAnts() {
-      if (this.larvae >= this.larvaCostPerAnt && this.seeds >= this.seedCostPerAnt) {
+      if (this.larvae >= this.larvaCostPerAnt && this.seeds >= this.seedCostPerAnt && this.ants < this.maxAnts) {
         this.ants += 1
         this.larvae -= this.larvaCostPerAnt
         this.seeds -= this.seedCostPerAnt
@@ -304,7 +308,8 @@ export const useGameStore = defineStore('gameStore', {
     createMaxAnts() {
       const maxAntsByLarvae = this.larvae
       const maxAntsBySeeds = Math.floor(this.seeds / this.seedCostPerAnt)
-      const maxAntsToCreate = Math.min(maxAntsByLarvae, maxAntsBySeeds)
+      const maxAntsToCreate = Math.min(maxAntsByLarvae, maxAntsBySeeds, this.maxAnts - this.ants)
+
       if (maxAntsToCreate > 0) {
         this.larvae -= maxAntsToCreate * this.larvaCostPerAnt
         this.seeds -= maxAntsToCreate * this.seedCostPerAnt
@@ -314,7 +319,7 @@ export const useGameStore = defineStore('gameStore', {
 
     // Function to buy more queens
     buyQueen() {
-      if (this.ants >= this.antCostPerQueen && this.seeds >= this.seedCostPerQueen) {
+      if (this.ants >= this.antCostPerQueen && this.seeds >= this.seedCostPerQueen && this.queens < this.maxQueens) {
         this.queens += 1
         this.ants -= this.antCostPerQueen
         this.seeds -= this.seedCostPerQueen
@@ -327,7 +332,8 @@ export const useGameStore = defineStore('gameStore', {
     buyMaxQueens() {
       const maxQueensByAnts = Math.floor(this.ants / this.antCostPerQueen)
       const maxQueensBySeeds = Math.floor(this.seeds / this.seedCostPerQueen)
-      const maxQueensToBuy = Math.min(maxQueensByAnts, maxQueensBySeeds)
+      const maxQueensToBuy = Math.min(maxQueensByAnts, maxQueensBySeeds, this.maxQueens - this.queens)
+
       if (maxQueensToBuy > 0) {
         this.ants -= maxQueensToBuy * this.antCostPerQueen
         this.seeds -= maxQueensToBuy * this.seedCostPerQueen
@@ -612,6 +618,8 @@ export const useGameStore = defineStore('gameStore', {
         larvae: this.larvae,
         maxSeeds: this.maxSeeds,
         maxLarvae: this.maxLarvae,
+        maxAnts: this.maxAnts,
+        maxQueens: this.maxQueens,
         seedStorageUpgradeCost: this.seedStorageUpgradeCost,
         larvaeStorageUpgradeCost: this.larvaeStorageUpgradeCost,
         prestigePoints: this.prestigePoints,
@@ -688,6 +696,8 @@ export const useGameStore = defineStore('gameStore', {
       this.larvae = savedState.larvae ?? this.larvae
       this.maxSeeds = savedState.maxSeeds ?? this.maxSeeds
       this.maxLarvae = savedState.maxLarvae ?? this.maxLarvae
+      this.maxAnts = savedState.maxAnts ?? this.maxAnts
+      this.maxQueens = savedState.maxQueens ?? this.maxQueens
       this.seedStorageUpgradeCost = savedState.seedStorageUpgradeCost ?? this.seedStorageUpgradeCost
       this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
       this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
@@ -775,6 +785,8 @@ export const useGameStore = defineStore('gameStore', {
 
       this.maxSeeds = this.initialMaxSeeds
       this.maxLarvae = this.initialMaxLarvae
+      this.maxAnts = 100
+      this.maxQueens = 10
 
       this.seedStorageUpgradeCost = 500
       this.larvaeStorageUpgradeCost = 100

@@ -57,7 +57,7 @@
                 }}
               </p>
               <p class="text-xs text-gray-500">
-                {{ upgrade.description }}
+                <span v-html="upgrade.description" />
               </p>
               <p
                 v-if="upgrade.oneTimePurchase && gameStore.upgradePurchased(upgrade.id)"

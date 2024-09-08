@@ -141,7 +141,7 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.ants) }}
+              Count: {{ formatNumber(gameStore.ants) }}/{{ formatNumber(gameStore.maxAnts) }}
             </p>
           </div>
           <div class="w-full flex flex-wrap gap-2">
@@ -207,7 +207,7 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full ">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.queens) }}
+              Count: {{ formatNumber(gameStore.queens) }}/{{ formatNumber(gameStore.maxQueens) }}
             </p>
           </div>
           <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
