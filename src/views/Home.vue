@@ -147,6 +147,9 @@
           >
             Login using google
           </button>
+          <p class="w-64">
+            I disabled play as guest since it sometimes causes saving issues.
+          </p>
           <!--          <button-->
           <!--            v-if="!gameStore.loggedIn"-->
           <!--            v-tooltip="'Will save progress for current session only, progress may be lost.'"-->

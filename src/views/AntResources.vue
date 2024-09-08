@@ -43,6 +43,7 @@
               @mouseleave="stopCollectingSeeds"
               @touchstart="startCollectingSeeds"
               @touchend="stopCollectingSeeds"
+              @contextmenu.prevent
             >
               Collect 🌱
             </button>
