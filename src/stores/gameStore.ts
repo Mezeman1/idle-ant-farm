@@ -13,6 +13,7 @@ export const useGameStore = defineStore('gameStore', {
     loggedIn: false,
     larvae: 0,
     ants: 0,
+    antsFromPrestigeShop: 0,
     seeds: 10,
     queens: 1, // Initial queen
     lastSavedTime: Date.now(),
@@ -146,7 +147,7 @@ export const useGameStore = defineStore('gameStore', {
       let pointsFromSeeds = Math.max(Math.floor(Math.log10(this.seeds + 1) / 2), 1) // Slow down seed contribution by dividing log result by 2
       if (pointsFromSeeds === 1) pointsFromSeeds = 0 // Minimum 1 point from seeds
       // Increase ant threshold to reward 1 point per 200 ants instead of 50 or 100
-      const pointsFromAnts = Math.floor(this.ants / 200) // 1 point per 200 ants
+      const pointsFromAnts = Math.floor(this.ants - this.antsFromPrestigeShop / 200) // 1 point per 200 ants
 
       // Increase queen contribution to 10 points per queen after the first one
       const pointsFromQueens = Math.max((this.queens - 1) * 2, 0) // 2 points per extra queen after the first
@@ -241,6 +242,7 @@ export const useGameStore = defineStore('gameStore', {
         },
         startWithAnts: () => {
           this.ants += 1
+          this.antsFromPrestigeShop += 1
         },
       }
 
