@@ -93,19 +93,23 @@ const formatNumber = gameStore.formatNumber
 const categories = [
   {
     name: 'Storage Upgrades',
-    upgrades: gameStore.prestigeShop.filter(upgrade => ['storageUpgrade'].includes(upgrade.id)),
+    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'storage'),
   },
   {
     name: 'Production Upgrades',
-    upgrades: gameStore.prestigeShop.filter(upgrade => ['productionBoost', 'queenEfficiency'].includes(upgrade.id)),
+    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'production'),
   },
   {
     name: 'Auto Features',
-    upgrades: gameStore.prestigeShop.filter(upgrade => ['autoLarvae', 'autoAnts', 'autoQueens'].includes(upgrade.id)),
+    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'auto'),
   },
   {
     name: 'Combat Upgrades',
-    upgrades: gameStore.prestigeShop.filter(upgrade => ['betterAnts'].includes(upgrade.id)),
+    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'combat'),
+  },
+  {
+    name: 'Expansion Upgrades',
+    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'expansion'),
   },
 ]
 

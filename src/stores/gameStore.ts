@@ -7,6 +7,17 @@ import {db} from '../firebase'
 import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
 import {useToast} from 'vue-toast-notification'
 
+interface PrestigeShopItem {
+  id: string
+  name: string
+  description: string
+  cost: number
+  oneTimePurchase?: boolean
+  applyOnPrestige?: boolean
+  category?: 'auto' | 'production' | 'storage' | 'combat' | 'expansion'
+}
+
+
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
     loaded: false,
@@ -55,6 +66,7 @@ export const useGameStore = defineStore('gameStore', {
         cost: 25,
         oneTimePurchase: true,
         applyOnPrestige: true,
+        category: 'auto',
       },
       {
         id: 'autoAnts',
@@ -63,6 +75,7 @@ export const useGameStore = defineStore('gameStore', {
         cost: 50,
         oneTimePurchase: true,
         applyOnPrestige: true,
+        category: 'auto',
       },
       {
         id: 'autoQueens',
@@ -71,6 +84,7 @@ export const useGameStore = defineStore('gameStore', {
         cost: 75,
         oneTimePurchase: true,
         applyOnPrestige: true,
+        category: 'auto',
       },
       {
         id: 'betterAnts',
@@ -78,6 +92,7 @@ export const useGameStore = defineStore('gameStore', {
         description: 'Increase ant strength by 10%',
         cost: 100,
         applyOnPrestige: false,
+        category: 'combat',
       },
       {
         id: 'startWithAnts',
@@ -85,26 +100,30 @@ export const useGameStore = defineStore('gameStore', {
         description: 'Start the game with ants!',
         cost: 50,
         applyOnPrestige: true,
+        category: 'expansion',
       },
       {
         id: 'storageUpgrade',
         name: 'Storage Upgrade',
         description: 'Increase max storage by 20%',
         cost: 10,
+        category: 'storage',
       },
       {
         id: 'productionBoost',
         name: 'Production Boost',
         description: 'Increase production speed by 20%',
         cost: 15,
+        category: 'production',
       },
       {
         id: 'queenEfficiency',
         name: 'Queen Efficiency',
         description: 'Queens produce 50% more larvae',
         cost: 20,
+        category: 'production',
       },
-    ],
+    ] as PrestigeShopItem[],
 
     // Prestige-related variables
     autoLarvaeCreation: false, // Auto-create larvae based on seeds
