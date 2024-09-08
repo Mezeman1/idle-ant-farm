@@ -19,10 +19,16 @@
       </button>
 
       <button
-        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
-        @click="gameStore.saveGameState()"
+        :disabled="!canSave"
+        class="ml-auto text-white px-2 py-1 rounded shadow text-xs"
+        :class="{
+          'bg-gray-300 cursor-not-allowed': !canSave,
+          'bg-blue-500': canSave
+        }"
+        @click="saveGameWithCooldown"
       >
-        Save
+        <span v-if="canSave">Save Game</span>
+        <span v-else>Wait {{ timeLeft }}s</span>
       </button>
 
       <button
@@ -156,6 +162,31 @@ const defaultTabClasses = 'inline-block p-4 border-b-2 border-transparent rounde
 // Function to set the active tab
 const setActiveTab = (tab) => {
   activeTab.value = tab
+}
+
+const canSave = ref(true)
+const timeLeft = ref(10) // Time left for the cooldown in seconds
+let interval: number | null = null // To store the countdown interval
+
+// Function to handle the cooldown on the save button
+const saveGameWithCooldown = async () => {
+  if (canSave.value) {
+    canSave.value = false // Disable the button
+    timeLeft.value = 10 // Set the countdown time
+
+    await gameStore.saveGameState()
+
+    // Start the countdown timer
+    interval = setInterval(() => {
+      timeLeft.value--
+
+      // Re-enable the button when the countdown reaches 0
+      if (timeLeft.value <= 0) {
+        canSave.value = true
+        clearInterval(interval as number) // Stop the timer
+      }
+    }, 1000) // Update every second
+  }
 }
 
 const debugMode = import.meta.env.MODE === 'localhost'

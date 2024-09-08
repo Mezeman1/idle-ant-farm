@@ -476,6 +476,7 @@ export const useGameStore = defineStore('gameStore', {
 
         const $toast = useToast()
         $toast.success('Game saved successfully')
+        this.lastSavedTime = Date.now()
       } catch (error) {
         console.error('Error saving game state to Firebase:', error)
       }
