@@ -296,14 +296,6 @@ export const useGameStore = defineStore('gameStore', {
       const tickDuration = 1 // 1 second for each game loop iteration
       let remainingTime = timeElapsed
 
-      console.log('Calculating offline progress...', timeElapsed, 'seconds')
-      console.log({
-        lastSavedTime: this.lastSavedTime,
-        currentTime,
-        timeElapsed,
-        remainingTime,
-      })
-
       // Simulate each second that passed while offline
       while (remainingTime > 0) {
         // Perform actions per second (larvae creation, seed collection, auto creation)
