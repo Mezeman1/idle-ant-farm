@@ -43,6 +43,7 @@ if (import.meta.hot) {
   })
 }
 
+
 app.use(VueFire, {
   // imported above but could also just be created here
   firebaseApp,
@@ -51,6 +52,8 @@ app.use(VueFire, {
     VueFireAuth(),
     VueFireAppCheck({
       provider: new ReCaptchaV3Provider(import.meta.env.VITE_APP_RECAPTCHA_SITEKEY),
+
+      debug: true,
       isTokenAutoRefreshEnabled: true,
     }),
   ],
