@@ -150,7 +150,7 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, ref, watch} from 'vue'
+import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useGameStore} from '../stores/gameStore'
 import AntSimulation from '../components/AntSimulation.vue'
 import {storeToRefs} from 'pinia'
@@ -162,7 +162,7 @@ import firebase from 'firebase/compat'
 
 const gameStore = useGameStore()
 const isMinimized = ref(false) // Minimized state
-const showBackground = ref(true) // Minimized background state
+const showBackground = ref(true) // Show background state
 const activeTab = ref('resources')
 
 // Classes for active and default tabs
