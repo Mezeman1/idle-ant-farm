@@ -1,6 +1,7 @@
 import firebase from 'firebase/compat/app'
 import { getFirestore, collection } from 'firebase/firestore'
 import { getAnalytics } from 'firebase/analytics'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 // ... other firebase imports
 
 export const firebaseApp = firebase.initializeApp({
@@ -17,6 +18,13 @@ export const firebaseApp = firebase.initializeApp({
 const db = getFirestore()
 const analytics = getAnalytics()
 
+const appCheck = initializeAppCheck(firebaseApp, {
+  provider: new ReCaptchaV3Provider(import.meta.env.VITE_APP_RECAPTCHA_SITEKEY),
+
+  // Optional argument. If true, the SDK automatically refreshes App Check
+  // tokens as needed.
+  isTokenAutoRefreshEnabled: true,
+})
 const initFirebase = async () => {
   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 }

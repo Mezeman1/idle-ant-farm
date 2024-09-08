@@ -6,25 +6,17 @@
     />
     <div
       v-if="debugMode"
-      class="absolute bottom-4 left-4 bg-white p-2 rounded shadow-lg"
+      class="absolute bottom-4 left-4 right-4 bg-white p-2 rounded shadow-lg max-h-screen-1/5 overflow-y-auto"
     >
-      <p>Ants: {{ ants.length }} Max: {{ maxAnts }}</p>
-      <p>Queens: {{ queens.length }} Max: {{ maxQueens }}</p>
-      <p>Larvae: {{ larvae.length }} Max: {{ maxLarvae }}</p>
-      <p>FPS: {{ fps.toFixed(1) }}</p>
-      <p class="mb-2">
-        Average Frame Time: {{ avgFrameTime.toFixed(2) }} ms
-      </p>
-
-      <p class="text-2xs">
-        Note:
-        <br>
-        The number of entities above is limited to prevent performance issues.
-        <br>
-        These numbers have been optimized for performance.
-        <br>
-        These maxes have nothing to do with the actual game.
-      </p>
+      <div class="text-xs text-gray-700">
+        <p>Ants: {{ ants.length }} Max: {{ maxAnts }}</p>
+        <p>Queens: {{ queens.length }} Max: {{ maxQueens }}</p>
+        <p>Larvae: {{ larvae.length }} Max: {{ maxLarvae }}</p>
+        <p>FPS: {{ fps.toFixed(1) }}</p>
+        <p class="mb-2">
+          Average Frame Time: {{ avgFrameTime.toFixed(2) }} ms
+        </p>
+      </div>
     </div>
   </div>
 </template>
