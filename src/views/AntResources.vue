@@ -1,15 +1,5 @@
 <template>
   <div>
-    <!-- Modal Component -->
-    <Modal
-      v-if="isModalVisible"
-      title="Prestige!"
-      message="Are you sure you want to prestige?"
-      :visible="isModalVisible"
-      @confirm="handleConfirm"
-      @cancel="handleCancel"
-    />
-
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
       <!-- Seeds Section -->
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
@@ -271,51 +261,7 @@
       </div>
 
       <!-- Prestige Section -->
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-        <p class="font-bold text-lg">
-          Prestige
-        </p>
-        <div class="flex items-center justify-between w-full">
-          <p>Prestige Points: {{ formatNumber(gameStore.prestigePoints) }}</p>
-          <button
-            :disabled="gameStore.calculatePrestigePoints() < 1"
-            class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
-            @click="confirmPrestige()"
-          >
-            Prestige for {{ formatNumber(gameStore.calculatePrestigePoints()) }} Points
-          </button>
-        </div>
-        <div class="prestige-shop">
-          <ul class="space-y-2">
-            <li
-              v-for="upgrade in gameStore.prestigeShop"
-              :key="upgrade.id"
-              class="flex items-center justify-between"
-            >
-              <div>
-                <p>{{ upgrade.name }} {{ !upgrade.oneTimePurchase && gameStore.amountOfUpgrade(upgrade.id) > 0 ? `(${gameStore.amountOfUpgrade(upgrade.id)})` : '' }}</p>
-                <p class="text-xs text-gray-500">
-                  {{ upgrade.description }}
-                </p>
-                <p
-                  v-if="upgrade.oneTimePurchase && gameStore.upgradePurchased(upgrade.id)"
-                  class="text-xs text-blue-600"
-                >
-                  Purchased
-                </p>
-              </div>
-              <button
-                v-if="!upgrade.oneTimePurchase || !gameStore.upgradePurchased(upgrade.id)"
-                :disabled="gameStore.prestigePoints < upgrade.cost"
-                class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
-                @click="gameStore.buyUpgrade(upgrade.id)"
-              >
-                Buy for {{ formatNumber(upgrade.cost) }} Points
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <PrestigeShop />
     </div>
   </div>
 </template>
@@ -324,27 +270,13 @@
 import {useGameStore} from '../stores/gameStore'
 import {ref} from 'vue'
 import Modal from '../components/Modal.vue'
+import PrestigeShop from './PrestigeShop.vue'
 
 const gameStore = useGameStore()
 
 // Format numbers using the store's function
 const formatNumber = gameStore.formatNumber
-const isModalVisible = ref(false)
-// Show the modal when clicking the prestige button
-const confirmPrestige = () => {
-  isModalVisible.value = true
-}
 
-// Handle the confirm action from the modal
-const handleConfirm = () => {
-  gameStore.prestige()
-  isModalVisible.value = false
-}
-
-// Handle the cancel action from the modal
-const handleCancel = () => {
-  isModalVisible.value = false
-}
 </script>
 
 <style scoped>
