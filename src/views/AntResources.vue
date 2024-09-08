@@ -294,7 +294,7 @@ const startCollectingSeeds = () => {
   // Start an interval for collecting seeds every 100ms while holding down
   collectingInterval = setInterval(() => {
     gameStore.collectSeedsManually()
-  }, 100)
+  }, 50)
 }
 
 const stopCollectingSeeds = () => {
