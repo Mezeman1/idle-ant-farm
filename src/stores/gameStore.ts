@@ -85,9 +85,24 @@ export const useGameStore = defineStore('gameStore', {
         cost: 50,
         applyOnPrestige: true,
       },
-      {id: 'storageUpgrade', name: 'Storage Upgrade', description: 'Increase max storage by 20%', cost: 10},
-      {id: 'productionBoost', name: 'Production Boost', description: 'Increase production speed by 20%', cost: 15},
-      {id: 'queenEfficiency', name: 'Queen Efficiency', description: 'Queens produce 50% more larvae', cost: 20},
+      {
+        id: 'storageUpgrade',
+        name: 'Storage Upgrade',
+        description: 'Increase max storage by 20%',
+        cost: 10,
+      },
+      {
+        id: 'productionBoost',
+        name: 'Production Boost',
+        description: 'Increase production speed by 20%',
+        cost: 15,
+      },
+      {
+        id: 'queenEfficiency',
+        name: 'Queen Efficiency',
+        description: 'Queens produce 50% more larvae',
+        cost: 20,
+      },
     ],
 
     // Prestige-related variables
@@ -588,6 +603,7 @@ export const useGameStore = defineStore('gameStore', {
         queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 20,
         autoLarvaePrestigeCost: this.prestigeShop.find(u => u.id === 'autoLarvae')?.cost ?? 25,
         betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 100,
+        startWithAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'startWithAnts')?.cost ?? 50,
 
         attackPerAnt: this.attackPerAnt,
         healthPerAnt: this.healthPerAnt,
@@ -671,6 +687,8 @@ export const useGameStore = defineStore('gameStore', {
         if (shop.id === 'productionBoost') shop.cost = savedState.productionPrestigeCost
         if (shop.id === 'queenEfficiency') shop.cost = savedState.queenPrestigeCost
         if (shop.id === 'autoLarvae') shop.cost = savedState.autoLarvaePrestigeCost
+        if (shop.id === 'betterAnts') shop.cost = savedState.betterAntsPrestigeCost
+        if (shop.id === 'startWithAnts') shop.cost = savedState.startWithAntsPrestigeCost
       })
 
       this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
