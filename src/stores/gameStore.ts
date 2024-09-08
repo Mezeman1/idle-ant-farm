@@ -67,7 +67,7 @@ export const useGameStore = defineStore('gameStore', {
         id: 'autoLarvae',
         name: 'Auto Larvae Creation',
         description: 'Automatically create larvae based on seeds',
-        cost: 25,
+        cost: 10,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -76,7 +76,7 @@ export const useGameStore = defineStore('gameStore', {
         id: 'autoAnts',
         name: 'Auto Ant Creation',
         description: 'Automatically create ants based on larvae and seeds',
-        cost: 50,
+        cost: 20,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -85,7 +85,7 @@ export const useGameStore = defineStore('gameStore', {
         id: 'autoQueens',
         name: 'Auto Queen Creation',
         description: 'Automatically create queens based on ants and seeds',
-        cost: 75,
+        cost: 20,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -94,7 +94,7 @@ export const useGameStore = defineStore('gameStore', {
         id: 'betterAnts',
         name: 'Stronger Ants',
         description: 'Increase ant strength by 10%',
-        cost: 100,
+        cost: 50,
         applyOnPrestige: false,
         category: 'combat',
       },
@@ -110,21 +110,21 @@ export const useGameStore = defineStore('gameStore', {
         id: 'storageUpgrade',
         name: 'Storage Upgrade',
         description: 'Increase seed and larvae storage by 20% <br> Increase ant storage by 100% and queen storage by 50%',
-        cost: 10,
+        cost: 5,
         category: 'storage',
       },
       {
         id: 'productionBoost',
         name: 'Production Boost',
         description: 'Increase production speed by 20%',
-        cost: 15,
+        cost: 10,
         category: 'production',
       },
       {
         id: 'queenEfficiency',
         name: 'Queen Efficiency',
         description: 'Queens produce 50% more larvae',
-        cost: 20,
+        cost: 15,
         category: 'production',
       },
     ] as PrestigeShopItem[],
@@ -170,7 +170,7 @@ export const useGameStore = defineStore('gameStore', {
       let pointsFromSeeds = Math.max(Math.floor(Math.log10(this.seeds + 1) / 2), 1) // Slow down seed contribution by dividing log result by 2
       if (pointsFromSeeds === 1) pointsFromSeeds = 0 // Minimum 1 point from seeds
       // Increase ant threshold to reward 1 point per 200 ants instead of 50 or 100
-      const pointsFromAnts = Math.floor((this.ants - this.antsFromPrestigeShop) / 200) // 1 point per 200 ants
+      const pointsFromAnts = Math.floor((this.ants - this.antsFromPrestigeShop) / 100) // 1 point per 200 ants
 
       // Increase queen contribution to 10 points per queen after the first one
       const pointsFromQueens = Math.max((this.queens - 1) * 2, 0) // 2 points per extra queen after the first
