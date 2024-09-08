@@ -37,11 +37,18 @@
           <!-- Right Column: Collect Button -->
           <div class="w-full">
             <button
-              class="bg-yellow-500 hover:bg-yellow-600 text-white w-full px-3 py-1 rounded shadow text-xs"
-              @click="gameStore.collectSeedsManually"
+              class="bg-yellow-500 hover:bg-yellow-600 text-white w-full px-3 py-1 rounded shadow text-xs select-none"
+              @mousedown="startCollectingSeeds"
+              @mouseup="stopCollectingSeeds"
+              @mouseleave="stopCollectingSeeds"
+              @touchstart="startCollectingSeeds"
+              @touchend="stopCollectingSeeds"
             >
               Collect 🌱
             </button>
+            <p>
+              Hold to collect seeds faster.
+            </p>
           </div>
         </div>
       </div>
@@ -276,6 +283,26 @@ const gameStore = useGameStore()
 
 // Format numbers using the store's function
 const formatNumber = gameStore.formatNumber
+
+let collectingInterval: number | undefined = undefined
+
+const startCollectingSeeds = () => {
+  console.log('Start collecting seeds')
+  gameStore.collectSeedsManually() // Initial collection on click
+
+  // Start an interval for collecting seeds every 100ms while holding down
+  collectingInterval = setInterval(() => {
+    gameStore.collectSeedsManually()
+  }, 100)
+}
+
+const stopCollectingSeeds = () => {
+  // Clear the interval when the mouse is released or leaves the button
+  if (collectingInterval) {
+    clearInterval(collectingInterval)
+    collectingInterval = undefined
+  }
+}
 
 </script>
 
