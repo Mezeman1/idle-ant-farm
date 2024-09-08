@@ -33,11 +33,13 @@ export const useGameStore = defineStore('gameStore', {
     maxSeeds: 1000, // Initial seed storage capacity
     maxLarvae: 10, // Initial larvae storage capacity
     maxAnts: 100, // Initial ant storage capacity
-    maxQueens: 10, // Initial queen storage capacity
+    maxQueens: 2, // Initial queen storage capacity
 
     // Initial resource caps
     initialMaxSeeds: 1000,
     initialMaxLarvae: 10,
+    initialMaxAnts: 100,
+    initialMaxQueens: 2,
 
     // Upgrade variables
     seedStorageUpgradeCost: 500, // Initial cost to upgrade seed storage
@@ -785,8 +787,8 @@ export const useGameStore = defineStore('gameStore', {
 
       this.maxSeeds = this.initialMaxSeeds
       this.maxLarvae = this.initialMaxLarvae
-      this.maxAnts = 100
-      this.maxQueens = 10
+      this.maxAnts = this.initialMaxAnts
+      this.maxQueens = this.initialMaxQueens
 
       this.seedStorageUpgradeCost = 500
       this.larvaeStorageUpgradeCost = 100
