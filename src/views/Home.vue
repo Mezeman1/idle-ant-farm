@@ -212,7 +212,16 @@ onMounted(() => {
 
   // Add event listeners for window close
   window.addEventListener('beforeunload', handleBeforeUnload)
-  console.log('Game mounted')
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      // The browser tab is in the background (or minimized)
+      handleBeforeUnload()
+      // You can pause the game, stop animations, or perform any necessary action here
+    } else {
+      gameStore.loadGameState()
+    }
+  })
 })
 
 onBeforeUnmount(() => {
@@ -221,6 +230,16 @@ onBeforeUnmount(() => {
 
   // Remove event listeners for window close
   window.removeEventListener('beforeunload', handleBeforeUnload)
+
+  document.removeEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      // The browser tab is in the background (or minimized)
+      handleBeforeUnload()
+      // You can pause the game, stop animations, or perform any necessary action here
+    } else {
+      gameStore.loadGameState()
+    }
+  })
 })
 
 const {
