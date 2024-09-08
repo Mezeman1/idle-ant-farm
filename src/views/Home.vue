@@ -147,14 +147,14 @@
           >
             Login using google
           </button>
-          <button
-            v-if="!gameStore.loggedIn"
-            v-tooltip="'Will save progress for current session only, progress may be lost.'"
-            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
-            @click="gameStore.loginAsGuest()"
-          >
-            Play as guest
-          </button>
+          <!--          <button-->
+          <!--            v-if="!gameStore.loggedIn"-->
+          <!--            v-tooltip="'Will save progress for current session only, progress may be lost.'"-->
+          <!--            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"-->
+          <!--            @click="gameStore.loginAsGuest()"-->
+          <!--          >-->
+          <!--            Play as guest-->
+          <!--          </button>-->
         </div>
       </div>
     </div>
