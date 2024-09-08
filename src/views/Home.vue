@@ -50,12 +50,12 @@
         class="bg-white p-4 rounded shadow-lg flex flex-col space-y-2 m-2 bg-opacity-30"
       >
         <!--        Navigation       -->
-        <div class="text-sm md:text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
-          <ul class="flex flex-wrap -mb-px justify-center md:justify-start">
-            <li class="me-2 mb-2 md:mb-0">
+        <div class="text-sm md:text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-x-auto">
+          <ul class="flex flex-nowrap -mb-px justify-start space-x-4">
+            <li class="flex-shrink-0">
               <button
                 :class="activeTab === 'resources' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-24 md:w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm"
+                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm"
                 @click.prevent="setActiveTab('resources')"
               >
                 Resources
@@ -64,22 +64,22 @@
 
             <li
               v-tooltip="gameStore.ants < 10 ? 'You need at least 10 ants to start an adventure.' : ''"
-              class="me-2 mb-2 md:mb-0"
+              class="flex-shrink-0"
             >
               <button
                 :disabled="gameStore.ants < 10"
                 :class="activeTab === 'adventure' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-24 md:w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 disabled:cursor-not-allowed text-2xs md:text-sm"
+                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 disabled:cursor-not-allowed text-2xs md:text-sm"
                 @click.prevent="setActiveTab('adventure')"
               >
                 Adventure
               </button>
             </li>
 
-            <li class="me-2 mb-2 md:mb-0">
+            <li class="flex-shrink-0">
               <button
                 :class="activeTab === 'inventory' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-24 md:w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm"
+                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm"
                 @click.prevent="setActiveTab('inventory')"
               >
                 Inventory
@@ -88,21 +88,21 @@
 
             <li
               v-if="debugMode"
-              class="me-2 mb-2 md:mb-0"
+              class="flex-shrink-0"
             >
               <button
                 :class="activeTab === 'debugger' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-24 md:w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm"
+                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm"
                 @click.prevent="setActiveTab('debugger')"
               >
                 Debugger
               </button>
             </li>
 
-            <li class="me-2 mb-2 md:mb-0">
+            <li class="flex-shrink-0">
               <button
                 :class="activeTab === 'settings' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-24 md:w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm"
+                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm"
                 @click.prevent="setActiveTab('settings')"
               >
                 Settings
