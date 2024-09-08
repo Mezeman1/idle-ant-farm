@@ -89,7 +89,8 @@ export const useGameStore = defineStore('gameStore', {
     healthPerAnt: 10, // Health value per ant
     defensePerAnt: 1, // Defense value per ant
 
-    gameLoopInterval: null as ReturnType<typeof setInterval> | null,
+    gameLoopInterval: null as number | null,
+    isGameLoopRunning: false,
   }),
 
   getters: {
@@ -290,49 +291,78 @@ export const useGameStore = defineStore('gameStore', {
     // Calculate offline progress based on elapsed time and respect caps
     calculateOfflineProgress() {
       const currentTime = Date.now()
-      const timeElapsed = (currentTime - this.lastSavedTime) / 60000 // Convert to minutes
-      console.log('Time elapsed:', timeElapsed)
+      const timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Convert to seconds
 
-      // Calculate how much should be produced while offline
-      const larvaeProduced = Math.min(Math.floor(timeElapsed * this.larvaeProductionRate * this.queens), this.maxLarvae - this.larvae)
-      const seedsCollected = Math.min(Math.floor(timeElapsed * this.collectionRatePerAnt * this.ants), this.maxSeeds - this.seeds)
+      const tickDuration = 1 // 1 second for each game loop iteration
+      let remainingTime = timeElapsed
 
-      // Ensure you're not double-counting, by checking or resetting the lastSavedTime after progress is applied
-      this.larvae += larvaeProduced
-      this.seeds += seedsCollected
+      // Simulate each second that passed while offline
+      while (remainingTime > 0) {
+        // Perform actions per second (larvae creation, seed collection, auto creation)
+        this.larvae = Math.min(this.larvae + this.larvaeProductionRate * this.queens / 60, this.maxLarvae)
+        this.seeds = Math.min(this.seeds + (this.collectionRatePerAnt * this.ants) / 60, this.maxSeeds)
 
-      // Update the last saved time to the current time after progress has been applied
+        // Simulate auto-buyers (larvae, ants, queens)
+        if (this.autoLarvaeCreation) {
+          this.createMaxLarvae()
+        }
+        if (this.autoAntCreation) {
+          this.createMaxAnts()
+        }
+        if (this.autoQueenCreation) {
+          this.buyMaxQueens()
+        }
+
+        // Reduce remaining time
+        remainingTime -= tickDuration
+      }
+
+      // Update the last saved time after catching up
       this.lastSavedTime = currentTime
     },
 
-
     // Start the game loop for real-time resource generation, respecting caps
     startGameLoop() {
-      if (!this.gameLoopInterval) {
-        this.gameLoopInterval = setInterval(() => {
-          this.larvae = Math.min(this.larvae + this.larvaeProductionRate * this.queens / 60, this.maxLarvae)
-          this.seeds = Math.min(this.seeds + (this.collectionRatePerAnt * this.ants) / 60, this.maxSeeds)
-
-          if (this.autoLarvaeCreation) {
-            this.createMaxLarvae()
-          }
-
-          if (this.autoAntCreation) {
-            this.createMaxAnts()
-          }
-
-          if (this.autoQueenCreation) {
-            this.buyMaxQueens()
-          }
-        }, 1000)
+      if (this.isGameLoopRunning) {
+        return // Prevent multiple loops from being started
       }
+
+      this.isGameLoopRunning = true
+      let lastFrameTime = performance.now()
+
+      const gameLoop = (currentTime) => {
+        const deltaTime = (currentTime - lastFrameTime) / 1000 // Time in seconds
+        lastFrameTime = currentTime
+
+        // Perform game updates based on deltaTime (e.g., resource generation)
+        this.larvae = Math.min(this.larvae + this.larvaeProductionRate * this.queens * deltaTime / 60, this.maxLarvae)
+        this.seeds = Math.min(this.seeds + (this.collectionRatePerAnt * this.ants * deltaTime) / 60, this.maxSeeds)
+
+        // Auto-larvae, auto-ants, auto-queens
+        if (this.autoLarvaeCreation) {
+          this.createMaxLarvae()
+        }
+        if (this.autoAntCreation) {
+          this.createMaxAnts()
+        }
+        if (this.autoQueenCreation) {
+          this.buyMaxQueens()
+        }
+
+        // Keep running the loop
+        if (this.isGameLoopRunning) {
+          requestAnimationFrame(gameLoop)
+        }
+      }
+
+      requestAnimationFrame(gameLoop)
     },
 
-    // Stop the game loop
     stopGameLoop() {
       if (this.gameLoopInterval) {
-        clearInterval(this.gameLoopInterval)
-        this.gameLoopInterval = null
+        cancelAnimationFrame(this.gameLoopInterval)
+        this.gameLoopInterval = null // Reset the loop interval
+        this.isGameLoopRunning = false
       }
     },
 
