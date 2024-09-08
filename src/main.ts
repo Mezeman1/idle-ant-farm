@@ -53,7 +53,6 @@ app.use(VueFire, {
     VueFireAppCheck({
       provider: new ReCaptchaV3Provider(import.meta.env.VITE_APP_RECAPTCHA_SITEKEY),
 
-      debug: true,
       isTokenAutoRefreshEnabled: true,
     }),
   ],
