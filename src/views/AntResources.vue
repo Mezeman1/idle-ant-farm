@@ -322,6 +322,7 @@ const prestigeStore = usePrestigeStore()
 const formatNumber = gameStore.formatNumber
 
 let collectingInterval: number | undefined = undefined
+const collectingIntervalTime = 25
 
 const startCollectingSeeds = () => {
   console.log('Start collecting seeds')
@@ -330,7 +331,7 @@ const startCollectingSeeds = () => {
   // Start an interval for collecting seeds every 100ms while holding down
   collectingInterval = setInterval(() => {
     gameStore.collectSeedsManually()
-  }, 50)
+  }, collectingIntervalTime)
 }
 
 const stopCollectingSeeds = () => {
