@@ -138,7 +138,11 @@
             </button>
           </div>
 
-          <div class="w-full flex">
+          <!--          Hidden to try out the removal of this feature. -->
+          <div
+            v-if="false"
+            class="w-full flex"
+          >
             <label
               v-if="prestigeStore.upgradePurchased('autoLarvae')"
               class="flex items-center cursor-pointer"

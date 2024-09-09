@@ -54,6 +54,7 @@ export const useGameStore = defineStore('gameStore', {
 
     gameLoopInterval: null as number | null,
     isGameLoopRunning: false,
+    progress: 0, // Track progress for offline calculation
   }),
 
   getters: {
@@ -174,6 +175,7 @@ export const useGameStore = defineStore('gameStore', {
           const prestigeStore = usePrestigeStore()
 
           let remainingTime = timeElapsed
+          const totalTime = timeElapsed // Store total offline time for progress calculation
           const tickDuration = 1 // Simulate in 1-second chunks of offline time
           let offlineTimeAccumulator = 0 // Track offline time for auto-actions
 
@@ -181,31 +183,29 @@ export const useGameStore = defineStore('gameStore', {
             if (remainingTime <= 0) {
               // All offline progress has been simulated, resolve the promise
               this.lastSavedTime = currentTime
+              this.progress = 100 // Set progress to 100% when done
               resolve()
               return
             }
 
-            const deltaTime = Math.min(tickDuration, remainingTime) // Simulate in 1-second chunks or the remaining time
-
-            // Update resources with the current max storage limits for the elapsed time
+            const deltaTime = Math.min(tickDuration, remainingTime) // Simulate in 1-second chunks or remaining time
             this.updateResources(deltaTime)
 
-            // Accumulate the offline time since last auto action
+            // Accumulate the offline time for auto actions
             offlineTimeAccumulator += deltaTime
 
-            // Call the createMax functions once for every 1 second of simulated offline time
+            // Trigger auto-actions every second
             if (offlineTimeAccumulator >= 1) {
               if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
               if (prestigeStore.autoAntCreation) this.createMaxAnts()
               if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
               if (prestigeStore.autoSeedStorageUpgrade) this.upgradeSeedStorage()
-
-              // Reduce the accumulator by 1 second after triggering the auto actions
-              offlineTimeAccumulator -= 1
+              offlineTimeAccumulator -= 1 // Reset accumulator after triggering auto actions
             }
 
-            // Reduce remaining time by the tick duration
+            // Reduce remaining time and update progress
             remainingTime -= tickDuration
+            this.progress = Math.min(100, ((totalTime - remainingTime) / totalTime) * 100) // Update progress
 
             // Continue simulating in the next event loop cycle
             setTimeout(simulateOffline, 0) // Allows for async behavior
@@ -219,7 +219,6 @@ export const useGameStore = defineStore('gameStore', {
         }
       })
     },
-
     // Start the game loop for real-time resource generation, respecting caps
     startGameLoop() {
       if (this.isGameLoopRunning) {
@@ -268,7 +267,7 @@ export const useGameStore = defineStore('gameStore', {
 
     handleAutoCreations() {
       const prestigeStore = usePrestigeStore()
-      if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
+      // if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
       if (prestigeStore.autoAntCreation) this.createMaxAnts()
       if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
       if (prestigeStore.autoSeedStorageUpgrade) this.upgradeSeedStorage()

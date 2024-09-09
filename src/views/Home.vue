@@ -122,12 +122,20 @@
     </div>
   </div>
   <div v-else>
-    <p
+    <div
       v-if="gameStore.loggedIn"
-      class="text-center text-2xl font-bold mt-20"
+      class="flex flex-col items-center justify-center h-screen p-4"
     >
-      Loading...
-    </p>
+      <div class="w-full bg-gray-800 rounded-full h-6 overflow-hidden shadow-inner">
+        <div
+          class="bg-green-500 h-6 rounded-full transition-all duration-1000 ease-linear shadow"
+          :style="{ width: progress + '%' }"
+        />
+      </div>
+      <p class="text-center mt-2 text-gray-800 font-bold">
+        {{ progress.toFixed(0) }}% Complete
+      </p>
+    </div>
     <div v-else>
       <AntSimulation
         :queen-count="5"
@@ -180,6 +188,9 @@ const gameStore = useGameStore()
 const isMinimized = ref(false) // Minimized state
 const showBackground = ref(true) // Show background state
 const activeTab = ref('resources')
+const {
+  progress,
+} = storeToRefs(gameStore)
 
 // Classes for active and default tabs
 const activeTabClasses = 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500'
@@ -236,8 +247,6 @@ onMounted(() => {
       document.addEventListener('visibilitychange', handleVisibilityChange) // Works for both desktop and mobile
     }
   })
-
-
 })
 
 onBeforeUnmount(() => {
