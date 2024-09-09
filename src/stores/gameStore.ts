@@ -550,6 +550,7 @@ export const useGameStore = defineStore('gameStore', {
 
     // Reset the local game state, optionally resetting prestige-related data and debug state
     resetLocalGameState({isDebug}) {
+      console.log('Resetting local game state...')
       this.larvae = 0
       this.ants = 0
       this.seeds = 10
