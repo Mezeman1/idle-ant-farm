@@ -1,5 +1,12 @@
 <template>
   <div>
+    <p class="text-2xs font-bold">
+      Please note, this game is in early development and may have bugs or balance issues.
+      <br>
+      I will be adding more features and balancing the game over time.
+      <br>
+      Also, any progress made may be reset at any time.
+    </p>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
       <!-- Seeds Section -->
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
@@ -106,27 +113,27 @@
 
           <div class="w-full flex">
             <label
-              v-if="gameStore.upgradePurchased('autoLarvae')"
+              v-if="prestigeStore.upgradePurchased('autoLarvae')"
               class="flex items-center cursor-pointer"
             >
               <span class="mr-3 text-xs text-gray-600">Auto creating</span>
               <div class="relative">
                 <input
-                  v-model="gameStore.autoLarvaeCreation"
+                  v-model="prestigeStore.autoLarvaeCreation"
                   type="checkbox"
                   class="sr-only"
                 >
                 <div
                   :class="{
-                    'bg-green-500': gameStore.autoLarvaeCreation,
-                    'bg-red-500': !gameStore.autoLarvaeCreation
+                    'bg-green-500': prestigeStore.autoLarvaeCreation,
+                    'bg-red-500': !prestigeStore.autoLarvaeCreation
                   }"
                   class="block w-10 h-6 rounded-full shadow-inner transition-colors"
                 />
                 <div
                   :class="{
-                    'translate-x-full': gameStore.autoLarvaeCreation,
-                    'translate-x-0': !gameStore.autoLarvaeCreation
+                    'translate-x-full': prestigeStore.autoLarvaeCreation,
+                    'translate-x-0': !prestigeStore.autoLarvaeCreation
                   }"
                   class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
                 />
@@ -172,27 +179,27 @@
           </div>
           <div class="w-full flex">
             <label
-              v-if="gameStore.upgradePurchased('autoAnts')"
+              v-if="prestigeStore.upgradePurchased('autoAnts')"
               class="flex items-center cursor-pointer"
             >
               <span class="mr-3 text-xs text-gray-600">Auto creating</span>
               <div class="relative">
                 <input
-                  v-model="gameStore.autoAntCreation"
+                  v-model="prestigeStore.autoAntCreation"
                   type="checkbox"
                   class="sr-only"
                 >
                 <div
                   :class="{
-                    'bg-green-500': gameStore.autoAntCreation,
-                    'bg-red-500': !gameStore.autoAntCreation
+                    'bg-green-500': prestigeStore.autoAntCreation,
+                    'bg-red-500': !prestigeStore.autoAntCreation
                   }"
                   class="block w-10 h-6 rounded-full shadow-inner transition-colors"
                 />
                 <div
                   :class="{
-                    'translate-x-full': gameStore.autoAntCreation,
-                    'translate-x-0': !gameStore.autoAntCreation
+                    'translate-x-full': prestigeStore.autoAntCreation,
+                    'translate-x-0': !prestigeStore.autoAntCreation
                   }"
                   class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
                 />
@@ -238,27 +245,27 @@
 
           <div class="w-full flex">
             <label
-              v-if="gameStore.upgradePurchased('autoQueens')"
+              v-if="prestigeStore.upgradePurchased('autoQueens')"
               class="flex items-center cursor-pointer"
             >
               <span class="mr-3 text-xs text-gray-600">Auto creating</span>
               <div class="relative">
                 <input
-                  v-model="gameStore.autoQueenCreation"
+                  v-model="prestigeStore.autoQueenCreation"
                   type="checkbox"
                   class="sr-only"
                 >
                 <div
                   :class="{
-                    'bg-green-500': gameStore.autoQueenCreation,
-                    'bg-red-500': !gameStore.autoQueenCreation
+                    'bg-green-500': prestigeStore.autoQueenCreation,
+                    'bg-red-500': !prestigeStore.autoQueenCreation
                   }"
                   class="block w-10 h-6 rounded-full shadow-inner transition-colors"
                 />
                 <div
                   :class="{
-                    'translate-x-full': gameStore.autoQueenCreation,
-                    'translate-x-0': !gameStore.autoQueenCreation
+                    'translate-x-full': prestigeStore.autoQueenCreation,
+                    'translate-x-0': !prestigeStore.autoQueenCreation
                   }"
                   class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
                 />
@@ -279,8 +286,10 @@ import {useGameStore} from '../stores/gameStore'
 import {ref} from 'vue'
 import Modal from '../components/Modal.vue'
 import PrestigeShop from './PrestigeShop.vue'
+import {usePrestigeStore} from '@/stores/prestigeStore'
 
 const gameStore = useGameStore()
+const prestigeStore = usePrestigeStore()
 
 // Format numbers using the store's function
 const formatNumber = gameStore.formatNumber

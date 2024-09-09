@@ -1,6 +1,9 @@
 <template>
   <div>
     <div class="flex flex-col my-2">
+      <p class="text-xs">
+        <strong>Note:</strong> There's not progression offline yet, so you have to be active to progress.
+      </p>
       <label
         for="area"
         class="text-md font-semibold"

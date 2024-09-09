@@ -31,13 +31,13 @@
         </ul>
       </div>
       <div class="flex items-center justify-between w-full">
-        <p>Prestige Points: {{ formatNumber(gameStore.prestigePoints) }}</p>
+        <p>Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }}</p>
         <button
-          :disabled="gameStore.calculatePrestigePoints() < 1"
+          :disabled="prestigeStore.calculatePrestigePoints() < 1"
           class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
           @click="confirmPrestige()"
         >
-          Prestige for {{ formatNumber(gameStore.calculatePrestigePoints()) }} Points
+          Prestige for {{ formatNumber(prestigeStore.calculatePrestigePoints()) }} Points
         </button>
       </div>
 
@@ -69,24 +69,24 @@
             <div>
               <p>
                 {{ upgrade.name }} {{
-                  !upgrade.oneTimePurchase && gameStore.amountOfUpgrade(upgrade.id) > 0 ? `(${gameStore.amountOfUpgrade(upgrade.id)})` : ''
+                  !upgrade.oneTimePurchase && prestigeStore.amountOfUpgrade(upgrade.id) > 0 ? `(${prestigeStore.amountOfUpgrade(upgrade.id)})` : ''
                 }}
               </p>
               <p class="text-xs text-gray-500">
                 <span v-html="upgrade.description" />
               </p>
               <p
-                v-if="upgrade.oneTimePurchase && gameStore.upgradePurchased(upgrade.id)"
+                v-if="upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id)"
                 class="text-xs text-blue-600"
               >
                 Purchased
               </p>
             </div>
             <button
-              v-if="!upgrade.oneTimePurchase || !gameStore.upgradePurchased(upgrade.id)"
-              :disabled="gameStore.prestigePoints < upgrade.cost"
+              v-if="!upgrade.oneTimePurchase || !prestigeStore.upgradePurchased(upgrade.id)"
+              :disabled="prestigeStore.prestigePoints < upgrade.cost"
               class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
-              @click="gameStore.buyUpgrade(upgrade.id)"
+              @click="prestigeStore.buyUpgrade(upgrade.id)"
             >
               Buy for {{ formatNumber(upgrade.cost) }} Points
             </button>
@@ -102,30 +102,32 @@ import {ref} from 'vue'
 
 import {useGameStore} from '../stores/gameStore'
 import Modal from '../components/Modal.vue'
+import {usePrestigeStore} from '@/stores/prestigeStore'
 
 const gameStore = useGameStore()
+const prestigeStore = usePrestigeStore()
 const formatNumber = gameStore.formatNumber
 
 const categories = [
   {
+    name: 'Auto Features',
+    upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'auto'),
+  },
+  {
     name: 'Storage Upgrades',
-    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'storage'),
+    upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'storage'),
   },
   {
     name: 'Production Upgrades',
-    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'production'),
-  },
-  {
-    name: 'Auto Features',
-    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'auto'),
+    upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'production'),
   },
   {
     name: 'Combat Upgrades',
-    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'combat'),
+    upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'combat'),
   },
   {
     name: 'Expansion Upgrades',
-    upgrades: gameStore.prestigeShop.filter(upgrade => upgrade.category === 'expansion'),
+    upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'expansion'),
   },
 ]
 
@@ -150,7 +152,7 @@ const confirmPrestige = () => {
 
 // Handle the confirm action from the modal
 const handleConfirm = () => {
-  gameStore.prestige()
+  prestigeStore.prestige()
   isModalVisible.value = false
 }
 

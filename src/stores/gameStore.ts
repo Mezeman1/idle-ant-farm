@@ -6,17 +6,7 @@ import {getAuth, signInAnonymously} from 'firebase/auth'
 import {db} from '../firebase'
 import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
 import {useToast} from 'vue-toast-notification'
-
-interface PrestigeShopItem {
-  id: string
-  name: string
-  description: string
-  cost: number
-  oneTimePurchase?: boolean
-  applyOnPrestige?: boolean
-  category?: 'auto' | 'production' | 'storage' | 'combat' | 'expansion'
-}
-
+import {usePrestigeStore} from './prestigeStore'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
@@ -24,7 +14,6 @@ export const useGameStore = defineStore('gameStore', {
     loggedIn: false,
     larvae: 0,
     ants: 0,
-    antsFromPrestigeShop: 0,
     seeds: 10,
     queens: 1, // Initial queen
     lastSavedTime: Date.now(),
@@ -46,8 +35,8 @@ export const useGameStore = defineStore('gameStore', {
     larvaeStorageUpgradeCost: 100, // Initial cost to upgrade larvae storage
 
     // Balancing factors
-    storageUpgradeFactor: 1.2, // How much each upgrade increases storage by (20%)
-    upgradeCostFactor: 1.3, // How much each upgrade increases the cost by (30%)
+    storageUpgradeFactor: 1.4, // How much each upgrade increases storage by (20%)
+    upgradeCostFactor: 1.5, // How much each upgrade increases the cost by (30%)
 
     // Production rates and costs
     larvaeProductionRate: 1, // Larvae produced per queen per minute
@@ -57,82 +46,6 @@ export const useGameStore = defineStore('gameStore', {
     larvaCostPerAnt: 1, // Cost in larvae to create one ant
     antCostPerQueen: 100, // Ants required to buy one queen
     seedCostPerQueen: 250, // Seeds required to buy one queen
-
-    prestigePoints: 0, // New prestige currency
-    purchasedUpgrades: [], // List of purchased prestige upgrades
-
-    // Prestige-related upgrades
-    prestigeShop: [
-      {
-        id: 'autoLarvae',
-        name: 'Auto Larvae Creation',
-        description: 'Automatically create larvae based on seeds',
-        cost: 10,
-        oneTimePurchase: true,
-        applyOnPrestige: true,
-        category: 'auto',
-      },
-      {
-        id: 'autoAnts',
-        name: 'Auto Ant Creation',
-        description: 'Automatically create ants based on larvae and seeds',
-        cost: 20,
-        oneTimePurchase: true,
-        applyOnPrestige: true,
-        category: 'auto',
-      },
-      {
-        id: 'autoQueens',
-        name: 'Auto Queen Creation',
-        description: 'Automatically create queens based on ants and seeds',
-        cost: 20,
-        oneTimePurchase: true,
-        applyOnPrestige: true,
-        category: 'auto',
-      },
-      {
-        id: 'betterAnts',
-        name: 'Stronger Ants',
-        description: 'Increase ant strength by 10%',
-        cost: 50,
-        applyOnPrestige: false,
-        category: 'combat',
-      },
-      {
-        id: 'startWithAnts',
-        name: 'Start with Ants',
-        description: 'Start the game with ants!',
-        cost: 50,
-        applyOnPrestige: true,
-        category: 'expansion',
-      },
-      {
-        id: 'storageUpgrade',
-        name: 'Storage Upgrade',
-        description: 'Increase seed and larvae storage by 20% <br> Increase ant storage by 100% and queen storage by 50%',
-        cost: 5,
-        category: 'storage',
-      },
-      {
-        id: 'productionBoost',
-        name: 'Production Boost',
-        description: 'Increase production speed by 20%',
-        cost: 10,
-        category: 'production',
-      },
-      {
-        id: 'queenEfficiency',
-        name: 'Queen Efficiency',
-        description: 'Queens produce 50% more larvae',
-        cost: 15,
-        category: 'production',
-      },
-    ] as PrestigeShopItem[],
-
-    // Prestige-related variables
-    autoLarvaeCreation: false, // Auto-create larvae based on seeds
-    autoAntCreation: false, // Auto-create ants based on larvae and seeds
-    autoQueenCreation: false, // Auto-create queens based on ants and seeds
 
     // Adventure-related variables
     attackPerAnt: 2, // Attack value per ant
@@ -150,8 +63,6 @@ export const useGameStore = defineStore('gameStore', {
     larvaePerSecond: (state) => (state.queens * state.larvaeProductionRate) / 60,
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => (state.collectionRatePerAnt * state.ants) / 60,
-    upgradePurchased: (state) => (upgradeId: string) => state.purchasedUpgrades.includes(upgradeId),
-    amountOfUpgrade: (state) => (upgradeId: string) => state.purchasedUpgrades.filter(id => id === upgradeId).length,
   },
 
   actions: {
@@ -164,134 +75,6 @@ export const useGameStore = defineStore('gameStore', {
         console.log('Not enough seeds to create larvae or larvae cap reached.')
       }
     },
-
-    calculatePrestigePoints() {
-      // Logarithmic scale for seeds with a minimum reward
-      const seedThreshold = 2000
-      let pointsFromSeeds = 0
-
-      if (this.seeds >= seedThreshold) {
-        const seedsOverThreshold = this.seeds - seedThreshold
-        pointsFromSeeds = Math.floor(Math.log10(seedsOverThreshold + 1) / 2) + 1
-      }
-
-      // Increase ant threshold to reward 1 point per 200 ants instead of 50 or 100
-      const pointsFromAnts = Math.floor((this.ants - this.antsFromPrestigeShop) / 50) // 1 point per 200 ants
-
-      // Increase queen contribution to 10 points per queen after the first one
-      const pointsFromQueens = Math.max((this.queens - 1) * 2, 0) // 2 points per extra queen after the first
-
-      // Combine all points together
-      return pointsFromSeeds + pointsFromAnts + pointsFromQueens
-    },
-
-    // Function to handle prestige/reset
-    async prestige() {
-      try {
-        const userId = await this.getUserId()
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
-
-        // Calculate the earned prestige points
-        const earnedPrestigePoints = this.calculatePrestigePoints()
-        if (earnedPrestigePoints === 0) {
-          console.log('Not enough resources to earn prestige points.')
-          return
-        }
-
-        // Add earned prestige points
-        this.prestigePoints += earnedPrestigePoints
-
-        // Reset the game state for prestige without deleting the Firestore doc
-        this.resetLocalGameState({isDebug: false})
-
-        await this.resetOtherStores(false)
-
-        // Save the updated state to Firestore
-        await this.saveGameState()
-        console.log(`Prestige successful! You earned ${earnedPrestigePoints} prestige points.`)
-      } catch (error) {
-        console.error('Error during prestige:', error)
-      }
-    },
-
-    // Buy an upgrade from the prestige shop
-    buyUpgrade(upgradeId) {
-      const upgrade = this.prestigeShop.find(u => u.id === upgradeId)
-
-      if (upgrade && this.prestigePoints >= upgrade.cost) {
-        this.prestigePoints -= upgrade.cost
-        this.prestigeShop.find(u => u.id === upgradeId).cost *= 1.5 // Increase cost by 50%
-        this.purchasedUpgrades.push(upgradeId)
-        this.applyPrestigeUpgrade(upgradeId)
-        console.log(`Purchased upgrade: ${upgrade.name}`)
-      } else {
-        console.log('Not enough prestige points or invalid upgrade.')
-      }
-    },
-
-    // Apply a purchased upgrade
-    applyPrestigeUpgrade(upgradeId, fromPrestige = false) {
-      console.log('Try to apply upgrade:', upgradeId, fromPrestige)
-      const prestigeInShop = this.prestigeShop.find(u => u.id === upgradeId)
-      console.log('Prestige in shop:', prestigeInShop)
-      if (fromPrestige && prestigeInShop?.applyOnPrestige === false) {
-        console.log('Upgrade not applicable for prestige purchase:', upgradeId)
-        return
-      }
-
-      console.log('Applying upgrade:', upgradeId)
-      // Object map for handling upgrade logic
-      const upgrades = {
-        storageUpgrade: () => {
-          this.maxSeeds *= 1.2 // Increase seed storage
-          this.maxLarvae *= 1.2 // Increase larvae storage
-          this.maxAnts *= 2 // Increase ant storage
-          this.maxQueens *= 1.5 // Increase queen storage
-        },
-        productionBoost: () => {
-          this.larvaeProductionRate *= 1.2
-          this.collectionRatePerAnt *= 1.2
-        },
-        queenEfficiency: () => {
-          this.larvaeProductionRate *= 1.5
-        },
-        autoLarvae: () => {
-          this.autoLarvaeCreation = true
-        },
-        betterAnts: () => {
-          this.attackPerAnt *= 1.1
-          this.setupAdventureStats()
-        },
-        autoAnts: () => {
-          this.autoAntCreation = true
-        },
-        autoQueens: () => {
-          this.autoQueenCreation = true
-        },
-        startWithAnts: () => {
-          this.ants += 1
-          this.antsFromPrestigeShop += 1
-        },
-      }
-
-      // Execute the appropriate upgrade or log an error if the upgrade ID is invalid
-      if (upgrades[upgradeId]) {
-        upgrades[upgradeId]()
-      } else {
-        console.log('Invalid upgrade ID:', upgradeId)
-      }
-    },
-
-    // Apply purchased upgrades to the game
-    applyPrestigeUpgrades(fromPrestige = false) {
-      this.purchasedUpgrades.forEach(upgradeId => {
-        this.applyPrestigeUpgrade(upgradeId, fromPrestige)
-      })
-    },
-
     // Create max larvae based on available seeds and larvae cap
     createMaxLarvae() {
       const maxLarvaeToCreate = Math.min(Math.floor(this.seeds / this.seedCostPerLarva), this.maxLarvae - this.larvae)
@@ -300,7 +83,6 @@ export const useGameStore = defineStore('gameStore', {
         this.seeds -= maxLarvaeToCreate * this.seedCostPerLarva
       }
     },
-
     // Function to create ants using larvae and seeds
     createAnts() {
       if (this.larvae >= this.larvaCostPerAnt && this.seeds >= this.seedCostPerAnt && this.ants < this.maxAnts) {
@@ -311,7 +93,6 @@ export const useGameStore = defineStore('gameStore', {
         console.log('Not enough larvae or seeds to create an ant.')
       }
     },
-
     // Create max ants based on available larvae and seeds
     createMaxAnts() {
       const maxAntsByLarvae = this.larvae
@@ -324,7 +105,6 @@ export const useGameStore = defineStore('gameStore', {
         this.ants += maxAntsToCreate
       }
     },
-
     // Function to buy more queens
     buyQueen() {
       if (this.ants >= this.antCostPerQueen && this.seeds >= this.seedCostPerQueen && this.queens < this.maxQueens) {
@@ -335,7 +115,6 @@ export const useGameStore = defineStore('gameStore', {
         console.log('Not enough ants or seeds to buy a queen.')
       }
     },
-
     // Buy max queens based on available ants and seeds
     buyMaxQueens() {
       const maxQueensByAnts = Math.floor(this.ants / this.antCostPerQueen)
@@ -348,7 +127,6 @@ export const useGameStore = defineStore('gameStore', {
         this.queens += maxQueensToBuy
       }
     },
-
     // Collect seeds manually, but respect the seed cap
     collectSeedsManually(amount = 1) {
       const manualSeedCollectionRate = 10 // Number of seeds collected per click
@@ -360,7 +138,6 @@ export const useGameStore = defineStore('gameStore', {
 
       this.seeds += seedsToAdd
     },
-
     // Function to upgrade seed storage
     upgradeSeedStorage() {
       if (this.seeds >= this.seedStorageUpgradeCost) {
@@ -375,7 +152,6 @@ export const useGameStore = defineStore('gameStore', {
         console.log('Not enough seeds to upgrade seed storage.')
       }
     },
-
     // Function to upgrade larvae storage
     upgradeLarvaeStorage() {
       if (this.seeds >= this.larvaeStorageUpgradeCost) {
@@ -395,6 +171,7 @@ export const useGameStore = defineStore('gameStore', {
         try {
           const currentTime = Date.now()
           const timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
+          const prestigeStore = usePrestigeStore()
 
           let remainingTime = timeElapsed
           const tickDuration = 1 // Simulate in 1-second chunks of offline time
@@ -418,9 +195,9 @@ export const useGameStore = defineStore('gameStore', {
 
             // Call the createMax functions once for every 1 second of simulated offline time
             if (offlineTimeAccumulator >= 1) {
-              if (this.autoLarvaeCreation) this.createMaxLarvae()
-              if (this.autoAntCreation) this.createMaxAnts()
-              if (this.autoQueenCreation) this.buyMaxQueens()
+              if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
+              if (prestigeStore.autoAntCreation) this.createMaxAnts()
+              if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
 
               // Reduce the accumulator by 1 second after triggering the auto actions
               offlineTimeAccumulator -= 1
@@ -490,9 +267,10 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     handleAutoCreations() {
-      if (this.autoLarvaeCreation) this.createMaxLarvae()
-      if (this.autoAntCreation) this.createMaxAnts()
-      if (this.autoQueenCreation) this.buyMaxQueens()
+      const prestigeStore = usePrestigeStore()
+      if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
+      if (prestigeStore.autoAntCreation) this.createMaxAnts()
+      if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
     },
 
     stopGameLoop() {
@@ -523,12 +301,9 @@ export const useGameStore = defineStore('gameStore', {
         .signInWithPopup(provider)
         .then(async (result) => {
           // This gives you a Google Access Token. You can use it to access the Google API.
-          const credential = result.credential as firebase.auth.OAuthCredential
-          const token = credential.accessToken
           // The signed-in user info.
           const user = result.user
           console.log('Logged in as:', user?.displayName)
-
 
           console.log('Trying to get user ID...')
 
@@ -619,6 +394,7 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     getGameState(userId) {
+      const prestigeStore = usePrestigeStore()
       return {
         ants: this.ants,
         seeds: this.seeds,
@@ -630,27 +406,15 @@ export const useGameStore = defineStore('gameStore', {
         maxQueens: this.maxQueens,
         seedStorageUpgradeCost: this.seedStorageUpgradeCost,
         larvaeStorageUpgradeCost: this.larvaeStorageUpgradeCost,
-        prestigePoints: this.prestigePoints,
-        purchasedUpgrades: this.purchasedUpgrades,
         lastSavedTime: Date.now(),
         userId,
-
-        storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 5,
-        productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 10,
-        queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 15,
-        betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 50,
-        startWithAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'startWithAnts')?.cost ?? 50,
-
         attackPerAnt: this.attackPerAnt,
         healthPerAnt: this.healthPerAnt,
         defensePerAnt: this.defensePerAnt,
-
-        autoLarvaeCreation: this.autoLarvaeCreation,
-        autoAntCreation: this.autoAntCreation,
-        autoQueenCreation: this.autoQueenCreation,
-
         larvaeProductionRate: this.larvaeProductionRate,
         collectionRatePerAnt: this.collectionRatePerAnt,
+
+        ...prestigeStore.getPrestigeState(),
       }
     },
 
@@ -708,29 +472,15 @@ export const useGameStore = defineStore('gameStore', {
       this.maxQueens = savedState.maxQueens ?? this.maxQueens
       this.seedStorageUpgradeCost = savedState.seedStorageUpgradeCost ?? this.seedStorageUpgradeCost
       this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
-      this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
-      this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
-
-      this.autoLarvaeCreation = savedState.autoLarvaeCreation ?? this.autoLarvaeCreation
-      this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
-      this.autoQueenCreation = savedState.autoQueenCreation ?? this.autoQueenCreation
-
       this.larvaeProductionRate = savedState.larvaeProductionRate ?? this.larvaeProductionRate
       this.collectionRatePerAnt = savedState.collectionRatePerAnt ?? this.collectionRatePerAnt
-
-      // Load prestige shop costs
-      this.prestigeShop.forEach(shop => {
-        if (shop.id === 'storageUpgrade') shop.cost = savedState.storagePrestigeCost
-        if (shop.id === 'productionBoost') shop.cost = savedState.productionPrestigeCost
-        if (shop.id === 'queenEfficiency') shop.cost = savedState.queenPrestigeCost
-        if (shop.id === 'betterAnts') shop.cost = savedState.betterAntsPrestigeCost
-        if (shop.id === 'startWithAnts') shop.cost = savedState.startWithAntsPrestigeCost
-      })
-
       this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
       this.healthPerAnt = savedState.healthPerAnt ?? this.healthPerAnt
       this.defensePerAnt = savedState.defensePerAnt ?? this.defensePerAnt
+
+      const prestigeStore = usePrestigeStore()
+      prestigeStore.loadPrestigeState(savedState)
     },
 
     async loadOtherStoreStates() {
@@ -761,7 +511,7 @@ export const useGameStore = defineStore('gameStore', {
         this.resetLocalGameState({isDebug: debug})
 
         // Apply any prestige-based bonuses
-        this.applyPrestigeUpgrades()
+        usePrestigeStore().applyPrestigeUpgrades()
 
         // Reset other stores (adventure, inventory, etc.)
         await this.resetOtherStores(debug)
@@ -805,40 +555,30 @@ export const useGameStore = defineStore('gameStore', {
         this.resetDebugState()
       }
 
-      this.applyPrestigeUpgrades(true)
+      const prestigeStore = usePrestigeStore()
+      prestigeStore.applyPrestigeUpgrades(true)
 
       // Reset auto-creation flags
-      this.autoQueenCreation = false
-      this.autoAntCreation = false
-      this.autoLarvaeCreation = false
+      prestigeStore.autoQueenCreation = false
+      prestigeStore.autoAntCreation = false
+      prestigeStore.autoLarvaeCreation = false
     },
 
-    resetPrestigeShopCosts() {
-      this.prestigeShop.forEach(shop => {
-        if (shop.id === 'storageUpgrade') shop.cost = 5
-        if (shop.id === 'productionBoost') shop.cost = 10
-        if (shop.id === 'queenEfficiency') shop.cost = 15
-        if (shop.id === 'autoLarvae') shop.cost = 10
-        if (shop.id === 'betterAnts') shop.cost = 50
-        if (shop.id === 'autoAnts') shop.cost = 20
-        if (shop.id === 'autoQueens') shop.cost = 20
-        if (shop.id === 'startWithAnts') shop.cost = 50
-      })
-    },
 
     resetDebugState() {
-      this.prestigePoints = 0
-      this.purchasedUpgrades = []
+      const prestigeStore = usePrestigeStore()
+      prestigeStore.prestigePoints = 0
+      prestigeStore.purchasedUpgrades = []
 
       this.healthPerAnt = 10
       this.attackPerAnt = 2
       this.defensePerAnt = 1
 
-      this.resetPrestigeShopCosts()
+      prestigeStore.resetPrestigeShopCosts()
 
-      this.autoQueenCreation = false
-      this.autoAntCreation = false
-      this.autoLarvaeCreation = false
+      prestigeStore.autoQueenCreation = false
+      prestigeStore.autoAntCreation = false
+      prestigeStore.autoLarvaeCreation = false
     },
 
     async resetOtherStores(debug) {
