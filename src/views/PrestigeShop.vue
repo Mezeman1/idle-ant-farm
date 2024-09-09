@@ -14,6 +14,22 @@
       <p class="font-bold text-lg">
         Prestige
       </p>
+      <div class="bg-gray-800 text-white p-4 rounded-lg shadow-md max-w-sm mx-auto">
+        <h2 class="text-base font-semibold mb-2 text-center">
+          Prestige Point Calculation
+        </h2>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <strong>Seeds:</strong> Prestige points start at 2000 seeds. After that, points increase slowly on a logarithmic scale.
+          </li>
+          <li>
+            <strong>Ants:</strong> For every 50 ants (excluding those bought via the Prestige Shop), you earn 1 prestige point.
+          </li>
+          <li>
+            <strong>Queens:</strong> After the first queen, every additional queen gives 2 prestige points.
+          </li>
+        </ul>
+      </div>
       <div class="flex items-center justify-between w-full">
         <p>Prestige Points: {{ formatNumber(gameStore.prestigePoints) }}</p>
         <button
