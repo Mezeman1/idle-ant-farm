@@ -216,6 +216,7 @@ const saveGameWithCooldown = async () => {
 
 const debugMode = import.meta.env.MODE === 'localhost'
 let saveInterval: number // Use 'number' for setInterval in the browser
+const loggedInUser = computed(() => gameStore.loggedIn)
 
 onMounted(() => {
   // Handle authentication state and game loading
@@ -224,20 +225,24 @@ onMounted(() => {
       console.log('User logged in')
       await gameStore.loadGameState() // Load game state and calculate offline progress
       gameStore.startGameLoop() // Start the game loop
+
+      // Save game state every 5 minutes (fallback for regular saves)
+      saveInterval = window.setInterval(() => {
+        gameStore.saveGameState()
+      }, 60000 * 5)
+
+      // Add event listeners for window close (desktop) and visibility change (desktop + mobile)
+      window.addEventListener('beforeunload', handleBeforeUnload) // Primarily for desktop
+      document.addEventListener('visibilitychange', handleVisibilityChange) // Works for both desktop and mobile
     }
   })
 
-  // Save game state every 5 minutes (fallback for regular saves)
-  saveInterval = window.setInterval(() => {
-    gameStore.saveGameState()
-  }, 60000 * 5)
 
-  // Add event listeners for window close (desktop) and visibility change (desktop + mobile)
-  window.addEventListener('beforeunload', handleBeforeUnload) // Primarily for desktop
-  document.addEventListener('visibilitychange', handleVisibilityChange) // Works for both desktop and mobile
 })
 
 onBeforeUnmount(() => {
+  if (!loggedInUser.value) return
+
   // Save game state and stop game loop before leaving
   gameStore.saveGameState()
   gameStore.stopGameLoop()
