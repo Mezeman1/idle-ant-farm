@@ -128,7 +128,7 @@
     >
       <div class="w-full bg-gray-800 rounded-full h-6 overflow-hidden shadow-inner">
         <div
-          class="bg-green-500 h-6 rounded-full transition-all duration-1000 ease-linear shadow"
+          class="bg-green-500 h-6 rounded-full shadow"
           :style="{ width: progress + '%' }"
         />
       </div>
