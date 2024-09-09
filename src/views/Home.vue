@@ -13,14 +13,14 @@
     <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
       <!-- Minimize/Maximize Button -->
       <button
-        class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded m-2 shadow"
+        class="bg-green-500 hover:bg-green-600 text-white font-bold rounded m-1 shadow text-xs small py-1 px-2"
         @click="isMinimized = !isMinimized"
       >
         {{ isMinimized ? 'Show UI' : 'Hide UI' }}
       </button>
 
       <button
-        class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded m-2 shadow"
+        class="bg-green-500 hover:bg-green-600 text-white font-bold rounded m-1 shadow text-xs small py-1 px-2"
         @click="showBackground = !showBackground"
       >
         {{ showBackground ? 'Hide Background' : 'Show Background' }}
@@ -28,7 +28,7 @@
 
       <button
         :disabled="!canSave"
-        class="ml-auto text-white px-2 py-1 rounded shadow text-xs"
+        class="ml-auto text-white rounded shadow text-xs small py-1 px-2"
         :class="{
           'bg-gray-300 cursor-not-allowed': !canSave,
           'bg-blue-500': canSave
@@ -40,17 +40,21 @@
       </button>
 
       <button
-        class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded m-2 shadow"
+        class="bg-red-500 hover:bg-red-600 text-white font-bold rounded m-1 shadow text-xs small py-1 px-2"
         @click="gameStore.logout()"
       >
         Log out
       </button>
+
+
       <div
         v-show="!isMinimized"
         class="bg-white p-4 rounded shadow-lg flex flex-col space-y-2 m-2 bg-opacity-30"
       >
         <!--        Navigation       -->
-        <div class="text-sm md:text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-x-auto overflow-y-hidden">
+        <div
+          class="text-sm md:text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 overflow-x-auto overflow-y-hidden"
+        >
           <ul class="flex flex-nowrap -mb-px justify-start space-x-4">
             <li class="flex-shrink-0">
               <button
@@ -301,5 +305,15 @@ watch(ants, async () => {
 <style lang="scss">
 button {
   min-height: 50px;
+
+  // Apply smaller styles only to buttons with the .small class
+  &.small {
+    min-height: 30px; // Smaller height for small buttons
+  }
+
+  // Apply general styles to buttons that are not .small
+  &:not(.small) {
+    min-height: 50px; // Default height for normal buttons
+  }
 }
 </style>

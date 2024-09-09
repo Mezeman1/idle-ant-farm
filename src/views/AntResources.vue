@@ -308,6 +308,17 @@
 
       <!-- Prestige Section -->
       <PrestigeShop />
+
+      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
+        <h2>Found an issue or have a suggestion?</h2>
+        <p>
+          Please report it on the <a
+            href="https://github.com/Mezeman1/idle-ant-farm/issues/new"
+            target="_blank"
+            class="text-blue-500"
+          >GitHub issues page</a>.
+        </p>
+      </div>
     </div>
   </div>
 </template>
