@@ -2,8 +2,18 @@
 import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
 
-export const itemRegistry = {
-  'grasshopper-leg': {
+export interface Item {
+  id: string
+  name: string
+  type: 'consumable' | 'passive'
+  description: string
+  effect: () => boolean
+  applyOnLoad?: boolean
+  applyOnPrestige?: boolean
+}
+
+export const itemRegistry: Item[] = [
+  {
     id: 'grasshopper-leg',
     name: 'Grasshopper Leg',
     type: 'consumable',
@@ -19,7 +29,7 @@ export const itemRegistry = {
       return true
     },
   },
-  'ant-strength-potion': {
+  {
     id: 'ant-strength-potion',
     name: 'Ant Strength Potion',
     type: 'consumable',
@@ -32,16 +42,14 @@ export const itemRegistry = {
         console.log('Reverting army attack buff')
         adventureStore.armyAttack /= 1.10 // Revert the buff after 5 minutes
       }, 300000) // 5 minutes in milliseconds
-
       return true
     },
   },
-  'queen-crown': {
+  {
     id: 'queen-crown',
     name: 'Queen’s Crown',
     type: 'passive',
     description: 'Increases queen larvae production by 100%. (Does not stack)',
-    applyOnLoad: false,
     applyOnPrestige: true,
     effect: () => {
       console.log('Increasing queen larvae production by 100%')
@@ -49,7 +57,7 @@ export const itemRegistry = {
       gameStore.larvaeProductionRate *= 2 // Passive effect
     },
   },
-  'spider-silk': {
+  {
     id: 'spider-silk',
     name: 'Spider Silk',
     type: 'passive',
@@ -60,7 +68,7 @@ export const itemRegistry = {
       adventureStore.armyDefense *= 1.10 // Passive effect
     },
   },
-  'centipede-leg': {
+  {
     id: 'centipede-leg',
     name: 'Centipede Leg',
     type: 'consumable',
@@ -76,7 +84,7 @@ export const itemRegistry = {
       return true
     },
   },
-  'moth-dust': {
+  {
     id: 'moth-dust',
     name: 'Moth Dust',
     type: 'consumable',
@@ -92,7 +100,7 @@ export const itemRegistry = {
       return true
     },
   },
-  'butterfly-wing': {
+  {
     id: 'butterfly-wing',
     name: 'Butterfly Wing',
     type: 'passive',
@@ -103,7 +111,7 @@ export const itemRegistry = {
       adventureStore.armyRegen *= 1.50 // Passive effect
     },
   },
-  'butterfly-dust': {
+  {
     id: 'butterfly-dust',
     name: 'Butterfly Dust',
     type: 'consumable',
@@ -119,4 +127,5 @@ export const itemRegistry = {
       return true
     },
   },
-}
+]
+

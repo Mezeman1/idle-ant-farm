@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {itemRegistry} from '../types/itemRegistry'
+import {Item, itemRegistry} from '../types/itemRegistry'
 import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import {useGameStore} from './gameStore' // Import your item registry
@@ -16,8 +16,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
       if (existingItem) {
         existingItem.amount += item.amount // Increment if the item already exists
       } else {
-        // Link item to itemRegistry and add to inventory
-        const registryItem = itemRegistry[item.id]
+        const registryItem = this.getItemById(item.id)
         if (registryItem) {
           this.inventory.push({...registryItem, amount: item.amount})
           if (registryItem.type === 'passive') {
@@ -44,7 +43,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
     },
 
     useItem(itemId) {
-      const item = this.inventory.find(i => i.id === itemId)
+      const itemInInv = this.inventory.find(i => i.id === itemId)
       console.log('Using item', item)
       if (item && item.amount > 0) {
         if (item.amount === 0) this.inventory = this.inventory.filter(i => i.id !== itemId)
@@ -136,7 +135,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
           const savedInventory = docSnap.data()
 
           this.inventory = savedInventory.inventory.map(item => {
-            const registryItem = itemRegistry[item.id]
+            const registryItem = this.getItemById(item.id)
             if (registryItem) {
               if (registryItem.type === 'passive' && registryItem.applyOnLoad !== false) {
                 this.applyItemEffect(registryItem) // Reapply the item's effect
@@ -184,18 +183,15 @@ export const useInventoryStore = defineStore('inventoryStore', {
       }
     },
 
-    getItemById(itemId) {
-      const registryItem = itemRegistry[itemId] ?? null
-      if (registryItem) {
-        return registryItem
-      }
+    getItemById(itemId: string): Item | null {
+      return itemRegistry.find(item => item.id === itemId) ?? null
     },
 
     applyPassiveEffects() {
       console.log('Applying passive effects')
       this.inventory.forEach(item => {
         console.log('Checking item', item)
-        const registryItem = itemRegistry[item.id]
+        const registryItem = this.getItemById(item.id)
         if (registryItem && registryItem.type === 'passive' && registryItem.applyOnPrestige) {
           this.applyItemEffect(registryItem)
         }
