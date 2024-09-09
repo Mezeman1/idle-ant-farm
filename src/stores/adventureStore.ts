@@ -281,7 +281,8 @@ export const useAdventureStore = defineStore('adventureStore', {
               useGameStore().seeds += amount
             } else {
               // Handle item drops
-              const item = itemRegistry[drop.name.toLowerCase().replace(/\s+/g, '-')]
+              const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
+              const item = useInventoryStore().getItemById(itemId)
               if (item) {
                 this.handleItemDrop(item, amount)
               } else {
