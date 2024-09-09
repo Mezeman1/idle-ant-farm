@@ -42,6 +42,7 @@ export const itemRegistry = {
     type: 'passive',
     description: 'Increases queen larvae production by 100%. (Does not stack)',
     applyOnLoad: false,
+    applyOnPrestige: true,
     effect: () => {
       console.log('Increasing queen larvae production by 100%')
       const gameStore = useGameStore()
