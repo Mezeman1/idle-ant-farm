@@ -174,16 +174,24 @@ export const useGameStore = defineStore('gameStore', {
           const timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
           const prestigeStore = usePrestigeStore()
 
+          // Always log lastSavedTime, currentTime, and the time difference
+          console.log(`lastSavedTime: ${this.lastSavedTime}`)
+          console.log(`currentTime: ${currentTime}`)
+          console.log(`Time elapsed (offline): ${timeElapsed} seconds`)
+
           let remainingTime = timeElapsed
           const totalTime = timeElapsed // Store total offline time for progress calculation
           const tickDuration = 1 // Simulate in 1-second chunks of offline time
           let offlineTimeAccumulator = 0 // Track offline time for auto-actions
+          const logInterval = 10 // Log progress every 10 seconds for less spam
 
           const simulateOffline = () => {
             if (remainingTime <= 0) {
               // All offline progress has been simulated, resolve the promise
               this.lastSavedTime = currentTime
               this.progress = 100 // Set progress to 100% when done
+              console.log('Offline progress simulation complete.')
+              console.log(`New lastSavedTime: ${this.lastSavedTime}`)
               resolve()
               return
             }
@@ -207,6 +215,12 @@ export const useGameStore = defineStore('gameStore', {
             remainingTime -= tickDuration
             this.progress = Math.min(100, ((totalTime - remainingTime) / totalTime) * 100) // Update progress
 
+            // Log progress every `logInterval` seconds to avoid spamming
+            if (remainingTime % logInterval === 0) {
+              console.log(`Offline time remaining: ${remainingTime}s`)
+              console.log(`Progress: ${this.progress}%`)
+            }
+
             // Continue simulating in the next event loop cycle
             setTimeout(simulateOffline, 0) // Allows for async behavior
           }
@@ -214,11 +228,13 @@ export const useGameStore = defineStore('gameStore', {
           // Start the simulation
           simulateOffline()
         } catch (error) {
+          console.error('Error during offline progress simulation:', error)
           // Reject the promise if an error occurs
           reject(error)
         }
       })
     },
+
     // Start the game loop for real-time resource generation, respecting caps
     startGameLoop() {
       if (this.isGameLoopRunning) {
