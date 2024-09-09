@@ -220,7 +220,6 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     // Start the game loop for real-time resource generation, respecting caps
-    // Start the game loop for real-time resource generation, respecting caps
     startGameLoop() {
       if (this.isGameLoopRunning) {
         return // Prevent multiple loops from being started
@@ -367,6 +366,7 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     async saveGameState() {
+      console.log('Game state is being saved...')
       try {
         const userId = await this.getUserId()
         if (!userId) {

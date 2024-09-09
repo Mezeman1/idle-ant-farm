@@ -215,13 +215,10 @@ const saveGameWithCooldown = async () => {
 }
 
 const debugMode = import.meta.env.MODE === 'localhost'
-
-// Function to handle game state saving before window unload
-const handleBeforeUnload = () => {
-  gameStore.saveGameState() // Save game state before leaving
-}
+let saveInterval: number // Use 'number' for setInterval in the browser
 
 onMounted(() => {
+  // Handle authentication state and game loading
   firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
       console.log('User logged in')
@@ -230,41 +227,50 @@ onMounted(() => {
     }
   })
 
-  setInterval(() => {
+  // Save game state every 5 minutes (fallback for regular saves)
+  saveInterval = window.setInterval(() => {
     gameStore.saveGameState()
-  }, 60000 * 5) // Save game state every minute
+  }, 60000 * 5)
 
-  // Add event listeners for window close
-  window.addEventListener('beforeunload', handleBeforeUnload)
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      // The browser tab is in the background (or minimized)
-      handleBeforeUnload()
-      // You can pause the game, stop animations, or perform any necessary action here
-    } else {
-      gameStore.loadGameState()
-    }
-  })
+  // Add event listeners for window close (desktop) and visibility change (desktop + mobile)
+  window.addEventListener('beforeunload', handleBeforeUnload) // Primarily for desktop
+  document.addEventListener('visibilitychange', handleVisibilityChange) // Works for both desktop and mobile
 })
 
 onBeforeUnmount(() => {
-  gameStore.saveGameState() // Save game state before leaving
-  gameStore.stopGameLoop() // Stop the game loop
+  // Save game state and stop game loop before leaving
+  gameStore.saveGameState()
+  gameStore.stopGameLoop()
 
-  // Remove event listeners for window close
+  // Cleanup event listeners and intervals
   window.removeEventListener('beforeunload', handleBeforeUnload)
-
-  document.removeEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      // The browser tab is in the background (or minimized)
-      handleBeforeUnload()
-      // You can pause the game, stop animations, or perform any necessary action here
-    } else {
-      gameStore.loadGameState()
-    }
-  })
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
+  clearInterval(saveInterval)
 })
+
+// Function to handle visibility change (works on mobile)
+function handleVisibilityChange() {
+  if (document.hidden) {
+    // Save game state when the tab goes into the background (or app is swiped away on mobile)
+    console.log('Tab is hidden (backgrounded), saving game state...')
+    gameStore.saveGameState()
+  } else {
+    // Reload the game state when tab becomes visible again (optional, if needed)
+    console.log('Tab is visible again, reloading game state...')
+    gameStore.loadGameState()
+    gameStore.startGameLoop()
+  }
+}
+
+// Function to handle saving the game state before unloading the window (works on desktop only)
+function handleBeforeUnload(event: BeforeUnloadEvent) {
+  // Save game state asynchronously and show alert dialog on desktop browsers
+  event.preventDefault()
+  event.returnValue = '' // Triggers confirmation dialog (works only on desktop)
+
+  // Save game state
+  gameStore.saveGameState()
+}
 
 const {
   ants,
