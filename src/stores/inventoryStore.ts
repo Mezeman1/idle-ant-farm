@@ -138,7 +138,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
           this.inventory = savedInventory.inventory.map(item => {
             const registryItem = itemRegistry[item.id]
             if (registryItem) {
-              if (registryItem.type === 'passive') {
+              if (registryItem.type === 'passive' && registryItem.applyOnLoad !== false) {
                 this.applyItemEffect(registryItem) // Reapply the item's effect
               }
               return {...registryItem, amount: item.amount}
