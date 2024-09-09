@@ -199,7 +199,7 @@ export const useGameStore = defineStore('gameStore', {
         this.prestigePoints += earnedPrestigePoints
 
         // Reset the game state for prestige without deleting the Firestore doc
-        this.resetLocalGameState({ isDebug: false })
+        this.resetLocalGameState({isDebug: false})
 
         await this.resetOtherStores(false)
 
@@ -752,7 +752,7 @@ export const useGameStore = defineStore('gameStore', {
         await this.clearGameStateFromFirestore(userId)
 
         // Reset the local game state, including prestige points if in debug mode
-        this.resetLocalGameState({ isDebug: debug })
+        this.resetLocalGameState({isDebug: debug})
 
         // Apply any prestige-based bonuses
         this.applyPrestigeUpgrades()
@@ -776,7 +776,7 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     // Reset the local game state, optionally resetting prestige-related data and debug state
-    resetLocalGameState({ isDebug }) {
+    resetLocalGameState({isDebug}) {
       this.larvae = 0
       this.ants = 0
       this.seeds = 10
@@ -809,11 +809,14 @@ export const useGameStore = defineStore('gameStore', {
 
     resetPrestigeShopCosts() {
       this.prestigeShop.forEach(shop => {
-        if (shop.id === 'storageUpgrade') shop.cost = 10
-        if (shop.id === 'productionBoost') shop.cost = 15
-        if (shop.id === 'queenEfficiency') shop.cost = 20
-        if (shop.id === 'autoLarvae') shop.cost = 25
-        if (shop.id === 'betterAnts') shop.cost = 100
+        if (shop.id === 'storageUpgrade') shop.cost = 5
+        if (shop.id === 'productionBoost') shop.cost = 10
+        if (shop.id === 'queenEfficiency') shop.cost = 15
+        if (shop.id === 'autoLarvae') shop.cost = 10
+        if (shop.id === 'betterAnts') shop.cost = 50
+        if (shop.id === 'autoAnts') shop.cost = 20
+        if (shop.id === 'autoQueens') shop.cost = 20
+        if (shop.id === 'startWithAnts') shop.cost = 50
       })
     },
 
