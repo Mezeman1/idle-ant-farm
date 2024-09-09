@@ -206,7 +206,8 @@ const setActiveTab = (tab) => {
 
 const canSave = ref(true)
 const timeLeft = ref(10) // Time left for the cooldown in seconds
-let interval: number | null = null // To store the countdown interval
+let interval: number | null = null // To store the cooldown interval
+let saveInterval: number | null = null // To store the auto-save interval
 
 // Function to handle the cooldown on the save button
 const saveGameWithCooldown = async () => {
@@ -230,7 +231,6 @@ const saveGameWithCooldown = async () => {
 }
 
 const debugMode = import.meta.env.MODE === 'localhost'
-let saveInterval: number // Use 'number' for setInterval in the browser
 const loggedInUser = computed(() => gameStore.loggedIn)
 
 onMounted(() => {
@@ -241,10 +241,13 @@ onMounted(() => {
       await gameStore.loadGameState() // Load game state and calculate offline progress
       gameStore.startGameLoop() // Start the game loop
 
-      // Save game state every 5 minutes (fallback for regular saves)
-      saveInterval = window.setInterval(() => {
-        gameStore.saveGameState()
-      }, 60000 * 5)
+      // Ensure only one interval is set
+      if (!saveInterval) {
+        // Save game state every 5 minutes (fallback for regular saves)
+        saveInterval = window.setInterval(() => {
+          gameStore.saveGameState()
+        }, 60000 * 5)
+      }
 
       // Add event listeners for window close (desktop) and visibility change (desktop + mobile)
       window.addEventListener('beforeunload', handleBeforeUnload) // Primarily for desktop
@@ -263,7 +266,17 @@ onBeforeUnmount(() => {
   // Cleanup event listeners and intervals
   window.removeEventListener('beforeunload', handleBeforeUnload)
   document.removeEventListener('visibilitychange', handleVisibilityChange)
-  clearInterval(saveInterval)
+
+  // Clear intervals
+  if (saveInterval) {
+    clearInterval(saveInterval)
+    saveInterval = null
+  }
+
+  if (interval) {
+    clearInterval(interval)
+    interval = null
+  }
 })
 
 // Function to handle visibility change (works on mobile)
@@ -289,6 +302,7 @@ function handleBeforeUnload(event: BeforeUnloadEvent) {
   // Save game state
   gameStore.saveGameState()
 }
+
 
 const {
   ants,
