@@ -52,11 +52,38 @@
               @touchend="stopCollectingSeeds"
               @contextmenu.prevent
             >
-              Collect 🌱
+              Hold to collect 🌱
             </button>
-            <p>
-              Hold to collect seeds faster.
-            </p>
+          </div>
+
+          <div class="w-full flex">
+            <label
+              v-if="prestigeStore.upgradePurchased('autoSeedStorageUpgrade')"
+              class="flex items-center cursor-pointer"
+            >
+              <span class="mr-3 text-xs text-gray-600">Auto upgrade storage</span>
+              <div class="relative">
+                <input
+                  v-model="prestigeStore.autoSeedStorageUpgrade"
+                  type="checkbox"
+                  class="sr-only"
+                >
+                <div
+                  :class="{
+                    'bg-green-500': prestigeStore.autoSeedStorageUpgrade,
+                    'bg-red-500': !prestigeStore.autoSeedStorageUpgrade
+                  }"
+                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
+                />
+                <div
+                  :class="{
+                    'translate-x-full': prestigeStore.autoSeedStorageUpgrade,
+                    'translate-x-0': !prestigeStore.autoSeedStorageUpgrade,
+                  }"
+                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
+                />
+              </div>
+            </label>
           </div>
         </div>
       </div>

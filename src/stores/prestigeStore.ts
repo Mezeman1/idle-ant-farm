@@ -46,6 +46,15 @@ export const usePrestigeStore = defineStore('prestige', {
         category: 'auto',
       },
       {
+        id: 'autoSeedStorageUpgrade',
+        name: 'Auto Seed Storage Upgrade',
+        description: 'Automatically upgrade seed storage',
+        cost: 10,
+        oneTimePurchase: true,
+        applyOnPrestige: true,
+        category: 'auto',
+      },
+      {
         id: 'betterAnts',
         name: 'Stronger Ants',
         description: 'Increase ant strength by 10%',
@@ -88,6 +97,7 @@ export const usePrestigeStore = defineStore('prestige', {
     autoLarvaeCreation: false, // Auto-create larvae based on seeds
     autoAntCreation: false, // Auto-create ants based on larvae and seeds
     autoQueenCreation: false, // Auto-create queens based on ants and seeds
+    autoSeedStorageUpgrade: false, // Auto-upgrade seed storage
 
     antsFromPrestigeShop: 0, // Ants from the prestige shop
   }),
@@ -155,7 +165,7 @@ export const usePrestigeStore = defineStore('prestige', {
 
       if (upgrade && this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost
-        this.prestigeShop.find(u => u.id === upgradeId).cost *= 1.5 // Increase cost by 50%
+        upgrade.cost *= 1.5 // Increase cost by 50%
         this.purchasedUpgrades.push(upgradeId)
         this.applyPrestigeUpgrade(upgradeId)
         console.log(`Purchased upgrade: ${upgrade.name}`)
@@ -203,6 +213,9 @@ export const usePrestigeStore = defineStore('prestige', {
         autoQueens: () => {
           this.autoQueenCreation = true
         },
+        autoSeedStorageUpgrade: () => {
+          this.autoSeedStorageUpgrade = true
+        },
         startWithAnts: () => {
           gameStore.ants += 1
           this.antsFromPrestigeShop += 1
@@ -230,7 +243,6 @@ export const usePrestigeStore = defineStore('prestige', {
         prestigePoints: this.prestigePoints,
         purchasedUpgrades: this.purchasedUpgrades,
 
-
         storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 5,
         productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 10,
         queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 15,
@@ -240,6 +252,7 @@ export const usePrestigeStore = defineStore('prestige', {
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,
         autoQueenCreation: this.autoQueenCreation,
+        autoSeedStorageUpgrade: this.autoSeedStorageUpgrade,
       }
     },
 
@@ -250,6 +263,7 @@ export const usePrestigeStore = defineStore('prestige', {
       this.autoLarvaeCreation = savedState.autoLarvaeCreation ?? this.autoLarvaeCreation
       this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
       this.autoQueenCreation = savedState.autoQueenCreation ?? this.autoQueenCreation
+      this.autoSeedStorageUpgrade = savedState.autoSeedStorageUpgrade ?? this.autoSeedStorageUpgrade
 
       // Load prestige shop costs
       this.prestigeShop.forEach(shop => {

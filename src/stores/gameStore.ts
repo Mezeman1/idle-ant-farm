@@ -198,6 +198,7 @@ export const useGameStore = defineStore('gameStore', {
               if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
               if (prestigeStore.autoAntCreation) this.createMaxAnts()
               if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
+              if (prestigeStore.autoSeedStorageUpgrade) this.upgradeSeedStorage()
 
               // Reduce the accumulator by 1 second after triggering the auto actions
               offlineTimeAccumulator -= 1
@@ -270,6 +271,7 @@ export const useGameStore = defineStore('gameStore', {
       if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
       if (prestigeStore.autoAntCreation) this.createMaxAnts()
       if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
+      if (prestigeStore.autoSeedStorageUpgrade) this.upgradeSeedStorage()
     },
 
     stopGameLoop() {
@@ -562,6 +564,7 @@ export const useGameStore = defineStore('gameStore', {
       prestigeStore.autoQueenCreation = false
       prestigeStore.autoAntCreation = false
       prestigeStore.autoLarvaeCreation = false
+      prestigeStore.autoSeedStorageUpgrade = false
     },
 
 
@@ -579,6 +582,7 @@ export const useGameStore = defineStore('gameStore', {
       prestigeStore.autoQueenCreation = false
       prestigeStore.autoAntCreation = false
       prestigeStore.autoLarvaeCreation = false
+      prestigeStore.autoSeedStorageUpgrade = false
     },
 
     async resetOtherStores(debug) {

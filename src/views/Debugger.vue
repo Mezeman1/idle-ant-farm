@@ -23,6 +23,12 @@
       </button>
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        @click="gameStore.ants += 100"
+      >
+        Add 100 Ants
+      </button>
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
         @click="gameStore.ants += 1000"
       >
         Add 1000 Ants
@@ -41,7 +47,7 @@
       </button>
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.prestigePoints += 1000"
+        @click="prestigeStore.prestigePoints += 1000"
       >
         Add 1000 prestige points
       </button>
@@ -51,8 +57,10 @@
 
 <script setup lang="ts">
 import {useGameStore} from '../stores/gameStore'
+import {usePrestigeStore} from '@/stores/prestigeStore'
 
 const gameStore = useGameStore()
+const prestigeStore = usePrestigeStore()
 </script>
 
 <style scoped>
