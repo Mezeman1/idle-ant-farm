@@ -165,6 +165,7 @@ export const usePrestigeStore = defineStore('prestige', {
     },
     // Apply a purchased upgrade
     applyPrestigeUpgrade(upgradeId, fromPrestige = false) {
+      const gameStore = useGameStore()
       console.log('Try to apply upgrade:', upgradeId, fromPrestige)
       const prestigeInShop = this.prestigeShop.find(u => u.id === upgradeId)
       console.log('Prestige in shop:', prestigeInShop)
@@ -177,24 +178,24 @@ export const usePrestigeStore = defineStore('prestige', {
       // Object map for handling upgrade logic
       const upgrades = {
         storageUpgrade: () => {
-          this.maxSeeds *= 1.2 // Increase seed storage
-          this.maxLarvae *= 1.2 // Increase larvae storage
-          this.maxAnts *= 2 // Increase ant storage
-          this.maxQueens *= 1.5 // Increase queen storage
+          gameStore.maxSeeds *= 1.2 // Increase seed storage
+          gameStore.maxLarvae *= 1.2 // Increase larvae storage
+          gameStore.maxAnts *= 2 // Increase ant storage
+          gameStore.maxQueens *= 1.5 // Increase queen storage
         },
         productionBoost: () => {
-          this.larvaeProductionRate *= 1.2
-          this.collectionRatePerAnt *= 1.2
+          gameStore.larvaeProductionRate *= 1.2
+          gameStore.collectionRatePerAnt *= 1.2
         },
         queenEfficiency: () => {
-          this.larvaeProductionRate *= 1.5
+          gameStore.larvaeProductionRate *= 1.5
         },
         autoLarvae: () => {
           this.autoLarvaeCreation = true
         },
         betterAnts: () => {
-          this.attackPerAnt *= 1.1
-          this.setupAdventureStats()
+          gameStore.attackPerAnt *= 1.1
+          gameStore.setupAdventureStats()
         },
         autoAnts: () => {
           this.autoAntCreation = true
@@ -203,7 +204,7 @@ export const usePrestigeStore = defineStore('prestige', {
           this.autoQueenCreation = true
         },
         startWithAnts: () => {
-          this.ants += 1
+          gameStore.ants += 1
           this.antsFromPrestigeShop += 1
         },
       }
