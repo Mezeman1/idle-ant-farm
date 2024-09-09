@@ -5,7 +5,7 @@ import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 // ... other firebase imports
 
 export const firebaseApp = firebase.initializeApp({
-  apiKey: 'AIzaSyC-iXDOWE7d6YFbTPklOXgkK-ca7ePlI9w',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: 'idleantfarm.firebaseapp.com',
   projectId: 'idleantfarm',
   storageBucket: 'idleantfarm.appspot.com',
