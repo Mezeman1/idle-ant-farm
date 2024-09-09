@@ -11,7 +11,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
   }),
 
   actions: {
-    addItemToInventory(item) {
+    async addItemToInventory(item) {
       const existingItem = this.inventory.find(i => i.id === item.id)
       if (existingItem) {
         existingItem.amount += item.amount // Increment if the item already exists
@@ -30,7 +30,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
         }
       }
 
-      this.saveInventoryState() // Save after modifying inventory
+      await this.saveInventoryState() // Save after modifying inventory
     },
 
     // Apply the effect of an item (passive or buffs)
@@ -189,6 +189,15 @@ export const useInventoryStore = defineStore('inventoryStore', {
       if (registryItem) {
         return registryItem
       }
+    },
+
+    applyPassiveEffects() {
+      this.inventory.forEach(item => {
+        const registryItem = itemRegistry[item.id]
+        if (registryItem && registryItem.type === 'passive' && registryItem.applyOnLoad !== false) {
+          this.applyItemEffect(registryItem)
+        }
+      })
     },
   },
 })

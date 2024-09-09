@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import {useGameStore} from './gameStore'
+import {useInventoryStore} from './inventoryStore'
 
 
 interface PrestigeShopItem {
@@ -129,6 +130,7 @@ export const usePrestigeStore = defineStore('prestige', {
     // Function to handle prestige/reset
     async prestige() {
       const gameStore = useGameStore()
+      const inventoryStore = useInventoryStore()
       try {
         const userId = await gameStore.getUserId()
         if (!userId) {
@@ -151,6 +153,7 @@ export const usePrestigeStore = defineStore('prestige', {
         gameStore.resetLocalGameState({isDebug: false})
 
         await gameStore.resetOtherStores(false)
+        inventoryStore.applyPassiveEffects()  // Apply passive effects from inventory items
 
         // Save the updated state to Firestore
         await gameStore.saveGameState()
