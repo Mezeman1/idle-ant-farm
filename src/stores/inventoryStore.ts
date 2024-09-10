@@ -42,7 +42,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
     useItem(itemId) {
       const item = this.inventory.find(i => i.id === itemId)
-      console.log('Using item', item)
       if (item && item.amount > 0) {
         if (item.amount === 0) this.inventory = this.inventory.filter(i => i.id !== itemId)
         if (item.type === 'passive') {
@@ -64,6 +63,8 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
         return false
       }
+
+      return false
     },
 
     sortInventory() {

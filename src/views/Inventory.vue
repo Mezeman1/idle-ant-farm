@@ -133,6 +133,8 @@ const useItem = (itemId: number) => {
     $toast.success('Item used successfully')
     return
   }
+
+  $toast.error('Failed to use item')
 }
 </script>
 
