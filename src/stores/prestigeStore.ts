@@ -67,7 +67,7 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'startWithAnts',
         name: 'Start with Ants',
         description: 'Start the game with ants!',
-        cost: 50,
+        cost: 15,
         applyOnPrestige: true,
         category: 'expansion',
       },
@@ -250,7 +250,7 @@ export const usePrestigeStore = defineStore('prestige', {
         productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 10,
         queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 15,
         betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 50,
-        startWithAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'startWithAnts')?.cost ?? 50,
+        startWithAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'startWithAnts')?.cost ?? 15,
 
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,
@@ -287,7 +287,7 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'betterAnts') shop.cost = 50
         if (shop.id === 'autoAnts') shop.cost = 20
         if (shop.id === 'autoQueens') shop.cost = 20
-        if (shop.id === 'startWithAnts') shop.cost = 50
+        if (shop.id === 'startWithAnts') shop.cost = 15
       })
     },
 
