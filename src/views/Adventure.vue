@@ -97,6 +97,7 @@ const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
 
 watch(() => adventureStore.currentArea, () => {
+  adventureStore.battleCooldown = false
   adventureStore.spawnRandomEnemy()
 })
 </script>

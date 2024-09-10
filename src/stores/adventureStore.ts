@@ -206,11 +206,6 @@ export const useAdventureStore = defineStore('adventureStore', {
     // Start the battle loop
     startBattle() {
       // Check if already running
-      if (this.battleRunning) {
-        console.error('Battle is already running')
-        return
-      }
-
       console.log('Battle Loop Started')
       this.battleRunning = true
       this.isFighting = true
