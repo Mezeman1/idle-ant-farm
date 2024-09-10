@@ -202,26 +202,15 @@ export const useGameStore = defineStore('gameStore', {
             // Accumulate the offline time for auto actions
             offlineTimeAccumulator += deltaTime
 
-            // Trigger auto-actions based on how much time has passed
+            // Trigger auto-actions after accumulating sufficient time
             if (offlineTimeAccumulator >= 1) {
-              const autoLarvae = Math.floor(offlineTimeAccumulator) // Handle full seconds
-              const autoAnts = Math.floor(offlineTimeAccumulator)
-              const autoQueens = Math.floor(offlineTimeAccumulator)
-              const autoSeeds = Math.floor(offlineTimeAccumulator)
+              if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
+              if (prestigeStore.autoAntCreation) this.createMaxAnts()
+              if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
+              if (prestigeStore.autoSeedStorageUpgrade) this.upgradeSeedStorage()
 
-              if (prestigeStore.autoLarvaeCreation) {
-                for (let i = 0; i < autoLarvae; i++) this.createMaxLarvae()
-              }
-              if (prestigeStore.autoAntCreation) {
-                for (let i = 0; i < autoAnts; i++) this.createMaxAnts()
-              }
-              if (prestigeStore.autoQueenCreation) {
-                for (let i = 0; i < autoQueens; i++) this.buyMaxQueens()
-              }
-              if (prestigeStore.autoSeedStorageUpgrade) {
-                for (let i = 0; i < autoSeeds; i++) this.upgradeSeedStorage()
-              }
-              offlineTimeAccumulator = 0 // Reset accumulator after triggering auto actions
+              // Reset accumulator after triggering auto actions
+              offlineTimeAccumulator = 0
             }
 
             // Reduce remaining time and update progress
@@ -296,10 +285,19 @@ export const useGameStore = defineStore('gameStore', {
 
     handleAutoCreations() {
       const prestigeStore = usePrestigeStore()
-      // if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
-      if (prestigeStore.autoAntCreation) this.createMaxAnts()
-      if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
-      if (prestigeStore.autoSeedStorageUpgrade) this.upgradeSeedStorage()
+
+      const autoActions = [
+        { enabled: prestigeStore.autoLarvaeCreation, action: this.createMaxLarvae },
+        { enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts },
+        { enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens },
+        { enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage },
+      ]
+
+      autoActions.forEach(autoAction => {
+        if (autoAction.enabled) {
+          autoAction.action()
+        }
+      })
     },
 
     stopGameLoop() {
