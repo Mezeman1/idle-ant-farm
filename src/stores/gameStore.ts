@@ -484,7 +484,7 @@ export const useGameStore = defineStore('gameStore', {
         const adventureStore = useAdventureStore()
         await adventureStore.calculateOfflineProgress()
         console.log('Adventure state isFighting:', adventureStore.isFighting)
-        if (adventureStore.isFighting) {
+        if (adventureStore.isFighting || adventureStore.battleCooldown) {
           adventureStore.startBattle()
         }
 
