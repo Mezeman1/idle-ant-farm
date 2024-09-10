@@ -40,7 +40,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
       return false
     },
 
-    useItem(itemId) {
+    async useItem(itemId) {
       const item = this.inventory.find(i => i.id === itemId)
       console.log('Using item', item)
       if (item && item.amount > 0) {
@@ -58,8 +58,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
           if (item.amount === 0) {
             this.inventory = this.inventory.filter(i => i.id !== itemId)
           }
-
-          this.saveInventoryState() // Save after using an item
 
           return true
         }
