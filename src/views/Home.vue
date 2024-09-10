@@ -323,6 +323,7 @@ watch(ants, async () => {
 <style lang="scss">
 button {
   min-height: 50px;
+  user-select: none;
 
   // Apply smaller styles only to buttons with the .small class
   &.small {
