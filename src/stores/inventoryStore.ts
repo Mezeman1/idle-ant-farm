@@ -28,8 +28,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
           console.error(`Item ${item.id} not found in registry`)
         }
       }
-
-      await this.saveInventoryState() // Save after modifying inventory
     },
 
     // Apply the effect of an item (passive or buffs)
