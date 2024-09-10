@@ -1,8 +1,7 @@
 <template>
   <button
-    v-tooltip="itemFromRegistry?.description"
     class="p-2 flex flex-col items-center h-full w-full cursor-pointer"
-    @click="useItem(item.id)"
+    @click="$emit('setActiveItem', item)"
   >
     <div class="w-full text-right">
       {{ formatNumber(item.amount) }}
@@ -32,22 +31,7 @@ const props = defineProps<{
 
 const formatNumber = useGameStore().formatNumber
 const itemFromRegistry = computed(() => useInventoryStore().getItemById(props.item.id))
-const useItem = (itemId: number) => {
-  const $toast = useToast()
-  const itemRegistry = useInventoryStore().getItemById(itemId)
-  if (useInventoryStore().useItem(itemId)) {
-    $toast.success('Item used successfully')
-    return
-  }
-
-  if (itemRegistry) {
-    if (itemRegistry.type === 'passive') {
-      $toast.error('You cannot use passive items')
-    } else {
-      $toast.error('Failed to use item')
-    }
-  }
-}
+defineEmits(['setActiveItem'])
 </script>
 
 <style scoped>

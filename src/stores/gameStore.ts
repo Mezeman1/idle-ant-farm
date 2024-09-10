@@ -287,10 +287,9 @@ export const useGameStore = defineStore('gameStore', {
       const prestigeStore = usePrestigeStore()
 
       const autoActions = [
-        { enabled: prestigeStore.autoLarvaeCreation, action: this.createMaxLarvae },
+        { enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage },
         { enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts },
         { enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens },
-        { enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage },
       ]
 
       autoActions.forEach(autoAction => {
@@ -484,7 +483,7 @@ export const useGameStore = defineStore('gameStore', {
         this.setupAdventureStats()
         const adventureStore = useAdventureStore()
         await adventureStore.calculateOfflineProgress()
-
+        console.log('Adventure state isFighting:', adventureStore.isFighting)
         if (adventureStore.isFighting) {
           adventureStore.startBattle()
         }

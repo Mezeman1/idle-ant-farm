@@ -1,8 +1,29 @@
 <template>
   <div>
-    <p class="text-sm">
-      Here we'll show the bonuses and effects of the items in the inventory.
-    </p>
+    <!-- Show the current selected item and action buttons -->
+    <div
+      v-if="activeItem"
+      class="flex flex-col md:flex-row md:items-center md:justify-between p-4 border border-gray-300 rounded-lg mb-4 bg-white"
+    >
+      <div>
+        <h3 class="font-bold text-lg md:text-xl">
+          {{ activeItem.name }}
+        </h3>
+        <p class="text-sm md:text-base mt-2">
+          {{ activeItem.description }}
+        </p>
+      </div>
+
+      <div class="flex gap-2 mt-4 md:mt-0">
+        <button
+          v-if="activeItem.type === 'consumable'"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
+          @click="useItem(activeItem.id)"
+        >
+          Use
+        </button>
+      </div>
+    </div>
     <section
       ref="gridContainer"
       class="grid-stack"
@@ -26,6 +47,7 @@
           <component
             :is="slot.component.name"
             v-bind="{ ...slot.component.props }"
+            v-on="{ ...slot.component.on }"
           />
         </div>
         <div
@@ -44,6 +66,7 @@ import {computed, onMounted, ref, watch} from 'vue'
 import InventoryItem from '../components/InventoryItem.vue'
 import {useWindowSize} from '@vueuse/core'
 import {useInventoryStore} from '../stores/inventoryStore'
+import {useToast} from 'vue-toast-notification'
 
 const {width, height} = useWindowSize() // Get the window size
 const inventoryStore = useInventoryStore() // Use the inventory store to get the items
@@ -51,6 +74,11 @@ const totalSlots = computed(() => inventoryStore.maxInventory) // Total slots in
 
 // Determine the number of columns based on screen size (responsive)
 const amountOfColumns = computed(() => width.value > 768 ? 10 : 5) // Use 12 columns for large screens, 6 for smaller ones
+const activeItem = ref(null) // Reference to the active item
+
+const selectItem = (item) => {
+  activeItem.value = item
+}
 
 // Compute the grid slots (items + empty slots)
 const gridSlots = computed(() => {
@@ -64,6 +92,11 @@ const gridSlots = computed(() => {
         name: InventoryItem,
         props: {
           item,
+        },
+        on: {
+          setActiveItem: (item) => {
+            selectItem(item)
+          },
         },
       } : null,
       gridPosition: {x, y, w: 1, h: 1},
@@ -82,7 +115,6 @@ onMounted(() => {
     disableResize: true,
     disableDrag: true,
     float: false,
-    scrollContainer: gridContainer.value, // Set the scroll container to the grid section
   })
 
   grid.value.on('added removed change', () => {
@@ -94,6 +126,14 @@ onMounted(() => {
 watch([amountOfColumns], () => {
   grid.value.column(amountOfColumns.value, 'list')
 })
+
+const useItem = (itemId: number) => {
+  const $toast = useToast()
+  if (useInventoryStore().useItem(itemId)) {
+    $toast.success('Item used successfully')
+    return
+  }
+}
 </script>
 
 <style scoped lang="scss">

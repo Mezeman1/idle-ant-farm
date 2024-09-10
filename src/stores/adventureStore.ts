@@ -383,7 +383,6 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     // Save adventure state to Firebase Firestore
-    // Save adventure state to Firebase Firestore
     async saveAdventureState() {
       const userId = await useGameStore().getUserId()
       if (!userId) {
