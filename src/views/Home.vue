@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="gameStore.loaded && gameStore.loggedIn"
+    v-if="gameStore.loaded && adventureStore.loaded && gameStore.loggedIn"
     class="relative h-screen w-screen overflow-hidden"
   >
     <AntSimulation
@@ -187,14 +187,18 @@ import Debugger from './Debugger.vue'
 import Inventory from './Inventory.vue'
 import firebase from 'firebase/compat'
 import Settings from './Settings.vue'
+import {useAdventureStore} from '@/stores/adventureStore'
 
 const gameStore = useGameStore()
+const adventureStore = useAdventureStore()
 const isMinimized = ref(false) // Minimized state
 const showBackground = ref(true) // Show background state
 const activeTab = ref('resources')
-const {
-  progress,
-} = storeToRefs(gameStore)
+const progress = computed(() => {
+  const gameProgress = gameStore.loaded ? 50 : (gameStore.progress / 2) // Half for game progress
+  const adventureProgress = adventureStore.loaded ? 50 : (adventureStore.progress / 2) // Half for adventure progress
+  return gameProgress + adventureProgress
+})
 
 // Classes for active and default tabs
 const activeTabClasses = 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500'

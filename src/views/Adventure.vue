@@ -2,7 +2,7 @@
   <div>
     <div class="flex flex-col my-2">
       <p class="text-xs">
-        <strong>Note:</strong> There's not progression offline yet, so you have to be active to progress.
+        <strong>Note:</strong> Offline progress has been implemented 09/10/2024.
       </p>
       <label
         for="area"
@@ -78,10 +78,11 @@
     <!-- Adventure Mode UI -->
     <div class="flex justify-center">
       <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        :class="adventureStore.isFighting || adventureStore.battleCooldown ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'"
+        class="text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-50"
         @click="adventureStore.toggleBattle()"
       >
-        {{ adventureStore.isFighting ? 'Stop Battle' : 'Start Battle' }}
+        {{ adventureStore.isFighting || adventureStore.battleCooldown ? 'Stop Battle' : 'Start Battle' }}
       </button>
     </div>
   </div>

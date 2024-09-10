@@ -276,8 +276,21 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     updateResources(deltaTime) {
-      this.larvae = Math.min(this.larvae + this.larvaeProductionRate * this.queens * deltaTime / 60, this.maxLarvae)
-      this.seeds = Math.min(this.seeds + this.collectionRatePerAnt * this.ants * deltaTime / 60, this.maxSeeds)
+      // Update larvae, but only if there are queens
+      if (this.queens > 0) {
+        this.larvae = Math.min(
+          this.larvae + (this.larvaeProductionRate * this.queens * deltaTime) / 60,
+          this.maxLarvae,
+        )
+      }
+
+      // Update seeds, but only if there are ants
+      if (this.ants > 0) {
+        this.seeds = Math.min(
+          this.seeds + (this.collectionRatePerAnt * this.ants * deltaTime) / 60,
+          this.maxSeeds,
+        )
+      }
     },
 
     handleAutoCreations() {
@@ -479,6 +492,13 @@ export const useGameStore = defineStore('gameStore', {
         // Recalculate based on upgrades, apply offline progress
         await this.calculateOfflineProgress()
         this.setupAdventureStats()
+        const adventureStore = useAdventureStore()
+        await adventureStore.calculateOfflineProgress()
+
+        if (adventureStore.isFighting) {
+          adventureStore.startBattle()
+        }
+
         this.loaded = true
         console.log('Game state loaded successfully')
       } catch (error) {
