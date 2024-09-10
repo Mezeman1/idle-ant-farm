@@ -204,10 +204,7 @@ export const useGameStore = defineStore('gameStore', {
 
             // Trigger auto-actions after accumulating sufficient time
             if (offlineTimeAccumulator >= 1) {
-              if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
-              if (prestigeStore.autoAntCreation) this.createMaxAnts()
-              if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
-              if (prestigeStore.autoSeedStorageUpgrade) this.upgradeSeedStorage()
+              this.handleAutoCreations()
 
               // Reset accumulator after triggering auto actions
               offlineTimeAccumulator = 0
