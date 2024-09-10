@@ -181,9 +181,9 @@ export const useGameStore = defineStore('gameStore', {
 
           let remainingTime = timeElapsed
           const totalTime = timeElapsed // Store total offline time for progress calculation
-          const tickDuration = 1 // Simulate in 1-second chunks of offline time
+          const chunkDuration = 60 // Simulate in larger chunks (e.g., 60 seconds)
           let offlineTimeAccumulator = 0 // Track offline time for auto-actions
-          const logInterval = 10 // Log progress every 10 seconds for less spam
+          const logInterval = 600 // Log progress every 10 minutes for less spam
 
           const simulateOffline = () => {
             if (remainingTime <= 0) {
@@ -196,27 +196,40 @@ export const useGameStore = defineStore('gameStore', {
               return
             }
 
-            const deltaTime = Math.min(tickDuration, remainingTime) // Simulate in 1-second chunks or remaining time
+            const deltaTime = Math.min(chunkDuration, remainingTime) // Simulate in larger chunks or remaining time
             this.updateResources(deltaTime)
 
             // Accumulate the offline time for auto actions
             offlineTimeAccumulator += deltaTime
 
-            // Trigger auto-actions every second
+            // Trigger auto-actions based on how much time has passed
             if (offlineTimeAccumulator >= 1) {
-              if (prestigeStore.autoLarvaeCreation) this.createMaxLarvae()
-              if (prestigeStore.autoAntCreation) this.createMaxAnts()
-              if (prestigeStore.autoQueenCreation) this.buyMaxQueens()
-              if (prestigeStore.autoSeedStorageUpgrade) this.upgradeSeedStorage()
-              offlineTimeAccumulator -= 1 // Reset accumulator after triggering auto actions
+              const autoLarvae = Math.floor(offlineTimeAccumulator) // Handle full seconds
+              const autoAnts = Math.floor(offlineTimeAccumulator)
+              const autoQueens = Math.floor(offlineTimeAccumulator)
+              const autoSeeds = Math.floor(offlineTimeAccumulator)
+
+              if (prestigeStore.autoLarvaeCreation) {
+                for (let i = 0; i < autoLarvae; i++) this.createMaxLarvae()
+              }
+              if (prestigeStore.autoAntCreation) {
+                for (let i = 0; i < autoAnts; i++) this.createMaxAnts()
+              }
+              if (prestigeStore.autoQueenCreation) {
+                for (let i = 0; i < autoQueens; i++) this.buyMaxQueens()
+              }
+              if (prestigeStore.autoSeedStorageUpgrade) {
+                for (let i = 0; i < autoSeeds; i++) this.upgradeSeedStorage()
+              }
+              offlineTimeAccumulator = 0 // Reset accumulator after triggering auto actions
             }
 
             // Reduce remaining time and update progress
-            remainingTime -= tickDuration
+            remainingTime -= deltaTime
             this.progress = Math.min(100, ((totalTime - remainingTime) / totalTime) * 100) // Update progress
 
             // Log progress every `logInterval` seconds to avoid spamming
-            if (remainingTime % logInterval === 0) {
+            if (totalTime - remainingTime % logInterval === 0) {
               console.log(`Offline time remaining: ${remainingTime}s`)
               console.log(`Progress: ${this.progress}%`)
             }
