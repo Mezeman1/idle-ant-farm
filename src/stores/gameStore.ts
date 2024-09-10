@@ -72,8 +72,6 @@ export const useGameStore = defineStore('gameStore', {
       if (this.seeds >= this.seedCostPerLarva && this.larvae < this.maxLarvae) {
         this.larvae += 1
         this.seeds -= this.seedCostPerLarva
-      } else {
-        console.log('Not enough seeds to create larvae or larvae cap reached.')
       }
     },
     // Create max larvae based on available seeds and larvae cap
@@ -90,8 +88,6 @@ export const useGameStore = defineStore('gameStore', {
         this.ants += 1
         this.larvae -= this.larvaCostPerAnt
         this.seeds -= this.seedCostPerAnt
-      } else {
-        console.log('Not enough larvae or seeds to create an ant.')
       }
     },
     // Create max ants based on available larvae and seeds
@@ -112,8 +108,6 @@ export const useGameStore = defineStore('gameStore', {
         this.queens += 1
         this.ants -= this.antCostPerQueen
         this.seeds -= this.seedCostPerQueen
-      } else {
-        console.log('Not enough ants or seeds to buy a queen.')
       }
     },
     // Buy max queens based on available ants and seeds
@@ -149,8 +143,6 @@ export const useGameStore = defineStore('gameStore', {
 
         // Increase the upgrade cost by 30%
         this.seedStorageUpgradeCost = Math.floor(this.seedStorageUpgradeCost * this.upgradeCostFactor)
-      } else {
-        console.log('Not enough seeds to upgrade seed storage.')
       }
     },
     // Function to upgrade larvae storage
@@ -163,8 +155,6 @@ export const useGameStore = defineStore('gameStore', {
 
         // Increase the upgrade cost by 30%
         this.larvaeStorageUpgradeCost = Math.floor(this.larvaeStorageUpgradeCost * this.upgradeCostFactor)
-      } else {
-        console.log('Not enough seeds to upgrade larvae storage.')
       }
     },
     calculateOfflineProgress() {
