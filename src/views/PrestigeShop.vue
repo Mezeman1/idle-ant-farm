@@ -20,10 +20,12 @@
         </h2>
         <ul class="space-y-2 text-xs">
           <li>
-            <strong>Seeds:</strong> Prestige points start at 2000 seeds. After that, points increase slowly on a logarithmic scale.
+            <strong>Seeds:</strong> Prestige points start at 2000 seeds. After that, points increase slowly on a
+            logarithmic scale.
           </li>
           <li>
-            <strong>Ants:</strong> For every 50 ants (excluding those bought via the Prestige Shop), you earn 1 prestige point.
+            <strong>Ants:</strong> For every 50 ants (excluding those bought via the Prestige Shop), you earn 1 prestige
+            point.
           </li>
           <li>
             <strong>Queens:</strong> After the first queen, every additional queen gives 2 prestige points.
@@ -31,7 +33,7 @@
         </ul>
       </div>
       <div class="flex items-center justify-between w-full">
-        <p>Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }}</p>
+        <p>Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }} <br>Prestige Times: {{ formatNumber(prestigeStore.timesPrestiged) }}</p>
         <button
           :disabled="prestigeStore.calculatePrestigePoints() < 1"
           class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
@@ -67,41 +69,53 @@
             <li
               v-for="upgrade in category.upgrades"
               :key="upgrade.id"
-              class="flex flex-col bg-white p-2 rounded shadow"
             >
-              <div>
-                <p>
-                  {{ upgrade.name }} {{
-                    !upgrade.oneTimePurchase && prestigeStore.amountOfUpgrade(upgrade.id) > 0 ? `(${prestigeStore.amountOfUpgrade(upgrade.id)})` : ''
-                  }}
-                </p>
-                <p class="text-xs text-gray-500">
-                  <span v-html="upgrade.description" />
-                </p>
-                <p
-                  v-if="upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id)"
-                  class="text-xs text-blue-600"
-                >
-                  Purchased
-                </p>
+              <div
+                v-if="upgrade.unlockedWhen === undefined || (typeof upgrade.unlockedWhen === 'function' && upgrade.unlockedWhen())"
+                class="flex flex-col bg-white p-2 rounded shadow mx-1"
+              >
+                <div>
+                  <p>
+                    {{ upgrade.name }} {{
+                      !upgrade.oneTimePurchase && prestigeStore.amountOfUpgrade(upgrade.id) > 0 ? `(${prestigeStore.amountOfUpgrade(upgrade.id)})` : ''
+                    }}
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    <span v-html="upgrade.description" />
+                  </p>
+                  <p
+                    v-if="upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id)"
+                    class="text-xs text-blue-600"
+                  >
+                    Purchased
+                  </p>
+                </div>
+                <div class="flex justify-between items-center">
+                  <button
+                    v-if="!upgrade.oneTimePurchase || !prestigeStore.upgradePurchased(upgrade.id)"
+                    :disabled="prestigeStore.prestigePoints < upgrade.cost"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    @click="prestigeStore.buyUpgrade(upgrade.id)"
+                  >
+                    Buy for {{ formatNumber(upgrade.cost) }} Points
+                  </button>
+                  <button
+                    v-if="!upgrade.oneTimePurchase"
+                    :disabled="prestigeStore.prestigePoints < upgrade.cost"
+                    class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    @click="prestigeStore.buyMaxUpgrade(upgrade.id)"
+                  >
+                    Buy max
+                  </button>
+                </div>
               </div>
-              <div class="flex justify-between items-center">
-                <button
-                  v-if="!upgrade.oneTimePurchase || !prestigeStore.upgradePurchased(upgrade.id)"
-                  :disabled="prestigeStore.prestigePoints < upgrade.cost"
-                  class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  @click="prestigeStore.buyUpgrade(upgrade.id)"
-                >
-                  Buy for {{ formatNumber(upgrade.cost) }} Points
-                </button>
-                <button
-                  v-if="!upgrade.oneTimePurchase && !prestigeStore.upgradePurchased(upgrade.id)"
-                  :disabled="prestigeStore.prestigePoints < upgrade.cost"
-                  class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  @click="prestigeStore.buyMaxUpgrade(upgrade.id)"
-                >
-                  Buy max
-                </button>
+              <div
+                v-else
+                class="flex items-center justify-center bg-white 0 p-2 rounded shadow h-12 mx-1"
+              >
+                <p class="text-gray-500 text-xs">
+                  Locked
+                </p>
               </div>
             </li>
           </ul>
@@ -112,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 
 import {useGameStore} from '../stores/gameStore'
 import Modal from '../components/Modal.vue'

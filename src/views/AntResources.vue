@@ -5,7 +5,7 @@
       <br>
       I will be adding more features and balancing the game over time.
       <br>
-      Also, any progress made may be reset at any time.
+      Also, any progress made may be reset at any time during current development stage.
     </p>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
       <!-- Seeds Section -->
@@ -238,6 +238,55 @@
             </label>
           </div>
         </div>
+      </div>
+
+      <!-- Elite Ant Section -->
+      <div
+        v-if="gameStore.eliteAntsUnlocked"
+        class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
+      >
+        <div>
+          <p class="font-bold text-lg">
+            Elite Ants
+          </p>
+          <p class="text-2xs">
+            Elite Ants help the ants to collect resources faster.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
+          <div class="flex flex-col gap-2 w-full">
+            <p class="text-sm">
+              Count: {{ formatNumber(gameStore.eliteAnts, 0) }}/{{ formatNumber(gameStore.maxEliteAnts, 0) }}
+            </p>
+          </div>
+          <div class="w-full flex flex-wrap gap-2">
+            <button
+              :disabled="gameStore.larvae < gameStore.larvaCostPerEliteAnt || gameStore.seeds < gameStore.seedCostPerEliteAnt"
+              class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+              @click="gameStore.createEliteAnts"
+            >
+              Create Ant <br>({{ formatNumber(gameStore.seedCostPerEliteAnt) }} seeds, {{
+                formatNumber(gameStore.larvaCostPerEliteAnt)
+              }} larvae)
+            </button>
+            <button
+              :disabled="gameStore.larvae < gameStore.larvaCostPerEliteAnt || gameStore.seeds < gameStore.seedCostPerEliteAnt"
+              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+              @click="gameStore.createEliteMaxAnts()"
+            >
+              Max
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        v-tooltip="'Maybe it has something to do with how many times we\'ve prestiged?'"
+        class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
+      >
+        <h2>
+          LOCKED
+        </h2>
       </div>
 
       <!-- Queen Section -->

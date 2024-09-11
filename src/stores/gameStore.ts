@@ -14,6 +14,9 @@ export const useGameStore = defineStore('gameStore', {
     loggedIn: false,
     larvae: 0,
     ants: 0,
+    eliteAnts: 0,
+
+    eliteAntsUnlocked: false,
 
     larvaeAccumulator: 0, // To accumulate fractional larvae production
     seedAccumulator: 0, // To accumulate fractional seed production
@@ -27,12 +30,14 @@ export const useGameStore = defineStore('gameStore', {
     maxLarvae: 10, // Initial larvae storage capacity
     maxAnts: 100, // Initial ant storage capacity
     maxQueens: 2, // Initial queen storage capacity
+    maxEliteAnts: 1,
 
     // Initial resource caps
     initialMaxSeeds: 1000,
     initialMaxLarvae: 10,
     initialMaxAnts: 100,
     initialMaxQueens: 2,
+    initialMaxEliteAnts: 1,
 
     // Upgrade variables
     seedStorageUpgradeCost: 500, // Initial cost to upgrade seed storage
@@ -47,9 +52,13 @@ export const useGameStore = defineStore('gameStore', {
     collectionRatePerAnt: 60, // Seeds collected per ant per minute
     seedCostPerLarva: 100, // Cost in seeds to create one larva
     seedCostPerAnt: 50, // Cost in seeds to create one ant
+    seedCostPerEliteAnt: 100,
     larvaCostPerAnt: 1, // Cost in larvae to create one ant
+    larvaCostPerEliteAnt: 5,
     antCostPerQueen: 100, // Ants required to buy one queen
     seedCostPerQueen: 250, // Seeds required to buy one queen
+
+    multiplierPerEliteAnt: 1.5,
 
     // Adventure-related variables
     attackPerAnt: 2, // Attack value per ant
@@ -67,7 +76,7 @@ export const useGameStore = defineStore('gameStore', {
     // Calculate larvae production per second for real-time updates
     larvaePerSecond: (state) => (state.queens * state.larvaeProductionRate) / 60,
     // Calculate seed production per second based on ants
-    seedsPerSecond: (state) => (state.collectionRatePerAnt * state.ants) / 60,
+    seedsPerSecond: (state) => (state.collectionRatePerAnt * state.ants * (state.eliteAnts * state.multiplierPerEliteAnt)) / 60,
   },
 
   actions: {
@@ -110,6 +119,21 @@ export const useGameStore = defineStore('gameStore', {
         this.seeds -= maxAntsToCreate * this.seedCostPerAnt
         this.ants += maxAntsToCreate
       }
+    },
+    // Function to create ants using larvae and seeds
+    createEliteAnts() {
+      if (this.larvae >= this.larvaCostPerEliteAnt && this.seeds >= this.seedCostPerEliteAnt && this.eliteAnts < this.maxEliteAnts) {
+        this.eliteAnts += 1
+        this.larvae -= this.larvaCostPerEliteAnt
+        this.seeds -= this.seedCostPerEliteAnt
+        return true
+      }
+
+      return false
+    },
+    // Create max ants based on available larvae and seeds
+    createEliteMaxAnts() {
+      while (this.createEliteAnts()) {}
     },
     // Function to buy more queens
     buyQueen() {
@@ -446,12 +470,14 @@ export const useGameStore = defineStore('gameStore', {
       const prestigeStore = usePrestigeStore()
       return {
         ants: this.ants,
+        eliteAnts: this.eliteAnts,
         seeds: this.seeds,
         queens: this.queens,
         larvae: this.larvae,
         maxSeeds: this.maxSeeds,
         maxLarvae: this.maxLarvae,
         maxAnts: this.maxAnts,
+        maxEliteAnts: this.maxEliteAnts,
         maxQueens: this.maxQueens,
         seedStorageUpgradeCost: this.seedStorageUpgradeCost,
         larvaeStorageUpgradeCost: this.larvaeStorageUpgradeCost,
@@ -519,12 +545,14 @@ export const useGameStore = defineStore('gameStore', {
 
     loadStateFromFirebase(savedState) {
       this.ants = savedState.ants ?? this.ants
+      this.eliteAnts = savedState.eliteAnts ?? this.eliteAnts
       this.seeds = savedState.seeds ?? this.seeds
       this.queens = savedState.queens ?? this.queens
       this.larvae = savedState.larvae ?? this.larvae
       this.maxSeeds = savedState.maxSeeds ?? this.maxSeeds
       this.maxLarvae = savedState.maxLarvae ?? this.maxLarvae
       this.maxAnts = savedState.maxAnts ?? this.maxAnts
+      this.maxEliteAnts = savedState.maxEliteAnts ?? this.maxEliteAnts
       this.maxQueens = savedState.maxQueens ?? this.maxQueens
       this.seedStorageUpgradeCost = savedState.seedStorageUpgradeCost ?? this.seedStorageUpgradeCost
       this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
@@ -537,6 +565,8 @@ export const useGameStore = defineStore('gameStore', {
 
       const prestigeStore = usePrestigeStore()
       prestigeStore.loadPrestigeState(savedState)
+
+      this.eliteAntsUnlocked = prestigeStore.upgradePurchased('eliteAnts')
     },
 
     async loadOtherStoreStates() {
@@ -594,6 +624,7 @@ export const useGameStore = defineStore('gameStore', {
       this.ants = 0
       this.seeds = 10
       this.queens = 1
+      this.eliteAnts = 0
 
       this.larvaeProductionRate = 1
       this.collectionRatePerAnt = 60
@@ -601,6 +632,7 @@ export const useGameStore = defineStore('gameStore', {
       this.maxSeeds = this.initialMaxSeeds
       this.maxLarvae = this.initialMaxLarvae
       this.maxAnts = this.initialMaxAnts
+      this.maxEliteAnts = this.initialMaxEliteAnts
       this.maxQueens = this.initialMaxQueens
 
       this.seedStorageUpgradeCost = 500
@@ -626,6 +658,7 @@ export const useGameStore = defineStore('gameStore', {
     resetDebugState() {
       const prestigeStore = usePrestigeStore()
       prestigeStore.prestigePoints = 0
+      prestigeStore.timesPrestiged = 0
       prestigeStore.purchasedUpgrades = []
 
       this.healthPerAnt = 10
