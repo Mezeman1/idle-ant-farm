@@ -664,6 +664,7 @@ export const useGameStore = defineStore('gameStore', {
       this.healthPerAnt = 10
       this.attackPerAnt = 2
       this.defensePerAnt = 1
+      this.eliteAntsUnlocked = false
 
       prestigeStore.resetPrestigeShopCosts()
 
