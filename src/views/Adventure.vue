@@ -58,7 +58,7 @@
           <p class="text-lg font-bold">
             Ant Army
           </p>
-          <p>Health: {{ formatNumber(adventureStore.armyHealth) }} / {{ formatNumber(adventureStore.armyMaxHealth) }}</p>
+          <p>Health: <br>{{ formatNumber(adventureStore.armyHealth) }} / {{ formatNumber(adventureStore.armyMaxHealth) }}</p>
           <div class="progress-container">
             <div
               class="progress-bar"
@@ -84,7 +84,7 @@
           <p class="text-lg font-bold">
             {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }} {{ adventureStore.currentEnemy?.isBoss ? '👑' : '' }}
           </p>
-          <p>Health: {{ formatNumber(adventureStore.bugHealth) }} / {{ formatNumber(adventureStore.bugMaxHealth) }}</p>
+          <p>Health: <br>{{ formatNumber(adventureStore.bugHealth) }} / {{ formatNumber(adventureStore.bugMaxHealth) }}</p>
           <div class="progress-container">
             <div
               class="progress-bar"
@@ -124,6 +124,7 @@ const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
 
 watch(() => adventureStore.currentArea, () => {
+  selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
   adventureStore.battleCooldown = false
   adventureStore.spawnRandomEnemy()
 })
