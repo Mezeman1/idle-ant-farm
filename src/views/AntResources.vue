@@ -368,6 +368,17 @@
           >GitHub issues page</a>.
         </p>
       </div>
+
+      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
+        <h2>Want to help support the game?</h2>
+        <p>
+          Consider <a
+            href="https://buymeacoffee.com/idleantfarm"
+            target="_blank"
+            class="text-blue-500"
+          >buying me a coffee</a> ☕️.
+        </p>
+      </div>
     </div>
   </div>
 </template>
