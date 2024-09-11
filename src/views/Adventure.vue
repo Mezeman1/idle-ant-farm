@@ -8,18 +8,43 @@
         for="area"
         class="text-md font-semibold"
       >Select Area:</label>
-      <select
-        v-model="adventureStore.currentArea"
-        class="flex-1 bg-white border border-gray-300 rounded-lg shadow-sm p-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-      >
-        <option
-          v-for="wave in adventureStore.enemyWaves"
-          :key="wave.name"
-          :disabled="!wave?.unlockedWhen(useGameStore())"
+      <div class="relative inline-block w-full">
+        <button
+          ref="target"
+          class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:border-blue-500"
+          @click="toggleDropdown"
         >
-          {{ wave.name }}
-        </option>
-      </select>
+          {{ selectedWave ? selectedWave.name : 'Select a wave' }}
+          <span class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+            <svg
+              class="fill-current h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <path d="M5.5 7l4.5 4.5L14.5 7z" />
+            </svg>
+          </span>
+        </button>
+        <div
+          v-if="dropdownOpen"
+          class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow-lg"
+        >
+          <div
+            v-for="wave in adventureStore.enemyWaves"
+            :key="wave.name"
+            :class="[
+              'cursor-pointer px-4 py-2 text-gray-700 hover:bg-gray-200',
+              !wave.unlockedWhen(useGameStore()) && 'text-gray-400 cursor-not-allowed',
+            ]"
+            @click="selectWave(wave)"
+          >
+            <span v-if="wave.unlockedWhen(useGameStore())">{{ wave.name }}</span>
+            <span v-else>
+              {{ wave.name }} 🔒 ({{ wave.unlockText }})
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="grid grid-cols-2 gap-4 mb-4">
       <!-- Ant Army Side -->
@@ -80,6 +105,7 @@
       <button
         :class="adventureStore.isFighting || adventureStore.battleCooldown ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'"
         class="text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-50"
+        :disabled="!adventureStore.currentArea"
         @click="adventureStore.toggleBattle()"
       >
         {{ adventureStore.isFighting || adventureStore.battleCooldown ? 'Stop Battle' : 'Start Battle' }}
@@ -91,7 +117,8 @@
 <script setup lang="ts">
 import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
-import {watch} from 'vue'
+import {ref, watch} from 'vue'
+import {onClickOutside} from '@vueuse/core'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
@@ -99,6 +126,27 @@ const adventureStore = useAdventureStore()
 watch(() => adventureStore.currentArea, () => {
   adventureStore.battleCooldown = false
   adventureStore.spawnRandomEnemy()
+})
+
+const dropdownOpen = ref(false)
+const selectedWave = ref(null)
+
+const toggleDropdown = () => {
+  dropdownOpen.value = !dropdownOpen.value
+}
+
+const selectWave = (wave) => {
+  if (wave.unlockedWhen(useGameStore())) {
+    selectedWave.value = wave
+    dropdownOpen.value = false
+    adventureStore.currentArea = wave.name
+  }
+}
+
+const target = ref(null)
+
+onClickOutside(target, event => {
+  dropdownOpen.value = false
 })
 </script>
 

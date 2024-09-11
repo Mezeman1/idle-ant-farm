@@ -23,7 +23,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     bugDefense: 0,
     bugRegen: 2,
 
-    currentArea: 'Wasteland',
+    currentArea: null,
     enemyWaves: adventureEnemyWaves,
     currentEnemy: null,
 
@@ -51,6 +51,9 @@ export const useAdventureStore = defineStore('adventureStore', {
 
   actions: {
     toggleBattle(shouldJustStart = false) {
+      if (!this.currentArea)
+        return
+
       if ((this.isFighting && !shouldJustStart) || (this.battleCooldown && !shouldJustStart)) {
         console.log('Battle Stopped')
         this.stopBattle() // Stop if currently running

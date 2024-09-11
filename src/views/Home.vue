@@ -67,11 +67,9 @@
             </li>
 
             <li
-              v-tooltip="gameStore.ants < 10 ? 'You need at least 10 ants to start an adventure.' : ''"
               class="flex-shrink-0"
             >
               <button
-                :disabled="gameStore.ants < 10"
                 :class="activeTab === 'adventure' ? activeTabClasses : defaultTabClasses"
                 class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 disabled:cursor-not-allowed text-2xs md:text-sm"
                 @click.prevent="setActiveTab('adventure')"
