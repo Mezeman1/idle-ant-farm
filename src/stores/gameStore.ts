@@ -85,47 +85,36 @@ export const useGameStore = defineStore('gameStore', {
   actions: {
     // Function to create larvae using seeds, respecting the larvae cap
     createLarvae() {
-      if (this.seeds >= this.seedCostPerLarva && this.larvae < this.maxLarvae) {
+      if (this.seeds >= this.seedCostPerLarva && this.larvae < Math.floor(this.maxLarvae)) {
         this.larvae += 1
         this.seeds -= this.seedCostPerLarva
+        return true
       }
+
+      return false
     },
     // Create max larvae based on available seeds and larvae cap
     createMaxLarvae() {
-      const maxLarvaeToCreate = Math.min(
-        Math.floor(this.seeds / this.seedCostPerLarva), // Calculate how many larvae can be created based on seeds
-        this.maxLarvae - this.larvae, // Respect larvae cap
-      )
-
-      // Ensure that only whole larvae are created
-      if (maxLarvaeToCreate >= 1) {
-        this.larvae += maxLarvaeToCreate // Add whole larvae to the total
-        this.seeds -= maxLarvaeToCreate * this.seedCostPerLarva // Deduct seeds based on how many larvae were created
-      }
+      while (this.createLarvae()) {}
     },
     // Function to create ants using larvae and seeds
     createAnts() {
-      if (this.larvae >= this.larvaCostPerAnt && this.seeds >= this.seedCostPerAnt && this.ants < this.maxAnts) {
+      if (this.larvae >= this.larvaCostPerAnt && this.seeds >= this.seedCostPerAnt && this.ants < Math.floor(this.maxAnts)) {
         this.ants += 1
         this.larvae -= this.larvaCostPerAnt
         this.seeds -= this.seedCostPerAnt
+        return true
       }
+
+      return false
     },
     // Create max ants based on available larvae and seeds
     createMaxAnts() {
-      const maxAntsByLarvae = this.larvae
-      const maxAntsBySeeds = Math.floor(this.seeds / this.seedCostPerAnt)
-      const maxAntsToCreate = Math.min(maxAntsByLarvae, maxAntsBySeeds, this.maxAnts - this.ants)
-
-      if (maxAntsToCreate >= 1) {
-        this.larvae -= maxAntsToCreate * this.larvaCostPerAnt
-        this.seeds -= maxAntsToCreate * this.seedCostPerAnt
-        this.ants += maxAntsToCreate
-      }
+      while (this.createAnts()) {}
     },
     // Function to create ants using larvae and seeds
     createEliteAnts() {
-      if (this.larvae >= this.larvaCostPerEliteAnt && this.seeds >= this.seedCostPerEliteAnt && this.eliteAnts < this.maxEliteAnts) {
+      if (this.larvae >= this.larvaCostPerEliteAnt && this.seeds >= this.seedCostPerEliteAnt && this.eliteAnts < Math.floor(this.maxEliteAnts)) {
         this.eliteAnts += 1
         this.larvae -= this.larvaCostPerEliteAnt
         this.seeds -= this.seedCostPerEliteAnt
@@ -140,23 +129,18 @@ export const useGameStore = defineStore('gameStore', {
     },
     // Function to buy more queens
     buyQueen() {
-      if (this.ants >= this.antCostPerQueen && this.seeds >= this.seedCostPerQueen && this.queens < this.maxQueens) {
+      if (this.ants >= this.antCostPerQueen && this.seeds >= this.seedCostPerQueen && this.queens < Math.floor(this.maxQueens)) {
         this.queens += 1
         this.ants -= this.antCostPerQueen
         this.seeds -= this.seedCostPerQueen
+        return true
       }
+
+      return false
     },
     // Buy max queens based on available ants and seeds
     buyMaxQueens() {
-      const maxQueensByAnts = Math.floor(this.ants / this.antCostPerQueen)
-      const maxQueensBySeeds = Math.floor(this.seeds / this.seedCostPerQueen)
-      const maxQueensToBuy = Math.min(maxQueensByAnts, maxQueensBySeeds, this.maxQueens - this.queens)
-
-      if (maxQueensToBuy > 0) {
-        this.ants -= maxQueensToBuy * this.antCostPerQueen
-        this.seeds -= maxQueensToBuy * this.seedCostPerQueen
-        this.queens += maxQueensToBuy
-      }
+      while (this.buyQueen()) {}
     },
     // Collect seeds manually, but respect the seed cap
     collectSeedsManually(amount = 1) {
