@@ -306,7 +306,10 @@ export const useGameStore = defineStore('gameStore', {
     updateResources(deltaTime) {
       // Update larvae, but only if there are queens
       if (this.queens > 0) {
-        const larvaeToAdd = (this.larvaeProductionRate * this.queens * deltaTime) / 60
+        const larvaePerSecond = this.larvaePerSecond // Use the larvaePerSecond calculation
+
+        // Calculate how many larvae to add based on deltaTime
+        const larvaeToAdd = larvaePerSecond * deltaTime
         this.larvaeAccumulator += larvaeToAdd
 
         // Only add full larvae units when the accumulator reaches or exceeds 1
@@ -319,7 +322,10 @@ export const useGameStore = defineStore('gameStore', {
 
       // Update seeds, but only if there are ants
       if (this.ants > 0) {
-        const seedsToAdd = (this.collectionRatePerAnt * this.ants * deltaTime) / 60
+        const seedsPerSecond = this.seedsPerSecond // Use the seedsPerSecond calculation
+
+        // Calculate how many seeds to add based on deltaTime
+        const seedsToAdd = seedsPerSecond * deltaTime
         this.seedAccumulator += seedsToAdd
 
         // Only add full seed units when the accumulator reaches or exceeds 1
