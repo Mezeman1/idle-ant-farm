@@ -76,7 +76,10 @@ export const useGameStore = defineStore('gameStore', {
     // Calculate larvae production per second for real-time updates
     larvaePerSecond: (state) => (state.queens * state.larvaeProductionRate) / 60,
     // Calculate seed production per second based on ants
-    seedsPerSecond: (state) => (state.collectionRatePerAnt * state.ants * (state.eliteAnts * state.multiplierPerEliteAnt)) / 60,
+    seedsPerSecond: (state) => {
+      const eliteMultiplier = state.eliteAnts > 0 ? (state.eliteAnts * state.multiplierPerEliteAnt) : 1
+      return (state.collectionRatePerAnt * state.ants * eliteMultiplier) / 60
+    },
   },
 
   actions: {
