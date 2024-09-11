@@ -1,15 +1,20 @@
 <template>
   <button
-    class="p-2 flex flex-col items-center h-full w-full cursor-pointer"
+    class="p-2 flex flex-col items-center h-full w-full cursor-pointer relative overflow-hidden bg-white text-gray-900 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
     @click="$emit('setActiveItem', item)"
   >
-    <div class="w-full text-right">
-      {{ formatNumber(item.amount) }}
+    <!-- Amount badge in the top-right corner -->
+    <div class="absolute text-3xs sm:text-2xs md:text-xs lg:text-sm top-1 right-1 bg-gray-200 text-gray-900 rounded-full z-10 py-1 px-2 shadow">
+      {{ formatNumber(item.amount, 0) }}
     </div>
-    <div class="text-3xs text-center break-words">
+
+    <!-- Item name -->
+    <div class="text-3xs sm:text-2xs md:text-xs lg:text-sm text-center break-words mt-6">
       {{ item.name }}
     </div>
-    <span class="text-3xs">
+
+    <!-- Item type -->
+    <span class="text-3xs sm:text-2xs md:text-xs lg:text-sm mt-1 text-gray-500">
       {{ itemFromRegistry.type }}
     </span>
   </button>

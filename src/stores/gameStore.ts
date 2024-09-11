@@ -14,6 +14,10 @@ export const useGameStore = defineStore('gameStore', {
     loggedIn: false,
     larvae: 0,
     ants: 0,
+
+    larvaeAccumulator: 0, // To accumulate fractional larvae production
+    seedAccumulator: 0, // To accumulate fractional seed production
+
     seeds: 10,
     queens: 1, // Initial queen
     lastSavedTime: Date.now(),
@@ -76,10 +80,15 @@ export const useGameStore = defineStore('gameStore', {
     },
     // Create max larvae based on available seeds and larvae cap
     createMaxLarvae() {
-      const maxLarvaeToCreate = Math.min(Math.floor(this.seeds / this.seedCostPerLarva), this.maxLarvae - this.larvae)
-      if (maxLarvaeToCreate > 0) {
-        this.larvae += maxLarvaeToCreate
-        this.seeds -= maxLarvaeToCreate * this.seedCostPerLarva
+      const maxLarvaeToCreate = Math.min(
+        Math.floor(this.seeds / this.seedCostPerLarva), // Calculate how many larvae can be created based on seeds
+        this.maxLarvae - this.larvae, // Respect larvae cap
+      )
+
+      // Ensure that only whole larvae are created
+      if (maxLarvaeToCreate >= 1) {
+        this.larvae += maxLarvaeToCreate // Add whole larvae to the total
+        this.seeds -= maxLarvaeToCreate * this.seedCostPerLarva // Deduct seeds based on how many larvae were created
       }
     },
     // Function to create ants using larvae and seeds
@@ -96,7 +105,7 @@ export const useGameStore = defineStore('gameStore', {
       const maxAntsBySeeds = Math.floor(this.seeds / this.seedCostPerAnt)
       const maxAntsToCreate = Math.min(maxAntsByLarvae, maxAntsBySeeds, this.maxAnts - this.ants)
 
-      if (maxAntsToCreate > 0) {
+      if (maxAntsToCreate >= 1) {
         this.larvae -= maxAntsToCreate * this.larvaCostPerAnt
         this.seeds -= maxAntsToCreate * this.seedCostPerAnt
         this.ants += maxAntsToCreate
@@ -227,9 +236,11 @@ export const useGameStore = defineStore('gameStore', {
     // Start the game loop for real-time resource generation, respecting caps
     startGameLoop() {
       if (this.isGameLoopRunning) {
+        console.log('Game loop is already running')
         return // Prevent multiple loops from being started
       }
 
+      console.log('Starting game loop')
       this.isGameLoopRunning = true
       let lastFrameTime = performance.now()
       let timeAccumulator = 0
@@ -258,28 +269,38 @@ export const useGameStore = defineStore('gameStore', {
         lastFrameTime = currentTime
 
         if (this.isGameLoopRunning) {
-          requestAnimationFrame(gameLoop)
+          this.gameLoopInterval = requestAnimationFrame(gameLoop)
         }
       }
 
-      requestAnimationFrame(gameLoop)
+      this.gameLoopInterval = requestAnimationFrame(gameLoop)
     },
 
     updateResources(deltaTime) {
       // Update larvae, but only if there are queens
       if (this.queens > 0) {
-        this.larvae = Math.min(
-          this.larvae + (this.larvaeProductionRate * this.queens * deltaTime) / 60,
-          this.maxLarvae,
-        )
+        const larvaeToAdd = (this.larvaeProductionRate * this.queens * deltaTime) / 60
+        this.larvaeAccumulator += larvaeToAdd
+
+        // Only add full larvae units when the accumulator reaches or exceeds 1
+        const wholeLarvae = Math.floor(this.larvaeAccumulator)
+        if (wholeLarvae > 0) {
+          this.larvae = Math.min(this.larvae + wholeLarvae, this.maxLarvae)
+          this.larvaeAccumulator -= wholeLarvae // Subtract the whole units from the accumulator
+        }
       }
 
       // Update seeds, but only if there are ants
       if (this.ants > 0) {
-        this.seeds = Math.min(
-          this.seeds + (this.collectionRatePerAnt * this.ants * deltaTime) / 60,
-          this.maxSeeds,
-        )
+        const seedsToAdd = (this.collectionRatePerAnt * this.ants * deltaTime) / 60
+        this.seedAccumulator += seedsToAdd
+
+        // Only add full seed units when the accumulator reaches or exceeds 1
+        const wholeSeeds = Math.floor(this.seedAccumulator)
+        if (wholeSeeds > 0) {
+          this.seeds = Math.min(this.seeds + wholeSeeds, this.maxSeeds)
+          this.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
+        }
       }
     },
 
@@ -301,6 +322,7 @@ export const useGameStore = defineStore('gameStore', {
 
     stopGameLoop() {
       if (this.gameLoopInterval) {
+        console.log('Stopping game loop')
         cancelAnimationFrame(this.gameLoopInterval)
         this.gameLoopInterval = null // Reset the loop interval
         this.isGameLoopRunning = false
@@ -640,12 +662,11 @@ export const useGameStore = defineStore('gameStore', {
     },
 
 
-    formatNumber(num: number): string {
-      num = Math.floor(num)
-
+    formatNumber(num: number, toFixed = 2): string {
+      if (toFixed === 0) num = Math.floor(num)
       // Use normal formatting for numbers below 1 million
       if (num < 100e6) {
-        if (num < 1000) return num.toFixed(0)
+        if (num < 1000) return num.toFixed(toFixed)
 
         const suffixes = ['', 'K', 'M']
         const exponent = Math.floor(Math.log10(Math.abs(num)) / 3)

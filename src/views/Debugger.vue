@@ -62,6 +62,28 @@
       >
         Give queen crown
       </button>
+
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        @click="inventoryStore.addItemToInventory({
+          id: 'grasshopper-leg',
+          name: 'Grasshopper Leg',
+          amount: 1000,
+        })"
+      >
+        Give 1000 Grasshopper legs
+      </button>
+
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        @click="inventoryStore.addItemToInventory({
+          id: 'butterfly-wing',
+          name: 'Butterfly Wing',
+          amount: 1,
+        })"
+      >
+        Give butterfly wings
+      </button>
     </div>
   </div>
 </template>

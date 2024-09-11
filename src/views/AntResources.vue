@@ -104,7 +104,7 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.larvae) }}/{{ formatNumber(gameStore.maxLarvae) }}
+              Count: {{ formatNumber(gameStore.larvae, 0) }}/{{ formatNumber(gameStore.maxLarvae, 0) }}
               ({{ formatNumber(gameStore.larvaePerMinute) }} /min)
             </p>
             <button
@@ -187,7 +187,7 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.ants) }}/{{ formatNumber(gameStore.maxAnts) }}
+              Count: {{ formatNumber(gameStore.ants, 0) }}/{{ formatNumber(gameStore.maxAnts, 0) }}
             </p>
           </div>
           <div class="w-full flex flex-wrap gap-2">
@@ -253,7 +253,7 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full ">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.queens) }}/{{ formatNumber(gameStore.maxQueens) }}
+              Count: {{ formatNumber(gameStore.queens, 0) }}/{{ formatNumber(gameStore.maxQueens, 0) }}
             </p>
           </div>
           <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">

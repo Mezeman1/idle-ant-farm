@@ -17,7 +17,7 @@ export const usePrestigeStore = defineStore('prestige', {
   state: () => ({
     prestigePoints: 0, // New prestige currency
     timesPrestiged: 0, // Number of times prestiged
-    purchasedUpgrades: [], // List of purchased prestige upgrades
+    purchasedUpgrades: [] as Array<string>, // List of purchased prestige upgrades
     prestigeShop: [
       // {
       //   id: 'autoLarvae',
@@ -124,6 +124,11 @@ export const usePrestigeStore = defineStore('prestige', {
       // Increase queen contribution to 10 points per queen after the first one
       const pointsFromQueens = Math.max((gameStore.queens - 1) * 2, 0) // 2 points per extra queen after the first
 
+      // when < 0 return 0
+      if (pointsFromSeeds + pointsFromAnts + pointsFromQueens < 0) {
+        return 0
+      }
+
       // Combine all points together
       return pointsFromSeeds + pointsFromAnts + pointsFromQueens
     },
@@ -163,7 +168,7 @@ export const usePrestigeStore = defineStore('prestige', {
       }
     },
     // Buy an upgrade from the prestige shop
-    buyUpgrade(upgradeId) {
+    buyUpgrade(upgradeId: string): boolean {
       const upgrade = this.prestigeShop.find(u => u.id === upgradeId)
 
       if (upgrade && this.prestigePoints >= upgrade.cost) {
@@ -171,10 +176,19 @@ export const usePrestigeStore = defineStore('prestige', {
         upgrade.cost *= 1.5 // Increase cost by 50%
         this.purchasedUpgrades.push(upgradeId)
         this.applyPrestigeUpgrade(upgradeId)
+
         console.log(`Purchased upgrade: ${upgrade.name}`)
+        return true
       } else {
         console.log('Not enough prestige points or invalid upgrade.')
       }
+
+      return false
+    },
+    buyMaxUpgrade(upgradeId: string): boolean {
+        while (this.buyUpgrade(upgradeId)) {}
+
+        return true
     },
     // Apply a purchased upgrade
     applyPrestigeUpgrade(upgradeId, fromPrestige = false) {

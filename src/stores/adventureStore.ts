@@ -190,6 +190,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     // For offline progress
     lastSavedTime: Date.now(),
     isSimulatingOffline: false,
+    animationFrameId: 0,
   }),
 
   actions: {
@@ -217,7 +218,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.spawnRandomEnemy()
       }
 
-      requestAnimationFrame(this.battleLoop)
+      this.animationFrameId = requestAnimationFrame(this.battleLoop)
     },
 
     // Stop the battle loop
@@ -225,6 +226,10 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.isFighting = false
       this.battleRunning = false
       this.battleCooldown = false
+      if (this.animationFrameId) {
+        cancelAnimationFrame(this.animationFrameId)
+        this.animationFrameId = 0
+      }
     },
 
     // Main battle loop with requestAnimationFrame
@@ -241,7 +246,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       // Keep running the loop as long as the battle is running
       if (this.battleRunning) {
-        requestAnimationFrame(this.battleLoop)
+        this.animationFrameId = requestAnimationFrame(this.battleLoop)
       }
     },
 

@@ -47,51 +47,65 @@
         :key="category.name"
         class="category-section"
       >
-        <button
-          class="w-full flex items-center justify-between bg-gray-200 hover:bg-gray-300 p-2 rounded"
-          @click="toggleCategory(category.name)"
+        <div
+          v-if="!allUpgradesInCategoryPurchaseableForOneTimePurchase(category.name)"
         >
-          <span class="font-bold">{{ category.name }}</span>
-          <span v-if="!category.expanded">+</span>
-          <span v-if="category.expanded">-</span>
-        </button>
-
-        <!-- Upgrade List (shown when expanded) -->
-        <ul
-          v-if="category.expanded"
-          class="space-y-2 mt-2"
-        >
-          <li
-            v-for="upgrade in category.upgrades"
-            :key="upgrade.id"
-            class="flex items-center justify-between bg-white p-2 rounded shadow"
+          <button
+            class="w-full flex items-center justify-between bg-gray-200 hover:bg-gray-300 p-2 rounded"
+            @click="toggleCategory(category.name)"
           >
-            <div>
-              <p>
-                {{ upgrade.name }} {{
-                  !upgrade.oneTimePurchase && prestigeStore.amountOfUpgrade(upgrade.id) > 0 ? `(${prestigeStore.amountOfUpgrade(upgrade.id)})` : ''
-                }}
-              </p>
-              <p class="text-xs text-gray-500">
-                <span v-html="upgrade.description" />
-              </p>
-              <p
-                v-if="upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id)"
-                class="text-xs text-blue-600"
-              >
-                Purchased
-              </p>
-            </div>
-            <button
-              v-if="!upgrade.oneTimePurchase || !prestigeStore.upgradePurchased(upgrade.id)"
-              :disabled="prestigeStore.prestigePoints < upgrade.cost"
-              class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
-              @click="prestigeStore.buyUpgrade(upgrade.id)"
+            <span class="font-bold">{{ category.name }}</span>
+            <span v-if="!category.expanded">+</span>
+            <span v-if="category.expanded">-</span>
+          </button>
+
+          <!-- Upgrade List (shown when expanded) -->
+          <ul
+            v-if="category.expanded"
+            class="space-y-2 mt-2"
+          >
+            <li
+              v-for="upgrade in category.upgrades"
+              :key="upgrade.id"
+              class="flex flex-col bg-white p-2 rounded shadow"
             >
-              Buy for {{ formatNumber(upgrade.cost) }} Points
-            </button>
-          </li>
-        </ul>
+              <div>
+                <p>
+                  {{ upgrade.name }} {{
+                    !upgrade.oneTimePurchase && prestigeStore.amountOfUpgrade(upgrade.id) > 0 ? `(${prestigeStore.amountOfUpgrade(upgrade.id)})` : ''
+                  }}
+                </p>
+                <p class="text-xs text-gray-500">
+                  <span v-html="upgrade.description" />
+                </p>
+                <p
+                  v-if="upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id)"
+                  class="text-xs text-blue-600"
+                >
+                  Purchased
+                </p>
+              </div>
+              <div class="flex justify-between items-center">
+                <button
+                  v-if="!upgrade.oneTimePurchase || !prestigeStore.upgradePurchased(upgrade.id)"
+                  :disabled="prestigeStore.prestigePoints < upgrade.cost"
+                  class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  @click="prestigeStore.buyUpgrade(upgrade.id)"
+                >
+                  Buy for {{ formatNumber(upgrade.cost) }} Points
+                </button>
+                <button
+                  v-if="!upgrade.oneTimePurchase && !prestigeStore.upgradePurchased(upgrade.id)"
+                  :disabled="prestigeStore.prestigePoints < upgrade.cost"
+                  class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  @click="prestigeStore.buyMaxUpgrade(upgrade.id)"
+                >
+                  Buy max
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -106,7 +120,7 @@ import {usePrestigeStore} from '@/stores/prestigeStore'
 
 const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()
-const formatNumber = gameStore.formatNumber
+const formatNumber = (num: number) => gameStore.formatNumber(num, 0)
 
 const categories = [
   {
@@ -130,6 +144,16 @@ const categories = [
     upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'expansion'),
   },
 ]
+
+const allUpgradesInCategoryPurchaseableForOneTimePurchase = (categoryName) => {
+  const category = categories.find(cat => cat.name === categoryName)
+
+  if (!category) {
+    return false
+  }
+
+  return category.upgrades.every(upgrade => upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id))
+}
 
 // Make the categories reactive and add an "expanded" property to control visibility
 const categorizedUpgrades = ref(categories.map(category => ({

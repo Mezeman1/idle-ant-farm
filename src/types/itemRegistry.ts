@@ -105,6 +105,7 @@ export const itemRegistry: Item[] = [
     name: 'Butterfly Wing',
     type: 'passive',
     description: 'Health regeneration increased by 50%. (Does not stack)',
+    applyOnPrestige: true,
     effect: () => {
       console.log('Increasing health regeneration by 50%')
       const adventureStore = useAdventureStore()

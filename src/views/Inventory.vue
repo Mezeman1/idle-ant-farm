@@ -73,7 +73,17 @@ const inventoryStore = useInventoryStore() // Use the inventory store to get the
 const totalSlots = computed(() => inventoryStore.maxInventory) // Total slots in the grid
 
 // Determine the number of columns based on screen size (responsive)
-const amountOfColumns = computed(() => width.value > 768 ? 10 : 5) // Use 12 columns for large screens, 6 for smaller ones
+// Determine the number of columns based on screen size (responsive)
+const amountOfColumns = computed(() => {
+  if (width.value > 1024) {
+    return 10 // Large screens (desktops and larger)
+  } else if (width.value > 768) {
+    return 5 // Medium screens (tablets, smaller laptops)
+  } else {
+    return 3 // Small screens (mobile devices)
+  }
+})
+
 const activeItem = ref(null) // Reference to the active item
 
 const selectItem = (item) => {
@@ -170,6 +180,25 @@ const useItem = (itemId: number) => {
 
 .grid-stack-item-content:hover {
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+$columns: 3;
+@function fixed($float) {
+  @return round($float * 1000) / 1000; // total 2+3 digits being %
+}
+
+.gs-#{$columns} > .grid-stack-item {
+
+  width: fixed(100% / $columns);
+
+  @for $i from 1 through $columns - 1 {
+    &[gs-x='#{$i}'] {
+      left: fixed((100% / $columns) * $i);
+    }
+    &[gs-w='#{$i+1}'] {
+      width: fixed((100% / $columns) * ($i+1));
+    }
+  }
 }
 
 $columns: 5;
