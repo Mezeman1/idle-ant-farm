@@ -140,20 +140,29 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     handlePlayerDefeat() {
       console.log('Bug Wins!')
+      if (!this.isSimulatingOffline) {
+        const $toast = useToast()
+        $toast.error('You were defeated by the bug!')
+      }
       this.isFighting = false
-      this.battleCooldown = true // Enter a cooldown state after defeat
 
       // Start a regeneration loop after defeat to limit full healing
       this.regenAfterDefeat()
     },
 
     regenAfterDefeat() {
+      if (this.battleCooldown) {
+        console.log('Regeneration is already running.')
+        return // Prevent multiple regen loops
+      }
+
+      this.battleCooldown = true // Enter cooldown state
       const regenInterval = 100 // Apply regeneration every 100ms
 
       const defeatRegen = () => {
         if (this.armyHealth < this.armyMaxHealth) {
           this.applyRegeneration() // Apply gradual regeneration
-          setTimeout(defeatRegen, regenInterval)
+          setTimeout(defeatRegen, regenInterval) // Continue regeneration
         } else {
           console.log('Regeneration after defeat finished')
           this.battleCooldown = false // Exit cooldown state
@@ -164,6 +173,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       defeatRegen() // Start the regeneration loop
     },
+
 
     handleKillCount() {
       const killKey = this.currentEnemy.name.toLowerCase().replace(/\s+/g, '') + 'Kills'
@@ -442,7 +452,14 @@ export const useAdventureStore = defineStore('adventureStore', {
             }
 
             const deltaTime = Math.min(chunkDuration, remainingTime)
-            this.updateCombat(deltaTime) // Simulate combat
+            const playerDied = this.updateCombat(deltaTime)
+            if (playerDied) {
+              console.log('Player died during offline progress. Stopping simulation.')
+              this.isSimulatingOffline = false
+              resolve() // End the simulation early
+              return
+            }
+
             this.applyRegeneration(deltaTime) // Simulate health regeneration
             this.handleLoot() // Simulate loot collection
 
@@ -480,7 +497,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         // Check if either the army or the bug is defeated
         if (this.armyHealth === 0) {
           this.handlePlayerDefeat()
-          break // Stop combat if the player is defeated
+          return true // Stop combat if the player is defeated
         }
 
         if (this.bugHealth === 0) {
@@ -490,6 +507,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           // Continue to next enemy
         }
       }
+
+      return false
     },
 
     handleLoot() {

@@ -146,15 +146,16 @@ export const adventureEnemyWaves = [
   },
 
   // New wave: Mountains
+  // New wave: Mountains
   {
     name: 'Mountains',
     enemies: [
       {
         name: 'Mountain Ant',
-        health: 12000,  // A bit lower than player health
-        attack: 2400,   // Slightly lower attack than player
-        defense: 1000,  // Slightly lower defense
-        regen: 50,      // Moderate regen, lower than player’s
+        health: 13000,  // Slightly lower than player health
+        attack: 2800,   // Slightly lower attack than player
+        defense: 1200,  // Slightly lower defense
+        regen: 60,      // Slightly lower regen than player
         dropOptions: [
           seedDrop(1000, 2500, 0.7),
           {
@@ -166,10 +167,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Rock Beetle',
-        health: 14000,  // Slightly higher than player health
-        attack: 2600,   // On par with player's attack
-        defense: 1300,  // On par with player's defense
-        regen: 60,      // Higher regen than Mountain Ant
+        health: 15000,  // On par with player health
+        attack: 3000,   // On par with player's attack
+        defense: 1500,  // On par with player's defense
+        regen: 75,      // Slightly higher regen than player
         dropOptions: [
           seedDrop(1200, 3000, 0.7),
           {
@@ -181,10 +182,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Giant Mantis',
-        health: 16000,  // Higher than player's health
-        attack: 2800,   // Slightly higher than player's attack
-        defense: 1500,  // Higher than player's defense
-        regen: 100,     // Higher regen
+        health: 18000,  // Higher than player's health
+        attack: 3200,   // Slightly higher than player's attack
+        defense: 1700,  // Higher than player's defense
+        regen: 100,     // Higher regen than player
         dropOptions: [
           seedDrop(1500, 3500, 0.5),
           {
@@ -196,9 +197,9 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Stone Golem',
-        health: 22000,  // Significantly higher than player's health
-        attack: 3000,   // Stronger than player’s attack
-        defense: 2000,  // Stronger defense
+        health: 23000,  // Significantly higher than player's health
+        attack: 3500,   // Stronger than player's attack
+        defense: 2000,  // Stronger defense than player
         regen: 150,     // Strong regen for a boss
         isBoss: true,
         dropOptions: [
@@ -211,9 +212,8 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 1000 || gameStore.queens >= 5,
+    unlockedWhen: (gameStore) => gameStore.ants >= 1000 || gameStore.queens >= 10,
   },
-
 
   // New wave: Volcano
   {
@@ -221,10 +221,10 @@ export const adventureEnemyWaves = [
     enemies: [
       {
         name: 'Lava Ant',
-        health: 50000,
-        attack: 8000,
-        defense: 4000,
-        regen: 500,
+        health: 120000,  // A bit lower than player health
+        attack: 32000,   // Slightly lower attack than player
+        defense: 15000,  // Slightly lower defense than player
+        regen: 500,      // Moderate regen
         dropOptions: [
           seedDrop(3000, 7000, 0.6),
           {
@@ -236,10 +236,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Magma Beetle',
-        health: 60000,
-        attack: 9000,
-        defense: 5000,
-        regen: 600,
+        health: 140000,  // On par with player health
+        attack: 35000,   // Slightly lower attack than player
+        defense: 16000,  // On par with player defense
+        regen: 600,      // Higher regen
         dropOptions: [
           seedDrop(3500, 7500, 0.7),
           {
@@ -251,10 +251,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Fire Scorpion',
-        health: 70000,
-        attack: 10000,
-        defense: 6000,
-        regen: 700,
+        health: 160000,  // Slightly higher than player's health
+        attack: 37000,   // On par with player's attack
+        defense: 17000,  // Higher defense than player
+        regen: 700,      // High regen
         dropOptions: [
           seedDrop(4000, 8000, 0.5),
           {
@@ -266,10 +266,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Molten Dragon',
-        health: 100000,
-        attack: 12000,
-        defense: 8000,
-        regen: 1000,
+        health: 200000,  // Significantly higher than player's health
+        attack: 40000,   // Stronger attack than player
+        defense: 18000,  // Stronger defense
+        regen: 1000,     // Very strong regen for a boss
         isBoss: true,
         dropOptions: [
           {
@@ -281,7 +281,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 5000 || gameStore.queens >= 10,
+    unlockedWhen: (gameStore) => gameStore.ants >= 5000 || gameStore.queens >= 20,
   },
 
   // New wave: Underworld
@@ -290,12 +290,12 @@ export const adventureEnemyWaves = [
     enemies: [
       {
         name: 'Hellfire Ant',
-        health: 250000,
-        attack: 20000,
-        defense: 10000,
-        regen: 2000,
+        health: 8_000_000,  // Lower than player health
+        attack: 2_000_000,  // Close to player attack
+        defense: 1_000_000, // Slightly lower than player's defense
+        regen: 500,         // Moderate regen
         dropOptions: [
-          seedDrop(10000, 15000, 0.5),
+          seedDrop(10_000, 15_000, 0.5),
           {
             name: 'Hellfire Ant Fang',
             chance: 0.08,
@@ -305,12 +305,12 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Demonic Beetle',
-        health: 300000,
-        attack: 25000,
-        defense: 12000,
-        regen: 2500,
+        health: 9_000_000,  // Closer to player's health
+        attack: 2_200_000,  // Slightly lower than player attack
+        defense: 1_200_000, // Near player defense
+        regen: 600,         // Slightly higher regen
         dropOptions: [
-          seedDrop(12000, 18000, 0.6),
+          seedDrop(12_000, 18_000, 0.6),
           {
             name: 'Demonic Carapace',
             chance: 0.05,
@@ -320,12 +320,12 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Infernal Scorpion',
-        health: 350000,
-        attack: 30000,
-        defense: 15000,
-        regen: 3000,
+        health: 10_000_000, // Matches player’s health
+        attack: 2_500_000,  // On par with player attack
+        defense: 1_300_000, // Matches player defense
+        regen: 750,         // Higher regen than other enemies
         dropOptions: [
-          seedDrop(15000, 20000, 0.4),
+          seedDrop(15_000, 20_000, 0.4),
           {
             name: 'Infernal Tail',
             chance: 0.03,
@@ -335,10 +335,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Underworld Lord',
-        health: 500000,
-        attack: 50000,
-        defense: 25000,
-        regen: 5000,
+        health: 12_000_000, // Stronger than player’s health
+        attack: 3_000_000,  // Stronger than player’s attack
+        defense: 1_500_000, // Stronger defense
+        regen: 1_000,       // High regen for a boss
         isBoss: true,
         dropOptions: [
           {
@@ -346,10 +346,11 @@ export const adventureEnemyWaves = [
             chance: 0.001,
             amountBetween: [1, 1],
           },
-          seedDrop(20000, 30000, 0.5),
+          seedDrop(20_000, 30_000, 0.5),
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 10000 || gameStore.queens >= 20,
+    unlockedWhen: (gameStore) => gameStore.ants >= 1_000_000 || gameStore.queens >= 10_000,
   },
+
 ]
