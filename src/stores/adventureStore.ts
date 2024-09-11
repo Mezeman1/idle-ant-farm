@@ -1,9 +1,9 @@
-import { defineStore } from 'pinia'
-import { useGameStore } from './gameStore'
-import { useToast } from 'vue-toast-notification'
-import { useInventoryStore } from './inventoryStore'
-import { deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore'
-import { db } from '../firebase'
+import {defineStore} from 'pinia'
+import {useGameStore} from './gameStore'
+import {useToast} from 'vue-toast-notification'
+import {useInventoryStore} from './inventoryStore'
+import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
+import {db} from '../firebase'
 import {adventureEnemyWaves} from '../types/AdventureEnemyWaves'
 
 export const useAdventureStore = defineStore('adventureStore', {
@@ -46,6 +46,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     lastSavedTime: Date.now(),
     isSimulatingOffline: false,
     animationFrameId: 0,
+    regenLoopActive: false,
   }),
 
   actions: {
@@ -87,17 +88,14 @@ export const useAdventureStore = defineStore('adventureStore', {
       }
     },
 
-    // Main battle loop with requestAnimationFrame
+    // Main battle loop with requestAnimationFrame (tick-based)
     battleLoop(currentTime) {
-      const deltaTime = currentTime - this.lastFrameTime
+      const deltaTime = (currentTime - this.lastFrameTime) / 1000 // Convert time to seconds
       this.lastFrameTime = currentTime
       this.accumulatedTime += deltaTime
 
-      // Process combat if the accumulated time exceeds the tick threshold
-      if (this.accumulatedTime >= this.combatTick) {
-        this.processCombat()
-        this.accumulatedTime = 0
-      }
+      // Process combat every tick (based on how much time has passed)
+      this.processCombat(deltaTime)
 
       // Keep running the loop as long as the battle is running
       if (this.battleRunning) {
@@ -105,57 +103,77 @@ export const useAdventureStore = defineStore('adventureStore', {
       }
     },
 
-    processCombat() {
+    processCombat(deltaTime) {
       if (this.isFighting && this.enemySpawned) {
-        this.applyArmyDamage()
-        this.applyBugDamage()
+        // Calculate damage based on DPS and the time passed since the last frame (deltaTime)
+        this.applyArmyDamage(deltaTime)
+        this.applyBugDamage(deltaTime)
 
-        if (this.armyHealth === 0) {
+        // Check for defeat conditions
+        if (this.armyHealth <= 0) {
           this.handlePlayerDefeat()
         }
 
-        if (this.bugHealth === 0) {
+        if (this.bugHealth <= 0) {
           this.handleEnemyDefeat()
         }
       }
 
-      this.applyRegeneration() // No params for real-time loop
+      this.applyRegeneration(deltaTime) // Regenerate health during the real-time loop
     },
 
-    applyArmyDamage() {
+    applyArmyDamage(deltaTime) {
+      // Calculate how much damage is applied per tick (DPS * deltaTime)
       const variation = 0.9 + Math.random() * 0.2 // Random multiplier between 0.9 and 1.1
-      const baseDamage = Math.max(this.armyAttack - this.bugDefense, 1)
-      const armyDamage = baseDamage * variation // Apply random variation
-      this.bugHealth = Math.max(this.bugHealth - armyDamage, 0)
+      const armyDPS = Math.max(this.armyAttack - this.bugDefense, 1) // Calculate DPS
+      const damageThisTick = armyDPS * deltaTime * variation // Damage for this tick
+      this.bugHealth = Math.max(this.bugHealth - damageThisTick, 0)
     },
 
-    applyBugDamage() {
+    applyBugDamage(deltaTime) {
+      // Calculate how much damage is applied per tick (DPS * deltaTime)
       const variation = 0.9 + Math.random() * 0.2 // Random multiplier between 0.9 and 1.1
-      const baseDamage = Math.max(this.bugAttack - this.armyDefense, 1)
-      const bugDamage = baseDamage * variation // Apply random variation
-      this.armyHealth = Math.max(this.armyHealth - bugDamage, 0)
+      const bugDPS = Math.max(this.bugAttack - this.armyDefense, 1) // Calculate DPS
+      const damageThisTick = bugDPS * deltaTime * variation // Damage for this tick
+      this.armyHealth = Math.max(this.armyHealth - damageThisTick, 0)
     },
 
     handlePlayerDefeat() {
       console.log('Bug Wins!')
       this.isFighting = false
-      this.applyRegeneration() // Regenerate after defeat
+      this.battleCooldown = true // Enter a cooldown state after defeat
+
+      // Start a regeneration loop after defeat to limit full healing
+      this.regenAfterDefeat()
     },
 
-    handleEnemyDefeat() {
-      this.enemySpawned = false
-      this.battleCooldown = true // Enter cooldown state
-      this.isFighting = false
+    regenAfterDefeat() {
+      const regenInterval = 100 // Apply regeneration every 100ms
 
-      // Update kill counts
+      const defeatRegen = () => {
+        if (this.armyHealth < this.armyMaxHealth) {
+          this.applyRegeneration() // Apply gradual regeneration
+          setTimeout(defeatRegen, regenInterval)
+        } else {
+          console.log('Regeneration after defeat finished')
+          this.battleCooldown = false // Exit cooldown state
+          this.isFighting = false // Stop fighting
+          this.battleRunning = false // Stop the battle loop
+        }
+      }
+
+      defeatRegen() // Start the regeneration loop
+    },
+
+    handleKillCount() {
       const killKey = this.currentEnemy.name.toLowerCase().replace(/\s+/g, '') + 'Kills'
       if (this.killCounts[killKey] !== undefined) {
         this.killCounts[killKey] += 1
       } else {
         this.killCounts[killKey] = 1 // Initialize if not present
       }
-
-      // Handle loot
+    },
+    handleEnemyDrop() {
       this.currentEnemy.dropOptions?.forEach((drop) => {
         if (Math.random() < drop.chance) {
           const amount =
@@ -183,6 +201,17 @@ export const useAdventureStore = defineStore('adventureStore', {
           }
         }
       })
+    },
+    handleEnemyDefeat() {
+      this.enemySpawned = false
+      this.battleCooldown = true // Enter cooldown state
+      this.isFighting = false
+
+      // Update kill counts
+      this.handleKillCount()
+
+      // Handle loot
+      this.handleEnemyDrop()
 
       // Spawn a new enemy
       setTimeout(() => {
@@ -195,6 +224,30 @@ export const useAdventureStore = defineStore('adventureStore', {
           }
         }, 1000)
       }, 2000)
+
+      // Continue applying regeneration during the cooldown phase
+      this.regenDuringCooldown()
+    },
+
+    // Add regeneration during cooldown phase
+    regenDuringCooldown() {
+      const regenInterval = 100 // Apply regeneration every 100ms
+
+      // Check if the regeneration loop is already running
+      if (!this.regenLoopActive) {
+        this.regenLoopActive = true // Mark the loop as active
+
+        const cooldownRegen = () => {
+          if (this.battleCooldown || !this.isFighting) {
+            this.applyRegeneration() // Apply regeneration
+            setTimeout(cooldownRegen, regenInterval) // Continue regenerating during cooldown
+          } else {
+            this.regenLoopActive = false // Stop the loop when battle resumes
+          }
+        }
+
+        cooldownRegen() // Start the regeneration loop during cooldown
+      }
     },
 
     // Apply effects based on item type
@@ -208,18 +261,21 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     applyRegeneration(deltaTime = null) {
-      const regenTicks = deltaTime ? Math.floor(deltaTime) : 1 // Use deltaTime for offline, or 1 tick for real-time
+      // If deltaTime is passed, use it; otherwise assume it's 1 tick (for real-time)
+      const regenMultiplier = deltaTime ? deltaTime : 1
 
-      // Apply army regeneration
-      this.armyHealth = Math.min(
-        this.armyHealth + this.armyRegen * regenTicks,
-        this.armyMaxHealth,
-      )
+      // Apply army regeneration per tick
+      if (this.armyHealth < this.armyMaxHealth) {
+        this.armyHealth = Math.min(
+          this.armyHealth + this.armyRegen * regenMultiplier,
+          this.armyMaxHealth,
+        )
+      }
 
-      // Apply bug regeneration if the bug was spawned
-      if (this.enemySpawned) {
+      // Apply bug regeneration if the bug is spawned and not at max health
+      if (this.enemySpawned && this.bugHealth < this.bugMaxHealth) {
         this.bugHealth = Math.min(
-          this.bugHealth + this.bugRegen * regenTicks,
+          this.bugHealth + this.bugRegen * regenMultiplier,
           this.bugMaxHealth,
         )
       }
