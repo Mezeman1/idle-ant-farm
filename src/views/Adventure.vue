@@ -15,7 +15,7 @@
         <option
           v-for="wave in adventureStore.enemyWaves"
           :key="wave.name"
-          :disabled="!wave.unlocked"
+          :disabled="!wave?.unlockedWhen(useGameStore())"
         >
           {{ wave.name }}
         </option>
@@ -57,7 +57,7 @@
         >
         <div class="w-full mt-2 text-center">
           <p class="text-lg font-bold">
-            {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }}
+            {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }} {{ adventureStore.currentEnemy?.isBoss ? '👑' : '' }}
           </p>
           <p>Health: {{ formatNumber(adventureStore.bugHealth) }} / {{ formatNumber(adventureStore.bugMaxHealth) }}</p>
           <div class="progress-container">

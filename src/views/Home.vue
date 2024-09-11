@@ -260,11 +260,11 @@ onMounted(() => {
   })
 })
 
-onBeforeUnmount(() => {
+onBeforeUnmount(async () => {
   if (!loggedInUser.value) return
 
   // Save game state and stop game loop before leaving
-  gameStore.saveGameState()
+  await gameStore.saveGameState()
   gameStore.stopGameLoop()
 
   // Cleanup event listeners and intervals
@@ -299,11 +299,7 @@ function handleVisibilityChange() {
 }
 
 // Function to handle saving the game state before unloading the window (works on desktop only)
-function handleBeforeUnload(event: BeforeUnloadEvent) {
-  // Save game state asynchronously and show alert dialog on desktop browsers
-  event.preventDefault()
-  event.returnValue = '' // Triggers confirmation dialog (works only on desktop)
-
+function handleBeforeUnload() {
   // Save game state
   gameStore.saveGameState()
 }

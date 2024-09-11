@@ -1,6 +1,9 @@
 <template>
   <button
-    class="p-2 flex flex-col items-center h-full w-full cursor-pointer relative overflow-hidden bg-white text-gray-900 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+    :class="[
+      'p-2 flex flex-col items-center h-full w-full cursor-pointer relative overflow-hidden rounded-lg transition-all duration-200 shadow-md hover:shadow-lg',
+      rarityColorClass(itemFromRegistry.rarity)
+    ]"
     @click="$emit('setActiveItem', item)"
   >
     <!-- Amount badge in the top-right corner -->
@@ -33,6 +36,21 @@ const props = defineProps<{
     amount: number;
   };
 }>()
+
+const rarityColorClass = (rarity) => {
+  switch (rarity) {
+    case 'common':
+      return 'bg-gray-100 text-gray-900 border border-gray-200'
+    case 'uncommon':
+      return 'bg-green-100 text-green-900 border border-green-200'
+    case 'rare':
+      return 'bg-blue-100 text-blue-900 border border-blue-200'
+    case 'legendary':
+      return 'bg-yellow-100 text-yellow-900 border border-yellow-200'
+    default:
+      return 'bg-white text-gray-900 border border-gray-200'
+  }
+}
 
 const formatNumber = useGameStore().formatNumber
 const itemFromRegistry = computed(() => useInventoryStore().getItemById(props.item.id))

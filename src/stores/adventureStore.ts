@@ -4,6 +4,7 @@ import { useToast } from 'vue-toast-notification'
 import { useInventoryStore } from './inventoryStore'
 import { deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '../firebase'
+import {adventureEnemyWaves} from '../types/AdventureEnemyWaves'
 
 export const useAdventureStore = defineStore('adventureStore', {
   state: () => ({
@@ -23,153 +24,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     bugRegen: 2,
 
     currentArea: 'Wasteland',
-    enemyWaves: [
-      {
-        name: 'Wasteland',
-        enemies: [
-          {
-            name: 'Grasshopper',
-            health: 100,
-            attack: 8,
-            defense: 4,
-            regen: 2,
-            dropOptions: [
-              {
-                name: 'Seeds',
-                chance: 0.5,
-                amountBetween: [100, 500],
-              },
-              {
-                name: 'Grasshopper Leg',
-                chance: 0.2,
-                amountBetween: [1, 2],
-              },
-            ],
-          },
-          {
-            name: 'Beetle',
-            health: 150,
-            attack: 10,
-            defense: 5,
-            regen: 3,
-            dropOptions: [
-              {
-                name: 'Seeds',
-                chance: 0.5,
-                amountBetween: [100, 500],
-              },
-              {
-                name: 'Ant Strength Potion',
-                chance: 0.1,
-                amountBetween: [1, 2],
-              },
-            ],
-          },
-          {
-            name: 'Wasp',
-            health: 120,
-            attack: 12,
-            defense: 6,
-            regen: 2,
-            dropOptions: [
-              {
-                name: 'Seeds',
-                chance: 0.5,
-                amountBetween: [100, 500],
-              },
-              {
-                name: 'Queen Crown',
-                chance: 0.05,
-                amountBetween: [1, 1],
-              },
-            ],
-          },
-        ],
-        unlocked: true,
-      },
-      {
-        name: 'Forest',
-        enemies: [
-          {
-            name: 'Spider',
-            health: 2000,
-            attack: 150,
-            defense: 80,
-            regen: 40,
-            dropOptions: [
-              {
-                name: 'Seeds',
-                chance: 0.5,
-                amountBetween: [100, 500],
-              },
-              {
-                name: 'Spider Silk',
-                chance: 0.05,
-                amountBetween: [1, 2],
-              },
-            ],
-          },
-          {
-            name: 'Centipede',
-            health: 2500,
-            attack: 180,
-            defense: 100,
-            regen: 50,
-            dropOptions: [
-              {
-                name: 'Seeds',
-                chance: 0.5,
-                amountBetween: [100, 500],
-              },
-              {
-                name: 'Centipede Leg',
-                chance: 0.2,
-                amountBetween: [1, 2],
-              },
-            ],
-          },
-          {
-            name: 'Moth',
-            health: 1800,
-            attack: 140,
-            defense: 70,
-            regen: 30,
-            dropOptions: [
-              {
-                name: 'Seeds',
-                chance: 0.5,
-                amountBetween: [100, 500],
-              },
-              {
-                name: 'Moth Dust',
-                chance: 0.1,
-                amountBetween: [1, 2],
-              },
-            ],
-          },
-          {
-            name: 'Butterfly',
-            health: 3000,
-            attack: 200,
-            defense: 120,
-            regen: 60,
-            dropOptions: [
-              {
-                name: 'Butterfly Wing',
-                chance: 0.01,
-                amountBetween: [1, 2],
-              },
-              {
-                name: 'Butterfly Dust',
-                chance: 0.05,
-                amountBetween: [1, 1],
-              },
-            ],
-          },
-        ],
-        unlocked: true,
-      },
-    ],
+    enemyWaves: adventureEnemyWaves,
     currentEnemy: null,
 
     enemySpawned: false,
@@ -268,12 +123,16 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     applyArmyDamage() {
-      const armyDamage = Math.max(this.armyAttack - this.bugDefense, 1)
+      const variation = 0.9 + Math.random() * 0.2 // Random multiplier between 0.9 and 1.1
+      const baseDamage = Math.max(this.armyAttack - this.bugDefense, 1)
+      const armyDamage = baseDamage * variation // Apply random variation
       this.bugHealth = Math.max(this.bugHealth - armyDamage, 0)
     },
 
     applyBugDamage() {
-      const bugDamage = Math.max(this.bugAttack - this.armyDefense, 1)
+      const variation = 0.9 + Math.random() * 0.2 // Random multiplier between 0.9 and 1.1
+      const baseDamage = Math.max(this.bugAttack - this.armyDefense, 1)
+      const bugDamage = baseDamage * variation // Apply random variation
       this.armyHealth = Math.max(this.armyHealth - bugDamage, 0)
     },
 
@@ -383,7 +242,6 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.bugDefense = enemy.defense
       this.bugRegen = enemy.regen
 
-      console.log(`New Enemy Spawned: ${enemy.name}`)
       this.enemySpawned = true
     },
 
@@ -498,11 +356,21 @@ export const useAdventureStore = defineStore('adventureStore', {
       return new Promise((resolve, reject) => {
         try {
           const currentTime = Date.now()
-          const timeElapsed = (currentTime - this.lastSavedTime) / 1000
+          let timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
+
+          // Define the offline cap (24 hours = 86400 seconds)
+          const OFFLINE_CAP = 86400
+
+          // Cap the offline time to 24 hours
+          if (timeElapsed > OFFLINE_CAP) {
+            console.log('Offline time capped to 24 hours (86400 seconds)')
+            timeElapsed = OFFLINE_CAP
+          }
+
           console.log(`Time elapsed (offline): ${timeElapsed} seconds`)
 
           let remainingTime = timeElapsed
-          const chunkDuration = 60
+          const chunkDuration = 60 // Simulate in chunks of 60 seconds
 
           this.isSimulatingOffline = true
           this.progress = 0 // Initialize progress
@@ -518,14 +386,14 @@ export const useAdventureStore = defineStore('adventureStore', {
             }
 
             const deltaTime = Math.min(chunkDuration, remainingTime)
-            this.updateCombat(deltaTime)
-            this.applyRegeneration(deltaTime)
-            this.handleLoot()
+            this.updateCombat(deltaTime) // Simulate combat
+            this.applyRegeneration(deltaTime) // Simulate health regeneration
+            this.handleLoot() // Simulate loot collection
 
             remainingTime -= deltaTime
             this.progress = Math.min(100, ((timeElapsed - remainingTime) / timeElapsed) * 100) // Update progress
 
-            setTimeout(simulateOffline, 0)
+            setTimeout(simulateOffline, 0) // Continue simulating in the next event loop cycle
           }
 
           simulateOffline()

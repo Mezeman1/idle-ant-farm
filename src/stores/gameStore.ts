@@ -181,7 +181,17 @@ export const useGameStore = defineStore('gameStore', {
       return new Promise((resolve, reject) => {
         try {
           const currentTime = Date.now()
-          const timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
+          let timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
+
+          // Define the offline cap (24 hours = 86400 seconds)
+          const OFFLINE_CAP = 86400
+
+          // Cap the offline time to 24 hours
+          if (timeElapsed > OFFLINE_CAP) {
+            console.log('Offline time capped to 24 hours (86400 seconds)')
+            timeElapsed = OFFLINE_CAP
+          }
+
           const prestigeStore = usePrestigeStore()
 
           // Always log lastSavedTime, currentTime, and the time difference
@@ -682,10 +692,10 @@ export const useGameStore = defineStore('gameStore', {
     setupAdventureStats() {
       const adventureStore = useAdventureStore()
       if (this.ants === 0) return
-      adventureStore.armyMaxHealth = this.ants * this.healthPerAnt
-      adventureStore.armyHealth = adventureStore.armyHealth ? Math.min(adventureStore.armyHealth, adventureStore.armyMaxHealth) : adventureStore.armyMaxHealth
-      adventureStore.armyAttack = this.ants * this.attackPerAnt
-      adventureStore.armyDefense = this.ants * this.defensePerAnt
+      adventureStore.armyMaxHealth = this.ants * this.healthPerAnt + (this.queens - 1) * this.healthPerAnt * this.antCostPerQueen
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth, adventureStore.armyMaxHealth)
+      adventureStore.armyAttack = this.ants * this.attackPerAnt + (this.queens - 1) * this.attackPerAnt * this.antCostPerQueen
+      adventureStore.armyDefense = this.ants * this.defensePerAnt + (this.queens - 1) * this.defensePerAnt * this.antCostPerQueen
     },
 
 

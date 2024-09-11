@@ -68,13 +68,21 @@ export const useInventoryStore = defineStore('inventoryStore', {
     },
 
     sortInventory() {
-      const sortBy = [
-        'consumable',
-        'buff',
-        'passive',
+      const sortByRarity = [
+        'common',
+        'uncommon',
+        'rare',
+        'epic',
+        'legendary',
       ]
 
-      this.inventory.sort((a, b) => sortBy.indexOf(a.type) - sortBy.indexOf(b.type))
+      this.inventory.sort((a, b) => {
+        if (a.rarity === b.rarity) {
+          return a.name.localeCompare(b.name)
+        }
+
+        return sortByRarity.indexOf(a.rarity) - sortByRarity.indexOf(b.rarity)
+      })
     },
 
     // Save inventory state to Firebase Firestore
