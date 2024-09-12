@@ -95,9 +95,19 @@ export const useGameStore = defineStore('gameStore', {
     },
     // Create max larvae based on available seeds and larvae cap
     createMaxLarvae() {
-      while (this.createLarvae()) {
+      const availableLarvaeSpace = Math.floor(this.maxLarvae) - this.larvae
+      const maxCreatableLarvae = Math.floor(this.seeds / this.seedCostPerLarva)
+
+      // Calculate how many larvae can actually be created
+      const larvaeToCreate = Math.min(availableLarvaeSpace, maxCreatableLarvae)
+
+      // If there is space and enough seeds to create larvae
+      if (larvaeToCreate > 0) {
+        this.larvae += larvaeToCreate
+        this.seeds -= larvaeToCreate * this.seedCostPerLarva
       }
     },
+
     // Function to create ants using larvae and seeds
     createAnts() {
       if (this.larvae >= this.larvaCostPerAnt && this.seeds >= this.seedCostPerAnt && this.ants < Math.floor(this.maxAnts)) {
@@ -110,8 +120,20 @@ export const useGameStore = defineStore('gameStore', {
       return false
     },
     // Create max ants based on available larvae and seeds
+    // Create max ants based on available larvae and seeds
     createMaxAnts() {
-      while (this.createAnts()) {
+      const availableAntSpace = Math.floor(this.maxAnts) - this.ants
+      const maxCreatableAntsByLarvae = Math.floor(this.larvae / this.larvaCostPerAnt)
+      const maxCreatableAntsBySeeds = Math.floor(this.seeds / this.seedCostPerAnt)
+
+      // Calculate how many ants can actually be created based on both larvae and seeds
+      const antsToCreate = Math.min(availableAntSpace, maxCreatableAntsByLarvae, maxCreatableAntsBySeeds)
+
+      // If there is space and enough larvae and seeds to create ants
+      if (antsToCreate > 0) {
+        this.ants += antsToCreate
+        this.larvae -= antsToCreate * this.larvaCostPerAnt
+        this.seeds -= antsToCreate * this.seedCostPerAnt
       }
     },
     // Function to create ants using larvae and seeds
@@ -126,8 +148,20 @@ export const useGameStore = defineStore('gameStore', {
       return false
     },
     // Create max ants based on available larvae and seeds
+    // Create max elite ants based on available larvae and seeds
     createEliteMaxAnts() {
-      while (this.createEliteAnts()) {
+      const availableEliteAntSpace = Math.floor(this.maxEliteAnts) - this.eliteAnts
+      const maxCreatableEliteAntsByLarvae = Math.floor(this.larvae / this.larvaCostPerEliteAnt)
+      const maxCreatableEliteAntsBySeeds = Math.floor(this.seeds / this.seedCostPerEliteAnt)
+
+      // Calculate how many elite ants can actually be created based on both larvae and seeds
+      const eliteAntsToCreate = Math.min(availableEliteAntSpace, maxCreatableEliteAntsByLarvae, maxCreatableEliteAntsBySeeds)
+
+      // If there is space and enough larvae and seeds to create elite ants
+      if (eliteAntsToCreate > 0) {
+        this.eliteAnts += eliteAntsToCreate
+        this.larvae -= eliteAntsToCreate * this.larvaCostPerEliteAnt
+        this.seeds -= eliteAntsToCreate * this.seedCostPerEliteAnt
       }
     },
     // Function to buy more queens
@@ -142,8 +176,20 @@ export const useGameStore = defineStore('gameStore', {
       return false
     },
     // Buy max queens based on available ants and seeds
+    // Buy max queens based on available ants and seeds
     buyMaxQueens() {
-      while (this.buyQueen()) {
+      const availableQueenSpace = Math.floor(this.maxQueens) - this.queens
+      const maxPurchasableQueensByAnts = Math.floor(this.ants / this.antCostPerQueen)
+      const maxPurchasableQueensBySeeds = Math.floor(this.seeds / this.seedCostPerQueen)
+
+      // Calculate how many queens can actually be bought based on both ants and seeds
+      const queensToBuy = Math.min(availableQueenSpace, maxPurchasableQueensByAnts, maxPurchasableQueensBySeeds)
+
+      // If there is space and enough ants and seeds to buy queens
+      if (queensToBuy > 0) {
+        this.queens += queensToBuy
+        this.ants -= queensToBuy * this.antCostPerQueen
+        this.seeds -= queensToBuy * this.seedCostPerQueen
       }
     },
     // Collect seeds manually, but respect the seed cap
