@@ -246,7 +246,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
 
     handleKillCount() {
-      const killKey = this.currentEnemy.name.toLowerCase().replace(/\s+/g, '') + 'Kills'
+      const killKey = this.currentEnemy?.name.toLowerCase().replace(/\s+/g, '') + 'Kills'
       if (this.killCounts[killKey] !== undefined) {
         this.killCounts[killKey] += 1
       } else {
@@ -254,7 +254,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       }
     },
     handleEnemyDrop() {
-      this.currentEnemy.dropOptions?.forEach((drop) => {
+      this.currentEnemy?.dropOptions?.forEach((drop) => {
         if (Math.random() < drop.chance) {
           const amount =
             Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
@@ -583,7 +583,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     handleLoot() {
       if (this.bugHealth === 0 && this.enemySpawned) {
-        this.currentEnemy.dropOptions?.forEach((drop) => {
+        this.currentEnemy?.dropOptions?.forEach((drop) => {
           if (Math.random() < drop.chance) {
             const amount =
               Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
