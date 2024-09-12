@@ -67,7 +67,7 @@ export const useGameStore = defineStore('gameStore', {
     eliteAntsUnlocked: false,
     royalJellyUnlocked: false,
 
-    royalJellyCollectionChance: 0.01, // 0.1% chance to collect royal jelly when queen produces larvae
+    royalJellyCollectionChance: 0.0001, // 0.1% chance to collect royal jelly when queen produces larvae
 
     // Balancing factors
     storageUpgradeFactor: 1.4, // How much each upgrade increases storage by (20%)
