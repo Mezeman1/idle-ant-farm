@@ -105,7 +105,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Elite Ants Store Upgrade',
         description: 'Increase the amount of elite ants you can store by 100%',
         cost: 100,
-        applyOnPrestige: false,
+        applyOnPrestige: true,
         category: 'storage',
         unlockedWhen: () => {
           return usePrestigeStore().timesPrestiged >= 5
@@ -223,10 +223,25 @@ export const usePrestigeStore = defineStore('prestige', {
 
       return false
     },
+    // Buy max upgrades based on available prestige points
     buyMaxUpgrade(upgradeId: string): boolean {
-      while (this.buyUpgrade(upgradeId)) {
+      const upgrade = this.prestigeShop.find(u => u.id === upgradeId)
+      if (!upgrade) {
+        console.log('Invalid upgrade.')
+        return false
       }
 
+      // Keep buying the upgrade until you can't afford the next one
+      while (this.prestigePoints >= upgrade.cost) {
+        this.prestigePoints -= upgrade.cost
+        this.purchasedUpgrades.push(upgradeId)
+        this.applyPrestigeUpgrade(upgradeId)
+
+        // Increase the cost for the next purchase
+        upgrade.cost *= 1.5
+      }
+
+      console.log(`Purchased max upgrades for: ${upgrade.name}`)
       return true
     },
     // Apply a purchased upgrade
