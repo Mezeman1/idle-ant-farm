@@ -436,6 +436,8 @@ export const useGameStore = defineStore('gameStore', {
           const royalJellyChance = this.royalJellyCollectionChance * deltaTime
           if (Math.random() < royalJellyChance) {
             this.resources.royalJelly += 1
+            const $toast = useToast()
+            $toast.info('Royal jelly collected!')
           }
         }
       }
