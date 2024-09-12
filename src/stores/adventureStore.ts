@@ -4,7 +4,11 @@ import {useToast} from 'vue-toast-notification'
 import {useInventoryStore} from './inventoryStore'
 import {deleteDoc, doc, setDoc} from 'firebase/firestore'
 import {db} from '../firebase'
-import {adventureEnemyWaves} from '../types/AdventureEnemyWaves'
+import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
+
+interface KillCounts {
+  [key: string]: number
+}
 
 export const useAdventureStore = defineStore('adventureStore', {
   state: () => ({
@@ -25,7 +29,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     currentArea: null,
     enemyWaves: adventureEnemyWaves,
-    currentEnemy: null,
+    currentEnemy: null as Enemy | null,
 
     enemySpawned: false,
     battleRunning: false, // Combat status
@@ -37,10 +41,8 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Kill counts
     killCounts: {
-      grasshopperKills: 0,
-      beetleKills: 0,
-      waspKills: 0,
-    },
+
+    } as KillCounts,
 
     // For offline progress
     lastSavedTime: Date.now(),
@@ -399,26 +401,6 @@ export const useAdventureStore = defineStore('adventureStore', {
         killCounts: this.killCounts,
         currentArea: this.currentArea,
         isFighting: this.isFighting || this.battleCooldown, // Save the current battle state
-      }
-    },
-
-    // Save adventure state to Firebase Firestore
-    async saveAdventureState() {
-      const userId = await useGameStore().getUserId()
-      if (!userId) {
-        console.error('User ID not found')
-        return
-      }
-
-      const adventureState = this.getAdventureState()
-
-      console.log('Saving adventure state to Firestore:', adventureState)
-
-      try {
-        await setDoc(doc(db, 'adventure', userId), adventureState)
-        console.log('Adventure state saved to Firestore')
-      } catch (error) {
-        console.error('Error saving adventure state to Firestore:', error)
       }
     },
 

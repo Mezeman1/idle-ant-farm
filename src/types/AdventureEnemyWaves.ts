@@ -5,7 +5,8 @@ const seedDrop = (min, max, chance = 0.75) => ({
   amountBetween: [min, max],
 })
 
-interface Enemy {
+export interface Enemy {
+  image?: string
   name: string
   health: number
   attack: number
@@ -19,7 +20,7 @@ interface Enemy {
   isBoss?: boolean
 }
 
-interface AdventureEnemyWave {
+export interface AdventureEnemyWave {
   name: string
   enemies: Enemy[]
   unlockedWhen: (gameStore: any) => boolean
