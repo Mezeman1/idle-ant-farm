@@ -442,6 +442,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           this.isFighting = adventureState.isFighting ?? false
           this.lastSavedTime = adventureState.lastSavedTime ?? Date.now()
 
+          this.loadEnemyImages()
+
           // Mark as loaded once the state is fully set
           this.loaded = true
         } else {
@@ -453,6 +455,20 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.loaded = true
       }
     },
+
+    async loadEnemyImages() {
+      for (const wave of adventureEnemyWaves) {
+        for (const enemy of wave.enemies) {
+          try {
+            const image = await import(`../assets/enemies/${enemy.name.toLowerCase().replace(' ', '-')}.webp`)
+            enemy.image = image.default
+          } catch (error) {
+            console.error(`Error loading image for ${enemy.name}:`, error)
+          }
+        }
+      }
+    },
+
 
     // Reset adventure state and clear from Firebase Firestore
     async resetAdventureState() {
