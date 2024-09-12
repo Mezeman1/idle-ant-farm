@@ -105,342 +105,93 @@
       </div>
 
       <!-- Larvae Section -->
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-        <div class="flex items-center">
-          <div>
-            <p class="font-bold text-lg">
-              Larvae
-            </p>
-            <p class="text-2xs">
-              Larvae are the main resource used to create ants.
-            </p>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full">
-            <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.larvae, 0) }}/{{ formatNumber(gameStore.storage.maxLarvae, 0) }}
-              ({{ formatNumber(gameStore.larvaePerMinute) }} /min)
-            </p>
-            <div class="w-full flex gap-2">
-              <button
-                :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.larvaeStorageUpgradeCost"
-                class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.upgradeLarvaeStorage"
-              >
-                Upgrade storage ({{ formatNumber(gameStore.upgradeCosts.larvaeStorageUpgradeCost) }} seeds)
-              </button>
-              <button
-                :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.larvaeStorageUpgradeCost"
-                class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.upgradeMaxLarvaeStorage"
-              >
-                Max
-              </button>
-            </div>
-            <p
-              v-if="gameStore.storage.maxSeeds < gameStore.upgradeCosts.larvaeStorageUpgradeCost"
-              class="text-xs"
-            >
-              If only there was a way to increase your seed storage...
-            </p>
-          </div>
-          <div class="w-full flex gap-2">
-            <button
-              :disabled="gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva"
-              class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createLarvae"
-            >
-              Create Larvae ({{ formatNumber(gameStore.resourceCosts.seedCostPerLarva) }} seeds)
-            </button>
-            <button
-              :disabled="gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva"
-              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createMaxLarvae"
-            >
-              Max
-            </button>
-          </div>
-
-          <!--          Hidden to try out the removal of this feature. -->
-          <div
-            v-if="false"
-            class="w-full flex"
-          >
-            <label
-              v-if="prestigeStore.upgradePurchased('autoLarvae')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto creating</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoLarvaeCreation"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoLarvaeCreation,
-                    'bg-red-500': !prestigeStore.autoLarvaeCreation
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoLarvaeCreation,
-                    'translate-x-0': !prestigeStore.autoLarvaeCreation
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
+      <ResourceCard
+        resource-name="Larvae"
+        description="Larvae are the main resource used to create ants."
+        :current-amount="gameStore.resources.larvae"
+        :max-amount="gameStore.storage.maxLarvae"
+        :seed-cost="gameStore.resourceCosts.seedCostPerLarva"
+        :ant-cost="0"
+        :can-buy="gameStore.resources.seeds >= gameStore.resourceCosts.seedCostPerLarva"
+        :buy-action="gameStore.createLarvae"
+        :buy-max-action="gameStore.createMaxLarvae"
+        buy-icon=""
+        :auto-creation="false"
+        :auto-creation-unlocked="prestigeStore.upgradePurchased('autoLarvae')"
+        :auto-creation-model-value="prestigeStore.autoLarvaeCreation"
+        :has-storage-upgrade="true"
+        :storage-upgrade-cost="gameStore.upgradeCosts.larvaeStorageUpgradeCost"
+        :can-upgrade-storage="gameStore.resources.seeds >= gameStore.upgradeCosts.larvaeStorageUpgradeCost"
+        :upgrade-storage="gameStore.upgradeLarvaeStorage"
+        :upgrade-max-storage="gameStore.upgradeMaxLarvaeStorage"
+        @update:autoCreationModelValue="value => prestigeStore.autoLarvaeCreation = value"
+      />
 
       <!-- Ant Section -->
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-        <div>
-          <p class="font-bold text-lg">
-            Ants
-          </p>
-          <p class="text-2xs">
-            Ants collect seeds and fight bugs.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full">
-            <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.ants, 0) }}/{{ formatNumber(gameStore.storage.maxAnts, 0) }}
-            </p>
-          </div>
-          <div class="w-full flex flex-wrap gap-2">
-            <button
-              :disabled="gameStore.resources.larvae < 1 || gameStore.resources.seeds < 50"
-              class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createAnts"
-            >
-              Create Ant <br>({{ formatNumber(gameStore.resourceCosts.seedCostPerAnt) }} seeds, {{
-                formatNumber(gameStore.resourceCosts.larvaCostPerAnt)
-              }} larvae)
-            </button>
-            <button
-              :disabled="gameStore.resources.larvae < 1 || gameStore.resources.seeds < 50"
-              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createMaxAnts"
-            >
-              Max
-            </button>
-          </div>
-          <div class="w-full flex">
-            <label
-              v-if="prestigeStore.upgradePurchased('autoAnts')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto creating</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoAntCreation"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoAntCreation,
-                    'bg-red-500': !prestigeStore.autoAntCreation
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoAntCreation,
-                    'translate-x-0': !prestigeStore.autoAntCreation
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
+      <ResourceCard
+        resource-name="Ants"
+        description="Ants collect seeds and fight bugs."
+        :current-amount="gameStore.resources.ants"
+        :max-amount="gameStore.storage.maxAnts"
+        :seed-cost="gameStore.resourceCosts.seedCostPerAnt"
+        :ant-cost="gameStore.resourceCosts.larvaCostPerAnt"
+        :can-buy="gameStore.resources.larvae >= gameStore.resourceCosts.larvaCostPerAnt && gameStore.resources.seeds >= gameStore.resourceCosts.seedCostPerAnt"
+        :buy-action="gameStore.createAnts"
+        :buy-max-action="gameStore.createMaxAnts"
+        buy-icon=""
+        :auto-creation="true"
+        :auto-creation-unlocked="prestigeStore.upgradePurchased('autoAnts')"
+        :auto-creation-model-value="prestigeStore.autoAntCreation"
+        @update:autoCreationModelValue="value => prestigeStore.autoAntCreation = value"
+      />
 
       <!-- Elite Ant Section -->
-      <div
-        v-if="gameStore.eliteAntsUnlocked"
-        class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
-      >
-        <div>
-          <p class="font-bold text-lg">
-            Elite Ants
-          </p>
-          <p class="text-2xs">
-            Elite Ants help the ants to collect resources faster.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full">
-            <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.eliteAnts, 0) }}/{{ formatNumber(gameStore.storage.maxEliteAnts, 0) }}
-            </p>
-          </div>
-          <div class="w-full flex flex-wrap gap-2">
-            <button
-              :disabled="gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerEliteAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerEliteAnt"
-              class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createEliteAnts"
-            >
-              Create Ant <br>({{ formatNumber(gameStore.resourceCosts.seedCostPerEliteAnt) }} seeds, {{
-                formatNumber(gameStore.resourceCosts.larvaCostPerEliteAnt)
-              }} larvae)
-            </button>
-            <button
-              :disabled="gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerEliteAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerEliteAnt"
-              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createEliteMaxAnts()"
-            >
-              Max
-            </button>
-          </div>
-          <div class="w-full flex">
-            <label
-              v-if="prestigeStore.upgradePurchased('autoEliteAntsCreation')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto creating</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoEliteAntsCreation"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoEliteAntsCreation,
-                    'bg-red-500': !prestigeStore.autoEliteAntsCreation,
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoEliteAntsCreation,
-                    'translate-x-0': !prestigeStore.autoEliteAntsCreation,
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        v-tooltip="'Maybe it has something to do with how many times we\'ve prestiged?'"
-        class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
-      >
-        <h2>
-          LOCKED
-        </h2>
-      </div>
+      <ResourceCard
+        resource-name="Elite Ants"
+        description="Elite Ants help the ants to collect resources faster."
+        :current-amount="gameStore.resources.eliteAnts"
+        :max-amount="gameStore.storage.maxEliteAnts"
+        :seed-cost="gameStore.resourceCosts.seedCostPerEliteAnt"
+        :ant-cost="gameStore.resourceCosts.larvaCostPerEliteAnt"
+        :can-buy="gameStore.resources.larvae >= gameStore.resourceCosts.larvaCostPerEliteAnt && gameStore.resources.seeds >= gameStore.resourceCosts.seedCostPerEliteAnt"
+        :buy-action="gameStore.createEliteAnts"
+        :buy-max-action="gameStore.createEliteMaxAnts"
+        :unlocked="gameStore.eliteAntsUnlocked"
+        :locked-tooltip="'Maybe it has something to do with how many times we\'ve prestiged?'"
+        :auto-creation="true"
+        :auto-creation-unlocked="prestigeStore.upgradePurchased('autoEliteAntsCreation')"
+        :auto-creation-model-value="prestigeStore.autoEliteAntsCreation"
+        @update:autoCreationModelValue="value => prestigeStore.autoEliteAntsCreation = value"
+      />
 
-      <!-- Queen Section -->
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-        <div>
-          <p class="font-bold text-lg">
-            Queens
-          </p>
-          <p class="text-2xs">
-            Queens are the main producers of larvae.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full ">
-            <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.queens, 0) }}/{{ formatNumber(gameStore.storage.maxQueens, 0) }}
-            </p>
-          </div>
-          <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
-            <button
-              :disabled="gameStore.resources.ants < 100 || gameStore.resources.seeds < 250"
-              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.buyQueen"
-            >
-              Buy Queen 👑 ({{ formatNumber(gameStore.resourceCosts.seedCostPerQueen) }} seeds,
-              {{ formatNumber(gameStore.resourceCosts.antCostPerQueen) }} ants)
-            </button>
-            <button
-              :disabled="gameStore.resources.ants < 100 || gameStore.resources.seeds < 250"
-              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.buyMaxQueens"
-            >
-              Max
-            </button>
-          </div>
-
-          <div class="w-full flex">
-            <label
-              v-if="prestigeStore.upgradePurchased('autoQueens')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto creating</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoQueenCreation"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoQueenCreation,
-                    'bg-red-500': !prestigeStore.autoQueenCreation
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoQueenCreation,
-                    'translate-x-0': !prestigeStore.autoQueenCreation
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
+      <!-- Queens Section -->
+      <ResourceCard
+        resource-name="Queens"
+        description="Queens are the main producers of larvae."
+        :current-amount="gameStore.resources.queens"
+        :max-amount="gameStore.storage.maxQueens"
+        :seed-cost="gameStore.resourceCosts.seedCostPerQueen"
+        :ant-cost="gameStore.resourceCosts.antCostPerQueen"
+        :can-buy="gameStore.resources.ants >= 100 && gameStore.resources.seeds >= 250"
+        :buy-action="gameStore.buyQueen"
+        :buy-max-action="gameStore.buyMaxQueens"
+        buy-icon="👑"
+        :auto-creation="true"
+        :auto-creation-unlocked="true"
+        :auto-creation-model-value="prestigeStore.autoQueenCreation"
+        @update:autoCreationModelValue="prestigeStore.autoQueenCreation = $event"
+      />
 
       <!-- Royal Jelly Section -->
-      <div
-        v-if="gameStore.royalJellyUnlocked"
-        class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
-      >
-        <div>
-          <p class="font-bold text-lg">
-            Royal Jelly
-          </p>
-          <p class="text-2xs">
-            Royal Jelly is a special resource used to upgrade ants. (Coming soon)
-          </p>
-          <p class="text-2xs">
-            Queens have a chance to produce Royal Jelly.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full">
-            <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.royalJelly ?? 0, 0) }}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
-      >
-        <h2>
-          LOCKED
-        </h2>
-      </div>
+      <ResourceCard
+        :resource-name="'Royal Jelly'"
+        :description="'Royal Jelly is a special resource used to upgrade ants. (Coming soon). Queens have a chance to produce Royal Jelly.'"
+        :current-amount="gameStore.resources.royalJelly ?? 0"
+        :can-buy="false"
+        :unlocked="gameStore.royalJellyUnlocked"
+        :has-buy-action="false"
+        :locked-tooltip="'Maybe it has something to do with how many times we\'ve prestiged?'"
+      />
 
       <!-- Prestige Section -->
       <PrestigeShop />
@@ -474,6 +225,7 @@
 import {useGameStore} from '../stores/gameStore'
 import PrestigeShop from './PrestigeShop.vue'
 import {usePrestigeStore} from '../stores/prestigeStore'
+import ResourceCard from '@/components/ResourceCard.vue'
 
 const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()
