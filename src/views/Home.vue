@@ -185,7 +185,7 @@ import Debugger from './Debugger.vue'
 import Inventory from './Inventory.vue'
 import firebase from 'firebase/compat'
 import Settings from './Settings.vue'
-import {useAdventureStore} from '@/stores/adventureStore'
+import {useAdventureStore} from '../stores/adventureStore'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
@@ -302,15 +302,8 @@ function handleBeforeUnload() {
   gameStore.saveGameState()
 }
 
-
-const {
-  resources,
-} = storeToRefs(gameStore)
-
-
-watch(() => resources.ants, async () => {
-  console.log('Resources changed, updating adventure stats...')
-  gameStore.setupAdventureStats() // Setup adventure stats
+watch(() => gameStore.resources.ants, () => {
+  gameStore.setupAdventureStats()
 }, {
   immediate: true,
 })
