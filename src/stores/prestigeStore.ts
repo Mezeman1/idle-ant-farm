@@ -59,8 +59,8 @@ export const usePrestigeStore = defineStore('prestige', {
       },
       {
         id: 'autoEliteAntsCreation',
-        name: 'Auto Elite Ants Store Upgrade',
-        description: 'Automatically upgrade elite ant storage',
+        name: 'Auto Elite Ants Creation',
+        description: 'Automatically create elite ants based on ants and seeds',
         cost: 100,
         oneTimePurchase: true,
         applyOnPrestige: true,

@@ -653,8 +653,17 @@ export const useGameStore = defineStore('gameStore', {
 
     async loadStateFromFirebase(savedState) {
       console.log('Loading game state from Firestore...', savedState)
-      this.resources = savedState.resources ?? this.resources
-      this.storage = savedState.storage ?? this.storage
+
+      this.resources = {
+        ...this.resources,
+        ...savedState.resources,
+      }
+
+      this.storage = {
+        ...this.storage,
+        ...savedState.storage,
+      }
+
       this.upgradeCosts = savedState.upgradeCosts ?? this.upgradeCosts
 
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
