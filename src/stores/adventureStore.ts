@@ -231,7 +231,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       const defeatRegen = () => {
         if (this.armyHealth < this.armyMaxHealth) {
-          this.applyRegeneration() // Apply gradual regeneration
+          this.applyDefeatRegeneration() // Apply gradual regeneration
           setTimeout(defeatRegen, regenInterval) // Continue regeneration
         } else {
           console.log('Regeneration after defeat finished')
@@ -328,6 +328,16 @@ export const useAdventureStore = defineStore('adventureStore', {
 
         cooldownRegen() // Start the regeneration loop during cooldown
       }
+    },
+
+    applyDefeatRegeneration() {
+      const regenPercentage = 0.1 // 10% regeneration per tick
+
+      // Calculate 10% of the army's max health and apply it to the current health
+      const healthToRegen = this.armyMaxHealth * regenPercentage
+
+      // Apply the regeneration, but don't exceed max health
+      this.armyHealth = Math.min(this.armyHealth + healthToRegen, this.armyMaxHealth)
     },
 
     // Apply effects based on item type
