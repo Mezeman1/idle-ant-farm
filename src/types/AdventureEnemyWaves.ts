@@ -55,7 +55,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 10 || gameStore.queens >= 2,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 10 || gameStore.resources.queens >= 2,
     unlockText: 'Unlocked when you have 10 ants or 2 queens.',
   },
   {
@@ -143,7 +143,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 100 || gameStore.queens >= 2,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 100 || gameStore.resources.queens >= 2,
     unlockText: 'Unlocked when you have 100 ants or 2 queens.',
   },
   // New wave: Mountains
@@ -212,7 +212,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 1000 || gameStore.queens >= 10,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 1000 || gameStore.resources.queens >= 10,
     unlockText: 'Unlocked when you have 1000 ants or 10 queens.',
   },
 
@@ -282,7 +282,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 5000 || gameStore.queens >= 20,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 5000 || gameStore.resources.queens >= 20,
     unlockText: 'Unlocked when you have 5000 ants or 20 queens.',
   },
 
@@ -352,7 +352,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 1_000_000 || gameStore.queens >= 10_000,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 1_000_000 || gameStore.resources.queens >= 10_000,
     unlockText: 'Unlocked when you have 1 million ants or 10 thousand queens.',
   },
 
@@ -421,7 +421,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 2_000_000 || gameStore.queens >= 20_000,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 2_000_000 || gameStore.resources.queens >= 20_000,
     unlockText: 'Unlocked when you have 2 million ants or 20 thousand queens.',
   },
 
@@ -490,7 +490,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 5_000_000 || gameStore.queens >= 50_000,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 5_000_000 || gameStore.resources.queens >= 50_000,
     unlockText: 'Unlocked when you have 5 million ants or 50 thousand queens.',
   },
 
@@ -559,7 +559,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.ants >= 10_000_000 || gameStore.queens >= 100_000,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 10_000_000 || gameStore.resources.queens >= 100_000,
     unlockText: 'Unlocked when you have 10 million ants or 100 thousand queens.',
   },
 ]
