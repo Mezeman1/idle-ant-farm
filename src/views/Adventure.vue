@@ -117,7 +117,7 @@
 <script setup lang="ts">
 import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
-import {ref, watch} from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import {onClickOutside} from '@vueuse/core'
 
 const formatNumber = useGameStore().formatNumber
@@ -127,6 +127,10 @@ watch(() => adventureStore.currentArea, () => {
   selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
   adventureStore.battleCooldown = false
   adventureStore.spawnRandomEnemy()
+})
+
+onMounted(() => {
+  selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
 })
 
 const dropdownOpen = ref(false)
@@ -166,6 +170,6 @@ onClickOutside(target, event => {
 .progress-bar {
   height: 100%;
   background-color: #34d399; /* Green progress fill */
-  transition: width 0.5s ease; /* Smooth transition for progress changes */
+  transition: width 0.1s ease; /* Smooth transition for progress changes */
 }
 </style>

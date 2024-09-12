@@ -47,52 +47,107 @@ export const useAdventureStore = defineStore('adventureStore', {
     isSimulatingOffline: false,
     animationFrameId: 0,
     regenLoopActive: false,
-  }),
+    toggleCooldown: false,
+    loopActive: false,
 
+    toggleCooldownTimeout: 0,
+  }),
   actions: {
     toggleBattle(shouldJustStart = false) {
-      if (!this.currentArea)
+      console.log({
+        isFighting: this.isFighting,
+        battleRunning: this.battleRunning,
+        loopActive: this.loopActive,
+        toggleCooldown: this.toggleCooldown,
+      })
+      // Always allow stopping the battle
+      if (this.isFighting && !shouldJustStart || this.battleCooldown) {
+        this.stopBattle()
         return
-
-      if ((this.isFighting && !shouldJustStart) || (this.battleCooldown && !shouldJustStart)) {
-        console.log('Battle Stopped')
-        this.stopBattle() // Stop if currently running
-      } else {
-        console.log('Battle Started')
-        this.startBattle() // Start if not running
       }
+
+      // Apply cooldown only when trying to start the battle
+      if (this.battleRunning || this.loopActive || this.toggleCooldown) {
+        return // Prevent starting multiple loops or rapid starts
+      }
+
+      if (this.toggleCooldown) {
+        console.log('Battle toggle is on cooldown')
+        return // Prevent starting multiple loops during cooldown
+      }
+
+      // Start the battle if not already running
+      this.startBattle()
     },
 
     // Start the battle loop
     startBattle() {
-      // Check if already running
-      console.log('Battle Loop Started')
+      this.stopBattle() // Stop any existing battle before starting a new one
+
+      // Clear any previous toggle cooldown timeout
+      if (this.toggleCooldownTimeout) {
+        clearTimeout(this.toggleCooldownTimeout)
+      }
+
+      // Set a cooldown to prevent rapid toggling
+      this.toggleCooldown = true
+      this.toggleCooldownTimeout = setTimeout(() => {
+        this.toggleCooldown = false
+        this.toggleCooldownTimeout = 0 // Clear the timeout reference after it's done
+      }, 3000) // Adjust cooldown period as needed (e.g., 1000ms = 1 second)
+
+      // Check if the loop is already active to avoid multiple starts
+      if (this.battleRunning || this.loopActive) {
+        console.warn('Battle loop is already running')
+        return // Prevent starting multiple loops
+      }
+
+      // Set flags immediately to prevent further calls
       this.battleRunning = true
+      this.loopActive = true  // New flag to prevent multiple loops
       this.isFighting = true
+
+      console.log('Battle Loop Started')
       this.lastFrameTime = performance.now()
       this.accumulatedTime = 0
 
-      // Spawn a new enemy if none exists
+      // Spawn a new enemy if necessary
       if (this.bugHealth === 0 || !this.enemySpawned) {
         this.spawnRandomEnemy()
       }
 
+      // Start the battle loop
       this.animationFrameId = requestAnimationFrame(this.battleLoop)
+
+      console.log('Battle Started')
     },
 
-    // Stop the battle loop
+// Stop the battle loop
     stopBattle() {
+      // Always allow stopping, regardless of cooldown
       this.isFighting = false
       this.battleRunning = false
       this.battleCooldown = false
+
+      // Cancel the animation frame to stop the loop
       if (this.animationFrameId) {
         cancelAnimationFrame(this.animationFrameId)
         this.animationFrameId = 0
       }
+
+      this.loopActive = false  // Ensure the loop can be restarted after stopping
+
+      console.log('Battle Stopped')
     },
 
-    // Main battle loop with requestAnimationFrame (tick-based)
+// Main battle loop with requestAnimationFrame (tick-based)
     battleLoop(currentTime) {
+      if (!this.battleRunning) {
+        console.log('Battle loop stopped')
+        this.loopActive = false  // Ensure the loop is fully inactive when stopped
+        return
+      }
+
       const deltaTime = (currentTime - this.lastFrameTime) / 1000 // Convert time to seconds
       this.lastFrameTime = currentTime
       this.accumulatedTime += deltaTime
@@ -100,7 +155,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       // Process combat every tick (based on how much time has passed)
       this.processCombat(deltaTime)
 
-      // Keep running the loop as long as the battle is running
+      // Continue the loop as long as the battle is active
       if (this.battleRunning) {
         this.animationFrameId = requestAnimationFrame(this.battleLoop)
       }
@@ -251,7 +306,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.regenLoopActive = true // Mark the loop as active
 
         const cooldownRegen = () => {
-          if (this.battleCooldown || !this.isFighting) {
+          if (this.battleCooldown || this.isFighting) {
             this.applyRegeneration() // Apply regeneration
             setTimeout(cooldownRegen, regenInterval) // Continue regenerating during cooldown
           } else {
