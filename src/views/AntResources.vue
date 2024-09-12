@@ -302,6 +302,35 @@
               Max
             </button>
           </div>
+          <div class="w-full flex">
+            <label
+              v-if="prestigeStore.upgradePurchased('autoEliteAntsCreation')"
+              class="flex items-center cursor-pointer"
+            >
+              <span class="mr-3 text-xs text-gray-600">Auto creating</span>
+              <div class="relative">
+                <input
+                  v-model="prestigeStore.autoEliteAntsCreation"
+                  type="checkbox"
+                  class="sr-only"
+                >
+                <div
+                  :class="{
+                    'bg-green-500': prestigeStore.autoEliteAntsCreation,
+                    'bg-red-500': !prestigeStore.autoEliteAntsCreation,
+                  }"
+                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
+                />
+                <div
+                  :class="{
+                    'translate-x-full': prestigeStore.autoEliteAntsCreation,
+                    'translate-x-0': !prestigeStore.autoEliteAntsCreation,
+                  }"
+                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
+                />
+              </div>
+            </label>
+          </div>
         </div>
       </div>
       <div
@@ -411,7 +440,7 @@
 <script setup lang="ts">
 import {useGameStore} from '../stores/gameStore'
 import PrestigeShop from './PrestigeShop.vue'
-import {usePrestigeStore} from '@/stores/prestigeStore'
+import {usePrestigeStore} from '../stores/prestigeStore'
 
 const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()

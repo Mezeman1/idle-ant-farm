@@ -440,6 +440,7 @@ export const useGameStore = defineStore('gameStore', {
         {enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage},
         {enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts},
         {enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens},
+        {enabled: prestigeStore.autoEliteAntsCreation, action: this.createEliteMaxAnts},
       ]
 
       autoActions.forEach(autoAction => {
@@ -630,13 +631,14 @@ export const useGameStore = defineStore('gameStore', {
         }
 
         this.loaded = true
-        console.log('Game state loaded successfully')
+        console.log('Game state loaded successfully', this.lastSavedTime)
       } catch (error) {
         console.error('Error loading game state from Firestore:', error)
       }
     },
 
     async loadStateFromFirebase(savedState) {
+      console.log('Loading game state from Firestore...', savedState)
       this.ants = savedState.ants ?? this.ants
       this.eliteAnts = savedState.eliteAnts ?? this.eliteAnts
       this.seeds = savedState.seeds ?? this.seeds
@@ -738,6 +740,7 @@ export const useGameStore = defineStore('gameStore', {
       prestigeStore.autoAntCreation = false
       prestigeStore.autoLarvaeCreation = false
       prestigeStore.autoSeedStorageUpgrade = false
+      prestigeStore.autoEliteAntsCreation = false
     },
 
 

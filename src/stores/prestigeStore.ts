@@ -58,6 +58,18 @@ export const usePrestigeStore = defineStore('prestige', {
         category: 'auto',
       },
       {
+        id: 'autoEliteAntsCreation',
+        name: 'Auto Elite Ants Store Upgrade',
+        description: 'Automatically upgrade elite ant storage',
+        cost: 100,
+        oneTimePurchase: true,
+        applyOnPrestige: true,
+        category: 'auto',
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('eliteAnts')
+        },
+      },
+      {
         id: 'betterAnts',
         name: 'Stronger Ants',
         description: 'Increase ants army strength by 10%',
@@ -108,7 +120,7 @@ export const usePrestigeStore = defineStore('prestige', {
         applyOnPrestige: true,
         category: 'storage',
         unlockedWhen: () => {
-          return usePrestigeStore().timesPrestiged >= 5
+          return usePrestigeStore().upgradePurchased('eliteAnts')
         },
       },
       {
@@ -130,6 +142,7 @@ export const usePrestigeStore = defineStore('prestige', {
     // Prestige-related variables
     autoLarvaeCreation: false, // Auto-create larvae based on seeds
     autoAntCreation: false, // Auto-create ants based on larvae and seeds
+    autoEliteAntsCreation: false, // Auto-create elite ants based on ants and seeds
     autoQueenCreation: false, // Auto-create queens based on ants and seeds
     autoSeedStorageUpgrade: false, // Auto-upgrade seed storage
 
@@ -277,6 +290,9 @@ export const usePrestigeStore = defineStore('prestige', {
         autoLarvae: () => {
           this.autoLarvaeCreation = true
         },
+        autoEliteAntsCreation: () => {
+          this.autoEliteAntsCreation = true
+        },
         betterAnts: () => {
           gameStore.attackPerAnt *= 1.1
           gameStore.setupAdventureStats()
@@ -335,6 +351,7 @@ export const usePrestigeStore = defineStore('prestige', {
 
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,
+        autoEliteAntsCreation: this.autoEliteAntsCreation,
         autoQueenCreation: this.autoQueenCreation,
         autoSeedStorageUpgrade: this.autoSeedStorageUpgrade,
         eliteAntsUnlocked: this.upgradePurchased('eliteAnts'),
@@ -350,6 +367,7 @@ export const usePrestigeStore = defineStore('prestige', {
       this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
       this.autoQueenCreation = savedState.autoQueenCreation ?? this.autoQueenCreation
       this.autoSeedStorageUpgrade = savedState.autoSeedStorageUpgrade ?? this.autoSeedStorageUpgrade
+      this.autoEliteAntsCreation = savedState.autoEliteAntsCreation ?? this.autoEliteAntsCreation
 
       // Load prestige shop costs
       this.prestigeShop.forEach(shop => {
