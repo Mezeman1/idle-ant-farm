@@ -137,6 +137,18 @@ export const usePrestigeStore = defineStore('prestige', {
         cost: 15,
         category: 'production',
       },
+      {
+        id: 'royalJelly',
+        name: 'Royal Jelly',
+        description: 'Queens will have a chance to produce royal jelly',
+        cost: 250,
+        category: 'expansion',
+        applyOnPrestige: true,
+        oneTimePurchase: true,
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('eliteAnts')
+        },
+      },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 
     // Prestige-related variables
@@ -317,6 +329,9 @@ export const usePrestigeStore = defineStore('prestige', {
         eliteAnts: () => {
           gameStore.eliteAntsUnlocked = true
         },
+        royalJelly: () => {
+          gameStore.royalJellyUnlocked = true
+        },
       }
 
       // Execute the appropriate upgrade or log an error if the upgrade ID is invalid
@@ -355,6 +370,7 @@ export const usePrestigeStore = defineStore('prestige', {
         autoQueenCreation: this.autoQueenCreation,
         autoSeedStorageUpgrade: this.autoSeedStorageUpgrade,
         eliteAntsUnlocked: this.upgradePurchased('eliteAnts'),
+        royalJellyUnlocked: this.upgradePurchased('royalJelly'),
       }
     },
 
@@ -394,6 +410,9 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'autoQueens') shop.cost = 20
         if (shop.id === 'startWithAnts') shop.cost = 15
         if (shop.id === 'eliteAnts') shop.cost = 500
+        if (shop.id === 'autoSeedStorageUpgrade') shop.cost = 10
+        if (shop.id === 'autoEliteAntsCreation') shop.cost = 100
+        if (shop.id === 'royalJelly') shop.cost = 250
       })
     },
   },

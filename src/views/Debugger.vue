@@ -17,39 +17,47 @@
       </button>
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.larvae += 1000"
+        @click="gameStore.resources.larvae += 1000"
       >
         Add 1000 Larvae
       </button>
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.ants += 100"
+        @click="gameStore.resources.ants += 100"
       >
         Add 100 Ants
       </button>
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.ants += 1000"
+        @click="gameStore.resources.ants += 1000"
       >
         Add 1000 Ants
       </button>
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.ants += 1000000"
+        @click="gameStore.resources.ants += 1000000"
       >
         Add 1000000 Ants
       </button>
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.queens += 10"
+        @click="gameStore.resources.queens += 10"
       >
         Add 10 Queens
       </button>
+
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
         @click="prestigeStore.prestigePoints += 1000"
       >
         Add 1000 prestige points
+      </button>
+
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        @click="prestigeStore.timesPrestiged += 1"
+      >
+        Add one prestige amount
       </button>
 
       <button
@@ -90,8 +98,8 @@
 
 <script setup lang="ts">
 import {useGameStore} from '../stores/gameStore'
-import {usePrestigeStore} from '@/stores/prestigeStore'
-import {useInventoryStore} from '@/stores/inventoryStore'
+import {usePrestigeStore} from '../stores/prestigeStore'
+import {useInventoryStore} from '../stores/inventoryStore'
 
 const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()

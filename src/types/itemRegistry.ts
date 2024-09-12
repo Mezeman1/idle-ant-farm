@@ -52,7 +52,7 @@ export const itemRegistry: Item[] = [
     applyOnPrestige: true,
     effect: () => {
       const gameStore = useGameStore()
-      gameStore.larvaeProductionRate *= 2
+      gameStore.productionRates.larvaeProductionRate *= 2
     },
     rarity: 'rare',
   },

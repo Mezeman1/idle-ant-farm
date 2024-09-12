@@ -20,6 +20,7 @@ export const useGameStore = defineStore('gameStore', {
       eliteAnts: 0,
       seeds: 10,
       queens: 1,
+      royalJelly: 0,
     },
 
     storage: {
@@ -64,6 +65,9 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     eliteAntsUnlocked: false,
+    royalJellyUnlocked: false,
+
+    royalJellyCollectionChance: 0.01, // 0.1% chance to collect royal jelly when queen produces larvae
 
     // Balancing factors
     storageUpgradeFactor: 1.4, // How much each upgrade increases storage by (20%)
@@ -78,6 +82,7 @@ export const useGameStore = defineStore('gameStore', {
     gameLoopInterval: null as number | null,
     isGameLoopRunning: false,
     progress: 0, // Track progress for offline calculation
+    simulatingOfflineProgress: false,
   }),
 
   getters: {
@@ -291,6 +296,8 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
     calculateOfflineProgress() {
+      this.simulatingOfflineProgress = true
+
       return new Promise((resolve, reject) => {
         try {
           const currentTime = Date.now()
@@ -362,7 +369,7 @@ export const useGameStore = defineStore('gameStore', {
           // Reject the promise if an error occurs
           reject(error)
         }
-      })
+      }).finally(() => this.simulatingOfflineProgress = false)
     },
 
     // Start the game loop for real-time resource generation, respecting caps
@@ -422,6 +429,14 @@ export const useGameStore = defineStore('gameStore', {
         if (wholeLarvae > 0) {
           this.resources.larvae = Math.min(this.resources.larvae + wholeLarvae, this.storage.maxLarvae)
           this.accumulators.larvaeAccumulator -= wholeLarvae // Subtract the whole units from the accumulator
+        }
+
+        // Check for royal jelly collection
+        if (this.royalJellyUnlocked && !this.simulatingOfflineProgress) {
+          const royalJellyChance = this.royalJellyCollectionChance * deltaTime
+          if (Math.random() < royalJellyChance) {
+            this.resources.royalJelly += 1
+          }
         }
       }
 
@@ -652,6 +667,7 @@ export const useGameStore = defineStore('gameStore', {
       prestigeStore.loadPrestigeState(savedState)
 
       this.eliteAntsUnlocked = prestigeStore.upgradePurchased('eliteAnts')
+      this.royalJellyUnlocked = prestigeStore.upgradePurchased('royalJelly')
 
       const adventureStore = useAdventureStore()
       await adventureStore.loadAdventureState(savedState)

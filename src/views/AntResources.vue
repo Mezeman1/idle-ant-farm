@@ -409,6 +409,39 @@
         </div>
       </div>
 
+      <!-- Royal Jelly Section -->
+      <div
+        v-if="gameStore.royalJellyUnlocked"
+        class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
+      >
+        <div>
+          <p class="font-bold text-lg">
+            Royal Jelly
+          </p>
+          <p class="text-2xs">
+            Royal Jelly is a special resource used to upgrade ants. (Coming soon)
+          </p>
+          <p class="text-2xs">
+            Queens have a chance to produce Royal Jelly.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
+          <div class="flex flex-col gap-2 w-full">
+            <p class="text-sm">
+              Count: {{ formatNumber(gameStore.resources.royalJelly ?? 0, 0) }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
+      >
+        <h2>
+          LOCKED
+        </h2>
+      </div>
+
       <!-- Prestige Section -->
       <PrestigeShop />
 
