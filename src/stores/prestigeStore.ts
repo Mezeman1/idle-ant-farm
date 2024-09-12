@@ -85,7 +85,7 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'eliteAnts',
         name: 'Elite Ants',
         description: 'Unlock elite ants',
-        cost: 2500,
+        cost: 500,
         applyOnPrestige: true,
         oneTimePurchase: true,
         category: 'expansion',
@@ -360,7 +360,7 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'autoAnts') shop.cost = 20
         if (shop.id === 'autoQueens') shop.cost = 20
         if (shop.id === 'startWithAnts') shop.cost = 15
-        if (shop.id === 'eliteAnts') shop.cost = 2500
+        if (shop.id === 'eliteAnts') shop.cost = 500
       })
     },
   },

@@ -48,26 +48,22 @@ export const useAdventureStore = defineStore('adventureStore', {
     animationFrameId: 0,
     regenLoopActive: false,
     toggleCooldown: false,
-    loopActive: false,
+
+    animationFrameIds: [] as Array<number>,  // Array to store multiple animation frame IDs
+    loopActive: [] as Array<number>,  // Array to track if loops are active
 
     toggleCooldownTimeout: 0,
   }),
   actions: {
-    toggleBattle(shouldJustStart = false) {
-      console.log({
-        isFighting: this.isFighting,
-        battleRunning: this.battleRunning,
-        loopActive: this.loopActive,
-        toggleCooldown: this.toggleCooldown,
-      })
+    toggleBattle() {
       // Always allow stopping the battle
-      if (this.isFighting && !shouldJustStart || this.battleCooldown) {
-        this.stopBattle()
+      if (this.isFighting || this.battleCooldown) {
+        this.stopAllBattles() // Stop all active loops
         return
       }
 
       // Apply cooldown only when trying to start the battle
-      if (this.battleRunning || this.loopActive || this.toggleCooldown) {
+      if (this.battleRunning || this.toggleCooldown) {
         return // Prevent starting multiple loops or rapid starts
       }
 
@@ -82,7 +78,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Start the battle loop
     startBattle() {
-      this.stopBattle() // Stop any existing battle before starting a new one
+      this.stopAllBattles() // Stop any existing battle before starting a new one
 
       // Clear any previous toggle cooldown timeout
       if (this.toggleCooldownTimeout) {
@@ -94,17 +90,16 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.toggleCooldownTimeout = setTimeout(() => {
         this.toggleCooldown = false
         this.toggleCooldownTimeout = 0 // Clear the timeout reference after it's done
-      }, 3000) // Adjust cooldown period as needed (e.g., 1000ms = 1 second)
+      }, 3000) // Adjust cooldown period as needed
 
       // Check if the loop is already active to avoid multiple starts
-      if (this.battleRunning || this.loopActive) {
+      if (this.battleRunning) {
         console.warn('Battle loop is already running')
         return // Prevent starting multiple loops
       }
 
       // Set flags immediately to prevent further calls
       this.battleRunning = true
-      this.loopActive = true  // New flag to prevent multiple loops
       this.isFighting = true
 
       console.log('Battle Loop Started')
@@ -116,35 +111,51 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.spawnRandomEnemy()
       }
 
-      // Start the battle loop
-      this.animationFrameId = requestAnimationFrame(this.battleLoop)
+      // Start the battle loop and store the animation frame ID in the array
+      const animationFrameId = requestAnimationFrame(this.battleLoop)
+      this.animationFrameIds.push(animationFrameId) // Store each new loop's ID
+      this.loopActive.push(true) // Keep track of the active loop
 
       console.log('Battle Started')
     },
 
-// Stop the battle loop
+    // Stop the battle loop
     stopBattle() {
       // Always allow stopping, regardless of cooldown
       this.isFighting = false
       this.battleRunning = false
       this.battleCooldown = false
 
-      // Cancel the animation frame to stop the loop
-      if (this.animationFrameId) {
-        cancelAnimationFrame(this.animationFrameId)
-        this.animationFrameId = 0
+      // Cancel the animation frames to stop the loop
+      if (this.animationFrameIds.length > 0) {
+        this.animationFrameIds.forEach((id) => cancelAnimationFrame(id))
+        this.animationFrameIds = [] // Clear the array of animation frame IDs
       }
 
-      this.loopActive = false  // Ensure the loop can be restarted after stopping
+      this.loopActive = []  // Ensure the loops can be restarted after stopping
 
       console.log('Battle Stopped')
     },
 
-// Main battle loop with requestAnimationFrame (tick-based)
+    // Stop all active battles (useful when managing multiple loops)
+    stopAllBattles() {
+      if (this.animationFrameIds.length > 0) {
+        console.log('Stopping all battles')
+        this.animationFrameIds.forEach((id) => cancelAnimationFrame(id))
+        this.animationFrameIds = [] // Clear the array of animation frame IDs
+      }
+      this.loopActive = []  // Clear all loop active states
+      this.battleRunning = false
+      this.isFighting = false
+      this.battleCooldown = false
+      console.log('All battles stopped')
+    },
+
+    // Main battle loop with requestAnimationFrame (tick-based)
     battleLoop(currentTime) {
       if (!this.battleRunning) {
         console.log('Battle loop stopped')
-        this.loopActive = false  // Ensure the loop is fully inactive when stopped
+        this.loopActive = this.loopActive.map(() => false) // Ensure the loop is fully inactive when stopped
         return
       }
 
@@ -157,7 +168,8 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       // Continue the loop as long as the battle is active
       if (this.battleRunning) {
-        this.animationFrameId = requestAnimationFrame(this.battleLoop)
+        const newAnimationFrameId = requestAnimationFrame(this.battleLoop)
+        this.animationFrameIds.push(newAnimationFrameId) // Keep adding new frame IDs to the array
       }
     },
 

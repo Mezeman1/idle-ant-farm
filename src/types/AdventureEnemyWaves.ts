@@ -562,6 +562,22 @@ export const adventureEnemyWaves = [
     unlockedWhen: (gameStore) => gameStore.ants >= 10_000_000 || gameStore.queens >= 100_000,
     unlockText: 'Unlocked when you have 10 million ants or 100 thousand queens.',
   },
-
 ]
+
+// Function to load images dynamically
+const loadEnemyImages = async () => {
+  for (const wave of adventureEnemyWaves) {
+    for (const enemy of wave.enemies) {
+      try {
+        const image = await import(`../assets/enemies/${enemy.name.toLowerCase().replace(' ', '-')}.webp`)
+        enemy.image = image.default
+      } catch (error) {
+        console.error(`Error loading image for ${enemy.name}:`, error)
+      }
+    }
+  }
+}
+
+// Call this function when the component or store is initialized
+await loadEnemyImages()
 

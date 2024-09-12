@@ -50,9 +50,9 @@
       <!-- Ant Army Side -->
       <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
         <img
-          src=""
+          :src="ArmyImage"
           alt="Ant Army"
-          class="w-24 h-24"
+          class="rounded max-w-[300px] w-full"
         >
         <div class="w-full mt-2 text-center">
           <p class="text-lg font-bold">
@@ -76,9 +76,9 @@
       <!-- Enemy Bug Side -->
       <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
         <img
-          src=""
+          :src="adventureStore.currentEnemy?.image ?? 'https://via.placeholder.com/150'"
           alt="Enemy Bug"
-          class="w-24 h-24"
+          class="rounded max-w-[300px] w-full"
         >
         <div class="w-full mt-2 text-center">
           <p class="text-lg font-bold">
@@ -119,7 +119,7 @@ import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
 import {onMounted, ref, watch} from 'vue'
 import {onClickOutside} from '@vueuse/core'
-
+import ArmyImage from '../assets/army.webp'
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
 
@@ -132,6 +132,7 @@ watch(() => adventureStore.currentArea, () => {
 onMounted(() => {
   selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
 })
+
 
 const dropdownOpen = ref(false)
 const selectedWave = ref(null)
