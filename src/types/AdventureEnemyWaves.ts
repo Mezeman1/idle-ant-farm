@@ -5,6 +5,27 @@ const seedDrop = (min, max, chance = 0.75) => ({
   amountBetween: [min, max],
 })
 
+interface Enemy {
+  name: string
+  health: number
+  attack: number
+  defense: number
+  regen: number
+  dropOptions: {
+    name: string
+    chance: number
+    amountBetween: [number, number]
+  }[]
+  isBoss?: boolean
+}
+
+interface AdventureEnemyWave {
+  name: string
+  enemies: Enemy[]
+  unlockedWhen: (gameStore: any) => boolean
+  unlockText: string
+}
+
 export const adventureEnemyWaves = [
   {
     name: 'Wasteland',
@@ -562,5 +583,5 @@ export const adventureEnemyWaves = [
     unlockedWhen: (gameStore) => gameStore.resources.ants >= 10_000_000 || gameStore.resources.queens >= 100_000,
     unlockText: 'Unlocked when you have 10 million ants or 100 thousand queens.',
   },
-]
+] as AdventureEnemyWave[]
 
