@@ -259,7 +259,6 @@ export const useAdventureStore = defineStore('adventureStore', {
           const amount =
             Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
             drop.amountBetween[0]
-          console.log(`Loot: +${amount} ${drop.name}`)
 
           if (!this.isSimulatingOffline) {
             const $toast = useToast()
