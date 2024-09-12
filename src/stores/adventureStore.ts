@@ -267,7 +267,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
           if (drop.name === 'Seeds') {
             // Add seeds to gameStore
-            useGameStore().seeds += amount
+            useGameStore().resources.seeds += amount
           } else {
             // Handle item drops
             const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
@@ -485,6 +485,7 @@ export const useAdventureStore = defineStore('adventureStore', {
           waspKills: 0,
         }
         this.lastSavedTime = Date.now()
+        this.currentArea = null
 
         console.log('Adventure state reset and cleared from Firestore')
       } catch (error) {
@@ -601,7 +602,7 @@ export const useAdventureStore = defineStore('adventureStore', {
             }
 
             if (drop.name === 'Seeds') {
-              useGameStore().seeds += amount
+              useGameStore().resources.seeds += amount
             } else {
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
               const item = useInventoryStore().getItemById(itemId)

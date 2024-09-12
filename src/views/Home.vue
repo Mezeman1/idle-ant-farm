@@ -1,13 +1,13 @@
 <template>
   <div
-    v-if="gameStore.loaded && adventureStore.loaded && gameStore.loggedIn"
+    v-if="gameStore.loaded && gameStore.loggedIn"
     class="relative h-screen w-screen overflow-hidden"
   >
     <AntSimulation
       v-if="gameStore.loaded && showBackground"
-      :ant-count="gameStore.ants"
-      :queen-count="gameStore.queens"
-      :larvae-count="gameStore.larvae"
+      :ant-count="gameStore.resources.ants"
+      :queen-count="gameStore.resources.queens"
+      :larvae-count="gameStore.resources.larvae"
     />
 
     <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
@@ -304,10 +304,12 @@ function handleBeforeUnload() {
 
 
 const {
-  ants,
+  resources,
 } = storeToRefs(gameStore)
 
-watch(ants, async () => {
+
+watch(() => resources.ants, async () => {
+  console.log('Resources changed, updating adventure stats...')
   gameStore.setupAdventureStats() // Setup adventure stats
 }, {
   immediate: true,

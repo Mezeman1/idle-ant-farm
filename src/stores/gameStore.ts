@@ -12,52 +12,62 @@ export const useGameStore = defineStore('gameStore', {
   state: () => ({
     loaded: false,
     loggedIn: false,
-    larvae: 0,
-    ants: 0,
-    eliteAnts: 0,
-
-    eliteAntsUnlocked: false,
-
-    larvaeAccumulator: 0, // To accumulate fractional larvae production
-    seedAccumulator: 0, // To accumulate fractional seed production
-
-    seeds: 10,
-    queens: 1, // Initial queen
     lastSavedTime: Date.now(),
 
-    // Resource caps
-    maxSeeds: 1000, // Initial seed storage capacity
-    maxLarvae: 10, // Initial larvae storage capacity
-    maxAnts: 100, // Initial ant storage capacity
-    maxQueens: 2, // Initial queen storage capacity
-    maxEliteAnts: 1,
+    resources: {
+      larvae: 0,
+      ants: 0,
+      eliteAnts: 0,
+      seeds: 10,
+      queens: 1,
+    },
 
-    // Initial resource caps
-    initialMaxSeeds: 1000,
-    initialMaxLarvae: 10,
-    initialMaxAnts: 100,
-    initialMaxQueens: 2,
-    initialMaxEliteAnts: 1,
+    storage: {
+      maxSeeds: 1000, // Initial seed storage capacity
+      maxLarvae: 10, // Initial larvae storage capacity
+      maxAnts: 100, // Initial ant storage capacity
+      maxQueens: 2, // Initial queen storage capacity
+      maxEliteAnts: 1,
+    },
 
-    // Upgrade variables
-    seedStorageUpgradeCost: 500, // Initial cost to upgrade seed storage
-    larvaeStorageUpgradeCost: 100, // Initial cost to upgrade larvae storage
+    initialCaps: {
+      maxSeeds: 1000,
+      maxLarvae: 10,
+      maxAnts: 100,
+      maxQueens: 2,
+      maxEliteAnts: 1,
+    },
+
+    accumulators: {
+      larvaeAccumulator: 0, // To accumulate fractional larvae production
+      seedAccumulator: 0, // To accumulate fractional seed production
+    },
+
+    productionRates: {
+      larvaeProductionRate: 1, // Larvae produced per queen per minute
+      collectionRatePerAnt: 60, // Seeds collected per ant per minute
+    },
+
+    resourceCosts: {
+      seedCostPerLarva: 100, // Cost in seeds to create one larva
+      seedCostPerAnt: 50, // Cost in seeds to create one ant
+      seedCostPerEliteAnt: 100,
+      larvaCostPerAnt: 1, // Cost in larvae to create one ant
+      larvaCostPerEliteAnt: 5,
+      antCostPerQueen: 100, // Ants required to buy one queen
+      seedCostPerQueen: 250, // Seeds required to buy one queen
+    },
+
+    upgradeCosts: {
+      seedStorageUpgradeCost: 500, // Initial cost to upgrade seed storage
+      larvaeStorageUpgradeCost: 100, // Initial cost to upgrade larvae storage
+    },
+
+    eliteAntsUnlocked: false,
 
     // Balancing factors
     storageUpgradeFactor: 1.4, // How much each upgrade increases storage by (20%)
     upgradeCostFactor: 1.5, // How much each upgrade increases the cost by (30%)
-
-    // Production rates and costs
-    larvaeProductionRate: 1, // Larvae produced per queen per minute
-    collectionRatePerAnt: 60, // Seeds collected per ant per minute
-    seedCostPerLarva: 100, // Cost in seeds to create one larva
-    seedCostPerAnt: 50, // Cost in seeds to create one ant
-    seedCostPerEliteAnt: 100,
-    larvaCostPerAnt: 1, // Cost in larvae to create one ant
-    larvaCostPerEliteAnt: 5,
-    antCostPerQueen: 100, // Ants required to buy one queen
-    seedCostPerQueen: 250, // Seeds required to buy one queen
-
     multiplierPerEliteAnt: 1.5,
 
     // Adventure-related variables
@@ -72,22 +82,23 @@ export const useGameStore = defineStore('gameStore', {
 
   getters: {
     // Calculate larvae production per minute based on queens
-    larvaePerMinute: (state) => state.queens * state.larvaeProductionRate,
+    larvaePerMinute: (state) => state.resources.queens * state.productionRates.larvaeProductionRate,
     // Calculate larvae production per second for real-time updates
-    larvaePerSecond: (state) => (state.queens * state.larvaeProductionRate) / 60,
+    larvaePerSecond: (state) => (state.resources.queens * state.productionRates.larvaeProductionRate) / 60,
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => {
-      const eliteMultiplier = state.eliteAnts > 0 ? (state.eliteAnts * state.multiplierPerEliteAnt) : 1
-      return (state.collectionRatePerAnt * state.ants * eliteMultiplier) / 60
+      const eliteMultiplier = state.resources.eliteAnts > 0 ? (state.resources.eliteAnts * state.multiplierPerEliteAnt) : 1
+
+      return (state.productionRates.collectionRatePerAnt * state.resources.ants * eliteMultiplier) / 60
     },
   },
 
   actions: {
     // Function to create larvae using seeds, respecting the larvae cap
     createLarvae() {
-      if (this.seeds >= this.seedCostPerLarva && this.larvae < Math.floor(this.maxLarvae)) {
-        this.larvae += 1
-        this.seeds -= this.seedCostPerLarva
+      if (this.resources.seeds >= this.resourceCosts.seedCostPerLarva && this.resources.larvae < Math.floor(this.storage.maxLarvae)) {
+        this.resources.larvae += 1
+        this.resources.seeds -= this.resourceCosts.seedCostPerLarva
         return true
       }
 
@@ -95,25 +106,25 @@ export const useGameStore = defineStore('gameStore', {
     },
     // Create max larvae based on available seeds and larvae cap
     createMaxLarvae() {
-      const availableLarvaeSpace = Math.floor(this.maxLarvae) - this.larvae
-      const maxCreatableLarvae = Math.floor(this.seeds / this.seedCostPerLarva)
+      const availableLarvaeSpace = Math.floor(this.storage.maxLarvae) - this.resources.larvae
+      const maxCreatableLarvae = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerLarva)
 
       // Calculate how many larvae can actually be created
       const larvaeToCreate = Math.min(availableLarvaeSpace, maxCreatableLarvae)
 
       // If there is space and enough seeds to create larvae
       if (larvaeToCreate > 0) {
-        this.larvae += larvaeToCreate
-        this.seeds -= larvaeToCreate * this.seedCostPerLarva
+        this.resources.larvae += larvaeToCreate
+        this.resources.seeds -= larvaeToCreate * this.resourceCosts.seedCostPerLarva
       }
     },
 
     // Function to create ants using larvae and seeds
     createAnts() {
-      if (this.larvae >= this.larvaCostPerAnt && this.seeds >= this.seedCostPerAnt && this.ants < Math.floor(this.maxAnts)) {
-        this.ants += 1
-        this.larvae -= this.larvaCostPerAnt
-        this.seeds -= this.seedCostPerAnt
+      if (this.resources.larvae >= this.resourceCosts.larvaCostPerAnt && this.resources.seeds >= this.resourceCosts.seedCostPerAnt && this.resources.ants < Math.floor(this.storage.maxAnts)) {
+        this.resources.ants += 1
+        this.resources.larvae -= this.resourceCosts.larvaCostPerAnt
+        this.resources.seeds -= this.resourceCosts.seedCostPerAnt
         return true
       }
 
@@ -122,26 +133,26 @@ export const useGameStore = defineStore('gameStore', {
     // Create max ants based on available larvae and seeds
     // Create max ants based on available larvae and seeds
     createMaxAnts() {
-      const availableAntSpace = Math.floor(this.maxAnts) - this.ants
-      const maxCreatableAntsByLarvae = Math.floor(this.larvae / this.larvaCostPerAnt)
-      const maxCreatableAntsBySeeds = Math.floor(this.seeds / this.seedCostPerAnt)
+      const availableAntSpace = Math.floor(this.storage.maxAnts) - this.resources.ants
+      const maxCreatableAntsByLarvae = Math.floor(this.resources.larvae / this.resourceCosts.larvaCostPerAnt)
+      const maxCreatableAntsBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerAnt)
 
       // Calculate how many ants can actually be created based on both larvae and seeds
       const antsToCreate = Math.min(availableAntSpace, maxCreatableAntsByLarvae, maxCreatableAntsBySeeds)
 
       // If there is space and enough larvae and seeds to create ants
       if (antsToCreate > 0) {
-        this.ants += antsToCreate
-        this.larvae -= antsToCreate * this.larvaCostPerAnt
-        this.seeds -= antsToCreate * this.seedCostPerAnt
+        this.resources.ants += antsToCreate
+        this.resources.larvae -= antsToCreate * this.resourceCosts.larvaCostPerAnt
+        this.resources.seeds -= antsToCreate * this.resourceCosts.seedCostPerAnt
       }
     },
     // Function to create ants using larvae and seeds
     createEliteAnts() {
-      if (this.larvae >= this.larvaCostPerEliteAnt && this.seeds >= this.seedCostPerEliteAnt && this.eliteAnts < Math.floor(this.maxEliteAnts)) {
-        this.eliteAnts += 1
-        this.larvae -= this.larvaCostPerEliteAnt
-        this.seeds -= this.seedCostPerEliteAnt
+      if (this.resources.larvae >= this.resourceCosts.larvaCostPerEliteAnt && this.resources.seeds >= this.resourceCosts.seedCostPerEliteAnt && this.resources.eliteAnts < Math.floor(this.storage.maxEliteAnts)) {
+        this.resources.eliteAnts += 1
+        this.resources.larvae -= this.resourceCosts.larvaCostPerEliteAnt
+        this.resources.seeds -= this.resourceCosts.seedCostPerEliteAnt
         return true
       }
 
@@ -150,26 +161,26 @@ export const useGameStore = defineStore('gameStore', {
     // Create max ants based on available larvae and seeds
     // Create max elite ants based on available larvae and seeds
     createEliteMaxAnts() {
-      const availableEliteAntSpace = Math.floor(this.maxEliteAnts) - this.eliteAnts
-      const maxCreatableEliteAntsByLarvae = Math.floor(this.larvae / this.larvaCostPerEliteAnt)
-      const maxCreatableEliteAntsBySeeds = Math.floor(this.seeds / this.seedCostPerEliteAnt)
+      const availableEliteAntSpace = Math.floor(this.storage.maxEliteAnts) - this.resources.eliteAnts
+      const maxCreatableEliteAntsByLarvae = Math.floor(this.resources.larvae / this.resourceCosts.larvaCostPerEliteAnt)
+      const maxCreatableEliteAntsBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerEliteAnt)
 
       // Calculate how many elite ants can actually be created based on both larvae and seeds
       const eliteAntsToCreate = Math.min(availableEliteAntSpace, maxCreatableEliteAntsByLarvae, maxCreatableEliteAntsBySeeds)
 
       // If there is space and enough larvae and seeds to create elite ants
       if (eliteAntsToCreate > 0) {
-        this.eliteAnts += eliteAntsToCreate
-        this.larvae -= eliteAntsToCreate * this.larvaCostPerEliteAnt
-        this.seeds -= eliteAntsToCreate * this.seedCostPerEliteAnt
+        this.resources.eliteAnts += eliteAntsToCreate
+        this.resources.larvae -= eliteAntsToCreate * this.resourceCosts.larvaCostPerEliteAnt
+        this.resources.seeds -= eliteAntsToCreate * this.resourceCosts.seedCostPerEliteAnt
       }
     },
     // Function to buy more queens
     buyQueen() {
-      if (this.ants >= this.antCostPerQueen && this.seeds >= this.seedCostPerQueen && this.queens < Math.floor(this.maxQueens)) {
-        this.queens += 1
-        this.ants -= this.antCostPerQueen
-        this.seeds -= this.seedCostPerQueen
+      if (this.resources.ants >= this.resourceCosts.antCostPerQueen && this.resources.seeds >= this.resourceCosts.seedCostPerQueen && this.resources.queens < Math.floor(this.storage.maxQueens)) {
+        this.resources.queens += 1
+        this.resources.ants -= this.resourceCosts.antCostPerQueen
+        this.resources.seeds -= this.resourceCosts.seedCostPerQueen
         return true
       }
 
@@ -178,50 +189,50 @@ export const useGameStore = defineStore('gameStore', {
     // Buy max queens based on available ants and seeds
     // Buy max queens based on available ants and seeds
     buyMaxQueens() {
-      const availableQueenSpace = Math.floor(this.maxQueens) - this.queens
-      const maxPurchasableQueensByAnts = Math.floor(this.ants / this.antCostPerQueen)
-      const maxPurchasableQueensBySeeds = Math.floor(this.seeds / this.seedCostPerQueen)
+      const availableQueenSpace = Math.floor(this.storage.maxQueens) - this.resources.queens
+      const maxPurchasableQueensByAnts = Math.floor(this.resources.ants / this.resourceCosts.antCostPerQueen)
+      const maxPurchasableQueensBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerQueen)
 
       // Calculate how many queens can actually be bought based on both ants and seeds
       const queensToBuy = Math.min(availableQueenSpace, maxPurchasableQueensByAnts, maxPurchasableQueensBySeeds)
 
       // If there is space and enough ants and seeds to buy queens
       if (queensToBuy > 0) {
-        this.queens += queensToBuy
-        this.ants -= queensToBuy * this.antCostPerQueen
-        this.seeds -= queensToBuy * this.seedCostPerQueen
+        this.resources.queens += queensToBuy
+        this.resources.ants -= queensToBuy * this.resourceCosts.antCostPerQueen
+        this.resources.seeds -= queensToBuy * this.resourceCosts.seedCostPerQueen
       }
     },
     // Collect seeds manually, but respect the seed cap
     collectSeedsManually(amount = 1) {
       const manualSeedCollectionRate = 10 // Number of seeds collected per click
-      const seedsToAdd = Math.min(manualSeedCollectionRate, this.maxSeeds - this.seeds)
-      if (amount > 0 && this.seeds + seedsToAdd <= this.maxSeeds) {
-        this.seeds += amount
+      const seedsToAdd = Math.min(manualSeedCollectionRate, this.storage.maxSeeds - this.resources.seeds)
+      if (amount > 0 && this.resources.seeds + seedsToAdd <= this.storage.maxSeeds) {
+        this.resources.seeds += amount
         return
       }
 
-      this.seeds += seedsToAdd
+      this.resources.seeds += seedsToAdd
     },
     // Function to upgrade seed storage
     upgradeSeedStorage() {
-      if (this.seeds >= this.seedStorageUpgradeCost) {
-        this.seeds -= this.seedStorageUpgradeCost
+      if (this.resources.seeds >= this.upgradeCosts.seedStorageUpgradeCost) {
+        this.resources.seeds -= this.upgradeCosts.seedStorageUpgradeCost
 
         // Increase storage by 20% of the current max
-        this.maxSeeds = Math.floor(this.maxSeeds * this.storageUpgradeFactor)
+        this.storage.maxSeeds = Math.floor(this.storage.maxSeeds * this.storageUpgradeFactor)
 
         // Increase the upgrade cost by 30%
-        this.seedStorageUpgradeCost = Math.floor(this.seedStorageUpgradeCost * this.upgradeCostFactor)
+        this.upgradeCosts.seedStorageUpgradeCost = Math.floor(this.upgradeCosts.seedStorageUpgradeCost * this.upgradeCostFactor)
       }
     },
     upgradeMaxSeedStorage() {
       let affordableUpgrades = 0
       let totalCost = 0
-      let nextUpgradeCost = this.seedStorageUpgradeCost
+      let nextUpgradeCost = this.upgradeCosts.seedStorageUpgradeCost
 
       // Calculate how many upgrades can be afforded in one go
-      while (this.seeds >= totalCost + nextUpgradeCost) {
+      while (this.resources.seeds >= totalCost + nextUpgradeCost) {
         affordableUpgrades += 1
         totalCost += nextUpgradeCost
         nextUpgradeCost = Math.floor(nextUpgradeCost * this.upgradeCostFactor)
@@ -230,36 +241,36 @@ export const useGameStore = defineStore('gameStore', {
       // If there are any affordable upgrades
       if (affordableUpgrades > 0) {
         // Deduct the total cost
-        this.seeds -= totalCost
+        this.resources.seeds -= totalCost
 
         // Apply all upgrades at once
-        this.maxSeeds = Math.floor(this.maxSeeds * Math.pow(this.storageUpgradeFactor, affordableUpgrades))
+        this.storage.maxSeeds = Math.floor(this.storage.maxSeeds * Math.pow(this.storageUpgradeFactor, affordableUpgrades))
 
         // Update the upgrade cost
-        this.seedStorageUpgradeCost = nextUpgradeCost
+        this.upgradeCosts.seedStorageUpgradeCost = nextUpgradeCost
 
         console.log(`Upgraded seed storage ${affordableUpgrades} times.`)
       }
     },
     // Function to upgrade larvae storage
     upgradeLarvaeStorage() {
-      if (this.seeds >= this.larvaeStorageUpgradeCost) {
-        this.seeds -= this.larvaeStorageUpgradeCost
+      if (this.resources.seeds >= this.upgradeCosts.larvaeStorageUpgradeCost) {
+        this.resources.seeds -= this.upgradeCosts.larvaeStorageUpgradeCost
 
         // Increase storage by 20% of the current max
-        this.maxLarvae = Math.floor(this.maxLarvae * this.storageUpgradeFactor)
+        this.storage.maxLarvae = Math.floor(this.storage.maxLarvae * this.storageUpgradeFactor)
 
         // Increase the upgrade cost by 30%
-        this.larvaeStorageUpgradeCost = Math.floor(this.larvaeStorageUpgradeCost * this.upgradeCostFactor)
+        this.upgradeCosts.larvaeStorageUpgradeCost = Math.floor(this.upgradeCosts.larvaeStorageUpgradeCost * this.upgradeCostFactor)
       }
     },
     upgradeMaxLarvaeStorage() {
       let affordableUpgrades = 0
       let totalCost = 0
-      let nextUpgradeCost = this.larvaeStorageUpgradeCost
+      let nextUpgradeCost = this.upgradeCosts.larvaeStorageUpgradeCost
 
       // Calculate how many upgrades can be afforded in one go
-      while (this.seeds >= totalCost + nextUpgradeCost) {
+      while (this.resources.seeds >= totalCost + nextUpgradeCost) {
         affordableUpgrades += 1
         totalCost += nextUpgradeCost
         nextUpgradeCost = Math.floor(nextUpgradeCost * this.upgradeCostFactor)
@@ -268,13 +279,13 @@ export const useGameStore = defineStore('gameStore', {
       // If there are any affordable upgrades
       if (affordableUpgrades > 0) {
         // Deduct the total cost
-        this.seeds -= totalCost
+        this.resources.seeds -= totalCost
 
         // Apply all upgrades at once
-        this.maxLarvae = Math.floor(this.maxLarvae * Math.pow(this.storageUpgradeFactor, affordableUpgrades))
+        this.storage.maxLarvae = Math.floor(this.storage.maxLarvae * Math.pow(this.storageUpgradeFactor, affordableUpgrades))
 
         // Update the upgrade cost
-        this.larvaeStorageUpgradeCost = nextUpgradeCost
+        this.upgradeCosts.larvaeStorageUpgradeCost = nextUpgradeCost
 
         console.log(`Upgraded larvae storage ${affordableUpgrades} times.`)
       }
@@ -293,8 +304,6 @@ export const useGameStore = defineStore('gameStore', {
             console.log('Offline time capped to 24 hours (86400 seconds)')
             timeElapsed = OFFLINE_CAP
           }
-
-          const prestigeStore = usePrestigeStore()
 
           // Always log lastSavedTime, currentTime, and the time difference
           console.log(`lastSavedTime: ${this.lastSavedTime}`)
@@ -401,34 +410,34 @@ export const useGameStore = defineStore('gameStore', {
 
     updateResources(deltaTime) {
       // Update larvae, but only if there are queens
-      if (this.queens > 0) {
+      if (this.resources.queens > 0) {
         const larvaePerSecond = this.larvaePerSecond // Use the larvaePerSecond calculation
 
         // Calculate how many larvae to add based on deltaTime
         const larvaeToAdd = larvaePerSecond * deltaTime
-        this.larvaeAccumulator += larvaeToAdd
+        this.accumulators.larvaeAccumulator += larvaeToAdd
 
         // Only add full larvae units when the accumulator reaches or exceeds 1
-        const wholeLarvae = Math.floor(this.larvaeAccumulator)
+        const wholeLarvae = Math.floor(this.accumulators.larvaeAccumulator)
         if (wholeLarvae > 0) {
-          this.larvae = Math.min(this.larvae + wholeLarvae, this.maxLarvae)
-          this.larvaeAccumulator -= wholeLarvae // Subtract the whole units from the accumulator
+          this.resources.larvae = Math.min(this.resources.larvae + wholeLarvae, this.storage.maxLarvae)
+          this.accumulators.larvaeAccumulator -= wholeLarvae // Subtract the whole units from the accumulator
         }
       }
 
       // Update seeds, but only if there are ants
-      if (this.ants > 0) {
+      if (this.resources.ants > 0) {
         const seedsPerSecond = this.seedsPerSecond // Use the seedsPerSecond calculation
 
         // Calculate how many seeds to add based on deltaTime
         const seedsToAdd = seedsPerSecond * deltaTime
-        this.seedAccumulator += seedsToAdd
+        this.accumulators.seedAccumulator += seedsToAdd
 
         // Only add full seed units when the accumulator reaches or exceeds 1
-        const wholeSeeds = Math.floor(this.seedAccumulator)
+        const wholeSeeds = Math.floor(this.accumulators.seedAccumulator)
         if (wholeSeeds > 0) {
-          this.seeds = Math.min(this.seeds + wholeSeeds, this.maxSeeds)
-          this.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
+          this.resources.seeds = Math.min(this.resources.seeds + wholeSeeds, this.storage.maxSeeds)
+          this.accumulators.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
         }
       }
     },
@@ -575,26 +584,16 @@ export const useGameStore = defineStore('gameStore', {
       const inventoryStore = useInventoryStore()
 
       return {
-        ants: this.ants,
-        eliteAnts: this.eliteAnts,
-        seeds: this.seeds,
-        queens: this.queens,
-        larvae: this.larvae,
-        maxSeeds: this.maxSeeds,
-        maxLarvae: this.maxLarvae,
-        maxAnts: this.maxAnts,
-        maxEliteAnts: this.maxEliteAnts,
-        maxQueens: this.maxQueens,
-        seedStorageUpgradeCost: this.seedStorageUpgradeCost,
-        larvaeStorageUpgradeCost: this.larvaeStorageUpgradeCost,
+        resources: this.resources,
+        storage: this.storage,
+        upgradeCosts: this.upgradeCosts,
         lastSavedTime: Date.now(),
         userId,
+
         attackPerAnt: this.attackPerAnt,
         healthPerAnt: this.healthPerAnt,
         defensePerAnt: this.defensePerAnt,
-        larvaeProductionRate: this.larvaeProductionRate,
-        collectionRatePerAnt: this.collectionRatePerAnt,
-
+        productionRates: this.productionRates,
         ...prestigeStore.getPrestigeState(),
         ...adventureStore.getAdventureState(),
         ...inventoryStore.getInventoryState(),
@@ -639,21 +638,12 @@ export const useGameStore = defineStore('gameStore', {
 
     async loadStateFromFirebase(savedState) {
       console.log('Loading game state from Firestore...', savedState)
-      this.ants = savedState.ants ?? this.ants
-      this.eliteAnts = savedState.eliteAnts ?? this.eliteAnts
-      this.seeds = savedState.seeds ?? this.seeds
-      this.queens = savedState.queens ?? this.queens
-      this.larvae = savedState.larvae ?? this.larvae
-      this.maxSeeds = savedState.maxSeeds ?? this.maxSeeds
-      this.maxLarvae = savedState.maxLarvae ?? this.maxLarvae
-      this.maxAnts = savedState.maxAnts ?? this.maxAnts
-      this.maxEliteAnts = savedState.maxEliteAnts ?? this.maxEliteAnts
-      this.maxQueens = savedState.maxQueens ?? this.maxQueens
-      this.seedStorageUpgradeCost = savedState.seedStorageUpgradeCost ?? this.seedStorageUpgradeCost
-      this.larvaeStorageUpgradeCost = savedState.larvaeStorageUpgradeCost ?? this.larvaeStorageUpgradeCost
+       this.resources = savedState.resources ?? this.resources
+      this.storage = savedState.storage ?? this.storage
+      this.upgradeCosts = savedState.upgradeCosts ?? this.upgradeCosts
+
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
-      this.larvaeProductionRate = savedState.larvaeProductionRate ?? this.larvaeProductionRate
-      this.collectionRatePerAnt = savedState.collectionRatePerAnt ?? this.collectionRatePerAnt
+      this.productionRates = savedState.productionRates ?? this.productionRates
       this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
       this.healthPerAnt = savedState.healthPerAnt ?? this.healthPerAnt
       this.defensePerAnt = savedState.defensePerAnt ?? this.defensePerAnt
@@ -708,23 +698,25 @@ export const useGameStore = defineStore('gameStore', {
     // Reset the local game state, optionally resetting prestige-related data and debug state
     resetLocalGameState({isDebug}) {
       console.log('Resetting local game state...')
-      this.larvae = 0
-      this.ants = 0
-      this.seeds = 10
-      this.queens = 1
-      this.eliteAnts = 0
+      this.resources = {
+        larvae: 0,
+        ants: 0,
+        eliteAnts: 0,
+        seeds: 10,
+        queens: 1,
+      }
 
-      this.larvaeProductionRate = 1
-      this.collectionRatePerAnt = 60
+      this.productionRates = {
+        larvaeProductionRate: 1,
+        collectionRatePerAnt: 60,
+      }
 
-      this.maxSeeds = this.initialMaxSeeds
-      this.maxLarvae = this.initialMaxLarvae
-      this.maxAnts = this.initialMaxAnts
-      this.maxEliteAnts = this.initialMaxEliteAnts
-      this.maxQueens = this.initialMaxQueens
+      this.storage = this.initialCaps
 
-      this.seedStorageUpgradeCost = 500
-      this.larvaeStorageUpgradeCost = 100
+      this.upgradeCosts = {
+        seedStorageUpgradeCost: 500,
+        larvaeStorageUpgradeCost: 100,
+      }
 
       this.lastSavedTime = Date.now()
 
@@ -777,11 +769,11 @@ export const useGameStore = defineStore('gameStore', {
 
     setupAdventureStats() {
       const adventureStore = useAdventureStore()
-      if (this.ants === 0) return
-      adventureStore.armyMaxHealth = this.ants * this.healthPerAnt + (this.queens - 1) * this.healthPerAnt * this.antCostPerQueen
+      if (this.resources.ants === 0) return
+      adventureStore.armyMaxHealth = this.resources.ants * this.healthPerAnt + (this.resources.queens - 1) * this.healthPerAnt * this.resourceCosts.antCostPerQueen
       adventureStore.armyHealth = Math.min(adventureStore.armyHealth, adventureStore.armyMaxHealth)
-      adventureStore.armyAttack = this.ants * this.attackPerAnt + (this.queens - 1) * this.attackPerAnt * this.antCostPerQueen
-      adventureStore.armyDefense = this.ants * this.defensePerAnt + (this.queens - 1) * this.defensePerAnt * this.antCostPerQueen
+      adventureStore.armyAttack = this.resources.ants * this.attackPerAnt + (this.resources.queens - 1) * this.attackPerAnt * this.resourceCosts.antCostPerQueen
+      adventureStore.armyDefense = this.resources.ants * this.defensePerAnt + (this.resources.queens - 1) * this.defensePerAnt * this.resourceCosts.antCostPerQueen
     },
 
 
