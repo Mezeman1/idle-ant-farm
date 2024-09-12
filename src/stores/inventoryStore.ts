@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import {Item, itemRegistry} from '../types/itemRegistry'
-import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
+import {deleteDoc, doc, setDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import {useGameStore} from './gameStore' // Import your item registry
 
@@ -84,7 +84,15 @@ export const useInventoryStore = defineStore('inventoryStore', {
         return sortByRarity.indexOf(a.rarity) - sortByRarity.indexOf(b.rarity)
       })
     },
-
+    getInventoryState() {
+      return {
+        inventory: this.inventory.map(item => ({
+          id: item.id,
+          amount: item.amount,
+        })),
+        maxInventory: this.maxInventory,
+      }
+    },
     // Save inventory state to Firebase Firestore
     async saveInventoryState() {
       const userId = await useGameStore().getUserId()
@@ -93,16 +101,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
         return
       }
 
-      const inventoryToSave = {
-        inventory: this.inventory.map(item => ({
-          id: item.id,
-          amount: item.amount,
-        })),
-        maxInventory: this.maxInventory,
-
-        lastSavedTime: Date.now(),
-        userId: userId,
-      }
+      const inventoryToSave = this.getInventoryState()
 
       try {
         const gameStore = useGameStore() // Access the gameStore
@@ -121,47 +120,23 @@ export const useInventoryStore = defineStore('inventoryStore', {
         console.error('Error saving inventory to Firebase:', error)
       }
     },
-
-    // Load inventory state from IndexedDB and reapply effects
-    // Load inventory state from Firebase Firestore and reapply effects
-    async loadInventoryState() {
-      try {
-        const gameStore = useGameStore() // Access the gameStore
-        const userId = await gameStore.getUserId() // Use gameStore's getUserId method
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
-
-        const docRef = doc(db, 'inventory', userId)
-        const docSnap = await getDoc(docRef)
-
-        if (docSnap.exists()) {
-          const savedInventory = docSnap.data()
-
-          this.inventory = savedInventory.inventory.map(item => {
-            const registryItem = this.getItemById(item.id)
-            if (registryItem) {
-              if (registryItem.type === 'passive' && registryItem.applyOnLoad) {
-                this.applyItemEffect(registryItem) // Reapply the item's effect
-              }
-              return {...registryItem, amount: item.amount}
-            } else {
-              console.error(`Item ${item.id} not found in registry`)
-              return item // Load the raw item if not found in registry
-            }
-          }) ?? []
-
-          this.sortInventory()
-          this.maxInventory = savedInventory.maxInventory ?? this.maxInventory
-
-          console.log('Inventory loaded from Firestore')
+    async loadInventoryState(savedInventory) {
+      this.inventory = savedInventory.inventory.map(item => {
+        const registryItem = this.getItemById(item.id)
+        if (registryItem) {
+          if (registryItem.type === 'passive' && registryItem.applyOnLoad) {
+            this.applyItemEffect(registryItem) // Reapply the item's effect
+          }
+          return {...registryItem, amount: item.amount}
         } else {
-          console.log('No inventory found in Firestore')
+          console.error(`Item ${item.id} not found in registry`)
+          return item // Load the raw item if not found in registry
         }
-      } catch (error) {
-        console.error('Error loading inventory from Firestore:', error)
-      }
+      }) ?? []
+
+      this.sortInventory()
+      this.maxInventory = savedInventory.maxInventory ?? this.maxInventory
+      console.log('Inventory loaded from Firestore')
     },
 
     // Reset inventory state and clear from Firebase Firestore

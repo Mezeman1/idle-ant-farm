@@ -95,7 +95,8 @@ export const useGameStore = defineStore('gameStore', {
     },
     // Create max larvae based on available seeds and larvae cap
     createMaxLarvae() {
-      while (this.createLarvae()) {}
+      while (this.createLarvae()) {
+      }
     },
     // Function to create ants using larvae and seeds
     createAnts() {
@@ -110,7 +111,8 @@ export const useGameStore = defineStore('gameStore', {
     },
     // Create max ants based on available larvae and seeds
     createMaxAnts() {
-      while (this.createAnts()) {}
+      while (this.createAnts()) {
+      }
     },
     // Function to create ants using larvae and seeds
     createEliteAnts() {
@@ -125,7 +127,8 @@ export const useGameStore = defineStore('gameStore', {
     },
     // Create max ants based on available larvae and seeds
     createEliteMaxAnts() {
-      while (this.createEliteAnts()) {}
+      while (this.createEliteAnts()) {
+      }
     },
     // Function to buy more queens
     buyQueen() {
@@ -140,7 +143,8 @@ export const useGameStore = defineStore('gameStore', {
     },
     // Buy max queens based on available ants and seeds
     buyMaxQueens() {
-      while (this.buyQueen()) {}
+      while (this.buyQueen()) {
+      }
     },
     // Collect seeds manually, but respect the seed cap
     collectSeedsManually(amount = 1) {
@@ -335,9 +339,9 @@ export const useGameStore = defineStore('gameStore', {
       const prestigeStore = usePrestigeStore()
 
       const autoActions = [
-        { enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage },
-        { enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts },
-        { enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens },
+        {enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage},
+        {enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts},
+        {enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens},
       ]
 
       autoActions.forEach(autoAction => {
@@ -456,9 +460,6 @@ export const useGameStore = defineStore('gameStore', {
 
         console.log('Game state saved to Firestore')
 
-        // Save other store states
-        await this.saveOtherStoreStates()
-
         const $toast = useToast()
         $toast.success('Game saved successfully')
         this.lastSavedTime = Date.now()
@@ -471,6 +472,9 @@ export const useGameStore = defineStore('gameStore', {
 
     getGameState(userId) {
       const prestigeStore = usePrestigeStore()
+      const adventureStore = useAdventureStore()
+      const inventoryStore = useInventoryStore()
+
       return {
         ants: this.ants,
         eliteAnts: this.eliteAnts,
@@ -493,18 +497,8 @@ export const useGameStore = defineStore('gameStore', {
         collectionRatePerAnt: this.collectionRatePerAnt,
 
         ...prestigeStore.getPrestigeState(),
-      }
-    },
-
-    async saveOtherStoreStates() {
-      try {
-        const inventoryStore = useInventoryStore()
-        await inventoryStore.saveInventoryState()
-
-        const adventureStore = useAdventureStore()
-        await adventureStore.saveAdventureState()
-      } catch (error) {
-        console.error('Error saving other store states:', error)
+        ...adventureStore.getAdventureState(),
+        ...inventoryStore.getInventoryState(),
       }
     },
 
@@ -521,10 +515,8 @@ export const useGameStore = defineStore('gameStore', {
         const docSnap = await getDoc(docRef)
 
         if (docSnap.exists()) {
-          this.loadStateFromFirebase(docSnap.data())
+          await this.loadStateFromFirebase(docSnap.data())
           console.log('Game state loaded from Firestore')
-
-          await this.loadOtherStoreStates()
         } else {
           console.log('No saved game state found in Firestore')
         }
@@ -546,7 +538,7 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
 
-    loadStateFromFirebase(savedState) {
+    async loadStateFromFirebase(savedState) {
       this.ants = savedState.ants ?? this.ants
       this.eliteAnts = savedState.eliteAnts ?? this.eliteAnts
       this.seeds = savedState.seeds ?? this.seeds
@@ -570,20 +562,13 @@ export const useGameStore = defineStore('gameStore', {
       prestigeStore.loadPrestigeState(savedState)
 
       this.eliteAntsUnlocked = prestigeStore.upgradePurchased('eliteAnts')
+
+      const adventureStore = useAdventureStore()
+      await adventureStore.loadAdventureState(savedState)
+
+      const inventoryStore = useInventoryStore()
+      await inventoryStore.loadInventoryState(savedState)
     },
-
-    async loadOtherStoreStates() {
-      try {
-        const inventoryStore = useInventoryStore()
-        await inventoryStore.loadInventoryState()
-
-        const adventureStore = useAdventureStore()
-        await adventureStore.loadAdventureState()
-      } catch (error) {
-        console.error('Error loading other store states:', error)
-      }
-    },
-
     async resetGameState(debug = false) {
       console.log('Resetting game state...')
       try {

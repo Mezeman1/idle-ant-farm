@@ -2,7 +2,7 @@ import {defineStore} from 'pinia'
 import {useGameStore} from './gameStore'
 import {useToast} from 'vue-toast-notification'
 import {useInventoryStore} from './inventoryStore'
-import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
+import {deleteDoc, doc, setDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import {adventureEnemyWaves} from '../types/AdventureEnemyWaves'
 
@@ -380,6 +380,18 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       this.enemySpawned = true
     },
+    getAdventureState() {
+      return {
+        armyHealth: this.armyHealth,
+        armyMaxHealth: this.armyMaxHealth,
+        armyAttack: this.armyAttack,
+        armyDefense: this.armyDefense,
+        armyRegen: this.armyRegen,
+        killCounts: this.killCounts,
+        currentArea: this.currentArea,
+        isFighting: this.isFighting || this.battleCooldown, // Save the current battle state
+      }
+    },
 
     // Save adventure state to Firebase Firestore
     async saveAdventureState() {
@@ -389,18 +401,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         return
       }
 
-      const adventureState = {
-        armyHealth: this.armyHealth,
-        armyMaxHealth: this.armyMaxHealth,
-        armyAttack: this.armyAttack,
-        armyDefense: this.armyDefense,
-        armyRegen: this.armyRegen,
-        killCounts: this.killCounts,
-        currentArea: this.currentArea,
-        isFighting: this.isFighting || this.battleCooldown, // Save the current battle state
-        lastSavedTime: Date.now(),
-        userId: userId,
-      }
+      const adventureState = this.getAdventureState()
 
       console.log('Saving adventure state to Firestore:', adventureState)
 
@@ -413,47 +414,26 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     // Load adventure state from Firebase Firestore
-    async loadAdventureState() {
+    async loadAdventureState(adventureState) {
       this.loaded = false // Mark as not loaded
 
-      try {
-        const gameStore = useGameStore()
-        const userId = await gameStore.getUserId()
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
+      console.log('Adventure state loaded from Firestore:', adventureState)
 
-        const docRef = doc(db, 'adventure', userId)
-        const docSnap = await getDoc(docRef)
+      // Load the saved state
+      this.armyHealth = adventureState.armyHealth ?? this.armyHealth
+      this.armyMaxHealth = adventureState.armyMaxHealth ?? this.armyMaxHealth
+      this.armyAttack = adventureState.armyAttack ?? this.armyAttack
+      this.armyDefense = adventureState.armyDefense ?? this.armyDefense
+      this.armyRegen = adventureState.armyRegen ?? this.armyRegen
+      this.killCounts = adventureState.killCounts ?? this.killCounts
+      this.currentArea = adventureState.currentArea ?? this.currentArea
+      this.isFighting = adventureState.isFighting ?? false
+      this.lastSavedTime = adventureState.lastSavedTime ?? Date.now()
 
-        if (docSnap.exists()) {
-          const adventureState = docSnap.data()
-          console.log('Adventure state loaded from Firestore:', adventureState)
+      await this.loadEnemyImages()
 
-          // Load the saved state
-          this.armyHealth = adventureState.armyHealth ?? this.armyHealth
-          this.armyMaxHealth = adventureState.armyMaxHealth ?? this.armyMaxHealth
-          this.armyAttack = adventureState.armyAttack ?? this.armyAttack
-          this.armyDefense = adventureState.armyDefense ?? this.armyDefense
-          this.armyRegen = adventureState.armyRegen ?? this.armyRegen
-          this.killCounts = adventureState.killCounts ?? this.killCounts
-          this.currentArea = adventureState.currentArea ?? this.currentArea
-          this.isFighting = adventureState.isFighting ?? false
-          this.lastSavedTime = adventureState.lastSavedTime ?? Date.now()
-
-          this.loadEnemyImages()
-
-          // Mark as loaded once the state is fully set
-          this.loaded = true
-        } else {
-          console.log('No adventure state found in Firestore')
-          this.loaded = true
-        }
-      } catch (error) {
-        console.error('Error loading adventure state from Firestore:', error)
-        this.loaded = true
-      }
+      // Mark as loaded once the state is fully set
+      this.loaded = true
     },
 
     async loadEnemyImages() {
@@ -604,7 +584,6 @@ export const useAdventureStore = defineStore('adventureStore', {
             const amount =
               Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
               drop.amountBetween[0]
-            console.log(`Loot: +${amount} ${drop.name}`)
 
             // Only show toast notifications if not simulating offline progress
             if (!this.isSimulatingOffline) {

@@ -7,6 +7,9 @@
       <br>
       Also, any progress made may be reset at any time during current development stage.
     </p>
+    <p class="text-2xs font-bold text-red-500">
+      Data before the 12th of September 2024 has been reset. Sorry for the inconvenience.
+    </p>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
       <!-- Seeds Section -->
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
