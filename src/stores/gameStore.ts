@@ -464,9 +464,9 @@ export const useGameStore = defineStore('gameStore', {
 
       const autoActions = [
         {enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage},
+        {enabled: prestigeStore.autoEliteAntsCreation, action: this.createEliteMaxAnts},
         {enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts},
         {enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens},
-        {enabled: prestigeStore.autoEliteAntsCreation, action: this.createEliteMaxAnts},
       ]
 
       autoActions.forEach(autoAction => {
