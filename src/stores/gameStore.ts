@@ -723,12 +723,14 @@ export const useGameStore = defineStore('gameStore', {
     // Reset the local game state, optionally resetting prestige-related data and debug state
     resetLocalGameState({isDebug}) {
       console.log('Resetting local game state...')
+
       this.resources = {
         larvae: 0,
         ants: 0,
         eliteAnts: 0,
         seeds: 10,
         queens: 1,
+        royalJelly: isDebug ? 0 : this.resources.royalJelly,
       }
 
       this.productionRates = {
@@ -771,6 +773,7 @@ export const useGameStore = defineStore('gameStore', {
       this.attackPerAnt = 2
       this.defensePerAnt = 1
       this.eliteAntsUnlocked = false
+      this.royalJellyUnlocked = false
 
       prestigeStore.resetPrestigeShopCosts()
 
