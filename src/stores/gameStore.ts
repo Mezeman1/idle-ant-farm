@@ -215,6 +215,32 @@ export const useGameStore = defineStore('gameStore', {
         this.seedStorageUpgradeCost = Math.floor(this.seedStorageUpgradeCost * this.upgradeCostFactor)
       }
     },
+    upgradeMaxSeedStorage() {
+      let affordableUpgrades = 0
+      let totalCost = 0
+      let nextUpgradeCost = this.seedStorageUpgradeCost
+
+      // Calculate how many upgrades can be afforded in one go
+      while (this.seeds >= totalCost + nextUpgradeCost) {
+        affordableUpgrades += 1
+        totalCost += nextUpgradeCost
+        nextUpgradeCost = Math.floor(nextUpgradeCost * this.upgradeCostFactor)
+      }
+
+      // If there are any affordable upgrades
+      if (affordableUpgrades > 0) {
+        // Deduct the total cost
+        this.seeds -= totalCost
+
+        // Apply all upgrades at once
+        this.maxSeeds = Math.floor(this.maxSeeds * Math.pow(this.storageUpgradeFactor, affordableUpgrades))
+
+        // Update the upgrade cost
+        this.seedStorageUpgradeCost = nextUpgradeCost
+
+        console.log(`Upgraded seed storage ${affordableUpgrades} times.`)
+      }
+    },
     // Function to upgrade larvae storage
     upgradeLarvaeStorage() {
       if (this.seeds >= this.larvaeStorageUpgradeCost) {
@@ -225,6 +251,32 @@ export const useGameStore = defineStore('gameStore', {
 
         // Increase the upgrade cost by 30%
         this.larvaeStorageUpgradeCost = Math.floor(this.larvaeStorageUpgradeCost * this.upgradeCostFactor)
+      }
+    },
+    upgradeMaxLarvaeStorage() {
+      let affordableUpgrades = 0
+      let totalCost = 0
+      let nextUpgradeCost = this.larvaeStorageUpgradeCost
+
+      // Calculate how many upgrades can be afforded in one go
+      while (this.seeds >= totalCost + nextUpgradeCost) {
+        affordableUpgrades += 1
+        totalCost += nextUpgradeCost
+        nextUpgradeCost = Math.floor(nextUpgradeCost * this.upgradeCostFactor)
+      }
+
+      // If there are any affordable upgrades
+      if (affordableUpgrades > 0) {
+        // Deduct the total cost
+        this.seeds -= totalCost
+
+        // Apply all upgrades at once
+        this.maxLarvae = Math.floor(this.maxLarvae * Math.pow(this.storageUpgradeFactor, affordableUpgrades))
+
+        // Update the upgrade cost
+        this.larvaeStorageUpgradeCost = nextUpgradeCost
+
+        console.log(`Upgraded larvae storage ${affordableUpgrades} times.`)
       }
     },
     calculateOfflineProgress() {

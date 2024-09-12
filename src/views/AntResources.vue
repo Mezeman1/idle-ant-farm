@@ -30,13 +30,25 @@
               Count: {{ formatNumber(gameStore.seeds) }}/{{ formatNumber(gameStore.maxSeeds) }}
               ({{ formatNumber(gameStore.seedsPerSecond) }} /s)
             </p>
-            <button
-              :disabled="gameStore.seeds < gameStore.seedStorageUpgradeCost"
-              class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.upgradeSeedStorage"
+            <div
+              class="w-full flex gap-2"
             >
-              Upgrade storage ({{ formatNumber(gameStore.seedStorageUpgradeCost) }} seeds)
-            </button>
+              <button
+                :disabled="gameStore.seeds < gameStore.seedStorageUpgradeCost"
+                class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.upgradeSeedStorage"
+              >
+                Upgrade storage ({{ formatNumber(gameStore.seedStorageUpgradeCost) }} seeds)
+              </button>
+              <button
+                :disabled="gameStore.seeds < gameStore.seedStorageUpgradeCost"
+                class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.upgradeMaxSeedStorage"
+              >
+                Max
+              </button>
+            </div>
+
             <p
               v-if="gameStore.maxSeeds < gameStore.seedStorageUpgradeCost"
               class="text-xs"
@@ -111,13 +123,22 @@
               Count: {{ formatNumber(gameStore.larvae, 0) }}/{{ formatNumber(gameStore.maxLarvae, 0) }}
               ({{ formatNumber(gameStore.larvaePerMinute) }} /min)
             </p>
-            <button
-              :disabled="gameStore.seeds < gameStore.larvaeStorageUpgradeCost"
-              class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.upgradeLarvaeStorage"
-            >
-              Upgrade storage ({{ formatNumber(gameStore.larvaeStorageUpgradeCost) }} seeds)
-            </button>
+            <div class="w-full flex gap-2">
+              <button
+                :disabled="gameStore.seeds < gameStore.larvaeStorageUpgradeCost"
+                class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.upgradeLarvaeStorage"
+              >
+                Upgrade storage ({{ formatNumber(gameStore.larvaeStorageUpgradeCost) }} seeds)
+              </button>
+              <button
+                :disabled="gameStore.seeds < gameStore.larvaeStorageUpgradeCost"
+                class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.upgradeMaxLarvaeStorage"
+              >
+                Max
+              </button>
+            </div>
             <p
               v-if="gameStore.maxSeeds < gameStore.larvaeStorageUpgradeCost"
               class="text-xs"
@@ -389,8 +410,6 @@
 
 <script setup lang="ts">
 import {useGameStore} from '../stores/gameStore'
-import {ref} from 'vue'
-import Modal from '../components/Modal.vue'
 import PrestigeShop from './PrestigeShop.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 
