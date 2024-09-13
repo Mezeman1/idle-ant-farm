@@ -141,7 +141,7 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'royalJelly',
         name: 'Royal Jelly',
         description: 'Queens will have a chance to produce royal jelly',
-        cost: 250,
+        cost: 1000,
         category: 'expansion',
         applyOnPrestige: true,
         oneTimePurchase: true,
@@ -412,7 +412,7 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'eliteAnts') shop.cost = 500
         if (shop.id === 'autoSeedStorageUpgrade') shop.cost = 10
         if (shop.id === 'autoEliteAntsCreation') shop.cost = 100
-        if (shop.id === 'royalJelly') shop.cost = 250
+        if (shop.id === 'royalJelly') shop.cost = 1000
       })
     },
   },

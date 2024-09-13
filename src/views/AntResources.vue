@@ -30,25 +30,12 @@
               Count: {{ formatNumber(gameStore.resources.seeds) }}/{{ formatNumber(gameStore.storage.maxSeeds) }}
               ({{ formatNumber(gameStore.seedsPerSecond) }} /s)
             </p>
-            <div
-              class="w-full flex gap-2"
-            >
-              <button
-                :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.seedStorageUpgradeCost"
-                class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.upgradeSeedStorage"
-              >
-                Upgrade storage ({{ formatNumber(gameStore.upgradeCosts.seedStorageUpgradeCost) }} seeds)
-              </button>
-              <button
-                :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.seedStorageUpgradeCost"
-                class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.upgradeMaxSeedStorage"
-              >
-                Max
-              </button>
-            </div>
-
+            <StorageButtons
+              :cost-string="`${formatNumber(gameStore.upgradeCosts.seedStorageUpgradeCost)} seeds`"
+              :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.seedStorageUpgradeCost"
+              @upgrade="gameStore.upgradeSeedStorage"
+              @upgradeMax="gameStore.upgradeMaxSeedStorage"
+            />
             <p
               v-if="gameStore.storage.maxSeeds < gameStore.upgradeCosts.seedStorageUpgradeCost"
               class="text-xs"
@@ -120,25 +107,17 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.larvae, 0) }}/{{ formatNumber(gameStore.storage.maxLarvae, 0) }}
+              Count: {{ formatNumber(gameStore.resources.larvae, 0) }}/{{
+                formatNumber(gameStore.storage.maxLarvae, 0)
+              }}
               ({{ formatNumber(gameStore.larvaePerMinute) }} /min)
             </p>
-            <div class="w-full flex gap-2">
-              <button
-                :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.larvaeStorageUpgradeCost"
-                class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.upgradeLarvaeStorage"
-              >
-                Upgrade storage ({{ formatNumber(gameStore.upgradeCosts.larvaeStorageUpgradeCost) }} seeds)
-              </button>
-              <button
-                :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.larvaeStorageUpgradeCost"
-                class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.upgradeMaxLarvaeStorage"
-              >
-                Max
-              </button>
-            </div>
+            <StorageButtons
+              :cost-string="`${formatNumber(gameStore.resourceCosts.seedCostPerLarva)} seeds`"
+              :disabled="gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva"
+              @upgrade="gameStore.upgradeLarvaeStorage"
+              @upgradeMax="gameStore.upgradeMaxLarvaeStorage"
+            />
             <p
               v-if="gameStore.storage.maxSeeds < gameStore.upgradeCosts.larvaeStorageUpgradeCost"
               class="text-xs"
@@ -146,6 +125,7 @@
               If only there was a way to increase your seed storage...
             </p>
           </div>
+
           <div class="w-full flex gap-2">
             <button
               :disabled="gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva"
@@ -162,7 +142,6 @@
               Max
             </button>
           </div>
-
           <!--          Hidden to try out the removal of this feature. -->
           <div
             v-if="false"
@@ -281,7 +260,9 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.eliteAnts, 0) }}/{{ formatNumber(gameStore.storage.maxEliteAnts, 0) }}
+              Count: {{
+                formatNumber(gameStore.resources.eliteAnts, 0)
+              }}/{{ formatNumber(gameStore.storage.maxEliteAnts, 0) }}
             </p>
           </div>
           <div class="w-full flex flex-wrap gap-2">
@@ -356,7 +337,9 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full ">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.queens, 0) }}/{{ formatNumber(gameStore.storage.maxQueens, 0) }}
+              Count: {{ formatNumber(gameStore.resources.queens, 0) }}/{{
+                formatNumber(gameStore.storage.maxQueens, 0)
+              }}
             </p>
           </div>
           <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
@@ -474,6 +457,7 @@
 import {useGameStore} from '../stores/gameStore'
 import PrestigeShop from './PrestigeShop.vue'
 import {usePrestigeStore} from '../stores/prestigeStore'
+import StorageButtons from '@/components/StorageButtons.vue'
 
 const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()
