@@ -186,6 +186,7 @@ import Inventory from './Inventory.vue'
 import firebase from 'firebase/compat'
 import Settings from './Settings.vue'
 import {useAdventureStore} from '../stores/adventureStore'
+import {useDebounce, useDebounceFn} from '@vueuse/core'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
@@ -302,11 +303,9 @@ function handleBeforeUnload() {
   gameStore.saveGameState()
 }
 
-watch(() => gameStore.resources.ants, () => {
+watch(() => gameStore.resources.ants, useDebounceFn(() => {
   gameStore.setupAdventureStats()
-}, {
-  immediate: true,
-})
+}, 300), { immediate: true })
 </script>
 
 

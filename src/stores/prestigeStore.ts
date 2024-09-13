@@ -111,6 +111,7 @@ export const usePrestigeStore = defineStore('prestige', {
         description: 'Increase seed and larvae storage by 20% <br> Increase ant storage by 100% and queen storage by 50%',
         cost: 5,
         category: 'storage',
+        applyOnPrestige: true,
       },
       {
         id: 'eliteAntsStoreUpgrade',
@@ -218,7 +219,7 @@ export const usePrestigeStore = defineStore('prestige', {
         }
 
         // Reset the game state for prestige without deleting the Firestore doc
-        gameStore.resetLocalGameState({isDebug: false})
+        await gameStore.resetLocalGameState({isDebug: false})
 
         await gameStore.resetOtherStores(false)
         inventoryStore.applyPassiveEffects()  // Apply passive effects from inventory items

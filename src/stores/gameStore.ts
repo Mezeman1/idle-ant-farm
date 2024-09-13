@@ -699,7 +699,7 @@ export const useGameStore = defineStore('gameStore', {
         await this.clearGameStateFromFirestore(userId)
 
         // Reset the local game state, including prestige points if in debug mode
-        this.resetLocalGameState({isDebug: debug})
+        await this.resetLocalGameState({isDebug: debug})
 
         // Apply any prestige-based bonuses
         usePrestigeStore().applyPrestigeUpgrades()
@@ -722,46 +722,63 @@ export const useGameStore = defineStore('gameStore', {
       console.log('Game state cleared from Firestore')
     },
 
-    // Reset the local game state, optionally resetting prestige-related data and debug state
-    resetLocalGameState({isDebug}) {
-      console.log('Resetting local game state...')
+    resetLocalGameState({ isDebug }): Promise<void> {
+      return new Promise((resolve) => {
+        console.log('Resetting local game state...')
 
-      this.resources = {
-        larvae: 0,
-        ants: 0,
-        eliteAnts: 0,
-        seeds: 10,
-        queens: 1,
-        royalJelly: isDebug ? 0 : this.resources.royalJelly,
-      }
+        // Reset resources
+        this.resources = {
+          larvae: 0,
+          ants: 0,
+          eliteAnts: 0,
+          seeds: 10,
+          queens: 1,
+          royalJelly: isDebug ? 0 : this.resources.royalJelly,
+        }
 
-      this.productionRates = {
-        larvaeProductionRate: 1,
-        collectionRatePerAnt: 60,
-      }
+        // Reset production rates
+        this.productionRates = {
+          larvaeProductionRate: 1,
+          collectionRatePerAnt: 60,
+        }
 
-      this.storage = this.initialCaps
+        // Reset storage to initial caps
+        this.storage = {
+          maxSeeds: this.initialCaps.maxSeeds,
+          maxLarvae: this.initialCaps.maxLarvae,
+          maxAnts: this.initialCaps.maxAnts,
+          maxQueens: this.initialCaps.maxQueens,
+          maxEliteAnts: this.initialCaps.maxEliteAnts,
+        }
 
-      this.upgradeCosts = {
-        seedStorageUpgradeCost: 500,
-        larvaeStorageUpgradeCost: 100,
-      }
+        // Reset upgrade costs
+        this.upgradeCosts = {
+          seedStorageUpgradeCost: 500,
+          larvaeStorageUpgradeCost: 100,
+        }
 
-      this.lastSavedTime = Date.now()
+        // Set the last saved time
+        this.lastSavedTime = Date.now()
 
-      if (isDebug) {
-        this.resetDebugState()
-      }
+        // Handle debug state reset if applicable
+        if (isDebug) {
+          this.resetDebugState()
+        }
 
-      const prestigeStore = usePrestigeStore()
-      prestigeStore.applyPrestigeUpgrades(true)
+        // Apply prestige upgrades
+        const prestigeStore = usePrestigeStore()
+        prestigeStore.applyPrestigeUpgrades(true)
 
-      // Reset auto-creation flags
-      prestigeStore.autoQueenCreation = false
-      prestigeStore.autoAntCreation = false
-      prestigeStore.autoLarvaeCreation = false
-      prestigeStore.autoSeedStorageUpgrade = false
-      prestigeStore.autoEliteAntsCreation = false
+        // Reset auto-creation flags
+        prestigeStore.autoQueenCreation = false
+        prestigeStore.autoAntCreation = false
+        prestigeStore.autoLarvaeCreation = false
+        prestigeStore.autoSeedStorageUpgrade = false
+        prestigeStore.autoEliteAntsCreation = false
+
+        // Resolve the promise once everything is done
+        resolve()
+      })
     },
 
 
