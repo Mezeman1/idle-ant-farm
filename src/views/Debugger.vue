@@ -57,7 +57,14 @@
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
         @click="prestigeStore.timesPrestiged += 1"
       >
-        Add one prestige amount
+        Add 1 prestige amount
+      </button>
+
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        @click="gameStore.resources.royalJelly += 1"
+      >
+        Add Royal Jelly
       </button>
 
       <button

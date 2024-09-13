@@ -21,6 +21,11 @@ export const useGameStore = defineStore('gameStore', {
       seeds: 10,
       queens: 1,
       royalJelly: 0,
+
+      // Evolved resources, bought using royal jelly
+      royalJellyAnts: 0,
+      workers: 0,
+      soldiers: 0,
     },
 
     storage: {
@@ -47,6 +52,8 @@ export const useGameStore = defineStore('gameStore', {
     productionRates: {
       larvaeProductionRate: 1, // Larvae produced per queen per minute
       collectionRatePerAnt: 60, // Seeds collected per ant per minute
+
+      collectionRatePerWorker: 600, // Seeds collected per worker per minute
     },
 
     resourceCosts: {
@@ -57,6 +64,9 @@ export const useGameStore = defineStore('gameStore', {
       larvaCostPerEliteAnt: 5,
       antCostPerQueen: 100, // Ants required to buy one queen
       seedCostPerQueen: 250, // Seeds required to buy one queen
+
+      // Costs for evolved resources
+      royalJellyCostPerUpgrade: 1,
     },
 
     upgradeCosts: {
@@ -93,12 +103,35 @@ export const useGameStore = defineStore('gameStore', {
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => {
       const eliteMultiplier = state.resources.eliteAnts > 0 ? (state.resources.eliteAnts * state.multiplierPerEliteAnt) : 1
+      const seedsFromAnts = (state.productionRates.collectionRatePerAnt * state.resources.ants * eliteMultiplier) / 60
+      if (state.resources.workers > 0) {
+        const seedsFromWorkers = (state.productionRates.collectionRatePerWorker * state.resources.workers * eliteMultiplier) / 60
+        return seedsFromAnts + seedsFromWorkers
+      }
 
-      return (state.productionRates.collectionRatePerAnt * state.resources.ants * eliteMultiplier) / 60
+      return seedsFromAnts
     },
   },
 
   actions: {
+    upgradeAnt() {
+      if (this.royalJellyUnlocked && this.resources.royalJelly >= this.resourceCosts.royalJellyCostPerUpgrade) {
+        this.resources.royalJelly -= this.resourceCosts.royalJellyCostPerUpgrade
+        this.resources.royalJellyAnts += 1
+      }
+    },
+    upgradeAntTo(antType: 'workers' | 'soldiers') {
+      if (this.resources.royalJellyAnts > 0) {
+        this.resources.royalJellyAnts -= 1
+        this.resources[antType] += 1
+      }
+    },
+    downgradeAntFrom(antType: 'workers' | 'soldiers') {
+      if (this.resources[antType] > 0) {
+        this.resources[antType] -= 1
+        this.resources.royalJellyAnts += 1
+      }
+    },
     // Function to create larvae using seeds, respecting the larvae cap
     createLarvae() {
       if (this.resources.seeds >= this.resourceCosts.seedCostPerLarva && this.resources.larvae < Math.floor(this.storage.maxLarvae)) {
@@ -669,7 +702,10 @@ export const useGameStore = defineStore('gameStore', {
       this.upgradeCosts = savedState.upgradeCosts ?? this.upgradeCosts
 
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
-      this.productionRates = savedState.productionRates ?? this.productionRates
+      this.productionRates = {
+        ...this.productionRates,
+        ...savedState.productionRates,
+      }
       this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
       this.healthPerAnt = savedState.healthPerAnt ?? this.healthPerAnt
       this.defensePerAnt = savedState.defensePerAnt ?? this.defensePerAnt
@@ -722,7 +758,7 @@ export const useGameStore = defineStore('gameStore', {
       console.log('Game state cleared from Firestore')
     },
 
-    resetLocalGameState({ isDebug }): Promise<void> {
+    resetLocalGameState({isDebug}): Promise<void> {
       return new Promise((resolve) => {
         console.log('Resetting local game state...')
 
@@ -734,12 +770,18 @@ export const useGameStore = defineStore('gameStore', {
           seeds: 10,
           queens: 1,
           royalJelly: isDebug ? 0 : this.resources.royalJelly,
+
+          royalJellyAnts: isDebug ? 0 : this.resources.royalJellyAnts,
+          workers: isDebug ? 0 : this.resources.workers,
+          soldiers: isDebug ? 0 : this.resources.soldiers,
         }
 
         // Reset production rates
         this.productionRates = {
           larvaeProductionRate: 1,
           collectionRatePerAnt: 60,
+
+          collectionRatePerWorker: 600,
         }
 
         // Reset storage to initial caps

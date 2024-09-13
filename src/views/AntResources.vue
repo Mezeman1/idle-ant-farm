@@ -402,7 +402,11 @@
             Royal Jelly
           </p>
           <p class="text-2xs">
-            Royal Jelly is a special resource used to upgrade ants. (Coming soon)
+            Royal Jelly is a special resource used to upgrade ants.
+            <br>
+            These ants are more efficient at collecting resources.
+            <br>
+            These ants do not reset on prestige.
           </p>
           <p class="text-2xs">
             Queens have a chance to produce Royal Jelly.
@@ -413,6 +417,70 @@
             <p class="text-sm">
               Count: {{ formatNumber(gameStore.resources.royalJelly ?? 0, 0) }}
             </p>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <button
+            :disabled="gameStore.resources.royalJelly < 1"
+            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            @click="gameStore.upgradeAnt"
+          >
+            Upgrade Ant
+          </button>
+          <span>
+            You currently have {{ formatNumber(gameStore.resources.royalJellyAnts ?? 0, 0) }} Royal Jelly Ants.
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span>
+              Workers: {{ formatNumber(gameStore.resources.workers ?? 0, 0) }}
+            </span>
+            <div class="flex gap-1">
+              <button
+                :disabled="gameStore.resources.workers < 1"
+                class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.downgradeAntFrom('workers')"
+              >
+                -
+              </button>
+              <button
+                :disabled="gameStore.resources.royalJellyAnts < 1"
+                class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.upgradeAntTo('workers')"
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <p>
+            More types of ants will be available in the future.
+          </p>
+          <div
+            v-if="false"
+            class="flex items-center justify-between"
+          >
+            <span>
+              Soldiers: {{ formatNumber(gameStore.resources.soldiers ?? 0, 0) }}
+            </span>
+            <div class="flex gap-1">
+              <button
+                :disabled="gameStore.resources.soldiers < 1"
+                class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.downgradeAntFrom('soldiers')"
+              >
+                -
+              </button>
+              <button
+                :disabled="gameStore.resources.royalJellyAnts < 1"
+                class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.upgradeAntTo('workers')"
+              >
+                +
+              </button>
+            </div>
           </div>
         </div>
       </div>
