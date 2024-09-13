@@ -53,10 +53,10 @@
           v-if="!allUpgradesInCategoryPurchaseableForOneTimePurchase(category.name)"
         >
           <button
-            class="w-full flex items-center justify-between bg-gray-200 hover:bg-gray-300 p-2 rounded"
+            class="w-full flex items-center justify-between bg-blue-500 hover:bg-blue-600 p-2 rounded font-bold text-white"
             @click="toggleCategory(category.name)"
           >
-            <span class="font-bold">{{ category.name }}</span>
+            <span>{{ category.name }}</span>
             <span v-if="!category.expanded">+</span>
             <span v-if="category.expanded">-</span>
           </button>
