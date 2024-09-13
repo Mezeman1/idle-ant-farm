@@ -8,6 +8,7 @@
       :ant-count="gameStore.resources.ants"
       :queen-count="gameStore.resources.queens"
       :larvae-count="gameStore.resources.larvae"
+      :elite-count="gameStore.resources.eliteAnts"
     />
 
     <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
@@ -49,7 +50,7 @@
 
       <div
         v-show="!isMinimized"
-        class="bg-white p-4 rounded shadow-lg flex flex-col space-y-2 m-2 bg-opacity-30"
+        class="bg-white p-4 rounded shadow-lg flex flex-col space-y-2 m-2 bg-opacity-50"
       >
         <!--        Navigation       -->
         <div
