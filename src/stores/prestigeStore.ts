@@ -150,6 +150,15 @@ export const usePrestigeStore = defineStore('prestige', {
           return usePrestigeStore().upgradePurchased('eliteAnts')
         },
       },
+      {
+        id: 'tunnels',
+        name: 'Tunnels',
+        description: 'Unlock the tunnel system for exploration',
+        cost: 500,
+        category: 'expansion',
+        applyOnPrestige: true,
+        oneTimePurchase: true,
+      },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 
     // Prestige-related variables

@@ -80,6 +80,17 @@
 
             <li class="flex-shrink-0">
               <button
+                :class="activeTab === 'tunnels' ? activeTabClasses : defaultTabClasses"
+                :disabled="!usePrestigeStore().upgradePurchased('tunnels')"
+                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm disabled:cursor-not-allowed"
+                @click.prevent="setActiveTab('tunnels')"
+              >
+                Tunnels
+              </button>
+            </li>
+
+            <li class="flex-shrink-0">
+              <button
                 :class="activeTab === 'inventory' ? activeTabClasses : defaultTabClasses"
                 class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 text-2xs md:text-sm"
                 @click.prevent="setActiveTab('inventory')"
@@ -117,6 +128,7 @@
           <AntResources v-show="activeTab === 'resources'" />
           <Adventure v-show="activeTab === 'adventure'" />
           <Inventory v-show="activeTab === 'inventory'" />
+          <Tunnels v-show="activeTab === 'tunnels'" />
           <Debugger v-show="activeTab === 'debugger'" />
           <Settings v-show="activeTab === 'settings'" />
         </div>
@@ -187,6 +199,8 @@ import firebase from 'firebase/compat'
 import Settings from './Settings.vue'
 import {useAdventureStore} from '../stores/adventureStore'
 import {useDebounce, useDebounceFn} from '@vueuse/core'
+import Tunnels from '@/views/Tunnels.vue'
+import {usePrestigeStore} from '@/stores/prestigeStore'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()

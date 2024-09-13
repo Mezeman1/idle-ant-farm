@@ -53,7 +53,7 @@ export const useGameStore = defineStore('gameStore', {
       larvaeProductionRate: 1, // Larvae produced per queen per minute
       collectionRatePerAnt: 60, // Seeds collected per ant per minute
 
-      collectionRatePerWorker: 600, // Seeds collected per worker per minute
+      collectionRatePerWorker: 6000, // Seeds collected per worker per minute
     },
 
     resourceCosts: {
@@ -781,7 +781,7 @@ export const useGameStore = defineStore('gameStore', {
           larvaeProductionRate: 1,
           collectionRatePerAnt: 60,
 
-          collectionRatePerWorker: 600,
+          collectionRatePerWorker: 6000,
         }
 
         // Reset storage to initial caps
