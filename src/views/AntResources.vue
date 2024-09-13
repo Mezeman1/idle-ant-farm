@@ -532,8 +532,6 @@
           >buying me a coffee</a> ☕️.
         </p>
       </div>
-
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2" />
     </div>
   </div>
 </template>
