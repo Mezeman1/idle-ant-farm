@@ -31,7 +31,7 @@
               ({{ formatNumber(gameStore.seedsPerSecond) }} /s)
             </p>
             <StorageButtons
-              :cost-string="`${formatNumber(gameStore.upgradeCosts.seedStorageUpgradeCost)} seeds`"
+              :cost-string="seedStorageCostString"
               :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.seedStorageUpgradeCost"
               @upgrade="gameStore.upgradeSeedStorage"
               @upgradeMax="gameStore.upgradeMaxSeedStorage"
@@ -113,8 +113,8 @@
               ({{ formatNumber(gameStore.larvaePerMinute) }} /min)
             </p>
             <StorageButtons
-              :cost-string="`${formatNumber(gameStore.resourceCosts.seedCostPerLarva)} seeds`"
-              :disabled="gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva"
+              :cost-string="larvaeStorageCostString"
+              :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.larvaeStorageUpgradeCost"
               @upgrade="gameStore.upgradeLarvaeStorage"
               @upgradeMax="gameStore.upgradeMaxLarvaeStorage"
             />
@@ -541,6 +541,7 @@ import {useGameStore} from '../stores/gameStore'
 import PrestigeShop from './PrestigeShop.vue'
 import {usePrestigeStore} from '../stores/prestigeStore'
 import StorageButtons from '@/components/StorageButtons.vue'
+import {computed} from 'vue'
 
 const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()
@@ -569,6 +570,8 @@ const stopCollectingSeeds = () => {
   }
 }
 
+const seedStorageCostString = computed(() => `${formatNumber(gameStore.upgradeCosts.seedStorageUpgradeCost)} seeds`)
+const larvaeStorageCostString = computed(() => `${formatNumber(gameStore.upgradeCosts.larvaeStorageUpgradeCost)} seeds`)
 </script>
 
 <style scoped>
