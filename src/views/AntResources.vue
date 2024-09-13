@@ -497,7 +497,11 @@
       <PrestigeShop />
 
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-        <h2>Found an issue or have a suggestion?</h2>
+        <h2
+          class="font-bold"
+        >
+          Found an issue or have a suggestion?
+        </h2>
         <p>
           Please report it on the <a
             href="https://github.com/Mezeman1/idle-ant-farm/issues/new"
@@ -506,7 +510,9 @@
           >GitHub issues page</a>.
         </p>
 
-        <h2>Want to keep up with development?</h2>
+        <h2 class="font-bold">
+          Want to keep up with development?
+        </h2>
         <p>
           Join the <a
             href="https://discord.gg/cHyAFTx9kj"
@@ -515,7 +521,9 @@
           >Discord server</a>.
         </p>
 
-        <h2>Want to help support the game?</h2>
+        <h2 class="font-bold">
+          Want to help support the game?
+        </h2>
         <p>
           Consider <a
             href="https://buymeacoffee.com/idleantfarm"
