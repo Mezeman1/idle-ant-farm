@@ -155,7 +155,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
         // Reset the local inventory state
         this.inventory = []
-        this.maxInventory = 120 // Reset to default value
+        this.maxInventory = 20 // Reset to default value
 
         console.log('Inventory reset and cleared from Firestore')
       } catch (error) {
