@@ -505,9 +505,16 @@
             class="text-blue-500"
           >GitHub issues page</a>.
         </p>
-      </div>
 
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
+        <h2>Want to keep up with development?</h2>
+        <p>
+          Join the <a
+            href="https://discord.gg/cHyAFTx9kj"
+            target="_blank"
+            class="text-blue-500"
+          >Discord server</a>.
+        </p>
+
         <h2>Want to help support the game?</h2>
         <p>
           Consider <a
@@ -517,6 +524,8 @@
           >buying me a coffee</a> ☕️.
         </p>
       </div>
+
+      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2" />
     </div>
   </div>
 </template>
