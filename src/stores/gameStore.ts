@@ -292,13 +292,14 @@ export const useGameStore = defineStore('gameStore', {
       try {
         // Parse the base64 encoded JSON string to retrieve IV and encrypted data
         const decodedString = atob(encryptedString)
-        const { iv, data } = JSON.parse(decodedString)
+        const {iv, data} = JSON.parse(decodedString)
 
         // Decrypt the data using the stored IV
         const decryptedData = await this.decryptData(data, Uint8Array.from(iv))
-        const { game } = decryptedData
+        const {game} = decryptedData
 
         await this.loadStateFromFirebase(game)
+        await this.loadGameState(false)
 
         console.log('Import successful!')
       } catch (error) {
@@ -313,7 +314,7 @@ export const useGameStore = defineStore('gameStore', {
       const encodedData = encoder.encode(JSON.stringify(data))
 
       const encryptedData = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
+        {name: 'AES-GCM', iv},
         key,
         encodedData,
       )
@@ -327,7 +328,7 @@ export const useGameStore = defineStore('gameStore', {
       const encryptedData = Uint8Array.from(atob(encryptedString), (c) => c.charCodeAt(0))
 
       const decryptedData = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv },
+        {name: 'AES-GCM', iv},
         key,
         encryptedData,
       )
@@ -341,7 +342,7 @@ export const useGameStore = defineStore('gameStore', {
       const keyMaterial = await crypto.subtle.importKey(
         'raw',
         new TextEncoder().encode('YourSecretKey12345'), // Use a secure key
-        { name: 'PBKDF2' },
+        {name: 'PBKDF2'},
         false,
         ['deriveKey'],
       )
@@ -354,7 +355,7 @@ export const useGameStore = defineStore('gameStore', {
           hash: 'SHA-256',
         },
         keyMaterial,
-        { name: 'AES-GCM', length: 256 },
+        {name: 'AES-GCM', length: 256},
         false,
         ['encrypt', 'decrypt'],
       )
@@ -801,23 +802,25 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
 
-    async loadGameState() {
+    async loadGameState(fromFireBase = true) {
       this.loaded = false
       try {
-        const userId = await this.getUserId()
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
+        if (fromFireBase) {
+          const userId = await this.getUserId()
+          if (!userId) {
+            console.error('User ID not found')
+            return
+          }
 
-        const docRef = doc(db, 'games', userId)
-        const docSnap = await getDoc(docRef)
+          const docRef = doc(db, 'games', userId)
+          const docSnap = await getDoc(docRef)
 
-        if (docSnap.exists()) {
-          await this.loadStateFromFirebase(docSnap.data())
-          console.log('Game state loaded from Firestore')
-        } else {
-          console.log('No saved game state found in Firestore')
+          if (docSnap.exists()) {
+            await this.loadStateFromFirebase(docSnap.data())
+            console.log('Game state loaded from Firestore')
+          } else {
+            console.log('No saved game state found in Firestore')
+          }
         }
 
         // Recalculate based on upgrades, apply offline progress
