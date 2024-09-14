@@ -647,9 +647,9 @@ export const useGameStore = defineStore('gameStore', {
       })
     },
 
-    async logout() {
+    async logout(withoutSaving = false) {
       // We don't need to save for anonymous users
-      if (firebase.auth().currentUser?.isAnonymous === false) {
+      if (firebase.auth().currentUser?.isAnonymous === false && !withoutSaving) {
         await this.saveGameState()
       }
 
@@ -808,6 +808,22 @@ export const useGameStore = defineStore('gameStore', {
       } catch (error) {
         console.error('Error resetting game state:', error)
       }
+    },
+
+    deleteAllData() {
+      const userId = this.getUserId()
+      if (!userId) {
+        console.error('User ID not found')
+        return
+      }
+
+      const auth = firebase.auth()
+      auth.currentUser?.delete().then(() => {
+        console.log('User deleted')
+        this.logout(true)
+      }).catch((error) => {
+        console.error('Error deleting user:', error)
+      })
     },
 
     // Clear Firestore document
