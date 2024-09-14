@@ -137,6 +137,10 @@
     </div>
   </div>
   <div v-else>
+    <PrivacyModal
+      :visible="privacyModalVisible"
+      @cancel="privacyModalVisible = false"
+    />
     <div
       v-if="gameStore.loggedIn"
       class="flex flex-col items-center justify-center h-screen p-4"
@@ -190,25 +194,38 @@
             >
               Login
             </button>
-            <button
-              v-if="registerActive"
-              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
-              @click="gameStore.register()"
+            <div
+              v-tooltip="gameStore.privacyAgreement === false ? 'Agree with the privacy policy before registering.' : ''"
+              class="w-full flex"
             >
-              Register
-            </button>
+              <button
+                v-if="registerActive"
+                :disabled="gameStore.privacyAgreement === false"
+                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2 disabled:cursor-not-allowed"
+                @click="gameStore.register()"
+              >
+                Register
+              </button>
+            </div>
+
             <p v-if="gameStore.error">
               <span class="text-red-500">{{ gameStore.error }}</span>
             </p>
           </div>
-          <button
-            v-if="!gameStore.loggedIn"
-            v-tooltip="'Will save your progress and allow you to play on multiple devices.'"
-            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
-            @click="gameStore.loginUsingGoogle()"
+          <div
+            v-tooltip="gameStore.privacyAgreement === false ? 'Agree with the privacy policy before logging in.' : ''"
+            class="w-full flex"
           >
-            Login using google
-          </button>
+            <button
+              v-if="!gameStore.loggedIn"
+              v-tooltip="'Will save your progress and allow you to play on multiple devices.'"
+              :disabled="gameStore.privacyAgreement === false"
+              class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2 disabled:cursor-not-allowed"
+              @click="gameStore.loginUsingGoogle()"
+            >
+              Login using google
+            </button>
+          </div>
           <p v-if="registerActive === false">
             Don't have an account?
             <button
@@ -226,6 +243,19 @@
             >
               Log in
             </button>
+          </p>
+
+          <p class="flex text-2xs items-center">
+            <input
+              v-model="gameStore.privacyAgreement"
+              type="checkbox"
+              class="m-2"
+            >
+            I have read and agree to the <a
+              href="#"
+              class="ml-1 text-blue-500 hover:text-blue-600"
+              @click="privacyModalVisible = true"
+            > Privacy Policy</a>
           </p>
         </div>
       </div>
@@ -247,6 +277,7 @@ import {useAdventureStore} from '../stores/adventureStore'
 import {useDebounceFn} from '@vueuse/core'
 import Tunnels from '@/views/Tunnels.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
+import PrivacyModal from '@/components/PrivacyModal.vue'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
@@ -260,6 +291,7 @@ const progress = computed(() => {
 })
 
 const registerActive = ref(false)
+const privacyModalVisible = ref(false)
 
 // Classes for active and default tabs
 const activeTabClasses = 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500'
