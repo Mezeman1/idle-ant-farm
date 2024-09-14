@@ -116,7 +116,7 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'eliteAntsStoreUpgrade',
         name: 'Elite Ants Store Upgrade',
-        description: 'Increase the amount of elite ants you can store by 100%',
+        description: 'Increase the amount of elite ants you can store by 1',
         cost: 100,
         applyOnPrestige: true,
         category: 'storage',
@@ -300,7 +300,7 @@ export const usePrestigeStore = defineStore('prestige', {
           gameStore.storage.maxQueens *= 1.5 // Increase queen storage
         },
         eliteAntsStoreUpgrade: () => {
-          gameStore.storage.maxEliteAnts *= 2 // Increase elite ant storage
+          gameStore.storage.maxEliteAnts +=1 // Increase elite ant storage
         },
         productionBoost: () => {
           gameStore.productionRates.larvaeProductionRate *= 1.2
