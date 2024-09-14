@@ -10,6 +10,11 @@ import {usePrestigeStore} from './prestigeStore'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
+    email: '',
+    password: '',
+    passwordConfirm: '',
+    error: null,
+
     loaded: false,
     loggedIn: false,
     lastSavedTime: Date.now(),
@@ -529,6 +534,60 @@ export const useGameStore = defineStore('gameStore', {
         console.error('User not found')
         return null
       }
+    },
+
+    async register() {
+      if (!this.email || !this.password || this.password !== this.passwordConfirm) {
+        console.error('Email or password missing')
+        return
+      }
+
+      firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+        .then(async (userCredential) => {
+          // Signed in
+          const user = userCredential.user
+          console.log('Registered as:', user?.email)
+
+          this.loggedIn = true
+
+          await this.loadGameState()
+        })
+        .catch((error) => {
+          const errorCode = error.code
+          const errorMessage = error.message
+          this.error = errorMessage
+        })
+    },
+
+    async login() {
+      if (!this.email || !this.password) {
+        console.error('Email or password missing')
+        return
+      }
+
+      firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+        .then(async (userCredential) => {
+          // Signed in
+          const user = userCredential.user
+          console.log('Logged in as:', user?.email)
+
+          console.log('Trying to get user ID...')
+
+          const userId = await this.getUserId()
+          if (!userId) {
+            console.error('User ID not found')
+            return
+          }
+
+          this.loggedIn = true
+
+          await this.loadGameState()
+        })
+        .catch((error) => {
+          const errorCode = error.code
+          const errorMessage = error.message
+          console.error('Error signing in:', errorCode, errorMessage)
+        })
     },
 
     async loginUsingGoogle() {

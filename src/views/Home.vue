@@ -162,6 +162,45 @@
           <p>
             Welcome to your Idle Ant Farm! 🐜
           </p>
+          <div class="flex flex-col gap-1">
+            <input
+              v-model="gameStore.email"
+              type="email"
+              placeholder="Email"
+              class="p-2 m-2 border-2 rounded"
+            >
+            <input
+              v-model="gameStore.password"
+              type="password"
+              placeholder="Password"
+              class="p-2 m-2 border-2 rounded"
+            >
+            <input
+              v-if="registerActive"
+              v-model="gameStore.passwordConfirm"
+              type="password"
+              placeholder="Confirm Password"
+              class="p-2 m-2 border-2 rounded"
+            >
+
+            <button
+              v-if="registerActive === false"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
+              @click="gameStore.login()"
+            >
+              Login
+            </button>
+            <button
+              v-if="registerActive"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
+              @click="gameStore.register()"
+            >
+              Register
+            </button>
+            <p v-if="gameStore.error">
+              <span class="text-red-500">{{ gameStore.error }}</span>
+            </p>
+          </div>
           <button
             v-if="!gameStore.loggedIn"
             v-tooltip="'Will save your progress and allow you to play on multiple devices.'"
@@ -170,17 +209,24 @@
           >
             Login using google
           </button>
-          <p class="w-64">
-            I disabled play as guest since it sometimes causes saving issues.
+          <p v-if="registerActive === false">
+            Don't have an account?
+            <button
+              class="text-blue-500 hover:text-blue-600"
+              @click="registerActive = !registerActive"
+            >
+              Sign up
+            </button>
           </p>
-          <!--          <button-->
-          <!--            v-if="!gameStore.loggedIn"-->
-          <!--            v-tooltip="'Will save progress for current session only, progress may be lost.'"-->
-          <!--            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"-->
-          <!--            @click="gameStore.loginAsGuest()"-->
-          <!--          >-->
-          <!--            Play as guest-->
-          <!--          </button>-->
+          <p v-else>
+            Already have an account?
+            <button
+              class="text-blue-500 hover:text-blue-600"
+              @click="registerActive = !registerActive"
+            >
+              Log in
+            </button>
+          </p>
         </div>
       </div>
     </div>
@@ -191,7 +237,6 @@
 import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useGameStore} from '../stores/gameStore'
 import AntSimulation from '../components/AntSimulation.vue'
-import {storeToRefs} from 'pinia'
 import AntResources from './AntResources.vue'
 import Adventure from './Adventure.vue'
 import Debugger from './Debugger.vue'
@@ -199,7 +244,7 @@ import Inventory from './Inventory.vue'
 import firebase from 'firebase/compat'
 import Settings from './Settings.vue'
 import {useAdventureStore} from '../stores/adventureStore'
-import {useDebounce, useDebounceFn} from '@vueuse/core'
+import {useDebounceFn} from '@vueuse/core'
 import Tunnels from '@/views/Tunnels.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 
@@ -213,6 +258,8 @@ const progress = computed(() => {
   const adventureProgress = adventureStore.loaded ? 50 : (adventureStore.progress / 2) // Half for adventure progress
   return gameProgress + adventureProgress
 })
+
+const registerActive = ref(false)
 
 // Classes for active and default tabs
 const activeTabClasses = 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500'
@@ -320,7 +367,7 @@ function handleBeforeUnload() {
 
 watch(() => gameStore.resources.ants, useDebounceFn(() => {
   gameStore.setupAdventureStats()
-}, 300), { immediate: true })
+}, 300), {immediate: true})
 </script>
 
 
