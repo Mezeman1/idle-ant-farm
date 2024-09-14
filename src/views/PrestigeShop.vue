@@ -25,7 +25,7 @@
             <br>
           </li>
           <li>
-            <strong>Queens:</strong> After the first queen, every additional queen gives 2 prestige points.
+            <strong>Queens:</strong> Every 2 queens will give you 1 prestige point.
           </li>
           <li>
             After a certain number of prestiges, the prestige point calculation will change.
