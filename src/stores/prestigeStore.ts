@@ -187,16 +187,16 @@ export const usePrestigeStore = defineStore('prestige', {
 
       // Calculate prestige points using adjusted logic
       const antPoints = this.calculatePrestigePointsFor(ants, this.baseAntThreshold, this.timesPrestiged)
-      const queenPoints = this.calculatePrestigePointsFor(queens, this.baseQueenThreshold, this.timesPrestiged)
+      const queenPoints = this.calculatePrestigePointsFor(queens, this.baseQueenThreshold, this.timesPrestiged, false)
 
       // Total prestige points is the sum of ant and queen points
       return antPoints + queenPoints
     },
 
-    calculatePrestigePointsFor(currentResources: number, baseThreshold: number, prestigeCount: number) {
+    calculatePrestigePointsFor(currentResources: number, baseThreshold: number, prestigeCount: number, scaling = true) {
       // Adjust scaling factor for prestige thresholds
       let scalingFactor = 1 + (prestigeCount * 0.2) // Scales gradually as prestiges increase
-      if (prestigeCount < 5) scalingFactor = 1 // Scales faster for first 5 prestiges (optional
+      if (prestigeCount < 5 || !scaling) scalingFactor = 1 // Scales faster for first 5 prestiges (optional
 
       const threshold = baseThreshold * scalingFactor
 
@@ -206,7 +206,7 @@ export const usePrestigeStore = defineStore('prestige', {
       }
 
       // For the first prestige, give enough points to allow for the first upgrade
-      if (prestigeCount <= 5) {
+      if (prestigeCount <= 5 || !scaling) {
         return Math.floor(currentResources / threshold) + 1 // Ensure at least 5 points can be earned
       }
 
