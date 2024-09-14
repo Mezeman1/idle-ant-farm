@@ -793,6 +793,7 @@ export const useGameStore = defineStore('gameStore', {
         resources: this.resources,
         storage: this.storage,
         upgradeCosts: this.upgradeCosts,
+        resourceCosts: this.resourceCosts,
         lastSavedTime: Date.now(),
         userId,
 
