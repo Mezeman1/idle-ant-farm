@@ -584,7 +584,7 @@ export const useAdventureStore = defineStore('adventureStore', {
             }
 
             if (drop.name === 'Seeds') {
-              useGameStore().resources.seeds += amount
+              useGameStore().collectSeedsManually(amount)
             } else {
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
               const item = useInventoryStore().getItemById(itemId)
