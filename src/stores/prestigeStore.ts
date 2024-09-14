@@ -263,7 +263,14 @@ export const usePrestigeStore = defineStore('prestige', {
 
       if (upgrade && this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost
-        upgrade.cost *= 1.5 // Increase cost by 50%
+        let defaultCostMultiplier = 1.5
+        switch (upgrade.id) {
+          case 'eliteAntsStoreUpgrade':
+            defaultCostMultiplier = 3
+            break
+        }
+
+        upgrade.cost *= defaultCostMultiplier
         upgrade.cost = Math.floor(upgrade.cost) // Round down to the nearest integer
 
         this.purchasedUpgrades.push(upgradeId)

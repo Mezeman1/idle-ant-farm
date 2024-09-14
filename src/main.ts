@@ -11,8 +11,8 @@ import 'tippy.js/dist/tippy.css' // optional for styling
 import {createPinia} from 'pinia'
 import ToastPlugin from 'vue-toast-notification'
 // Import one of the available themes
-//import 'vue-toast-notification/dist/theme-default.css';
-import 'vue-toast-notification/dist/theme-sugar.css'
+import 'vue-toast-notification/dist/theme-default.css'
+// import 'vue-toast-notification/dist/theme-sugar.css'
 
 import VueSimpleContextMenu from 'vue-simple-context-menu'
 import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'

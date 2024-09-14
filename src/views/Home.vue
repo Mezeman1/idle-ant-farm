@@ -428,4 +428,8 @@ button {
     min-height: 50px; // Default height for normal buttons
   }
 }
+
+.v-toast__item {
+  font-size: 0.8rem;
+}
 </style>

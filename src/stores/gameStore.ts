@@ -985,13 +985,6 @@ export const useGameStore = defineStore('gameStore', {
         const prestigeStore = usePrestigeStore()
         prestigeStore.applyPrestigeUpgrades(true)
 
-        // Reset auto-creation flags
-        prestigeStore.autoQueenCreation = false
-        prestigeStore.autoAntCreation = false
-        prestigeStore.autoLarvaeCreation = false
-        prestigeStore.autoSeedStorageUpgrade = false
-        prestigeStore.autoEliteAntsCreation = false
-
         // Resolve the promise once everything is done
         resolve()
       })
@@ -1012,10 +1005,12 @@ export const useGameStore = defineStore('gameStore', {
 
       prestigeStore.resetPrestigeShopCosts()
 
+      // Reset auto-creation flags
       prestigeStore.autoQueenCreation = false
       prestigeStore.autoAntCreation = false
       prestigeStore.autoLarvaeCreation = false
       prestigeStore.autoSeedStorageUpgrade = false
+      prestigeStore.autoEliteAntsCreation = false
     },
 
     async resetOtherStores(debug) {
