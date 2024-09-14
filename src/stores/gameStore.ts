@@ -825,7 +825,8 @@ export const useGameStore = defineStore('gameStore', {
         await this.logout(true)
       }).catch((error) => {
         console.error('Error deleting user:', error)
-        this.error = error.message
+        const $toast = useToast()
+        $toast.error('Failed to delete user: ' + error.message)
       })
     },
 
