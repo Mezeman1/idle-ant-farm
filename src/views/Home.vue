@@ -214,7 +214,7 @@
           </div>
           <div
             v-tooltip="gameStore.privacyAgreement === false ? 'Agree with the privacy policy before logging in.' : ''"
-            class="w-full flex"
+            class="w-full flex flex-col"
           >
             <button
               v-if="!gameStore.loggedIn"
@@ -225,6 +225,17 @@
             >
               Login using google
             </button>
+            <button
+              v-if="!gameStore.loggedIn"
+              v-tooltip="'Will save progress for current session only, progress may be lost.'"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
+              @click="gameStore.loginAsGuest()"
+            >
+              Play as guest
+            </button>
+            <p class="text-xs text-red-500">
+              <strong>Note:</strong> can't guarantee progress will be saved.
+            </p>
           </div>
           <p v-if="registerActive === false">
             Don't have an account?
