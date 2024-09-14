@@ -258,6 +258,107 @@ export const useGameStore = defineStore('gameStore', {
 
       this.resources.seeds += seedsToAdd
     },
+    // Export game data as encrypted string
+    async exportData() {
+      const userId = await this.getUserId()
+      const dataToExport = {
+        game: this.getGameState(userId), // Entire game state
+        timestamp: Date.now(), // Add a timestamp
+      }
+
+      try {
+        // Generate an IV
+        const iv = crypto.getRandomValues(new Uint8Array(12))
+
+        // Encrypt data
+        const encryptedData = await this.encryptData(dataToExport, iv)
+
+        // Combine IV and encrypted data
+        const exportPayload = {
+          iv: Array.from(iv), // Store IV as an array of numbers
+          data: encryptedData,
+        }
+
+        // Return the base64 encoded JSON string containing IV and encrypted data
+        return btoa(JSON.stringify(exportPayload))
+      } catch (error) {
+        console.error('Error exporting data:', error)
+        return null
+      }
+    },
+
+    // Import game data from a string (decrypt and load into state)
+    async importData(encryptedString: string) {
+      try {
+        // Parse the base64 encoded JSON string to retrieve IV and encrypted data
+        const decodedString = atob(encryptedString)
+        const { iv, data } = JSON.parse(decodedString)
+
+        // Decrypt the data using the stored IV
+        const decryptedData = await this.decryptData(data, Uint8Array.from(iv))
+        const { game } = decryptedData
+
+        await this.loadStateFromFirebase(game)
+
+        console.log('Import successful!')
+      } catch (error) {
+        console.error('Error importing data:', error)
+      }
+    },
+
+    // Encrypt the game data with provided IV
+    async encryptData(data: any, iv: Uint8Array) {
+      const key = await this.getCryptoKey()
+      const encoder = new TextEncoder()
+      const encodedData = encoder.encode(JSON.stringify(data))
+
+      const encryptedData = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        encodedData,
+      )
+
+      return btoa(String.fromCharCode(...new Uint8Array(encryptedData))) // Convert to base64 string
+    },
+
+    // Decrypt the imported string using the provided IV
+    async decryptData(encryptedString: string, iv: Uint8Array) {
+      const key = await this.getCryptoKey()
+      const encryptedData = Uint8Array.from(atob(encryptedString), (c) => c.charCodeAt(0))
+
+      const decryptedData = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        encryptedData,
+      )
+
+      const decoder = new TextDecoder()
+      return JSON.parse(decoder.decode(decryptedData))
+    },
+
+    // Generate the encryption key
+    async getCryptoKey() {
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode('YourSecretKey12345'), // Use a secure key
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey'],
+      )
+
+      return crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: new TextEncoder().encode('YourUniqueSalt'), // Use a unique salt
+          iterations: 100000,
+          hash: 'SHA-256',
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt'],
+      )
+    },
     // Function to upgrade seed storage
     upgradeSeedStorage() {
       if (this.resources.seeds >= this.upgradeCosts.seedStorageUpgradeCost) {
