@@ -818,11 +818,14 @@ export const useGameStore = defineStore('gameStore', {
       }
 
       const auth = firebase.auth()
-      auth.currentUser?.delete().then(() => {
+      auth.currentUser?.delete().then(async () => {
         console.log('User deleted')
-        this.logout(true)
+        const $toast = useToast()
+        $toast.success('User deleted successfully')
+        await this.logout(true)
       }).catch((error) => {
         console.error('Error deleting user:', error)
+        this.error = error.message
       })
     },
 
