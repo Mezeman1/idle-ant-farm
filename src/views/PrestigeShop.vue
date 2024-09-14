@@ -84,13 +84,16 @@
                     <span v-html="upgrade.description" />
                   </p>
                   <p
-                    v-if="upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id)"
+                    v-if="upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id) || upgrade.maxPurchases !== undefined && prestigeStore.amountOfUpgrade(upgrade.id) >= upgrade.maxPurchases"
                     class="text-xs text-blue-600"
                   >
                     Purchased
                   </p>
                 </div>
-                <div class="flex justify-between items-center">
+                <div
+                  v-if="!(upgrade.maxPurchases !== undefined && prestigeStore.amountOfUpgrade(upgrade.id) >= upgrade.maxPurchases)"
+                  class="flex justify-between items-center"
+                >
                   <button
                     v-if="!upgrade.oneTimePurchase || !prestigeStore.upgradePurchased(upgrade.id)"
                     :disabled="prestigeStore.prestigePoints < upgrade.cost"

@@ -13,6 +13,7 @@ interface PrestigeShopItem {
   applyOnPrestige?: boolean
   category?: 'auto' | 'production' | 'storage' | 'combat' | 'expansion',
   unlockedWhen?: () => boolean // Function to determine if the upgrade is unlocked
+  maxPurchases?: number // Maximum number of times the upgrade can be purchased
 }
 
 export const usePrestigeStore = defineStore('prestige', {
@@ -123,6 +124,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('eliteAnts')
         },
+        maxPurchases: 5,
       },
       {
         id: 'productionBoost',
@@ -260,6 +262,12 @@ export const usePrestigeStore = defineStore('prestige', {
     // Buy an upgrade from the prestige shop
     buyUpgrade(upgradeId: string): boolean {
       const upgrade = this.prestigeShop.find(u => u.id === upgradeId)
+
+      const amountOfUpgrade = this.amountOfUpgrade(upgradeId)
+      if (upgrade && upgrade.maxPurchases && amountOfUpgrade >= upgrade.maxPurchases) {
+        console.log('Max purchases reached for upgrade:', upgradeId)
+        return false
+      }
 
       if (upgrade && this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost

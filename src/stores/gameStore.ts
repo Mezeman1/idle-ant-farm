@@ -197,6 +197,10 @@ export const useGameStore = defineStore('gameStore', {
         this.resources.eliteAnts += 1
         this.resources.larvae -= this.resourceCosts.larvaCostPerEliteAnt
         this.resources.seeds -= this.resourceCosts.seedCostPerEliteAnt
+
+        this.resourceCosts.larvaCostPerEliteAnt = Math.floor(this.resourceCosts.larvaCostPerEliteAnt * 5)
+        this.resourceCosts.seedCostPerEliteAnt = Math.floor(this.resourceCosts.seedCostPerEliteAnt * 5)
+
         return true
       }
 
