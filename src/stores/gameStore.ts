@@ -793,7 +793,10 @@ export const useGameStore = defineStore('gameStore', {
         resources: this.resources,
         storage: this.storage,
         upgradeCosts: this.upgradeCosts,
-        resourceCosts: this.resourceCosts,
+        resourceCosts: {
+          seedCostPerEliteAnt: this.resourceCosts.seedCostPerEliteAnt,
+          larvaCostPerEliteAnt: this.resourceCosts.larvaCostPerEliteAnt,
+        },
         lastSavedTime: Date.now(),
         userId,
 
@@ -859,6 +862,11 @@ export const useGameStore = defineStore('gameStore', {
       }
 
       this.upgradeCosts = savedState.upgradeCosts ?? this.upgradeCosts
+
+      this.resourceCosts = {
+        ...this.resourceCosts,
+        ...savedState.resourceCosts,
+      }
 
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
       this.productionRates = {
