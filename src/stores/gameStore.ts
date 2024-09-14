@@ -551,7 +551,7 @@ export const useGameStore = defineStore('gameStore', {
 
           this.loggedIn = true
 
-          await this.setConsent()
+          await this.setConsent(await this.getUserId())
 
           await this.loadGameState()
         })
@@ -599,7 +599,7 @@ export const useGameStore = defineStore('gameStore', {
       firebase.auth()
         .signInWithPopup(provider)
         .then(async (result) => {
-          await this.setConsent()
+          await this.setConsent(await this.getUserId())
 
           this.loggedIn = true
 
@@ -611,53 +611,6 @@ export const useGameStore = defineStore('gameStore', {
         console.error('Error signing in:', errorCode, errorMessage)
       })
     },
-
-    async setConsent() {
-      try {
-        const userId = this.getUserId()
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
-
-        // Reference to the user's document in Firestore
-        const docRef = doc(db, 'userData', userId)
-        const docSnap = await getDoc(docRef)
-
-        // Check if the document exists
-        if (docSnap.exists()) {
-          const userData = docSnap.data()
-
-          // Check if consent has already been given
-          if (!userData.consentGiven) {
-            // If not, check if privacyAgreement is true and update Firestore
-            if (this.privacyAgreement) {
-              await setDoc(docRef, {
-                consentGiven: true,
-                consentTimestamp: new Date().toISOString(), // Store the current timestamp
-              }, {merge: true}) // Merge so that other data is not overwritten
-
-              console.log('Consent has been set with timestamp.')
-              return
-            }
-          } else {
-            console.log('Consent already given.')
-          }
-        } else {
-          console.log('No user data found, creating new document...')
-          const userData = {
-            consentGiven: this.privacyAgreement,
-            consentTimestamp: new Date().toISOString(),
-          }
-
-          await setDoc(docRef, userData)
-          console.log('Consent has been set with timestamp.')
-        }
-      } catch (error) {
-        console.error('Error updating consent:', error)
-      }
-    },
-
     loginAsGuest() {
       signInAnonymously(getAuth()).then(async (result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
@@ -982,6 +935,44 @@ export const useGameStore = defineStore('gameStore', {
       adventureStore.armyDefense = this.resources.ants * this.defensePerAnt + (this.resources.queens - 1) * this.defensePerAnt * this.resourceCosts.antCostPerQueen
     },
 
+    async setConsent(userId) {
+      try {
+        const docRef = doc(db, 'consent', userId)
+        const docSnap = await getDoc(docRef)
+
+        // Check if the document exists
+        if (docSnap.exists()) {
+          const userData = docSnap.data()
+
+          // Check if consent has already been given
+          if (!userData.consentGiven) {
+            // If not, check if privacyAgreement is true and update Firestore
+            if (this.privacyAgreement) {
+              await setDoc(docRef, {
+                consentGiven: true,
+                consentTimestamp: new Date().toISOString(), // Store the current timestamp
+              }, {merge: true}) // Merge so that other data is not overwritten
+
+              console.log('Consent has been set with timestamp.')
+              return
+            }
+          } else {
+            console.log('Consent already given.')
+          }
+        } else {
+          console.log('No user data found, creating new document...')
+          const userData = {
+            consentGiven: this.privacyAgreement,
+            consentTimestamp: new Date().toISOString(),
+          }
+
+          await setDoc(docRef, userData)
+          console.log('Consent has been set with timestamp.')
+        }
+      } catch (error) {
+        console.error('Error updating consent:', error)
+      }
+    },
 
     formatNumber(num: number, toFixed = 2): string {
       if (toFixed === 0) num = Math.floor(num)
