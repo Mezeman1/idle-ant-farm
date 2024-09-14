@@ -108,7 +108,7 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'storageUpgrade',
         name: 'Storage Upgrade',
-        description: 'Increase seed and larvae storage by 20% <br> Increase ant storage by 100% and queen storage by 50%',
+        description: 'Increase seed and larvae storage by 20% <br> Increase ant storage by 100% and queen storage by 1',
         cost: 5,
         category: 'storage',
         applyOnPrestige: true,
@@ -169,6 +169,9 @@ export const usePrestigeStore = defineStore('prestige', {
     autoSeedStorageUpgrade: false, // Auto-upgrade seed storage
 
     antsFromPrestigeShop: 0, // Ants from the prestige shop
+
+    baseAntThreshold: 50,
+    baseQueenThreshold: 2,
   }),
   getters: {
     upgradePurchased: (state) => (upgradeId: string) => state.purchasedUpgrades.includes(upgradeId),
@@ -176,30 +179,44 @@ export const usePrestigeStore = defineStore('prestige', {
   },
   actions: {
     calculatePrestigePoints() {
-      // Logarithmic scale for seeds with a minimum reward
-      const seedThreshold = 2000
-      let pointsFromSeeds = 0
       const gameStore = useGameStore()
 
-      if (gameStore.resources.seeds >= seedThreshold) {
-        const seedsOverThreshold = gameStore.resources.seeds - seedThreshold
-        pointsFromSeeds = Math.floor(Math.log10(seedsOverThreshold + 1) / 2) + 1
-      }
+      // Get current ants and queens from the game store
+      const ants = gameStore.resources.ants
+      const queens = gameStore.resources.queens
 
-      // Increase ant threshold to reward 1 point per 200 ants instead of 50 or 100
-      const pointsFromAnts = Math.floor((gameStore.resources.ants - this.antsFromPrestigeShop) / 50) // 1 point per 200 ants
+      // Calculate prestige points using adjusted logic
+      const antPoints = this.calculatePrestigePointsFor(ants, this.baseAntThreshold, this.timesPrestiged)
+      const queenPoints = this.calculatePrestigePointsFor(queens, this.baseQueenThreshold, this.timesPrestiged)
 
-      // Increase queen contribution to 10 points per queen after the first one
-      const pointsFromQueens = Math.max((gameStore.resources.queens - 1) * 2, 0) // 2 points per extra queen after the first
-
-      // when < 0 return 0
-      if (pointsFromSeeds + pointsFromAnts + pointsFromQueens < 0) {
-        return 0
-      }
-
-      // Combine all points together
-      return pointsFromSeeds + pointsFromAnts + pointsFromQueens
+      // Total prestige points is the sum of ant and queen points
+      return antPoints + queenPoints
     },
+
+    calculatePrestigePointsFor(currentResources: number, baseThreshold: number, prestigeCount: number) {
+      // Adjust scaling factor for prestige thresholds
+      let scalingFactor = 1 + (prestigeCount * 0.2) // Scales gradually as prestiges increase
+      if (prestigeCount < 5) scalingFactor = 1 // Scales faster for first 5 prestiges (optional
+
+      const threshold = baseThreshold * scalingFactor
+
+      // Ensure resources are above the threshold to earn prestige points
+      if (currentResources < threshold) {
+        return 0 // No prestige points if resources are below the threshold
+      }
+
+      // For the first prestige, give enough points to allow for the first upgrade
+      if (prestigeCount <= 5) {
+        return Math.floor(currentResources / threshold) + 1 // Ensure at least 5 points can be earned
+      }
+
+      // Use a hybrid scaling system for subsequent prestiges
+      const prestigePoints = Math.floor((currentResources / threshold) * (1 + prestigeCount * 0.05)) // Slow scaling after prestige 1
+
+      // Ensure points don’t drop below 0
+      return prestigePoints > 0 ? prestigePoints : 0
+    },
+
     // Function to handle prestige/reset
     async prestige() {
       const gameStore = useGameStore()
@@ -247,6 +264,8 @@ export const usePrestigeStore = defineStore('prestige', {
       if (upgrade && this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost
         upgrade.cost *= 1.5 // Increase cost by 50%
+        upgrade.cost = Math.floor(upgrade.cost) // Round down to the nearest integer
+
         this.purchasedUpgrades.push(upgradeId)
         this.applyPrestigeUpgrade(upgradeId)
 
@@ -274,6 +293,7 @@ export const usePrestigeStore = defineStore('prestige', {
 
         // Increase the cost for the next purchase
         upgrade.cost *= 1.5
+        upgrade.cost = Math.floor(upgrade.cost) // Round down to the nearest integer
       }
 
       console.log(`Purchased max upgrades for: ${upgrade.name}`)
@@ -297,7 +317,7 @@ export const usePrestigeStore = defineStore('prestige', {
           gameStore.storage.maxSeeds *= 1.2 // Increase seed storage
           gameStore.storage.maxLarvae *= 1.2 // Increase larvae storage
           gameStore.storage.maxAnts *= 2 // Increase ant storage
-          gameStore.storage.maxQueens *= 1.5 // Increase queen storage
+          gameStore.storage.maxQueens += 1 // Increase queen storage
         },
         eliteAntsStoreUpgrade: () => {
           gameStore.storage.maxEliteAnts +=1 // Increase elite ant storage

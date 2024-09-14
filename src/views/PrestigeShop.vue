@@ -20,15 +20,15 @@
         </h2>
         <ul class="space-y-2 text-xs">
           <li>
-            <strong>Seeds:</strong> Prestige points start at 2000 seeds. After that, points increase slowly on a
-            logarithmic scale.
-          </li>
-          <li>
             <strong>Ants:</strong> For every 50 ants (excluding those bought via the Prestige Shop), you earn 1 prestige
             point.
+            <br>
           </li>
           <li>
             <strong>Queens:</strong> After the first queen, every additional queen gives 2 prestige points.
+          </li>
+          <li>
+            After a certain number of prestiges, the prestige point calculation will change.
           </li>
         </ul>
       </div>

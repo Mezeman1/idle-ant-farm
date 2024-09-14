@@ -157,7 +157,7 @@ const addQueens = (count: number) => {
 const addEliteAnts = (count: number) => {
   const centerX = window.innerWidth / 2
   const centerY = window.innerHeight / 2
-  const antsToAdd = Math.min(count, maxAnts.value - ants.value.length)
+  const antsToAdd = Math.min(count, maxEliteAnts.value - eliteAnts.value.length)
 
   for (let i = 0; i < antsToAdd; i++) {
     eliteAnts.value.push({

@@ -10,6 +10,12 @@
     </div>
     <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <button
+        class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+        @click="maxAllResources()"
+      >
+        Max all resources
+      </button>
+      <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
         @click="gameStore.collectSeedsManually(1000)"
       >
@@ -112,6 +118,16 @@ const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()
 
 const inventoryStore = useInventoryStore()
+
+const maxAllResources = () => {
+  gameStore.resources.seeds = gameStore.storage.maxSeeds
+  gameStore.resources.larvae = gameStore.storage.maxLarvae
+  gameStore.resources.ants = gameStore.storage.maxAnts
+  gameStore.resources.queens = gameStore.storage.maxQueens
+  if (gameStore.eliteAntsUnlocked) {
+    gameStore.resources.eliteAnts = gameStore.storage.maxEliteAnts
+  }
+}
 </script>
 
 <style scoped>
