@@ -233,7 +233,7 @@
               Play as guest
             </button>
             <p class="text-xs text-red-500">
-              <strong>Note:</strong> can't guarantee progress will be saved.
+              <strong>Note:</strong> can't guarantee progress will be saved. There's an option to export your progress in the settings.
             </p>
           </div>
           <p v-if="registerActive === false">
