@@ -25,7 +25,6 @@
         </button>
       </div>
 
-      <!-- Tunnel Progress Bar -->
       <div class="relative w-full bg-gray-700 rounded-full h-4 shadow-inner">
         <div
           class="absolute top-0 left-0 bg-green-500 h-full rounded-full"
@@ -82,16 +81,22 @@
       <div class="max-h-40 overflow-y-auto bg-gray-800 bg-opacity-50 rounded-lg p-3 space-y-2">
         <ul class="list-disc list-inside text-sm text-gray-300">
           <li
+            v-if="resourcesFound.queens > 0"
+            class="text-yellow-400"
+          >
+            Found {{ formatNumber(resourcesFound.queens) }} queens
+          </li>
+          <li
             v-if="resourcesFound.seeds > 0"
             class="text-green-400"
           >
-            Found {{ resourcesFound.seeds }} seeds
+            Found {{ formatNumber(resourcesFound.seeds) }} seeds
           </li>
           <li
             v-if="resourcesFound.mineralShards > 0"
             class="text-blue-400"
           >
-            Found {{ resourcesFound.mineralShards }} mineral shards
+            Found {{ formatNumber(resourcesFound.mineralShards) }} mineral shards
           </li>
           <li
             v-if="trapsEncountered > 0"
@@ -113,9 +118,9 @@
 </template>
 
 <script setup lang="ts">
-import { useTunnelStore } from '@/stores/tunnelStore'
-import { storeToRefs } from 'pinia'
-import { ref, computed } from 'vue'
+import {useTunnelStore} from '@/stores/tunnelStore'
+import {storeToRefs} from 'pinia'
+import {computed, ref} from 'vue'
 import {useGameStore} from '@/stores/gameStore'
 
 const tunnelStore = useTunnelStore()
@@ -132,7 +137,7 @@ const {
   lootFound,
 } = storeToRefs(tunnelStore)
 
-const { startTunnelExploration, stopTunnelExploration } = tunnelStore
+const {startTunnelExploration, stopTunnelExploration} = tunnelStore
 
 // Slider for selecting ants to send
 const selectedAnts = ref(10)

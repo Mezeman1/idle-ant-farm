@@ -1,9 +1,6 @@
 <template>
   <div>
     <div class="flex flex-col my-2">
-      <p class="text-xs">
-        <strong>Note:</strong> Offline progress has been implemented 09/10/2024.
-      </p>
       <label
         for="area"
         class="text-md font-semibold"
@@ -52,7 +49,7 @@
         <img
           :src="ArmyImage"
           alt="Ant Army"
-          class="rounded max-w-[300px] w-full"
+          class="rounded max-w-[150px] w-full"
         >
         <div class="w-full mt-2 text-center">
           <p class="text-lg font-bold">
@@ -78,7 +75,7 @@
         <img
           :src="adventureStore.currentEnemy?.image ?? 'https://via.placeholder.com/150'"
           alt="Enemy Bug"
-          class="rounded max-w-[300px] w-full"
+          class="rounded max-w-[150px] w-full"
         >
         <div class="w-full mt-2 text-center">
           <p class="text-lg font-bold">

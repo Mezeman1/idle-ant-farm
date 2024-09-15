@@ -132,7 +132,7 @@
         </div>
 
 
-        <div class="max-h-screen-3/4 overflow-y-auto">
+        <div class="max-h-screen-4/5 overflow-y-auto">
           <AntResources v-show="activeTab === 'resources'" />
           <PrestigeShop v-show="activeTab === 'prestige'" />
           <Adventure v-show="activeTab === 'adventure'" />

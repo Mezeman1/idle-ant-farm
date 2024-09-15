@@ -18,6 +18,7 @@ module.exports = {
         'half-screen': '50vh',
         'screen-3/4': '75vh',
         'screen-1/5': '20vh',
+        'screen-4/5': '80vh',
       },
       fontSize: {
         '3xs': '.5rem',

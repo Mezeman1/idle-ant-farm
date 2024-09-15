@@ -198,16 +198,17 @@ export const usePrestigeStore = defineStore('prestige', {
       const queens = gameStore.resources.queens
 
       // Calculate prestige points using adjusted logic
-      const antPoints = this.calculatePrestigePointsFor(ants, this.baseAntThreshold, this.timesPrestiged)
+      const antPoints = this.calculatePrestigePointsFor(ants, this.baseAntThreshold, this.timesPrestiged, false)
       const queenPoints = this.calculatePrestigePointsFor(queens, this.baseQueenThreshold, this.timesPrestiged, false)
+      const seedPoints = this.calculatePrestigePointsFor(gameStore.resources.seeds, 1000, this.timesPrestiged)
 
       // Total prestige points is the sum of ant and queen points
-      return antPoints + queenPoints
+      return antPoints + queenPoints + seedPoints
     },
 
     calculatePrestigePointsFor(currentResources: number, baseThreshold: number, prestigeCount: number, scaling = true) {
       // Adjust scaling factor for prestige thresholds
-      let scalingFactor = 1 + (prestigeCount * 0.2) // Scales gradually as prestiges increase
+      let scalingFactor = 1 + (prestigeCount * 2) // Scales gradually as prestiges increase
       if (prestigeCount < 5 || !scaling) scalingFactor = 1 // Scales faster for first 5 prestiges (optional
 
       const threshold = baseThreshold * scalingFactor

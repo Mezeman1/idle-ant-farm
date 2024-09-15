@@ -207,8 +207,6 @@ export const useGameStore = defineStore('gameStore', {
 
       return false
     },
-    // Create max ants based on available larvae and seeds
-    // Create max elite ants based on available larvae and seeds
     createEliteMaxAnts() {
       const availableEliteAntSpace = Math.floor(this.storage.maxEliteAnts) - this.resources.eliteAnts
       const maxCreatableEliteAntsByLarvae = Math.floor(this.resources.larvae / this.resourceCosts.larvaCostPerEliteAnt)
@@ -235,7 +233,9 @@ export const useGameStore = defineStore('gameStore', {
 
       return false
     },
-    // Buy max queens based on available ants and seeds
+    addQueen(amount = 1) {
+      this.resources.queens = Math.min(this.resources.queens + amount, this.storage.maxQueens)
+    },
     // Buy max queens based on available ants and seeds
     buyMaxQueens() {
       const availableQueenSpace = Math.floor(this.storage.maxQueens) - this.resources.queens
@@ -366,7 +366,11 @@ export const useGameStore = defineStore('gameStore', {
       )
     },
     // Function to upgrade seed storage
-    upgradeSeedStorage() {
+    upgradeSeedStorage(fromPrestige = false) {
+      if (fromPrestige && this.resources.seeds < this.storage.maxSeeds / 2) {
+        return
+      }
+
       if (this.resources.seeds >= this.upgradeCosts.seedStorageUpgradeCost) {
         this.resources.seeds -= this.upgradeCosts.seedStorageUpgradeCost
 
@@ -404,7 +408,11 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
     // Function to upgrade larvae storage
-    upgradeLarvaeStorage() {
+    upgradeLarvaeStorage(fromPrestige = false) {
+      if (fromPrestige && this.resources.seeds < this.storage.maxSeeds / 2) {
+        return
+      }
+
       if (this.resources.seeds >= this.upgradeCosts.larvaeStorageUpgradeCost) {
         this.resources.seeds -= this.upgradeCosts.larvaeStorageUpgradeCost
 
@@ -618,7 +626,7 @@ export const useGameStore = defineStore('gameStore', {
 
       autoActions.forEach(autoAction => {
         if (autoAction.enabled) {
-          autoAction.action()
+          autoAction.action(true)
         }
       })
     },

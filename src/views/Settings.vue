@@ -20,6 +20,18 @@
     />
 
     <div class="flex flex-col gap-2">
+      <p class="text-2xs font-bold">
+        Please note, this game is in early development and may have bugs or balance issues.
+        <br>
+        I will be adding more features and balancing the game over time.
+        <br>
+        Also, any progress made may be reset at any time during current development stage.
+        <br>
+        Since I'm updating the game frequently, I recommend refreshing the page to get the latest version.
+        <br>
+        Resetting the game is also a good idea on updates to get the latest balance changes.
+      </p>
+
       <button
         v-tooltip="'This will reset your game and give you a fresh start. Added for demo purposes.'"
         class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow"

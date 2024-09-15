@@ -1,16 +1,5 @@
 <template>
   <div>
-    <p class="text-2xs font-bold">
-      Please note, this game is in early development and may have bugs or balance issues.
-      <br>
-      I will be adding more features and balancing the game over time.
-      <br>
-      Also, any progress made may be reset at any time during current development stage.
-      <br>
-      Since I'm updating the game frequently, I recommend refreshing the page to get the latest version.
-      <br>
-      Resetting the game is also a good idea on updates to get the latest balance changes.
-    </p>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
       <!-- Seeds Section -->
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
