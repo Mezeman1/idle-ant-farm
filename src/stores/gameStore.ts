@@ -219,7 +219,7 @@ export const useGameStore = defineStore('gameStore', {
       this.resources.seeds -= seedCost
       this.resources.antHousing += 1
     },
-    createMaxAntHousing(fromPrestige = false) {
+    createMaxAntHousing() {
       while (this.resources.seeds >= this.seedCostPerAntHousing) {
         this.resources.seeds -= this.seedCostPerAntHousing
         this.resources.antHousing += 1
