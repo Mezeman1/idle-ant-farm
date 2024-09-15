@@ -20,6 +20,8 @@ export const useGameStore = defineStore('gameStore', {
     loggedIn: false,
     lastSavedTime: Date.now(),
 
+    deltaMultiplier: 1,
+
     resources: {
       larvae: 0,
       ants: 0,
@@ -519,7 +521,7 @@ export const useGameStore = defineStore('gameStore', {
               return
             }
 
-            const deltaTime = Math.min(chunkDuration, remainingTime) // Simulate in larger chunks or remaining time
+            const deltaTime = Math.min(chunkDuration, remainingTime) * this.deltaMultiplier // Simulate in larger chunks or remaining time
             this.updateResources(deltaTime)
 
             // Accumulate the offline time for auto actions
@@ -572,7 +574,7 @@ export const useGameStore = defineStore('gameStore', {
       const autoCreationInterval = 1 // Only allow auto-creation every second
 
       const gameLoop = (currentTime) => {
-        const deltaTime = (currentTime - lastFrameTime) / 1000 // Time in seconds
+        const deltaTime = (currentTime - lastFrameTime) / 1000 * this.deltaMultiplier // Delta time in seconds
         const updateInterval = 1 / 30 // Target update rate (e.g., 30 FPS)
 
         timeAccumulator += deltaTime
@@ -650,7 +652,7 @@ export const useGameStore = defineStore('gameStore', {
       const autoActions = [
         {enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage},
         {enabled: prestigeStore.autoLarvaeStorageUpgrade, action: this.upgradeLarvaeStorage},
-        {enabled: prestigeStore.autoAntHousingCreation, action: this.createMaxAntHousing},
+        {enabled: prestigeStore.autoCreateHousing, action: this.createMaxAntHousing},
         {enabled: prestigeStore.autoEliteAntsCreation, action: this.createEliteMaxAnts},
         {enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts},
         {enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens},
