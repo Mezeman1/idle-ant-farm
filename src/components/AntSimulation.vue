@@ -25,12 +25,19 @@
 import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useWindowSize} from '@vueuse/core'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   antCount: number;
   queenCount: number;
   larvaeCount: number;
   eliteCount?: number;
-}>()
+  showAnimation: boolean;
+}>(), {
+  antCount: 100,
+  queenCount: 10,
+  larvaeCount: 50,
+  eliteCount: 0,
+  showAnimation: true,
+})
 
 const debugMode = import.meta.env.MODE === 'localhost'
 
@@ -350,10 +357,12 @@ const drawAll = () => {
 
   // Draw all entities
   drawLarvae()
-  drawEntities(ants.value)
-  drawEntities(queens.value)
-  drawEntities(eliteAnts.value)
-  drawSeeds() // Draw seeds only once every second
+  if (props.showAnimation) {
+    drawEntities(ants.value)
+    drawEntities(queens.value)
+    drawEntities(eliteAnts.value)
+    drawSeeds() // Draw seeds only once every second
+  }
 
   if (currentTime - lastSeedRotationTime >= 1000) {
     seedRotationAngle += 10 // Rotate by 10 degrees every second

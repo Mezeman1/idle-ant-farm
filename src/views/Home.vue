@@ -5,6 +5,7 @@
   >
     <AntSimulation
       v-if="gameStore.loaded && showBackground"
+      :show-animation="showAnimation"
       :ant-count="gameStore.resources.ants"
       :queen-count="gameStore.resources.queens"
       :larvae-count="gameStore.resources.larvae"
@@ -25,6 +26,13 @@
         @click="showBackground = !showBackground"
       >
         {{ showBackground ? 'Hide Background' : 'Show Background' }}
+      </button>
+
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white font-bold rounded m-1 shadow text-xs small py-1 px-2"
+        @click="showAnimation = !showAnimation"
+      >
+        {{ showAnimation ? 'Hide Animation' : 'Show Animation' }}
       </button>
 
       <button
@@ -295,6 +303,7 @@ const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
 const isMinimized = ref(false) // Minimized state
 const showBackground = ref(true) // Show background state
+const showAnimation = ref(true) // Show animation state
 const activeTab = ref('resources')
 const progress = computed(() => {
   const gameProgress = gameStore.loaded ? 50 : (gameStore.progress / 2) // Half for game progress
