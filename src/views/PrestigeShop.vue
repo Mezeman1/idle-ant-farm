@@ -43,6 +43,21 @@
         </button>
       </div>
 
+      <div class="flex w-full justify-end gap-2">
+        <button
+          class="small bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow"
+          @click="toggleAll(false)"
+        >
+          Collapse All
+        </button>
+        <button
+          class="small bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow"
+          @click="toggleAll(true)"
+        >
+          Expand All
+        </button>
+      </div>
+
       <!-- Collapsible Upgrade Sections -->
       <div
         v-for="category in categorizedUpgrades"
@@ -200,6 +215,13 @@ const handleConfirm = () => {
 // Handle the cancel action from the modal
 const handleCancel = () => {
   isModalVisible.value = false
+}
+
+
+const toggleAll = (value) => {
+  categorizedUpgrades.value.forEach(category => {
+    category.expanded = value
+  })
 }
 </script>
 

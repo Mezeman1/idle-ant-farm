@@ -354,7 +354,6 @@ export const useAdventureStore = defineStore('adventureStore', {
     applyRegeneration(deltaTime = null) {
       // If deltaTime is passed, use it; otherwise assume it's 1 tick (for real-time)
       const regenMultiplier = deltaTime ? deltaTime : 1
-
       // Apply army regeneration per tick
       if (this.armyHealth < this.armyMaxHealth) {
         this.armyHealth = Math.min(
@@ -511,6 +510,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
             const deltaTime = Math.min(chunkDuration, remainingTime)
             const playerDied = this.updateCombat(deltaTime)
+
             if (playerDied) {
               console.log('Player died during offline progress. Stopping simulation.')
               this.isSimulatingOffline = false
@@ -518,7 +518,6 @@ export const useAdventureStore = defineStore('adventureStore', {
               return
             }
 
-            this.applyRegeneration(deltaTime) // Simulate health regeneration
             this.handleLoot() // Simulate loot collection
 
             remainingTime -= deltaTime
@@ -545,12 +544,10 @@ export const useAdventureStore = defineStore('adventureStore', {
         }
 
         // Army attacks the bug
-        const armyDamage = Math.max(this.armyAttack - this.bugDefense, 1)
-        this.bugHealth = Math.max(this.bugHealth - armyDamage, 0)
+        this.applyArmyDamage(this.combatTick / 1000)
 
         // Bug attacks the army
-        const bugDamage = Math.max(this.bugAttack - this.armyDefense, 1)
-        this.armyHealth = Math.max(this.armyHealth - bugDamage, 0)
+        this.applyBugDamage(this.combatTick / 1000)
 
         // Check if either the army or the bug is defeated
         if (this.armyHealth === 0) {
@@ -564,6 +561,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           // this.armyHealth = this.armyMaxHealth
           // Continue to next enemy
         }
+
+        this.applyRegeneration(deltaTime) // Simulate health regeneration
       }
 
       return false
