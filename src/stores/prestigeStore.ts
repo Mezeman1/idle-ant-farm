@@ -192,7 +192,7 @@ export const usePrestigeStore = defineStore('prestige', {
 
     antsFromPrestigeShop: 0, // Ants from the prestige shop
 
-    baseAntThreshold: 100,
+    baseAntThreshold: 10,
   }),
   getters: {
     upgradePurchased: (state) => (upgradeId: string) => state.purchasedUpgrades.includes(upgradeId),
