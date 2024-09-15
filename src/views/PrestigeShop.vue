@@ -20,7 +20,7 @@
         </h2>
         <ul class="space-y-2 text-xs text-center">
           <li>
-            <strong>Ants:</strong> Calculated using Log1.01(ants) / 100
+            <strong>Ants:</strong> Calculated using Log2(ants / 16) * 10
           </li>
         </ul>
       </div>

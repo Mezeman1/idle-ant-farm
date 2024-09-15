@@ -192,7 +192,7 @@ export const usePrestigeStore = defineStore('prestige', {
 
     antsFromPrestigeShop: 0, // Ants from the prestige shop
 
-    baseAntThreshold: 10,
+    baseAntThreshold: 16,
   }),
   getters: {
     upgradePurchased: (state) => (upgradeId: string) => state.purchasedUpgrades.includes(upgradeId),
@@ -218,7 +218,7 @@ export const usePrestigeStore = defineStore('prestige', {
       }
 
       // Calculate prestige points using log1.01 for faster scaling
-      const points = Math.floor(Math.log(currentResources) / Math.log(1.01) / baseThreshold)
+      const points = Math.floor(Math.log2(currentResources/baseThreshold) * 10)
 
       // Ensure points don’t drop below 0
       return points > 0 ? points : 0
