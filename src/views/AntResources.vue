@@ -143,33 +143,29 @@
               Max
             </button>
           </div>
-          <!--          Hidden to try out the removal of this feature. -->
-          <div
-            v-if="false"
-            class="w-full flex"
-          >
+          <div class="w-full flex">
             <label
-              v-if="prestigeStore.upgradePurchased('autoLarvae')"
+              v-if="prestigeStore.upgradePurchased('autoLarvaeStorageUpgrade')"
               class="flex items-center cursor-pointer"
             >
-              <span class="mr-3 text-xs text-gray-600">Auto creating</span>
+              <span class="mr-3 text-xs text-gray-600">Auto upgrade storage</span>
               <div class="relative">
                 <input
-                  v-model="prestigeStore.autoLarvaeCreation"
+                  v-model="prestigeStore.autoLarvaeStorageUpgrade"
                   type="checkbox"
                   class="sr-only"
                 >
                 <div
                   :class="{
-                    'bg-green-500': prestigeStore.autoLarvaeCreation,
-                    'bg-red-500': !prestigeStore.autoLarvaeCreation
+                    'bg-green-500': prestigeStore.autoLarvaeStorageUpgrade,
+                    'bg-red-500': !prestigeStore.autoLarvaeStorageUpgrade
                   }"
                   class="block w-10 h-6 rounded-full shadow-inner transition-colors"
                 />
                 <div
                   :class="{
-                    'translate-x-full': prestigeStore.autoLarvaeCreation,
-                    'translate-x-0': !prestigeStore.autoLarvaeCreation
+                    'translate-x-full': prestigeStore.autoLarvaeStorageUpgrade,
+                    'translate-x-0': !prestigeStore.autoLarvaeStorageUpgrade,
                   }"
                   class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
                 />
