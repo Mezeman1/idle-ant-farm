@@ -1003,6 +1003,9 @@ export const useGameStore = defineStore('gameStore', {
         const prestigeStore = usePrestigeStore()
         prestigeStore.applyPrestigeUpgrades(true)
 
+        const adventureStore = useAdventureStore()
+        adventureStore.resetAdventureState()
+
         // Resolve the promise once everything is done
         resolve()
       })

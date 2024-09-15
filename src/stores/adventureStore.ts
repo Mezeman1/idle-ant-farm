@@ -2,8 +2,6 @@ import {defineStore} from 'pinia'
 import {useGameStore} from './gameStore'
 import {useToast} from 'vue-toast-notification'
 import {useInventoryStore} from './inventoryStore'
-import {deleteDoc, doc, setDoc} from 'firebase/firestore'
-import {db} from '../firebase'
 import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
 
 interface KillCounts {
@@ -41,9 +39,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     combatTick: 2000, // Combat happens every 2000ms (2 seconds)
 
     // Kill counts
-    killCounts: {
-
-    } as KillCounts,
+    killCounts: {} as KillCounts,
 
     // For offline progress
     lastSavedTime: Date.now(),
@@ -443,36 +439,15 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Reset adventure state and clear from Firebase Firestore
     async resetAdventureState() {
-      try {
-        const gameStore = useGameStore() // Access the gameStore
-        const userId = await gameStore.getUserId() // Use gameStore's getUserId method
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
 
-        // Clear the user's adventure state from Firestore
-        const docRef = doc(db, 'adventure', userId)
-        await deleteDoc(docRef) // Delete the document from Firestore
-
-        // Reset the local adventure state
-        this.armyHealth = 100
-        this.armyMaxHealth = 100
-        this.armyAttack = 10
-        this.armyDefense = 5
-        this.armyRegen = 5
-        this.killCounts = {
-          grasshopperKills: 0,
-          beetleKills: 0,
-          waspKills: 0,
-        }
-        this.lastSavedTime = Date.now()
-        this.currentArea = null
-
-        console.log('Adventure state reset and cleared from Firestore')
-      } catch (error) {
-        console.error('Error resetting adventure state:', error)
-      }
+      // Reset the local adventure state
+      this.armyHealth = 100
+      this.armyMaxHealth = 100
+      this.armyAttack = 10
+      this.armyDefense = 5
+      this.armyRegen = 5
+      this.lastSavedTime = Date.now()
+      this.currentArea = null
     },
 
     // Offline progress calculation

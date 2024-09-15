@@ -270,11 +270,14 @@ export const usePrestigeStore = defineStore('prestige', {
       }
     },
     getCostMultiplier(upgrade) {
-      let defaultCostMultiplier = 1.5
+      let defaultCostMultiplier = 1.2
 
       switch (upgrade.id) {
         case 'eliteAntsStoreUpgrade':
           defaultCostMultiplier = 3
+          break
+        case 'startWithAnts':
+          defaultCostMultiplier = 1.1
           break
       }
       return defaultCostMultiplier

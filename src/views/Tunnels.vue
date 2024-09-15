@@ -60,7 +60,7 @@
     <!-- Send button -->
     <div class="flex justify-center">
       <button
-        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md font-medium transition-all duration-300"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md font-medium transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
         :disabled="selectedAnts > availableAnts"
         @click="startTunnelExploration(selectedAnts)"
       >
