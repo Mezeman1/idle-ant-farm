@@ -1077,6 +1077,7 @@ export const useGameStore = defineStore('gameStore', {
       prestigeStore.autoSeedStorageUpgrade = false
       prestigeStore.autoLarvaeStorageUpgrade = false
       prestigeStore.autoEliteAntsCreation = false
+      prestigeStore.autoCreateHousing = false
 
       inventoryStore.resetInventoryState()
     },

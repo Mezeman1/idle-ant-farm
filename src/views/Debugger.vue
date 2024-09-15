@@ -9,6 +9,16 @@
       </button>
     </div>
     <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
+      <label>
+        Delta Multiplier: {{ gameStore.deltaMultiplier }}
+      </label>
+      <input
+        v-model="gameStore.deltaMultiplier"
+        class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+        type="range"
+        :min="0"
+        :max="10"
+      >
       <button
         class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
         @click="maxAllResources()"

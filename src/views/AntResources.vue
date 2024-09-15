@@ -219,7 +219,7 @@
               v-if="prestigeStore.upgradePurchased('autoAnts')"
               class="flex items-center cursor-pointer"
             >
-              <span class="mr-3 text-xs text-gray-600">Auto creating</span>
+              <span class="mr-3 text-xs text-gray-600">Auto create ants</span>
               <div class="relative">
                 <input
                   v-model="prestigeStore.autoAntCreation"

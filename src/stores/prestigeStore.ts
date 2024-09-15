@@ -192,8 +192,7 @@ export const usePrestigeStore = defineStore('prestige', {
 
     antsFromPrestigeShop: 0, // Ants from the prestige shop
 
-    baseAntThreshold: 50,
-    baseQueenThreshold: 2,
+    baseAntThreshold: 100,
   }),
   getters: {
     upgradePurchased: (state) => (upgradeId: string) => state.purchasedUpgrades.includes(upgradeId),
@@ -203,41 +202,26 @@ export const usePrestigeStore = defineStore('prestige', {
     calculatePrestigePoints() {
       const gameStore = useGameStore()
 
-      // Get current ants and queens from the game store
+      // Get current ants from the game store
       const ants = gameStore.resources.ants
-      const queens = gameStore.resources.queens
 
-      // Calculate prestige points using adjusted logic
-      const antPoints = this.calculatePrestigePointsFor(ants, this.baseAntThreshold, this.timesPrestiged, false)
-      const queenPoints = this.calculatePrestigePointsFor(queens, this.baseQueenThreshold, this.timesPrestiged, false)
-      const seedPoints = this.calculatePrestigePointsFor(gameStore.resources.seeds, 1000, this.timesPrestiged)
+      // Calculate prestige points using log1.01 scaling for ants
+      const antPoints = this.calculatePrestigePointsFor(ants, this.baseAntThreshold)
 
-      // Total prestige points is the sum of ant and queen points
-      return antPoints + queenPoints + seedPoints
+      return antPoints // Only ants will give prestige points
     },
 
-    calculatePrestigePointsFor(currentResources: number, baseThreshold: number, prestigeCount: number, scaling = true) {
-      // Adjust scaling factor for prestige thresholds
-      let scalingFactor = 1 + (prestigeCount * 2) // Scales gradually as prestiges increase
-      if (prestigeCount < 5 || !scaling) scalingFactor = 1 // Scales faster for first 5 prestiges (optional
-
-      const threshold = baseThreshold * scalingFactor
-
+    calculatePrestigePointsFor(currentResources: number, baseThreshold: number) {
       // Ensure resources are above the threshold to earn prestige points
-      if (currentResources < threshold) {
+      if (currentResources < baseThreshold) {
         return 0 // No prestige points if resources are below the threshold
       }
 
-      // For the first prestige, give enough points to allow for the first upgrade
-      if (prestigeCount <= 5 || !scaling) {
-        return Math.floor(currentResources / threshold) + 1 // Ensure at least 5 points can be earned
-      }
-
-      // Use a hybrid scaling system for subsequent prestiges
-      const prestigePoints = Math.floor((currentResources / threshold) * (1 + prestigeCount * 0.05)) // Slow scaling after prestige 1
+      // Calculate prestige points using log1.01 for faster scaling
+      const points = Math.floor(Math.log(currentResources) / Math.log(1.01) / baseThreshold)
 
       // Ensure points don’t drop below 0
-      return prestigePoints > 0 ? prestigePoints : 0
+      return points > 0 ? points : 0
     },
 
     // Function to handle prestige/reset

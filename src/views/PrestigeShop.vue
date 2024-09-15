@@ -18,17 +18,9 @@
         <h2 class="text-base font-semibold mb-2 text-center">
           Prestige Point Calculation
         </h2>
-        <ul class="space-y-2 text-xs">
+        <ul class="space-y-2 text-xs text-center">
           <li>
-            <strong>Ants:</strong> For every 50 ants (excluding those bought via the Prestige Shop), you earn 1 prestige
-            point.
-            <br>
-          </li>
-          <li>
-            <strong>Queens:</strong> Every 2 queens will give you 1 prestige point.
-          </li>
-          <li>
-            After a certain number of prestiges, the prestige point calculation will change.
+            <strong>Ants:</strong> Calculated using Log1.01(ants) / 100
           </li>
         </ul>
       </div>
