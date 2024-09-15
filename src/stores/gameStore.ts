@@ -217,7 +217,7 @@ export const useGameStore = defineStore('gameStore', {
       this.resources.seeds -= seedCost
       this.resources.antHousing += 1
     },
-    createMaxAntHousing() {
+    createMaxAntHousing(fromPrestige = false) {
       while (this.resources.seeds >= this.seedCostPerAntHousing) {
         this.resources.seeds -= this.seedCostPerAntHousing
         this.resources.antHousing += 1
@@ -650,6 +650,7 @@ export const useGameStore = defineStore('gameStore', {
       const autoActions = [
         {enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage},
         {enabled: prestigeStore.autoLarvaeStorageUpgrade, action: this.upgradeLarvaeStorage},
+        {enabled: prestigeStore.autoAntHousingCreation, action: this.createMaxAntHousing},
         {enabled: prestigeStore.autoEliteAntsCreation, action: this.createEliteMaxAnts},
         {enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts},
         {enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens},

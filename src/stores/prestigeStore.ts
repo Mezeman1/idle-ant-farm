@@ -170,6 +170,12 @@ export const usePrestigeStore = defineStore('prestige', {
         applyOnPrestige: true,
         oneTimePurchase: true,
       },
+      {
+        id: 'autoCreateHousing',
+        name: 'Auto Create Housing',
+        description: 'Automatically create housing for ants',
+        cost: 20,
+      },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 
     // Prestige-related variables
@@ -179,6 +185,7 @@ export const usePrestigeStore = defineStore('prestige', {
     autoQueenCreation: false, // Auto-create queens based on ants and seeds
     autoSeedStorageUpgrade: false, // Auto-upgrade seed storage
     autoLarvaeStorageUpgrade: false, // Auto-upgrade larvae storage
+    autoCreateHousing: false, // Auto-create housing for ants
 
     antsFromPrestigeShop: 0, // Ants from the prestige shop
 
@@ -393,6 +400,9 @@ export const usePrestigeStore = defineStore('prestige', {
         autoLarvaeStorageUpgrade: () => {
           this.autoLarvaeStorageUpgrade = true
         },
+        autoCreateHousing: () => {
+          this.autoCreateHousing = true
+        },
         startWithAnts: () => {
           gameStore.resources.ants += 1
           this.antsFromPrestigeShop += 1
@@ -441,6 +451,7 @@ export const usePrestigeStore = defineStore('prestige', {
         autoQueenCreation: this.autoQueenCreation,
         autoSeedStorageUpgrade: this.autoSeedStorageUpgrade,
         autoLarvaeStorageUpgrade: this.autoLarvaeStorageUpgrade,
+        autoCreateHousing: this.autoCreateHousing,
         eliteAntsUnlocked: this.upgradePurchased('eliteAnts'),
         royalJellyUnlocked: this.upgradePurchased('royalJelly'),
       }
@@ -455,7 +466,8 @@ export const usePrestigeStore = defineStore('prestige', {
       this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
       this.autoQueenCreation = savedState.autoQueenCreation ?? this.autoQueenCreation
       this.autoSeedStorageUpgrade = savedState.autoSeedStorageUpgrade ?? this.autoSeedStorageUpgrade
-      this.autoLarvaeStorageUpgrade = savedState.autoLarvaeStorageUpgrade ?? this.autoLarvaeStorage
+      this.autoLarvaeStorageUpgrade = savedState.autoLarvaeStorageUpgrade ?? this.autoLarvaeStorageUpgrade
+      this.autoCreateHousing = savedState.autoCreateHousing ?? this.autoCreateHousing
       this.autoEliteAntsCreation = savedState.autoEliteAntsCreation ?? this.autoEliteAntsCreation
 
       // Load prestige shop costs
@@ -487,6 +499,8 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'autoLarvaeStorageUpgrade') shop.cost = 10
         if (shop.id === 'autoEliteAntsCreation') shop.cost = 100
         if (shop.id === 'royalJelly') shop.cost = 1000
+        if (shop.id === 'tunnels') shop.cost = 500
+        if (shop.id === 'autoCreateHousing') shop.cost = 20
       })
     },
   },

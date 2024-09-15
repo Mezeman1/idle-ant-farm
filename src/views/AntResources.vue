@@ -243,6 +243,35 @@
               </div>
             </label>
           </div>
+          <div class="w-full flex">
+            <label
+              v-if="prestigeStore.upgradePurchased('autoCreateHousing')"
+              class="flex items-center cursor-pointer"
+            >
+              <span class="mr-3 text-xs text-gray-600">Auto create housing</span>
+              <div class="relative">
+                <input
+                  v-model="prestigeStore.autoCreateHousing"
+                  type="checkbox"
+                  class="sr-only"
+                >
+                <div
+                  :class="{
+                    'bg-green-500': prestigeStore.autoCreateHousing,
+                    'bg-red-500': !prestigeStore.autoCreateHousing
+                  }"
+                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
+                />
+                <div
+                  :class="{
+                    'translate-x-full': prestigeStore.autoCreateHousing,
+                    'translate-x-0': !prestigeStore.autoCreateHousing,
+                  }"
+                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
+                />
+              </div>
+            </label>
+          </div>
         </div>
       </div>
 
