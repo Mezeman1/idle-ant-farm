@@ -177,8 +177,24 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.ants, 0) }}/{{ formatNumber(gameStore.storage.maxAnts, 0) }}
+              Count: {{ formatNumber(gameStore.resources.ants, 0) }}/{{ formatNumber(gameStore.maxAnts, 0) }}
             </p>
+          </div>
+          <div class="w-full flex flex-wrap gap-2">
+            <button
+              class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+              :disabled="gameStore.resources.seeds < gameStore.seedCostPerAntHousing"
+              @click="gameStore.createAntHousing"
+            >
+              Create housing ({{ formatNumber(gameStore.seedCostPerAntHousing) }} seeds)
+            </button>
+            <button
+              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+              :disabled="gameStore.resources.seeds < gameStore.seedCostPerAntHousing"
+              @click="gameStore.createMaxAntHousing"
+            >
+              Max
+            </button>
           </div>
           <div class="w-full flex flex-wrap gap-2">
             <button
@@ -590,7 +606,7 @@ const larvaeStorageCostString = computed(() => `${formatNumber(gameStore.upgrade
 
 const seedCollectingDisabled = computed(() => gameStore.resources.seeds >= gameStore.storage.maxSeeds)
 const createLarvaeDisabled = computed(() => gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva || gameStore.resources.larvae >= gameStore.storage.maxLarvae)
-const createAntDisabled = computed(() => gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerAnt || gameStore.resources.ants >= gameStore.storage.maxAnts)
+const createAntDisabled = computed(() => gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerAnt || gameStore.resources.ants >= gameStore.maxAnts)
 const createEliteAntDisabled = computed(() => gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerEliteAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerEliteAnt || gameStore.resources.eliteAnts >= gameStore.storage.maxEliteAnts)
 const createQueenDisabled = computed(() => gameStore.resources.ants < 100 || gameStore.resources.seeds < 250 || gameStore.resources.queens >= gameStore.storage.maxQueens)
 </script>

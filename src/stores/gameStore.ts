@@ -23,6 +23,7 @@ export const useGameStore = defineStore('gameStore', {
     resources: {
       larvae: 0,
       ants: 0,
+      antHousing: 0,
       eliteAnts: 0,
       seeds: 10,
       queens: 1,
@@ -34,6 +35,8 @@ export const useGameStore = defineStore('gameStore', {
       workers: 0,
       soldiers: 0,
     },
+
+    antsPerHousing: 1,
 
     storage: {
       maxSeeds: 1000, // Initial seed storage capacity
@@ -118,6 +121,20 @@ export const useGameStore = defineStore('gameStore', {
 
       return seedsFromAnts
     },
+    maxAnts: (state) => {
+      if (state.resources.antHousing === 0) {
+        return state.storage.maxAnts
+      }
+
+      return state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing
+    },
+    seedCostPerAntHousing: (state) => {
+      if (state.resources.antHousing === 0) {
+        return 1
+      }
+
+      return state.resources.antHousing + 1
+    },
   },
 
   actions: {
@@ -166,7 +183,7 @@ export const useGameStore = defineStore('gameStore', {
 
     // Function to create ants using larvae and seeds
     createAnts() {
-      if (this.resources.larvae >= this.resourceCosts.larvaCostPerAnt && this.resources.seeds >= this.resourceCosts.seedCostPerAnt && this.resources.ants < Math.floor(this.storage.maxAnts)) {
+      if (this.resources.larvae >= this.resourceCosts.larvaCostPerAnt && this.resources.seeds >= this.resourceCosts.seedCostPerAnt && this.resources.ants < Math.floor(this.maxAnts)) {
         this.resources.ants += 1
         this.resources.larvae -= this.resourceCosts.larvaCostPerAnt
         this.resources.seeds -= this.resourceCosts.seedCostPerAnt
@@ -175,10 +192,8 @@ export const useGameStore = defineStore('gameStore', {
 
       return false
     },
-    // Create max ants based on available larvae and seeds
-    // Create max ants based on available larvae and seeds
     createMaxAnts() {
-      const availableAntSpace = Math.floor(this.storage.maxAnts) - this.resources.ants
+      const availableAntSpace = Math.floor(this.maxAnts) - this.resources.ants
       const maxCreatableAntsByLarvae = Math.floor(this.resources.larvae / this.resourceCosts.larvaCostPerAnt)
       const maxCreatableAntsBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerAnt)
 
@@ -190,6 +205,22 @@ export const useGameStore = defineStore('gameStore', {
         this.resources.ants += antsToCreate
         this.resources.larvae -= antsToCreate * this.resourceCosts.larvaCostPerAnt
         this.resources.seeds -= antsToCreate * this.resourceCosts.seedCostPerAnt
+      }
+    },
+
+    createAntHousing() {
+      const seedCost = this.seedCostPerAntHousing
+      if (this.resources.seeds < seedCost) {
+        return
+      }
+
+      this.resources.seeds -= seedCost
+      this.resources.antHousing += 1
+    },
+    createMaxAntHousing() {
+      while (this.resources.seeds >= this.seedCostPerAntHousing) {
+        this.resources.seeds -= this.seedCostPerAntHousing
+        this.resources.antHousing += 1
       }
     },
     // Function to create ants using larvae and seeds
@@ -409,7 +440,7 @@ export const useGameStore = defineStore('gameStore', {
     },
     // Function to upgrade larvae storage
     upgradeLarvaeStorage(fromPrestige = false) {
-      if (fromPrestige && this.resources.seeds < this.storage.maxSeeds / 2) {
+      if (fromPrestige && this.resources.larvae < this.storage.maxLarvae / 2) {
         return
       }
 
@@ -963,6 +994,7 @@ export const useGameStore = defineStore('gameStore', {
         this.resources = {
           larvae: 0,
           ants: 0,
+          antHousing: 0,
           eliteAnts: 0,
           seeds: this.initialCaps.maxSeeds,
           queens: 1,
