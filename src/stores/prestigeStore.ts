@@ -175,6 +175,9 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Auto Create Housing',
         description: 'Automatically create housing for ants',
         cost: 20,
+        oneTimePurchase: true,
+        applyOnPrestige: true,
+        category: 'auto',
       },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 
