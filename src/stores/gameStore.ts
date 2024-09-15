@@ -955,7 +955,7 @@ export const useGameStore = defineStore('gameStore', {
           larvae: 0,
           ants: 0,
           eliteAnts: 0,
-          seeds: 10,
+          seeds: this.initialCaps.maxSeeds,
           queens: 1,
           royalJelly: isDebug ? 0 : this.resources.royalJelly,
 
@@ -1025,6 +1025,7 @@ export const useGameStore = defineStore('gameStore', {
       prestigeStore.autoAntCreation = false
       prestigeStore.autoLarvaeCreation = false
       prestigeStore.autoSeedStorageUpgrade = false
+      prestigeStore.autoLarvaeStorageUpgrade = false
       prestigeStore.autoEliteAntsCreation = false
 
       inventoryStore.resetInventoryState()
