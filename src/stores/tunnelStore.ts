@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
-import { useGameStore } from '@/stores/gameStore'
+import {defineStore} from 'pinia'
+import {useGameStore} from '@/stores/gameStore'
 
 export const useTunnelStore = defineStore('tunnelStore', {
   state: () => ({
@@ -34,17 +34,26 @@ export const useTunnelStore = defineStore('tunnelStore', {
     // Start the tunnel exploration
     startTunnelExploration(antsToSend: number) {
       if (this.antsInTunnel > 0) return // Prevent sending more ants if the tunnel is active
+      const gameStore = useGameStore()
+      const availableAnts = gameStore.resources.ants
+      if (antsToSend > availableAnts) return // Prevent sending more ants than available
+
 
       this.antsInTunnel = antsToSend
       this.initialAntsInTunnel = antsToSend // Store the starting number of ants
+      gameStore.resources.ants -= antsToSend // Deduct the sent ants from the player's resources
 
-    // **New Calculation**: Linear-Logarithmic scaling for initial depth
+      // **New Calculation**: Linear-Logarithmic scaling for initial depth
       const linearFactor = this.initialAntsInTunnel * 0.00001 // Linear boost for every ant sent
       const logFactor = Math.log10(this.initialAntsInTunnel + 10) // Logarithmic component to maintain balance
       this.depthBoost = linearFactor + logFactor // Combine linear and log scaling
       this.tunnelDepth = 0
       this.tunnelProgress = 0
       this.autoTunnelActive = true // Set auto mode
+
+      this.resourcesFound = {seeds: 0, mineralShards: 0}
+      this.trapsEncountered = 0
+      this.lootFound = []
 
       this.runTunnelLoop(performance.now()) // Start the loop
     },
@@ -81,7 +90,10 @@ export const useTunnelStore = defineStore('tunnelStore', {
       this.autoTunnelActive = false
       cancelAnimationFrame(this.animationFrameId)
       this.antsInTunnel = 0
-      console.log('Tunnel exploration stopped.')
+
+      // Add found resources, traps, and loot to the player's inventory
+      const gameStore = useGameStore()
+      gameStore.resources.seeds += this.resourcesFound.seeds
     },
 
     // Handle random events (resources, traps, loot)
@@ -89,42 +101,70 @@ export const useTunnelStore = defineStore('tunnelStore', {
       const eventChance = Math.random()
 
       // Adjust depth multiplier to scale logarithmically for better control at higher depths
-      const depthMultiplier = Math.log2(this.tunnelDepth + 2) // Logarithmic scaling: log2(depth + 2)
+      const depthMultiplier = Math.log2(this.tunnelDepth + 2) // Logarithmic scaling
 
-      // Scale event rewards based on the initial number of ants sent
-      const antMultiplier = Math.pow(this.initialAntsInTunnel, 0.25) // Use a 0.25 power scale for rewards and event intensity
+      // Scale rewards based on the number of ants sent
+      const antMultiplier = Math.pow(this.initialAntsInTunnel, 0.25) // Ant-based scaling
 
-      // Trap chance scaling slower, maxing at 50% but taking more depth to reach there
-      const trapChance = Math.min(0.2 + this.tunnelDepth * 0.01, 0.5) // Max out at 0.5 but slower scaling per depth
+      // Define possible events with corresponding chance ranges
+      const events = [
+        {chance: 0.5, handler: this.handleResourceEvent}, // 30% chance for resources
+        {chance: this.getTrapChance(), handler: this.handleTrapEvent}, // Trap event based on tunnel depth
+        {chance: 0.1, handler: this.handleLootEvent}, // Remaining chance for loot
+      ]
 
-      if (eventChance < 0.3) {
-        // Find resources (seeds or mineral shards)
-        const seedsFound = Math.floor((Math.random() * 50 + 10) * depthMultiplier * antMultiplier)
-        const shardsFound = Math.floor((Math.random() * 5 + 1) * depthMultiplier * antMultiplier)
-
-        this.resourcesFound.seeds += seedsFound
-        this.resourcesFound.mineralShards += shardsFound
-      } else if (eventChance < trapChance) {
-        if (this.tunnelDepth < this.depthBoost) return // Prevent traps at the start (linear boost)
-
-        // Calculate percentage loss based on depth
-        const baseLossPercentage = 0.05 // Base 5% loss
-        const maxLossPercentage = 0.3 // Max 30% loss at very deep levels
-        const depthFactor = Math.log2(this.tunnelDepth + 2) / 10 // Scale the depth factor logarithmically
-        const percentageLost = Math.min(baseLossPercentage + depthFactor, maxLossPercentage) // Ensure it doesn’t exceed max loss
-
-        const antsLost = Math.floor(this.initialAntsInTunnel * percentageLost)
-
-        this.antsInTunnel = Math.max(0, this.antsInTunnel - antsLost)
-        this.trapsEncountered += 1
-      } else {
-        // Find better loot in deeper tunnels, loot value scaling with depth and ant group size
-        const lootValue = Math.floor((Math.random() * 100 + 50) * depthMultiplier * antMultiplier)
-        const loot = { name: 'Rare Artifact', value: lootValue }
-
-        this.lootFound.push(loot)
+      // Determine which event should occur
+      let cumulativeChance = 0
+      for (const event of events) {
+        cumulativeChance += event.chance
+        if (eventChance < cumulativeChance) {
+          event.handler(depthMultiplier, antMultiplier) // Call the handler function for the selected event
+          break
+        }
       }
     },
+
+// Handler for resource event (seeds and mineral shards)
+    handleResourceEvent(depthMultiplier, antMultiplier) {
+      const seedsFound = Math.floor((Math.random() * 50 + 10) * depthMultiplier * antMultiplier)
+      const shardsFound = Math.floor((Math.random() * 5 + 1) * depthMultiplier * antMultiplier)
+
+      this.resourcesFound.seeds += seedsFound
+      this.resourcesFound.mineralShards += shardsFound
+
+      console.log(`Found ${seedsFound} seeds and ${shardsFound} mineral shards.`)
+    },
+
+    // Handler for trap event (losing ants)
+    handleTrapEvent(depthMultiplier, antMultiplier) {
+      if (this.tunnelDepth < this.depthBoost) return // Prevent traps early on
+
+      const baseLossPercentage = 0.05 // Base 5% loss
+      const maxLossPercentage = 0.3 // Max 30% loss at deeper levels
+      const depthFactor = Math.log2(this.tunnelDepth + 2) / 10 // Logarithmic scaling
+      const percentageLost = Math.min(baseLossPercentage + depthFactor, maxLossPercentage) // Scale loss based on depth
+
+      const antsLost = Math.floor(this.initialAntsInTunnel * percentageLost)
+      this.antsInTunnel = Math.max(0, this.antsInTunnel - antsLost)
+      this.trapsEncountered += 1
+
+      console.log(`Encountered a trap! Lost ${antsLost} ants.`)
+    },
+
+    // Handler for loot event (finding rare items)
+    handleLootEvent(depthMultiplier, antMultiplier) {
+      const lootValue = Math.floor((Math.random() * 100 + 50) * depthMultiplier * antMultiplier)
+      const loot = {name: 'Rare Artifact', value: lootValue}
+
+      this.lootFound.push(loot)
+      console.log(`Found loot: ${loot.name} worth ${loot.value}!`)
+    },
+
+    // Function to calculate the chance of encountering a trap based on depth
+    getTrapChance() {
+      return Math.min(0.2 + this.tunnelDepth * 0.01, 0.5) // Max at 50% trap chance
+    },
+
 
     // Reset tunnel data
     resetTunnel() {
@@ -132,7 +172,7 @@ export const useTunnelStore = defineStore('tunnelStore', {
       this.initialAntsInTunnel = 0 // Reset the initial ants as well
       this.tunnelDepth = 0
       this.tunnelProgress = 0
-      this.resourcesFound = { seeds: 0, mineralShards: 0 }
+      this.resourcesFound = {seeds: 0, mineralShards: 0}
       this.trapsEncountered = 0
       this.lootFound = []
       this.autoTunnelActive = false

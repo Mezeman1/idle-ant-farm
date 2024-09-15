@@ -10,6 +10,7 @@ interface KillCounts {
   [key: string]: number
 }
 
+
 export const useAdventureStore = defineStore('adventureStore', {
   state: () => ({
     loaded: false, // To track when adventure state is fully loaded

@@ -987,6 +987,9 @@ export const useGameStore = defineStore('gameStore', {
           larvaeStorageUpgradeCost: 100,
         }
 
+        this.resourceCosts.larvaCostPerEliteAnt = 5
+        this.resourceCosts.seedCostPerEliteAnt = 100
+
         // Set the last saved time
         this.lastSavedTime = Date.now()
 

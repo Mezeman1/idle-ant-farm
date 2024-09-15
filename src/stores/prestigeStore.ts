@@ -268,8 +268,10 @@ export const usePrestigeStore = defineStore('prestige', {
       } catch (error) {
         console.error('Error during prestige:', error)
       }
-    }, getCostMultiplier(upgrade: UnwrapRefSimple<PrestigeShopItem>) {
+    },
+    getCostMultiplier(upgrade) {
       let defaultCostMultiplier = 1.5
+
       switch (upgrade.id) {
         case 'eliteAntsStoreUpgrade':
           defaultCostMultiplier = 3

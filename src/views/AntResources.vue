@@ -490,6 +490,97 @@
         </h2>
       </div>
 
+      <!-- Mineral Shards Section -->
+      <div
+        v-if="prestigeStore.upgradePurchased('tunnels')"
+        class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
+      >
+        <div>
+          <p class="font-bold text-lg">
+            Mineral shards
+          </p>
+        </div>
+        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
+          <div class="flex flex-col gap-2 w-full">
+            <p class="text-sm">
+              Count: {{ formatNumber(gameStore.resources.mineralShards ?? 0, 0) }}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <button
+            :disabled="gameStore.resources.royalJelly < 1"
+            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+            @click="gameStore.upgradeAnt"
+          >
+            Upgrade Ant
+          </button>
+          <span>
+            You currently have {{ formatNumber(gameStore.resources.royalJellyAnts ?? 0, 0) }} Royal Jelly Ants.
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span>
+              Workers: {{ formatNumber(gameStore.resources.workers ?? 0, 0) }}
+            </span>
+            <div class="flex gap-1">
+              <button
+                :disabled="gameStore.resources.workers < 1"
+                class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.downgradeAntFrom('workers')"
+              >
+                -
+              </button>
+              <button
+                :disabled="gameStore.resources.royalJellyAnts < 1"
+                class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.upgradeAntTo('workers')"
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <p>
+            More types of ants will be available in the future.
+          </p>
+          <div
+            v-if="false"
+            class="flex items-center justify-between"
+          >
+            <span>
+              Soldiers: {{ formatNumber(gameStore.resources.soldiers ?? 0, 0) }}
+            </span>
+            <div class="flex gap-1">
+              <button
+                :disabled="gameStore.resources.soldiers < 1"
+                class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.downgradeAntFrom('soldiers')"
+              >
+                -
+              </button>
+              <button
+                :disabled="gameStore.resources.royalJellyAnts < 1"
+                class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="gameStore.upgradeAntTo('workers')"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
+      >
+        <h2>
+          LOCKED
+        </h2>
+      </div>
+
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
         <h2
           class="font-bold"
