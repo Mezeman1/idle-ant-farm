@@ -47,7 +47,8 @@
           <!-- Right Column: Collect Button -->
           <div class="w-full">
             <button
-              class="bg-yellow-500 hover:bg-yellow-600 text-white w-full px-3 py-1 rounded shadow text-xs select-none"
+              :disabled="seedCollectingDisabled"
+              class="bg-yellow-500 hover:bg-yellow-600 text-white w-full px-3 py-1 rounded shadow text-xs select-none disabled:bg-gray-400 disabled:cursor-not-allowed"
               @mousedown="startCollectingSeeds"
               @mouseup="stopCollectingSeeds"
               @mouseleave="stopCollectingSeeds"
@@ -128,14 +129,14 @@
 
           <div class="w-full flex gap-2">
             <button
-              :disabled="gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva"
+              :disabled="createLarvaeDisabled"
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="gameStore.createLarvae"
             >
               Create Larvae ({{ formatNumber(gameStore.resourceCosts.seedCostPerLarva) }} seeds)
             </button>
             <button
-              :disabled="gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva"
+              :disabled="createLarvaeDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="gameStore.createMaxLarvae"
             >
@@ -196,7 +197,7 @@
           </div>
           <div class="w-full flex flex-wrap gap-2">
             <button
-              :disabled="gameStore.resources.larvae < 1 || gameStore.resources.seeds < 50"
+              :disabled="createAntDisabled"
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="gameStore.createAnts"
             >
@@ -205,7 +206,7 @@
               }} larvae)
             </button>
             <button
-              :disabled="gameStore.resources.larvae < 1 || gameStore.resources.seeds < 50"
+              :disabled="createAntDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="gameStore.createMaxAnts"
             >
@@ -267,7 +268,7 @@
           </div>
           <div class="w-full flex flex-wrap gap-2">
             <button
-              :disabled="gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerEliteAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerEliteAnt"
+              :disabled="createEliteAntDisabled"
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="gameStore.createEliteAnts"
             >
@@ -276,7 +277,7 @@
               }} larvae)
             </button>
             <button
-              :disabled="gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerEliteAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerEliteAnt"
+              :disabled="createEliteAntDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="gameStore.createEliteMaxAnts()"
             >
@@ -344,7 +345,7 @@
           </div>
           <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
             <button
-              :disabled="gameStore.resources.ants < 100 || gameStore.resources.seeds < 250"
+              :disabled="createQueenDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="gameStore.buyQueen"
             >
@@ -352,7 +353,7 @@
               {{ formatNumber(gameStore.resourceCosts.antCostPerQueen) }} ants)
             </button>
             <button
-              :disabled="gameStore.resources.ants < 100 || gameStore.resources.seeds < 250"
+              :disabled="createQueenDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="gameStore.buyMaxQueens"
             >
@@ -493,9 +494,6 @@
         </h2>
       </div>
 
-      <!-- Prestige Section -->
-      <PrestigeShop />
-
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
         <h2
           class="font-bold"
@@ -572,6 +570,12 @@ const stopCollectingSeeds = () => {
 
 const seedStorageCostString = computed(() => `${formatNumber(gameStore.upgradeCosts.seedStorageUpgradeCost)} seeds`)
 const larvaeStorageCostString = computed(() => `${formatNumber(gameStore.upgradeCosts.larvaeStorageUpgradeCost)} seeds`)
+
+const seedCollectingDisabled = computed(() => gameStore.resources.seeds >= gameStore.storage.maxSeeds)
+const createLarvaeDisabled = computed(() => gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva || gameStore.resources.larvae >= gameStore.storage.maxLarvae)
+const createAntDisabled = computed(() => gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerAnt || gameStore.resources.ants >= gameStore.storage.maxAnts)
+const createEliteAntDisabled = computed(() => gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerEliteAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerEliteAnt || gameStore.resources.eliteAnts >= gameStore.storage.maxEliteAnts)
+const createQueenDisabled = computed(() => gameStore.resources.ants < 100 || gameStore.resources.seeds < 250 || gameStore.resources.queens >= gameStore.storage.maxQueens)
 </script>
 
 <style scoped>

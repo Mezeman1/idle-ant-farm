@@ -1,8 +1,5 @@
 import {defineStore} from 'pinia'
 import {Item, itemRegistry} from '../types/itemRegistry'
-import {deleteDoc, doc, setDoc} from 'firebase/firestore'
-import {db} from '../firebase'
-import {useGameStore} from './gameStore' // Import your item registry
 
 export const useInventoryStore = defineStore('inventoryStore', {
   state: () => ({
@@ -31,41 +28,51 @@ export const useInventoryStore = defineStore('inventoryStore', {
     },
 
     // Apply the effect of an item (passive or buffs)
-    applyItemEffect(item) {
-      console.log('Applying item effect', item)
+    applyItemEffect(item, amount = 1) {
       if (item.effect) {
-        return item.effect() // Apply passive or buff effects
-      }
-
-      return false
-    },
-
-    useItem(itemId) {
-      const item = this.inventory.find(i => i.id === itemId)
-      if (item && item.amount > 0) {
-        if (item.amount === 0) this.inventory = this.inventory.filter(i => i.id !== itemId)
-        if (item.type === 'passive') {
-          return false
+        for (let i = 0; i < amount; i++) {
+          const result = item.effect() // Apply the effect multiple times based on the amount
+          if (!result) return false // Stop if the effect fails
         }
 
+        return true // All effects applied successfully
+      }
+
+      return false // No effect or unsupported item type
+    },
+
+    useItem(itemId, amount = 1) {
+      const item = this.inventory.find(i => i.id === itemId)
+
+      if (item && item.amount > 0) {
+        if (item.type === 'passive') {
+          return false // Passive items can't be used
+        }
+
+        // Ensure the amount to use doesn't exceed the available amount
+        const useAmount = Math.min(item.amount, amount)
+
         // Apply the item's effect
-        if (this.applyItemEffect(item)) {
+        if (this.applyItemEffect(item, useAmount)) {
+          // Reduce the item's amount by the useAmount
           if (item.type === 'consumable' || item.type === 'buff') {
-            item.amount -= 1
+            item.amount -= useAmount
           }
 
-          if (item.amount === 0) {
+          // If the item's amount reaches 0, remove it from the inventory
+          if (item.amount <= 0) {
             this.inventory = this.inventory.filter(i => i.id !== itemId)
           }
 
-          return true
+          return true // Item used successfully
         }
 
-        return false
+        return false // Effect couldn't be applied
       }
 
-      return false
+      return false // Item not found or no amount left
     },
+
 
     sortInventory() {
       const sortByRarity = [

@@ -69,6 +69,16 @@
 
             <li class="flex-shrink-0">
               <button
+                :class="activeTab === 'prestige' ? activeTabClasses : defaultTabClasses"
+                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm"
+                @click.prevent="setActiveTab('prestige')"
+              >
+                Prestige
+              </button>
+            </li>
+
+            <li class="flex-shrink-0">
+              <button
                 :class="activeTab === 'adventure' ? activeTabClasses : defaultTabClasses"
                 class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 disabled:cursor-not-allowed text-2xs md:text-sm"
                 @click.prevent="setActiveTab('adventure')"
@@ -85,16 +95,6 @@
                 @click.prevent="setActiveTab('tunnels')"
               >
                 Tunnels
-              </button>
-            </li>
-
-            <li class="flex-shrink-0">
-              <button
-                :class="activeTab === 'inventory' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm"
-                @click.prevent="setActiveTab('inventory')"
-              >
-                Inventory
               </button>
             </li>
 
@@ -126,6 +126,7 @@
 
         <div class="max-h-screen-3/4 overflow-y-auto">
           <AntResources v-show="activeTab === 'resources'" />
+          <PrestigeShop v-show="activeTab === 'prestige'" />
           <Adventure v-show="activeTab === 'adventure'" />
           <Inventory v-show="activeTab === 'inventory'" />
           <Tunnels v-show="activeTab === 'tunnels'" />
@@ -288,6 +289,7 @@ import {useDebounceFn} from '@vueuse/core'
 import Tunnels from '@/views/Tunnels.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import PrivacyModal from '@/components/PrivacyModal.vue'
+import PrestigeShop from '@/views/PrestigeShop.vue'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()

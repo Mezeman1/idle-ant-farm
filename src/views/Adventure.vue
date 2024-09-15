@@ -111,6 +111,8 @@
         {{ adventureStore.isFighting || adventureStore.battleCooldown ? 'Stop Battle' : 'Start Battle' }}
       </button>
     </div>
+
+    <Inventory />
   </div>
 </template>
 
@@ -120,6 +122,7 @@ import {useGameStore} from '../stores/gameStore'
 import {onMounted, ref, watch} from 'vue'
 import {onClickOutside} from '@vueuse/core'
 import ArmyImage from '../assets/army.webp'
+import Inventory from '@/views/Inventory.vue'
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
 

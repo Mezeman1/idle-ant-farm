@@ -1,5 +1,10 @@
 <template>
   <div>
+    <h2
+      class="font-bold mb-4"
+    >
+      Inventory
+    </h2>
     <!-- Show the current selected item and action buttons -->
     <div
       v-if="activeItem"
@@ -14,13 +19,22 @@
         </p>
       </div>
 
-      <div class="flex gap-2 mt-4 md:mt-0">
+      <div
+        v-if="activeItem.type === 'consumable'"
+        class="flex gap-2 mt-4 md:mt-0"
+      >
         <button
-          v-if="activeItem.type === 'consumable'"
           class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
           @click="useItem(activeItem.id)"
         >
           Use
+        </button>
+
+        <button
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
+          @click="useItem(activeItem.id, 10)"
+        >
+          Use 10
         </button>
       </div>
     </div>
@@ -68,7 +82,7 @@ import {useWindowSize} from '@vueuse/core'
 import {useInventoryStore} from '../stores/inventoryStore'
 import {useToast} from 'vue-toast-notification'
 
-const {width, height} = useWindowSize() // Get the window size
+const {width} = useWindowSize() // Get the window size
 const inventoryStore = useInventoryStore() // Use the inventory store to get the items
 const totalSlots = computed(() => inventoryStore.maxInventory) // Total slots in the grid
 
@@ -137,9 +151,10 @@ watch([amountOfColumns], () => {
   grid.value.column(amountOfColumns.value, 'list')
 })
 
-const useItem = (itemId: number) => {
+const useItem = (itemId: number, amount = 1) => {
   const $toast = useToast()
-  if (useInventoryStore().useItem(itemId)) {
+
+  if (useInventoryStore().useItem(itemId, amount)) {
     $toast.success('Item used successfully')
     return
   }
