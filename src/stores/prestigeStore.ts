@@ -388,7 +388,7 @@ export const usePrestigeStore = defineStore('prestige', {
           this.autoLarvaeStorageUpgrade = true
         },
         autoCreateHousing: () => {
-          this.autoCreateHousing = true
+          this.autoCreateHousing = false
         },
         startWithAnts: () => {
           gameStore.resources.ants += 1
