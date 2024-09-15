@@ -59,6 +59,15 @@ export const usePrestigeStore = defineStore('prestige', {
         category: 'auto',
       },
       {
+        id: 'autoLarvaeStorageUpgrade',
+        name: 'Auto Larvae Storage Upgrade',
+        description: 'Automatically upgrade larvae storage',
+        cost: 10,
+        oneTimePurchase: true,
+        applyOnPrestige: true,
+        category: 'auto',
+      },
+      {
         id: 'autoEliteAntsCreation',
         name: 'Auto Elite Ants Creation',
         description: 'Automatically create elite ants based on ants and seeds',
@@ -169,6 +178,7 @@ export const usePrestigeStore = defineStore('prestige', {
     autoEliteAntsCreation: false, // Auto-create elite ants based on ants and seeds
     autoQueenCreation: false, // Auto-create queens based on ants and seeds
     autoSeedStorageUpgrade: false, // Auto-upgrade seed storage
+    autoLarvaeStorageUpgrade: false, // Auto-upgrade larvae storage
 
     antsFromPrestigeShop: 0, // Ants from the prestige shop
 
@@ -374,6 +384,9 @@ export const usePrestigeStore = defineStore('prestige', {
         autoSeedStorageUpgrade: () => {
           this.autoSeedStorageUpgrade = true
         },
+        autoLarvaeStorageUpgrade: () => {
+          this.autoLarvaeStorageUpgrade = true
+        },
         startWithAnts: () => {
           gameStore.resources.ants += 1
           this.antsFromPrestigeShop += 1
@@ -421,6 +434,7 @@ export const usePrestigeStore = defineStore('prestige', {
         autoEliteAntsCreation: this.autoEliteAntsCreation,
         autoQueenCreation: this.autoQueenCreation,
         autoSeedStorageUpgrade: this.autoSeedStorageUpgrade,
+        autoLarvaeStorageUpgrade: this.autoLarvaeStorageUpgrade,
         eliteAntsUnlocked: this.upgradePurchased('eliteAnts'),
         royalJellyUnlocked: this.upgradePurchased('royalJelly'),
       }
@@ -435,6 +449,7 @@ export const usePrestigeStore = defineStore('prestige', {
       this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
       this.autoQueenCreation = savedState.autoQueenCreation ?? this.autoQueenCreation
       this.autoSeedStorageUpgrade = savedState.autoSeedStorageUpgrade ?? this.autoSeedStorageUpgrade
+      this.autoLarvaeStorageUpgrade = savedState.autoLarvaeStorageUpgrade ?? this.autoLarvaeStorage
       this.autoEliteAntsCreation = savedState.autoEliteAntsCreation ?? this.autoEliteAntsCreation
 
       // Load prestige shop costs
@@ -463,6 +478,7 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'startWithAnts') shop.cost = 15
         if (shop.id === 'eliteAnts') shop.cost = 500
         if (shop.id === 'autoSeedStorageUpgrade') shop.cost = 10
+        if (shop.id === 'autoLarvaeStorageUpgrade') shop.cost = 10
         if (shop.id === 'autoEliteAntsCreation') shop.cost = 100
         if (shop.id === 'royalJelly') shop.cost = 1000
       })
