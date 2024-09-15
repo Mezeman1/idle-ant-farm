@@ -93,33 +93,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
         maxInventory: this.maxInventory,
       }
     },
-    // Save inventory state to Firebase Firestore
-    async saveInventoryState() {
-      const userId = await useGameStore().getUserId()
-      if (!userId) {
-        console.error('User ID not found')
-        return
-      }
-
-      const inventoryToSave = this.getInventoryState()
-
-      try {
-        const gameStore = useGameStore() // Access the gameStore
-        const userId = await gameStore.getUserId() // Use gameStore's getUserId method
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
-
-        await setDoc(doc(db, 'inventory', userId), inventoryToSave).then(() => {
-          console.log('Inventory saved to Firestore')
-        }).catch((error) => {
-          console.error('Error saving inventory to Firestore:', error)
-        })
-      } catch (error) {
-        console.error('Error saving inventory to Firebase:', error)
-      }
-    },
     async loadInventoryState(savedInventory) {
       this.inventory = savedInventory.inventory.map(item => {
         const registryItem = this.getItemById(item.id)
@@ -141,26 +114,8 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
     // Reset inventory state and clear from Firebase Firestore
     async resetInventoryState() {
-      try {
-        const gameStore = useGameStore() // Access the gameStore
-        const userId = await gameStore.getUserId() // Use gameStore's getUserId method
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
-
-        // Clear the user's inventory state from Firestore
-        const docRef = doc(db, 'inventory', userId)
-        await deleteDoc(docRef) // Delete the document from Firestore
-
-        // Reset the local inventory state
-        this.inventory = []
-        this.maxInventory = 20 // Reset to default value
-
-        console.log('Inventory reset and cleared from Firestore')
-      } catch (error) {
-        console.error('Error resetting inventory:', error)
-      }
+      this.inventory = []
+      this.maxInventory = 20
     },
 
     getItemById(itemId: string): Item | null {

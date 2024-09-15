@@ -37,16 +37,16 @@ export const useGameStore = defineStore('gameStore', {
     storage: {
       maxSeeds: 1000, // Initial seed storage capacity
       maxLarvae: 10, // Initial larvae storage capacity
-      maxAnts: 100, // Initial ant storage capacity
-      maxQueens: 2, // Initial queen storage capacity
+      maxAnts: 500, // Initial ant storage capacity
+      maxQueens: 10, // Initial queen storage capacity
       maxEliteAnts: 1,
     },
 
     initialCaps: {
       maxSeeds: 1000,
       maxLarvae: 10,
-      maxAnts: 100,
-      maxQueens: 2,
+      maxAnts: 500,
+      maxQueens: 10,
       maxEliteAnts: 1,
     },
 
@@ -68,8 +68,8 @@ export const useGameStore = defineStore('gameStore', {
       seedCostPerEliteAnt: 100,
       larvaCostPerAnt: 1, // Cost in larvae to create one ant
       larvaCostPerEliteAnt: 5,
-      antCostPerQueen: 100, // Ants required to buy one queen
-      seedCostPerQueen: 250, // Seeds required to buy one queen
+      antCostPerQueen: 50, // Ants required to buy one queen
+      seedCostPerQueen: 500, // Seeds required to buy one queen
 
       // Costs for evolved resources
       royalJellyCostPerUpgrade: 1,
@@ -83,7 +83,7 @@ export const useGameStore = defineStore('gameStore', {
     eliteAntsUnlocked: false,
     royalJellyUnlocked: false,
 
-    royalJellyCollectionChance: 0.0001, // 0.1% chance to collect royal jelly when queen produces larvae
+    royalJellyCollectionChance: 0.001, // 0.1% chance to collect royal jelly when queen produces larvae
 
     // Balancing factors
     storageUpgradeFactor: 1.4, // How much each upgrade increases storage by (20%)
@@ -1006,6 +1006,7 @@ export const useGameStore = defineStore('gameStore', {
 
     resetDebugState() {
       const prestigeStore = usePrestigeStore()
+      const inventoryStore = useInventoryStore()
       prestigeStore.prestigePoints = 0
       prestigeStore.timesPrestiged = 0
       prestigeStore.purchasedUpgrades = []
@@ -1024,6 +1025,8 @@ export const useGameStore = defineStore('gameStore', {
       prestigeStore.autoLarvaeCreation = false
       prestigeStore.autoSeedStorageUpgrade = false
       prestigeStore.autoEliteAntsCreation = false
+
+      inventoryStore.resetInventoryState()
     },
 
     async resetOtherStores(debug) {

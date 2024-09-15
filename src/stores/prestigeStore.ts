@@ -124,7 +124,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('eliteAnts')
         },
-        maxPurchases: 5,
+        maxPurchases: 3,
       },
       {
         id: 'productionBoost',
@@ -258,6 +258,14 @@ export const usePrestigeStore = defineStore('prestige', {
       } catch (error) {
         console.error('Error during prestige:', error)
       }
+    }, getCostMultiplier(upgrade: UnwrapRefSimple<PrestigeShopItem>) {
+      let defaultCostMultiplier = 1.5
+      switch (upgrade.id) {
+        case 'eliteAntsStoreUpgrade':
+          defaultCostMultiplier = 3
+          break
+      }
+      return defaultCostMultiplier
     },
     // Buy an upgrade from the prestige shop
     buyUpgrade(upgradeId: string): boolean {
@@ -271,14 +279,8 @@ export const usePrestigeStore = defineStore('prestige', {
 
       if (upgrade && this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost
-        let defaultCostMultiplier = 1.5
-        switch (upgrade.id) {
-          case 'eliteAntsStoreUpgrade':
-            defaultCostMultiplier = 3
-            break
-        }
 
-        upgrade.cost *= defaultCostMultiplier
+        upgrade.cost *= this.getCostMultiplier(upgrade)
         upgrade.cost = Math.floor(upgrade.cost) // Round down to the nearest integer
 
         this.purchasedUpgrades.push(upgradeId)
@@ -303,11 +305,16 @@ export const usePrestigeStore = defineStore('prestige', {
       // Keep buying the upgrade until you can't afford the next one
       while (this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost
+        if (upgrade.maxPurchases && this.amountOfUpgrade(upgradeId) >= upgrade.maxPurchases) {
+          console.log('Max purchases reached for upgrade:', upgradeId)
+          break
+        }
+
         this.purchasedUpgrades.push(upgradeId)
         this.applyPrestigeUpgrade(upgradeId)
 
         // Increase the cost for the next purchase
-        upgrade.cost *= 1.5
+        upgrade.cost *= this.getCostMultiplier(upgrade)
         upgrade.cost = Math.floor(upgrade.cost) // Round down to the nearest integer
       }
 
@@ -329,9 +336,9 @@ export const usePrestigeStore = defineStore('prestige', {
       // Object map for handling upgrade logic
       const upgrades = {
         storageUpgrade: () => {
-          gameStore.storage.maxSeeds *= 1.2 // Increase seed storage
-          gameStore.storage.maxLarvae *= 1.2 // Increase larvae storage
-          gameStore.storage.maxAnts *= 2 // Increase ant storage
+          gameStore.storage.maxSeeds += gameStore.initialCaps.maxSeeds // Increase seed storage
+          gameStore.storage.maxLarvae += gameStore.initialCaps.maxLarvae // Increase larvae storage
+          gameStore.storage.maxAnts += gameStore.initialCaps.maxAnts // Increase ant storage
           gameStore.storage.maxQueens += 1 // Increase queen storage
         },
         eliteAntsStoreUpgrade: () => {
