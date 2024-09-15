@@ -6,10 +6,10 @@
       I will be adding more features and balancing the game over time.
       <br>
       Also, any progress made may be reset at any time during current development stage.
-    </p>
-    <p class="text-2xs font-bold text-red-500">
-      Data before the 13th of September 2024 will/has been reset. Sorry for the inconvenience. <br>
-      If your game is bugged, try hard resetting the game in settings.
+      <br>
+      Since I'm updating the game frequently, I recommend refreshing the page to get the latest version.
+      <br>
+      Resetting the game is also a good idea on updates to get the latest balance changes.
     </p>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
       <!-- Seeds Section -->
