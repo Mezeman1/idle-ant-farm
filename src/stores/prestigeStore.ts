@@ -118,7 +118,7 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'storageUpgrade',
         name: 'Storage Upgrade',
-        description: 'Increase seed and larvae storage by 20% <br> Increase ant storage by 100% and queen storage by 1',
+        description: 'Increase the storage for seeds, larvae, ants, and queens',
         cost: 5,
         category: 'storage',
         applyOnPrestige: true,
