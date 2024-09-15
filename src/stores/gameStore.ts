@@ -27,6 +27,7 @@ export const useGameStore = defineStore('gameStore', {
       seeds: 10,
       queens: 1,
       royalJelly: 0,
+      mineralShards: 0, // New resource for tunnel upgrades
 
       // Evolved resources, bought using royal jelly
       royalJellyAnts: 0,

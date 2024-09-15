@@ -94,6 +94,9 @@ export const useTunnelStore = defineStore('tunnelStore', {
       // Add found resources, traps, and loot to the player's inventory
       const gameStore = useGameStore()
       gameStore.resources.seeds += this.resourcesFound.seeds
+      gameStore.resources.mineralShards += this.resourcesFound.mineralShards
+
+      console.log('Tunnel exploration stopped. Resources added.')
     },
 
     // Handle random events (resources, traps, loot)
@@ -110,7 +113,7 @@ export const useTunnelStore = defineStore('tunnelStore', {
       const events = [
         {chance: 0.5, handler: this.handleResourceEvent}, // 30% chance for resources
         {chance: this.getTrapChance(), handler: this.handleTrapEvent}, // Trap event based on tunnel depth
-        {chance: 0.1, handler: this.handleLootEvent}, // Remaining chance for loot
+        // {chance: 0.1, handler: this.handleLootEvent}, // Remaining chance for loot
       ]
 
       // Determine which event should occur
@@ -124,15 +127,13 @@ export const useTunnelStore = defineStore('tunnelStore', {
       }
     },
 
-// Handler for resource event (seeds and mineral shards)
+    // Handler for resource event (seeds and mineral shards)
     handleResourceEvent(depthMultiplier, antMultiplier) {
       const seedsFound = Math.floor((Math.random() * 50 + 10) * depthMultiplier * antMultiplier)
       const shardsFound = Math.floor((Math.random() * 5 + 1) * depthMultiplier * antMultiplier)
 
       this.resourcesFound.seeds += seedsFound
       this.resourcesFound.mineralShards += shardsFound
-
-      console.log(`Found ${seedsFound} seeds and ${shardsFound} mineral shards.`)
     },
 
     // Handler for trap event (losing ants)

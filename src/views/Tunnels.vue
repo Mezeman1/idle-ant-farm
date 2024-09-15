@@ -1,14 +1,5 @@
 <template>
   <div class="p-6 bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-lg shadow-lg space-y-6">
-    <div class="text-center">
-      <p>
-        Note: this feature does not work yet.
-        <br>
-        You can play around with the slider and start the exploration to get an idea of how it would look like.
-        <br>
-        This is just a UI to show how it would look like. The actual implementation is not done.
-      </p>
-    </div>
     <!-- Title and Tunnel Info -->
     <div class="text-center">
       <h1 class="text-2xl font-bold text-yellow-300 mb-1">
