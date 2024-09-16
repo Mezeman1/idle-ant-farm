@@ -158,7 +158,7 @@ export const usePrestigeStore = defineStore('prestige', {
         applyOnPrestige: true,
         oneTimePurchase: true,
         unlockedWhen: () => {
-          return usePrestigeStore().upgradePurchased('eliteAnts')
+          return usePrestigeStore().timesPrestiged >= 5
         },
       },
       {

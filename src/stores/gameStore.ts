@@ -130,6 +130,9 @@ export const useGameStore = defineStore('gameStore', {
 
       return state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing
     },
+    maxWorkers: (state) => {
+      return state.storage.maxAnts * 0.01
+    },
     seedCostPerAntHousing: (state) => {
       if (state.resources.antHousing === 0) {
         return 1
@@ -147,7 +150,11 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
     upgradeAntTo(antType: 'workers' | 'soldiers') {
-      if (this.resources.royalJellyAnts > 0) {
+      if (this.resources.royalJellyAnts > 0 && this.resources[antType]) {
+        if (antType === 'workers' && this.resources.workers >= this.maxWorkers) {
+          return
+        }
+
         this.resources.royalJellyAnts -= 1
         this.resources[antType] += 1
       }
@@ -620,17 +627,19 @@ export const useGameStore = defineStore('gameStore', {
         if (wholeLarvae > 0) {
           this.resources.larvae = Math.min(this.resources.larvae + wholeLarvae, this.storage.maxLarvae)
           this.accumulators.larvaeAccumulator -= wholeLarvae // Subtract the whole units from the accumulator
-        }
 
-        // Check for royal jelly collection
-        if (this.royalJellyUnlocked && !this.simulatingOfflineProgress) {
-          const royalJellyChance = this.royalJellyCollectionChance * deltaTime
-          if (Math.random() < royalJellyChance) {
-            this.resources.royalJelly += 1
-            const $toast = useToast()
-            $toast.info('Royal jelly collected!')
+          // Check for royal jelly collection
+          if (this.royalJellyUnlocked && !this.simulatingOfflineProgress) {
+            const royalJellyChance = this.royalJellyCollectionChance
+            const random = Math.random()
+            if (random < royalJellyChance) {
+              this.resources.royalJelly += 1
+              const $toast = useToast()
+              $toast.info('Royal jelly collected!')
+            }
           }
         }
+
       }
 
       // Update seeds, but only if there are ants

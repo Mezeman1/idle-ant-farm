@@ -446,7 +446,7 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.royalJelly ?? 0, 0) }}
+              Count: {{ formatNumber(gameStore.resources.royalJelly ?? 0, 0) }}/∞
             </p>
           </div>
         </div>
@@ -467,7 +467,7 @@
         <div class="flex flex-col gap-2">
           <div class="flex items-center justify-between">
             <span>
-              Workers: {{ formatNumber(gameStore.resources.workers ?? 0, 0) }}
+              Workers: {{ formatNumber(gameStore.resources.workers ?? 0, 0) }}/{{ formatNumber(gameStore.maxWorkers, 0) }}
             </span>
             <div class="flex gap-1">
               <button

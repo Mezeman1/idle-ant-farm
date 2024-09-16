@@ -29,12 +29,34 @@
       <div class="flex flex-col gap-2">
         <div
           v-for="(value, key) in gameStore.resources"
-          :key="value"
+          :key="key + '-' + value"
           class="flex flex-col gap-1"
         >
           <label>{{ key }}</label>
           <input
             v-model="gameStore.resources[key]"
+            class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+            type="number"
+          >
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label>
+            Prestige Points
+          </label>
+          <input
+            v-model="prestigeStore.prestigePoints"
+            class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+            type="number"
+          >
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label>
+            Prestige Times
+          </label>
+          <input
+            v-model="prestigeStore.timesPrestiged"
             class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
             type="number"
           >
