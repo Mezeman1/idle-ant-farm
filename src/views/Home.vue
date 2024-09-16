@@ -106,6 +106,16 @@
               </button>
             </li>
 
+            <li class="flex-shrink-0">
+              <button
+                :class="activeTab === 'passives' ? activeTabClasses : defaultTabClasses"
+                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm disabled:cursor-not-allowed"
+                @click.prevent="setActiveTab('passives')"
+              >
+                Passives
+              </button>
+            </li>
+
             <li
               v-if="debugMode"
               class="flex-shrink-0"
@@ -136,7 +146,10 @@
           <AntResources v-show="activeTab === 'resources'" />
           <PrestigeShop v-show="activeTab === 'prestige'" />
           <Adventure v-show="activeTab === 'adventure'" />
-          <Inventory v-show="activeTab === 'inventory'" />
+          <Inventory
+            v-if="activeTab === 'passives'"
+            only-passive
+          />
           <Tunnels v-show="activeTab === 'tunnels'" />
           <Debugger v-show="activeTab === 'debugger'" />
           <Settings v-show="activeTab === 'settings'" />
@@ -242,7 +255,8 @@
               Play as guest
             </button>
             <p class="text-xs text-red-500">
-              <strong>Note:</strong> can't guarantee progress will be saved. There's an option to export your progress in the settings.
+              <strong>Note:</strong> can't guarantee progress will be saved. There's an option to export your progress
+              in the settings.
             </p>
           </div>
           <p v-if="registerActive === false">

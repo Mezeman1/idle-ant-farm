@@ -25,63 +25,21 @@
       >
         Max all resources
       </button>
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.collectSeedsManually(1000)"
-      >
-        Add 1000 Seeds
-      </button>
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.resources.larvae += 1000"
-      >
-        Add 1000 Larvae
-      </button>
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.resources.ants += 100"
-      >
-        Add 100 Ants
-      </button>
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.resources.ants += 1000"
-      >
-        Add 1000 Ants
-      </button>
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.resources.ants += 1000000"
-      >
-        Add 1000000 Ants
-      </button>
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.resources.queens += 10"
-      >
-        Add 10 Queens
-      </button>
 
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="prestigeStore.prestigePoints += 1000"
-      >
-        Add 1000 prestige points
-      </button>
-
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="prestigeStore.timesPrestiged += 1"
-      >
-        Add 1 prestige amount
-      </button>
-
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="gameStore.resources.royalJelly += 1"
-      >
-        Add Royal Jelly
-      </button>
+      <div class="flex flex-col gap-2">
+        <div
+          v-for="(value, key) in gameStore.resources"
+          :key="value"
+          class="flex flex-col gap-1"
+        >
+          <label>{{ key }}</label>
+          <input
+            v-model="gameStore.resources[key]"
+            class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+            type="number"
+          >
+        </div>
+      </div>
 
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
@@ -108,12 +66,33 @@
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
         @click="inventoryStore.addItemToInventory({
+          id: 'ant-strength-potion',
+          name: 'Ant Strength Potion',
+          amount: 1000,
+        })"
+      >
+        Give 1000 Ant Strength Potions
+      </button>
+
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        @click="inventoryStore.addItemToInventory({
           id: 'butterfly-wing',
           name: 'Butterfly Wing',
           amount: 1,
         })"
       >
         Give butterfly wings
+      </button>
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        @click="inventoryStore.addItemToInventory({
+          id: 'underworld-crown',
+          name: 'Underworld Crown',
+          amount: 1,
+        })"
+      >
+        Give underworld crown
       </button>
     </div>
   </div>

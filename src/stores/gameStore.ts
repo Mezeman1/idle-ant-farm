@@ -219,7 +219,11 @@ export const useGameStore = defineStore('gameStore', {
       this.resources.seeds -= seedCost
       this.resources.antHousing += 1
     },
-    createMaxAntHousing() {
+    createMaxAntHousing(fromPrestige = false) {
+      if (fromPrestige && this.resources.seeds < this.storage.maxSeeds / 2) {
+         // Not sure if we want to check on this yet, leaving it here for now
+      }
+
       while (this.resources.seeds >= this.seedCostPerAntHousing) {
         this.resources.seeds -= this.seedCostPerAntHousing
         this.resources.antHousing += 1
@@ -654,8 +658,8 @@ export const useGameStore = defineStore('gameStore', {
         {enabled: prestigeStore.autoLarvaeStorageUpgrade, action: this.upgradeLarvaeStorage},
         {enabled: prestigeStore.autoEliteAntsCreation, action: this.createEliteMaxAnts},
         {enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts},
-        {enabled: prestigeStore.autoCreateHousing, action: this.createMaxAntHousing},
         {enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens},
+        {enabled: prestigeStore.autoCreateHousing, action: this.createMaxAntHousing},
       ]
 
       autoActions.forEach(autoAction => {
@@ -1096,11 +1100,7 @@ export const useGameStore = defineStore('gameStore', {
 
     setupAdventureStats() {
       const adventureStore = useAdventureStore()
-      if (this.resources.ants === 0) return
-      adventureStore.armyMaxHealth = this.resources.ants * this.healthPerAnt + (this.resources.queens - 1) * this.healthPerAnt * this.resourceCosts.antCostPerQueen
-      adventureStore.armyHealth = Math.min(adventureStore.armyHealth, adventureStore.armyMaxHealth)
-      adventureStore.armyAttack = this.resources.ants * this.attackPerAnt + (this.resources.queens - 1) * this.attackPerAnt * this.resourceCosts.antCostPerQueen
-      adventureStore.armyDefense = this.resources.ants * this.defensePerAnt + (this.resources.queens - 1) * this.defensePerAnt * this.resourceCosts.antCostPerQueen
+      adventureStore.setupAdventureStats()
     },
 
     async setConsent(userId) {

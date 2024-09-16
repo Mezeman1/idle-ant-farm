@@ -8,11 +8,21 @@ interface KillCounts {
   [key: string]: number
 }
 
+interface ActiveBuff {
+  id: string
+  name: string
+  duration: number
+  effect: () => void
+  onRemove: () => void
+  active?: boolean
+}
+
 
 export const useAdventureStore = defineStore('adventureStore', {
   state: () => ({
     loaded: false, // To track when adventure state is fully loaded
     progress: 0, // Track progress for offline calculation
+    activeBuffs: [] as Array<ActiveBuff>,
 
     armyHealth: 100,
     armyMaxHealth: 100,
@@ -26,7 +36,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     bugDefense: 0,
     bugRegen: 2,
 
-    currentArea: null,
+    currentArea: '',
     enemyWaves: adventureEnemyWaves,
     currentEnemy: null as Enemy | null,
 
@@ -152,6 +162,8 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Main battle loop with requestAnimationFrame (tick-based)
     battleLoop(currentTime) {
+      if (this.loaded === false) return
+
       if (!this.battleRunning) {
         console.log('Battle loop stopped')
         this.loopActive = this.loopActive.map(() => false) // Ensure the loop is fully inactive when stopped
@@ -163,6 +175,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.accumulatedTime += deltaTime
 
       // Process combat every tick (based on how much time has passed)
+      this.applyBuffs(deltaTime)
       this.processCombat(deltaTime)
 
       // Continue the loop as long as the battle is active
@@ -171,7 +184,24 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.animationFrameIds.push(newAnimationFrameId) // Keep adding new frame IDs to the array
       }
     },
+    applyBuffs(deltaTime) {
+      this.activeBuffs.forEach((buff) => {
+        if (buff.active) {
+          buff.duration -= deltaTime
+        }
 
+        if (buff.duration > 0 && !buff.active && buff.effect) {
+          buff.effect()
+          buff.active = true
+        }
+
+        if (buff.duration <= 0 && buff.active && buff.onRemove) {
+          console.log(`Buff ${buff.id} expired`)
+          buff.onRemove()
+          this.activeBuffs = this.activeBuffs.filter((activeBuff) => activeBuff.id !== buff.id)
+        }
+      })
+    },
     processCombat(deltaTime) {
       if (this.isFighting && this.enemySpawned) {
         // Calculate damage based on DPS and the time passed since the last frame (deltaTime)
@@ -396,6 +426,11 @@ export const useAdventureStore = defineStore('adventureStore', {
         armyRegen: this.armyRegen,
         killCounts: this.killCounts,
         currentArea: this.currentArea,
+        activeBuffs: this.activeBuffs.map((buff) => ({
+          id: buff.id,
+          name: buff.name,
+          duration: buff.duration,
+        })),
         isFighting: this.isFighting || this.battleCooldown, // Save the current battle state
       }
     },
@@ -403,8 +438,6 @@ export const useAdventureStore = defineStore('adventureStore', {
     // Load adventure state from Firebase Firestore
     async loadAdventureState(adventureState) {
       this.loaded = false // Mark as not loaded
-
-      console.log('Adventure state loaded from Firestore:', adventureState)
 
       // Load the saved state
       this.armyHealth = adventureState.armyHealth ?? this.armyHealth
@@ -414,6 +447,18 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.armyRegen = adventureState.armyRegen ?? this.armyRegen
       this.killCounts = adventureState.killCounts ?? this.killCounts
       this.currentArea = adventureState.currentArea ?? this.currentArea
+
+      const inventoryStore = useInventoryStore()
+      this.activeBuffs = adventureState.activeBuffs?.map((buff) => {
+        const itemFromName = inventoryStore.getItemById(buff.name)
+        return {
+          ...buff,
+          active: false,
+          effect: itemFromName?.effect,
+          onRemove: itemFromName?.onRemove,
+        }
+      }) ?? []
+
       this.isFighting = adventureState.isFighting ?? false
       this.lastSavedTime = adventureState.lastSavedTime ?? Date.now()
 
@@ -447,7 +492,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.armyDefense = 5
       this.armyRegen = 5
       this.lastSavedTime = Date.now()
-      this.currentArea = null
+      this.currentArea = ''
     },
 
     // Offline progress calculation
@@ -574,6 +619,26 @@ export const useAdventureStore = defineStore('adventureStore', {
 
         this.enemySpawned = false
       }
+    },
+
+    setupAdventureStats() {
+      const gameStore = useGameStore()
+      const inventoryStore = useInventoryStore()
+      if (gameStore.resources.ants === 0 && gameStore.resources.queens <= 1) return
+
+      this.armyMaxHealth = gameStore.resources.ants * gameStore.healthPerAnt + (gameStore.resources.queens - 1) * gameStore.healthPerAnt * gameStore.resourceCosts.antCostPerQueen
+      this.armyAttack = gameStore.resources.ants * gameStore.attackPerAnt + (gameStore.resources.queens - 1) * gameStore.attackPerAnt * gameStore.resourceCosts.antCostPerQueen
+      this.armyDefense = gameStore.resources.ants * gameStore.defensePerAnt + (gameStore.resources.queens - 1) * gameStore.defensePerAnt * gameStore.resourceCosts.antCostPerQueen
+      this.armyRegen = 5
+      this.activeBuffs = this.activeBuffs?.map((buff) => {
+        return {
+          ...buff,
+          active: false,
+        }
+      })
+
+      inventoryStore.reApplyPassiveEffects()
+      this.armyHealth = Math.min(this.armyHealth, this.armyMaxHealth)
     },
   },
 })

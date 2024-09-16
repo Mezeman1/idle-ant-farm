@@ -41,8 +41,13 @@ export const adventureEnemyWaves = [
           seedDrop(100, 500),
           {
             name: 'Grasshopper Leg',
-            chance: 0.1,
+            chance: 0.2,
             amountBetween: [1, 2],
+          },
+          {
+            name: 'Grasshopper Wing',
+            chance: 0.1,
+            amountBetween: [1, 1],
           },
         ],
       },
@@ -56,6 +61,11 @@ export const adventureEnemyWaves = [
           seedDrop(100, 500),
           {
             name: 'Ant Strength Potion',
+            chance: 0.15,
+            amountBetween: [1, 2],
+          },
+          {
+            name: 'Beetle Shell',
             chance: 0.1,
             amountBetween: [1, 2],
           },
@@ -74,21 +84,26 @@ export const adventureEnemyWaves = [
             chance: 0.05,
             amountBetween: [1, 1],
           },
+          {
+            name: 'Wasp Stinger',
+            chance: 0.075,
+            amountBetween: [1, 2],
+          },
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 10 || gameStore.resources.queens >= 2,
-    unlockText: 'Unlocked when you have 10 ants or 2 queens.',
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 15 || gameStore.resources.queens >= 3,
+    unlockText: 'Unlocked when you have 15 ants or 3 queens.',
   },
   {
     name: 'Forest',
     enemies: [
       {
         name: 'Spider',
-        health: 3500,
-        attack: 700,
-        defense: 350,
-        regen: 10,
+        health: 1500,
+        attack: 300,
+        defense: 150,
+        regen: 6,
         dropOptions: [
           seedDrop(300, 750, 0.7),
           {
@@ -100,10 +115,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Centipede',
-        health: 4000,
-        attack: 850,
-        defense: 380,
-        regen: 15,
+        health: 1600,
+        attack: 340,
+        defense: 160,
+        regen: 7,
         dropOptions: [
           seedDrop(300, 750, 0.7),
           {
@@ -115,10 +130,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Moth',
-        health: 3200,
-        attack: 750,
-        defense: 300,
-        regen: 8,
+        health: 1400,
+        attack: 310,
+        defense: 140,
+        regen: 5,
         dropOptions: [
           seedDrop(400, 800, 0.5),
           {
@@ -130,10 +145,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Butterfly',
-        health: 4200,
-        attack: 900,
-        defense: 400,
-        regen: 20,
+        health: 1700,
+        attack: 360,
+        defense: 170,
+        regen: 8,
         dropOptions: [
           {
             name: 'Butterfly Wing',
@@ -150,16 +165,21 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Queen Wasp',
-        health: 6000,
-        attack: 1000,
-        defense: 500,
-        regen: 30,
+        health: 2400,
+        attack: 400,
+        defense: 200,
+        regen: 10,
         isBoss: true,
         dropOptions: [
           {
             name: 'Queen Stinger',
             chance: 0.005,
             amountBetween: [1, 1],
+          },
+          {
+            name: 'Wasp Stinger',
+            chance: 0.08,
+            amountBetween: [1, 2],
           },
           seedDrop(500, 1500, 0.5),
         ],
@@ -168,16 +188,15 @@ export const adventureEnemyWaves = [
     unlockedWhen: (gameStore) => gameStore.resources.ants >= 100 || gameStore.resources.queens >= 2,
     unlockText: 'Unlocked when you have 100 ants or 2 queens.',
   },
-  // New wave: Mountains
   {
     name: 'Mountains',
     enemies: [
       {
         name: 'Mountain Ant',
-        health: 13000,
-        attack: 2800,
+        health: 12000,
+        attack: 2400,
         defense: 1200,
-        regen: 60,
+        regen: 20,
         dropOptions: [
           seedDrop(1000, 2500, 0.7),
           {
@@ -189,10 +208,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Rock Beetle',
-        health: 15000,
-        attack: 3000,
-        defense: 1500,
-        regen: 75,
+        health: 13000,
+        attack: 2600,
+        defense: 1400,
+        regen: 25,
         dropOptions: [
           seedDrop(1200, 3000, 0.7),
           {
@@ -204,10 +223,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Giant Mantis',
-        health: 18000,
-        attack: 3200,
-        defense: 1700,
-        regen: 100,
+        health: 15000,
+        attack: 2800,
+        defense: 1600,
+        regen: 30,
         dropOptions: [
           seedDrop(1500, 3500, 0.5),
           {
@@ -219,10 +238,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Stone Golem',
-        health: 23000,
-        attack: 3500,
-        defense: 2000,
-        regen: 150,
+        health: 20000,
+        attack: 3200,
+        defense: 1800,
+        regen: 50,
         isBoss: true,
         dropOptions: [
           {
@@ -234,20 +253,18 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 1000 || gameStore.resources.queens >= 10,
-    unlockText: 'Unlocked when you have 1000 ants or 10 queens.',
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 1000 || gameStore.resources.queens >= 20,
+    unlockText: 'Unlocked when you have 1000 ants or 20 queens.',
   },
-
-  // New wave: Volcano
   {
     name: 'Volcano',
     enemies: [
       {
         name: 'Lava Ant',
-        health: 120000,
-        attack: 32000,
-        defense: 15000,
-        regen: 500,
+        health: 60000,
+        attack: 12000,
+        defense: 7000,
+        regen: 15,
         dropOptions: [
           seedDrop(3000, 7000, 0.6),
           {
@@ -259,10 +276,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Magma Beetle',
-        health: 140000,
-        attack: 35000,
-        defense: 16000,
-        regen: 600,
+        health: 70000,
+        attack: 13000,
+        defense: 7500,
+        regen: 18,
         dropOptions: [
           seedDrop(3500, 7500, 0.7),
           {
@@ -274,10 +291,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Fire Scorpion',
-        health: 160000,
-        attack: 37000,
-        defense: 17000,
-        regen: 700,
+        health: 80000,
+        attack: 14000,
+        defense: 8000,
+        regen: 20,
         dropOptions: [
           seedDrop(4000, 8000, 0.5),
           {
@@ -289,10 +306,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Molten Dragon',
-        health: 200000,
-        attack: 40000,
-        defense: 18000,
-        regen: 1000,
+        health: 100000,
+        attack: 16000,
+        defense: 9000,
+        regen: 25,
         isBoss: true,
         dropOptions: [
           {
@@ -304,22 +321,20 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 5000 || gameStore.resources.queens >= 20,
-    unlockText: 'Unlocked when you have 5000 ants or 20 queens.',
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 5000 || gameStore.resources.queens >= (5000 / 50),
+    unlockText: 'Unlocked when you have 5000 ants or 100 queens.',
   },
-
-  // New wave: Underworld
   {
     name: 'Underworld',
     enemies: [
       {
         name: 'Hellfire Ant',
-        health: 8_000_000,
-        attack: 2_000_000,
-        defense: 1_000_000,
-        regen: 500,
+        health: 120000,
+        attack: 30000,
+        defense: 16000,
+        regen: 25,
         dropOptions: [
-          seedDrop(10_000, 15_000, 0.5),
+          seedDrop(10000, 15000, 0.5),
           {
             name: 'Hellfire Ant Fang',
             chance: 0.08,
@@ -329,12 +344,12 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Demonic Beetle',
-        health: 9_000_000,
-        attack: 2_200_000,
-        defense: 1_200_000,
-        regen: 600,
+        health: 130000,
+        attack: 32000,
+        defense: 18000,
+        regen: 30,
         dropOptions: [
-          seedDrop(12_000, 18_000, 0.6),
+          seedDrop(12000, 18000, 0.6),
           {
             name: 'Demonic Carapace',
             chance: 0.05,
@@ -344,12 +359,12 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Infernal Scorpion',
-        health: 10_000_000,
-        attack: 2_500_000,
-        defense: 1_300_000,
-        regen: 750,
+        health: 150000,
+        attack: 35000,
+        defense: 20000,
+        regen: 40,
         dropOptions: [
-          seedDrop(15_000, 20_000, 0.4),
+          seedDrop(15000, 20000, 0.4),
           {
             name: 'Infernal Tail',
             chance: 0.03,
@@ -359,10 +374,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Underworld Lord',
-        health: 12_000_000,
-        attack: 3_000_000,
-        defense: 1_500_000,
-        regen: 1_000,
+        health: 180000,
+        attack: 40000,
+        defense: 24000,
+        regen: 50,
         isBoss: true,
         dropOptions: [
           {
@@ -370,12 +385,12 @@ export const adventureEnemyWaves = [
             chance: 0.001,
             amountBetween: [1, 1],
           },
-          seedDrop(20_000, 30_000, 0.5),
+          seedDrop(20000, 30000, 0.5),
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 1_000_000 || gameStore.resources.queens >= 10_000,
-    unlockText: 'Unlocked when you have 1 million ants or 10 thousand queens.',
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 10000 || gameStore.resources.queens >= (10000 / gameStore.resourceCosts.antCostPerQueen),
+    unlockText: 'Unlocked when you have 10 thousand ants or 200 queens.',
   },
 
   {
@@ -383,10 +398,10 @@ export const adventureEnemyWaves = [
     enemies: [
       {
         name: 'Ice Beetle',
-        health: 15_000_000, // Lower than player health
-        attack: 3_500_000,  // Slightly lower attack than player
-        defense: 1_800_000, // Slightly lower defense than player
-        regen: 1_500,       // Moderate regen
+        health: 240_000, // Slightly lower than player health
+        attack: 48_000,  // Slightly lower attack than player
+        defense: 24_000, // Slightly lower defense than player
+        regen: 1_500,    // Moderate regen
         dropOptions: [
           seedDrop(25_000, 35_000, 0.6),
           {
@@ -398,10 +413,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Frost Scorpion',
-        health: 18_000_000, // Higher health than player
-        attack: 4_000_000,  // On par with player’s attack
-        defense: 2_000_000, // On par with player’s defense
-        regen: 1_800,       // High regen
+        health: 270_000, // Higher health than player
+        attack: 50_000,  // On par with player’s attack
+        defense: 25_000, // On par with player’s defense
+        regen: 1_800,    // High regen
         dropOptions: [
           seedDrop(30_000, 40_000, 0.7),
           {
@@ -413,10 +428,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Glacier Mantis',
-        health: 22_000_000, // Stronger health than player
-        attack: 4_500_000,  // Stronger attack than player
-        defense: 2_300_000, // Slightly stronger defense than player
-        regen: 2_000,       // High regen
+        health: 300_000, // Stronger health than player
+        attack: 55_000,  // Stronger attack than player
+        defense: 26_500, // Slightly stronger defense than player
+        regen: 2_000,    // High regen
         dropOptions: [
           seedDrop(35_000, 45_000, 0.5),
           {
@@ -428,10 +443,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Frost Wyrm',
-        health: 30_000_000, // Significantly higher than player health
-        attack: 5_500_000,  // Strong attack for boss
-        defense: 2_500_000, // Strong defense
-        regen: 3_000,       // Very strong regen for a boss
+        health: 350_000, // Significantly higher than player health
+        attack: 60_000,  // Strong attack for boss
+        defense: 28_000, // Strong defense
+        regen: 3_000,    // Very strong regen for a boss
         isBoss: true,
         dropOptions: [
           {
@@ -443,8 +458,8 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 2_000_000 || gameStore.resources.queens >= 20_000,
-    unlockText: 'Unlocked when you have 2 million ants or 20 thousand queens.',
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 25_000 || gameStore.resources.queens >= 500,
+    unlockText: 'Unlocked when you have 25 thousand ants or 500 queens.',
   },
 
   {
@@ -452,10 +467,10 @@ export const adventureEnemyWaves = [
     enemies: [
       {
         name: 'Abyss Crab',
-        health: 40_000_000, // Higher than player health
-        attack: 6_000_000,  // Strong attack
-        defense: 3_000_000, // Strong defense
-        regen: 4_000,       // Strong regen
+        health: 600_000, // Higher than player health
+        attack: 120_000, // Strong attack
+        defense: 60_000, // Strong defense
+        regen: 40,       // Strong regen
         dropOptions: [
           seedDrop(70_000, 90_000, 0.6),
           {
@@ -467,10 +482,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Deep Sea Angler',
-        health: 45_000_000, // Stronger health
-        attack: 7_000_000,  // On par with strong player attack
-        defense: 3_500_000, // On par with defense
-        regen: 5_000,       // High regen
+        health: 650_000, // Stronger health
+        attack: 140_000, // On par with strong player attack
+        defense: 70_000, // On par with defense
+        regen: 50,       // High regen
         dropOptions: [
           seedDrop(80_000, 100_000, 0.5),
           {
@@ -482,10 +497,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Kraken Tentacle',
-        health: 50_000_000, // Very high health
-        attack: 8_000_000,  // Strong attack
-        defense: 4_000_000, // Strong defense
-        regen: 6_000,       // High regen
+        health: 700_000, // Very high health
+        attack: 160_000, // Strong attack
+        defense: 80_000, // Strong defense
+        regen: 60,       // High regen
         dropOptions: [
           seedDrop(90_000, 110_000, 0.4),
           {
@@ -497,10 +512,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Abyssal Leviathan',
-        health: 60_000_000, // Boss-level health
-        attack: 10_000_000, // Stronger than player
-        defense: 5_000_000, // Strong boss defense
-        regen: 8_000,       // High regen for a boss
+        health: 800_000, // Boss-level health
+        attack: 200_000, // Stronger than player
+        defense: 100_000, // Strong boss defense
+        regen: 80,       // High regen for a boss
         isBoss: true,
         dropOptions: [
           {
@@ -512,8 +527,8 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 5_000_000 || gameStore.resources.queens >= 50_000,
-    unlockText: 'Unlocked when you have 5 million ants or 50 thousand queens.',
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 50_000 || gameStore.resources.queens >= 1_000,
+    unlockText: 'Unlocked when you have 50 thousand ants or 1 thousand queens.',
   },
 
   {
@@ -521,10 +536,10 @@ export const adventureEnemyWaves = [
     enemies: [
       {
         name: 'Cosmic Wasp',
-        health: 100_000_000,  // Higher than player health
-        attack: 15_000_000,   // Strong attack
-        defense: 6_000_000,   // High defense
-        regen: 7_000,         // Strong regen
+        health: 2_000_000,  // Higher than player health
+        attack: 300_000,    // Strong attack
+        defense: 120_000,   // High defense
+        regen: 140,         // Strong regen
         dropOptions: [
           seedDrop(150_000, 200_000, 0.4),
           {
@@ -536,10 +551,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Void Mantis',
-        health: 120_000_000, // Stronger health than player
-        attack: 18_000_000,  // On par with player's attack
-        defense: 7_000_000,  // Strong defense
-        regen: 8_000,        // Higher regen
+        health: 2_400_000, // Stronger health than player
+        attack: 360_000,   // On par with player's attack
+        defense: 140_000,  // Strong defense
+        regen: 160,        // Higher regen
         dropOptions: [
           seedDrop(180_000, 230_000, 0.3),
           {
@@ -551,10 +566,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Galaxy Spider',
-        health: 150_000_000, // Very strong health
-        attack: 20_000_000,  // Stronger than player’s attack
-        defense: 8_000_000,  // High defense
-        regen: 10_000,       // High regen
+        health: 3_000_000, // Very strong health
+        attack: 400_000,   // Stronger than player’s attack
+        defense: 160_000,  // High defense
+        regen: 200,        // High regen
         dropOptions: [
           seedDrop(200_000, 300_000, 0.2),
           {
@@ -566,10 +581,10 @@ export const adventureEnemyWaves = [
       },
       {
         name: 'Celestial Dragon',
-        health: 180_000_000, // Boss-level health
-        attack: 25_000_000,  // Stronger than player’s attack
-        defense: 10_000_000, // Strong defense
-        regen: 15_000,       // Very high regen for a boss
+        health: 3_600_000, // Boss-level health
+        attack: 500_000,   // Stronger than player’s attack
+        defense: 200_000,  // Strong defense
+        regen: 300,        // Very high regen for a boss
         isBoss: true,
         dropOptions: [
           {
@@ -581,8 +596,8 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 10_000_000 || gameStore.resources.queens >= 100_000,
-    unlockText: 'Unlocked when you have 10 million ants or 100 thousand queens.',
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 100_000 || gameStore.resources.queens >= 2_000,
+    unlockText: 'Unlocked when you have 100 thousand ants or 2 thousand queens.',
   },
 ] as AdventureEnemyWave[]
 

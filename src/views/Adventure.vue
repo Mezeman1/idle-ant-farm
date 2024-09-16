@@ -55,7 +55,11 @@
           <p class="text-lg font-bold">
             Ant Army
           </p>
-          <p>Health: <br>{{ formatNumber(adventureStore.armyHealth) }} / {{ formatNumber(adventureStore.armyMaxHealth) }}</p>
+          <p>
+            Health: <br>{{ formatNumber(adventureStore.armyHealth) }} / {{
+              formatNumber(adventureStore.armyMaxHealth)
+            }}
+          </p>
           <div class="progress-container">
             <div
               class="progress-bar"
@@ -79,9 +83,12 @@
         >
         <div class="w-full mt-2 text-center">
           <p class="text-lg font-bold">
-            {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }} {{ adventureStore.currentEnemy?.isBoss ? '👑' : '' }}
+            {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }}
+            {{ adventureStore.currentEnemy?.isBoss ? '👑' : '' }}
           </p>
-          <p>Health: <br>{{ formatNumber(adventureStore.bugHealth) }} / {{ formatNumber(adventureStore.bugMaxHealth) }}</p>
+          <p>
+            Health: <br>{{ formatNumber(adventureStore.bugHealth) }} / {{ formatNumber(adventureStore.bugMaxHealth) }}
+          </p>
           <div class="progress-container">
             <div
               class="progress-bar"
@@ -109,7 +116,7 @@
       </button>
     </div>
 
-    <Inventory />
+    <Inventory only-consumables />
   </div>
 </template>
 
@@ -117,11 +124,17 @@
 import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
 import {onMounted, ref, watch} from 'vue'
-import {onClickOutside} from '@vueuse/core'
+import {onClickOutside, watchDebounced} from '@vueuse/core'
 import ArmyImage from '../assets/army.webp'
 import Inventory from '@/views/Inventory.vue'
+import {usePrestigeStore} from '@/stores/prestigeStore'
+import {useToast} from 'vue-toast-notification'
+
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
+const gameStore = useGameStore()
+const prestigeStore = usePrestigeStore()
+const $toast = useToast()
 
 watch(() => adventureStore.currentArea, () => {
   selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
@@ -131,6 +144,22 @@ watch(() => adventureStore.currentArea, () => {
 
 onMounted(() => {
   selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
+})
+
+watchDebounced(() => gameStore.resources.ants, () => {
+  if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
+
+  if (prestigeStore.upgradePurchased('autoAdventure') && !adventureStore.battleRunning && gameStore.resources.ants >= 15) {
+    console.log('Starting battle automatically')
+    $toast.info('Starting battle automatically')
+    adventureStore.toggleBattle()
+  }
+
+  if (!selectedWave.value && gameStore.resources.ants >= 15) {
+    adventureStore.currentArea = 'Wasteland'
+  }
+}, {
+  debounce: 1000,
 })
 
 

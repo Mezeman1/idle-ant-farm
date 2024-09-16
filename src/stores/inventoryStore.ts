@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import {Item, itemRegistry} from '../types/itemRegistry'
-
+import {useAdventureStore} from '@/stores/adventureStore'
+import { v4 as uuidv4 } from 'uuid'
 export const useInventoryStore = defineStore('inventoryStore', {
   state: () => ({
     inventory: [],
@@ -29,10 +30,21 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
     // Apply the effect of an item (passive or buffs)
     applyItemEffect(item, amount = 1) {
+      const adventureStore = useAdventureStore()
       if (item.effect) {
         for (let i = 0; i < amount; i++) {
-          const result = item.effect() // Apply the effect multiple times based on the amount
-          if (!result) return false // Stop if the effect fails
+          if (item.duration) {
+            adventureStore.activeBuffs.push({
+              id: uuidv4(),
+              name: item.id,
+              duration: item.duration,
+              effect: item.effect,
+              onRemove: item.onRemove,
+            })
+          } else {
+            const result = item.effect() // Apply the effect multiple times based on the amount
+            if (!result) return false // Stop if the effect fails
+          }
         }
 
         return true // All effects applied successfully
@@ -117,6 +129,15 @@ export const useInventoryStore = defineStore('inventoryStore', {
       this.sortInventory()
       this.maxInventory = savedInventory.maxInventory ?? this.maxInventory
       console.log('Inventory loaded from Firestore')
+    },
+
+    reApplyPassiveEffects() {
+      this.inventory.forEach(item => {
+        const registryItem = this.getItemById(item.id)
+        if (registryItem && registryItem.type === 'passive' && registryItem.applyOnLoad) {
+          this.applyItemEffect(registryItem)
+        }
+      })
     },
 
     // Reset inventory state and clear from Firebase Firestore

@@ -7,9 +7,11 @@ export interface Item {
   type: 'consumable' | 'passive';
   description: string;
   effect: () => boolean;
+  onRemove?: () => void;
   applyOnLoad?: boolean;
   applyOnPrestige?: boolean;
   rarity: 'common' | 'uncommon' | 'rare' | 'legendary'; // New rarity field
+  duration?: number;
 }
 
 export const itemRegistry: Item[] = [
@@ -30,6 +32,23 @@ export const itemRegistry: Item[] = [
     rarity: 'common',
   },
   {
+    id: 'grasshopper-wing',
+    name: 'Grasshopper Wing',
+    type: 'consumable',
+    description: 'Increases army regen by 1% for 5 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyRegen *= 1.01
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyRegen /= 1.01
+    },
+    duration: 60 * 5,
+    rarity: 'common',
+  },
+  {
     id: 'ant-strength-potion',
     name: 'Ant Strength Potion',
     type: 'consumable',
@@ -37,11 +56,30 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttack *= 1.10
-      setTimeout(() => {
-        adventureStore.armyAttack /= 1.10
-      }, 300000) // 5 minutes
       return true
     },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack /= 1.10
+    },
+    duration: 60 * 5,
+    rarity: 'uncommon',
+  },
+  {
+    id: 'beetle-shell',
+    name: 'Beetle Shell',
+    type: 'consumable',
+    description: 'Increase army defense by 10% for 5 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense *= 1.10
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense /= 1.10
+    },
+    duration: 60 * 5,
     rarity: 'uncommon',
   },
   {
@@ -53,7 +91,26 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const gameStore = useGameStore()
       gameStore.productionRates.larvaeProductionRate *= 2
+
+      return true
     },
+    rarity: 'rare',
+  },
+  {
+    id: 'wasp-stinger',
+    name: 'Wasp Stinger',
+    type: 'consumable',
+    description: 'Increases army attack by attack by 20% for 5 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack *= 1.20
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack /= 1.20
+    },
+    duration: 60 * 5,
     rarity: 'rare',
   },
   {
@@ -62,9 +119,12 @@ export const itemRegistry: Item[] = [
     type: 'passive',
     description: 'Increases army health regeneration by 100%. (Does not stack)',
     applyOnPrestige: true,
+    applyOnLoad: true,
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyRegen *= 2
+
+      return true
     },
     rarity: 'rare',
   },
@@ -77,7 +137,10 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyDefense *= 1.10
+
+      return true
     },
+    applyOnLoad: true,
     rarity: 'uncommon',
   },
   {
@@ -118,9 +181,12 @@ export const itemRegistry: Item[] = [
     type: 'passive',
     description: 'Health regeneration increased by 50%. (Does not stack)',
     applyOnPrestige: true,
+    applyOnLoad: true,
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyRegen *= 1.50
+
+      return true
     },
     rarity: 'rare',
   },
@@ -166,8 +232,11 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyDefense *= 1.20
+
+      return true
     },
     rarity: 'rare',
+    applyOnLoad: true,
   },
   {
     id: 'mantis-claw',
@@ -178,8 +247,11 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttack *= 1.15
+
+      return true
     },
     rarity: 'rare',
+    applyOnLoad: true,
   },
   {
     id: 'stone-heart',
@@ -190,8 +262,11 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyMaxHealth *= 1.20
+
+      return true
     },
     rarity: 'legendary',
+    applyOnLoad: true,
   },
   {
     id: 'lava-ant-tooth',
@@ -218,8 +293,11 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyDefense *= 1.30
+
+      return true
     },
     rarity: 'rare',
+    applyOnLoad: true,
   },
   {
     id: 'scorpion-tail',
@@ -230,8 +308,11 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttack *= 1.20
+
+      return true
     },
     rarity: 'rare',
+    applyOnLoad: true,
   },
   {
     id: 'dragon-scale',
@@ -243,8 +324,11 @@ export const itemRegistry: Item[] = [
       const adventureStore = useAdventureStore()
       adventureStore.armyMaxHealth *= 1.50
       adventureStore.armyDefense *= 1.50
+
+      return true
     },
     rarity: 'legendary',
+    applyOnLoad: true,
   },
   {
     id: 'hellfire-ant-fang',
@@ -271,8 +355,11 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyDefense *= 1.40
+
+      return true
     },
     rarity: 'rare',
+    applyOnLoad: true,
   },
   {
     id: 'infernal-tail',
@@ -283,8 +370,11 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttack *= 1.30
+
+      return true
     },
     rarity: 'rare',
+    applyOnLoad: true,
   },
   {
     id: 'underworld-crown',
@@ -297,8 +387,10 @@ export const itemRegistry: Item[] = [
       adventureStore.armyAttack *= 2
       adventureStore.armyDefense *= 2
       adventureStore.armyMaxHealth *= 2
-      adventureStore.armyRegen *= 2
+
+      return true
     },
     rarity: 'legendary',
+    applyOnLoad: true,
   },
 ]

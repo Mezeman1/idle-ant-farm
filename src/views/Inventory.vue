@@ -81,6 +81,7 @@ import InventoryItem from '../components/InventoryItem.vue'
 import {useWindowSize} from '@vueuse/core'
 import {useInventoryStore} from '../stores/inventoryStore'
 import {useToast} from 'vue-toast-notification'
+import {v4 as uuidv4} from 'uuid'
 
 const {width} = useWindowSize() // Get the window size
 const inventoryStore = useInventoryStore() // Use the inventory store to get the items
@@ -104,11 +105,22 @@ const selectItem = (item) => {
   activeItem.value = item
 }
 
-// Compute the grid slots (items + empty slots)
 const gridSlots = computed(() => {
   const slots = []
+  const inventory = inventoryStore.inventory.filter(item => {
+    if (props.onlyConsumables && item.type !== 'consumable') {
+      return false
+    }
+
+    if (props.onlyPassive && item.type !== 'passive') {
+      return false
+    }
+
+    return true
+  })
+
   for (let i = 0; i < totalSlots.value; i++) {
-    const item = inventoryStore.inventory[i]
+    const item = inventory[i]
     const x = i % amountOfColumns.value // Calculate column
     const y = Math.floor(i / amountOfColumns.value) // Calculate row
     slots.push({
@@ -124,27 +136,28 @@ const gridSlots = computed(() => {
         },
       } : null,
       gridPosition: {x, y, w: 1, h: 1},
+      uuid: uuidv4(),
     })
   }
+
   return slots
 })
 
 // GridStack Initialization
-const gridContainer = ref(null) // Reference to the scrollable grid container
+const gridContainer = ref<HTMLElement>(null) // Reference to the scrollable grid container
 const grid = ref<any>(null)
 
 onMounted(() => {
-  grid.value = GridStack.init({
+  grid.value = GridStack.addGrid(gridContainer.value, {
     column: amountOfColumns.value,
     disableResize: true,
     disableDrag: true,
     float: false,
-  })
-
-  grid.value.on('added removed change', () => {
-      grid.value.compact()
+    staticGrid: true,
+    auto: true,
   })
 })
+
 
 // Watch to update grid when window size changes
 watch([amountOfColumns], () => {
@@ -161,6 +174,14 @@ const useItem = (itemId: number, amount = 1) => {
 
   $toast.error('Failed to use item')
 }
+
+const props = withDefaults(defineProps<{
+  onlyConsumables?: boolean
+  onlyPassive?: boolean
+}>(), {
+  onlyConsumables: false,
+  onlyPassive: false,
+})
 </script>
 
 <style scoped lang="scss">

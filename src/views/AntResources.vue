@@ -637,7 +637,7 @@ const seedCollectingDisabled = computed(() => gameStore.resources.seeds >= gameS
 const createLarvaeDisabled = computed(() => gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva || gameStore.resources.larvae >= gameStore.storage.maxLarvae)
 const createAntDisabled = computed(() => gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerAnt || gameStore.resources.ants >= gameStore.maxAnts)
 const createEliteAntDisabled = computed(() => gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerEliteAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerEliteAnt || gameStore.resources.eliteAnts >= gameStore.storage.maxEliteAnts)
-const createQueenDisabled = computed(() => gameStore.resources.ants < 100 || gameStore.resources.seeds < 250 || gameStore.resources.queens >= gameStore.storage.maxQueens)
+const createQueenDisabled = computed(() => gameStore.resources.ants < 50 || gameStore.resources.seeds < 500 || gameStore.resources.queens >= gameStore.storage.maxQueens)
 </script>
 
 <style scoped>
