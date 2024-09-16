@@ -628,18 +628,8 @@ export const useGameStore = defineStore('gameStore', {
           this.resources.larvae = Math.min(this.resources.larvae + wholeLarvae, this.storage.maxLarvae)
           this.accumulators.larvaeAccumulator -= wholeLarvae // Subtract the whole units from the accumulator
 
-          // Check for royal jelly collection
-          if (this.royalJellyUnlocked && !this.simulatingOfflineProgress) {
-            const royalJellyChance = this.royalJellyCollectionChance
-            const random = Math.random()
-            if (random < royalJellyChance) {
-              this.resources.royalJelly += 1
-              const $toast = useToast()
-              $toast.info('Royal jelly collected!')
-            }
-          }
+          this.tryCollectJelly()
         }
-
       }
 
       // Update seeds, but only if there are ants
@@ -655,6 +645,18 @@ export const useGameStore = defineStore('gameStore', {
         if (wholeSeeds > 0) {
           this.resources.seeds = Math.min(this.resources.seeds + wholeSeeds, this.storage.maxSeeds)
           this.accumulators.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
+        }
+      }
+    },
+
+    tryCollectJelly() {
+      if (this.royalJellyUnlocked && !this.simulatingOfflineProgress) {
+        const royalJellyChance = this.royalJellyCollectionChance
+        const random = Math.random()
+        if (random < royalJellyChance) {
+          this.resources.royalJelly += 1
+          const $toast = useToast()
+          $toast.info('Royal jelly collected!')
         }
       }
     },
