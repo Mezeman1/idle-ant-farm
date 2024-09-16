@@ -30,7 +30,8 @@
     "vue-simple-context-menu": "^4.1.0",
     "vue-tippy": "^6.4.4",
     "vue-toast-notification": "^3.1.2",
-    "vuefire": "^3.2.0"
+    "vuefire": "^3.2.0",
+    "vite-plugin-pwa": "^0.20.5"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.12.1",
@@ -47,8 +48,7 @@
     "sass": "^1.78.0",
     "sass-loader": "^16.0.1",
     "typescript": "^4.5.5",
-    "vite": "^3.2.10",
-    "vite-plugin-pwa": "^0.20.5"
+    "vite": "^3.2.10"
   },
   "lint-staged": {
     "*.{js,ts,vue}": "eslint --cache --fix",
