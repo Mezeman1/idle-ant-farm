@@ -281,14 +281,14 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const inventoryStore = useInventoryStore()
       const gameStore = useGameStore()
       const adventureStore = useAdventureStore()
-      const context = { gameStore, adventureStore };
+      const context = { gameStore, adventureStore }
+
+      if (!state.equippedItems) {
+        return
+      }
 
       // Load equipped items and apply their effects
       ['head', 'body', 'legs', 'weapon'].forEach((slotType) => {
-        if (!state.equippedItems) {
-          return
-        }
-
         const itemId = state.equippedItems[slotType]?.id || null
 
         if (itemId) {
@@ -306,10 +306,6 @@ export const useEquipmentStore = defineStore('equipmentStore', {
           this.equippedItems[slotType] = null
         }
       })
-
-      if (!state.equippedItems) {
-        return
-      }
 
       // Load accessories
       if (Array.isArray(state.equippedItems.accessories)) {
