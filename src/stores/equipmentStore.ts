@@ -1,6 +1,6 @@
-import {defineStore} from 'pinia'
-import {Item} from './itemRegistry'
-import {useInventoryStore} from '@/stores/inventoryStore'
+import { defineStore } from 'pinia'
+import { Item } from './itemRegistry'
+import { useInventoryStore } from '@/stores/inventoryStore'
 
 interface EquipmentState {
   equippedItems: {
@@ -25,7 +25,11 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     activeSetBonus: null,
   }),
   actions: {
-    equipItem(item: Item, slotType: 'head' | 'body' | 'legs' | 'weapon' | 'accessory', index?: number): boolean {
+    equipItem(
+      item: Item,
+      slotType: 'head' | 'body' | 'legs' | 'weapon' | 'accessory',
+      index?: number,
+    ): boolean {
       // Check if the item belongs in the specified slot
       if (item.slotType !== slotType) {
         console.warn(`Cannot equip ${item.name} in the ${slotType} slot`)
@@ -56,8 +60,9 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     checkForSetBonus() {
       const equippedSet = new Set(
         Object.values(this.equippedItems)
-          .filter((item) => item && item.set)
-          .map((item) => item!.set),
+          .flatMap((item) => (Array.isArray(item) ? item : [item]))
+          .filter((item): item is Item => item !== null && item.set !== undefined)
+          .map((item) => item.set),
       )
 
       if (equippedSet.size === 1) {
@@ -92,9 +97,13 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     },
 
     getEquipmentState() {
-      const equipmentItemsOnlyId = Object.fromEntries(
-        Object.entries(this.equippedItems).map(([key, item]) => [key, item ? item.id : null]),
-      )
+      const equipmentItemsOnlyId = {
+        head: this.equippedItems.head ? this.equippedItems.head.id : null,
+        body: this.equippedItems.body ? this.equippedItems.body.id : null,
+        legs: this.equippedItems.legs ? this.equippedItems.legs.id : null,
+        weapon: this.equippedItems.weapon ? this.equippedItems.weapon.id : null,
+        accessories: this.equippedItems.accessories.map((item) => (item ? item.id : null)),
+      }
 
       return {
         equippedItems: equipmentItemsOnlyId,
@@ -103,17 +112,30 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     },
 
     loadEquipmentState(state) {
-      const inventoryStore = useInventoryStore()
+      const inventoryStore = useInventoryStore();
 
-      Object.entries(state.equippedItems).forEach(([key, id]) => {
+      // Load single equipment slots
+      ['head', 'body', 'legs', 'weapon'].forEach((slotType) => {
+        const id = state.equippedItems[slotType]
         if (id) {
           const item = inventoryStore.getItemById(id)
-
           if (item) {
-            this.equipItem(item, key as 'head' | 'body' | 'legs' | 'weapon' | 'accessory')
+            this.equipItem(item, slotType as 'head' | 'body' | 'legs' | 'weapon')
           }
         }
       })
+
+      // Load accessories
+      if (Array.isArray(state.equippedItems.accessories)) {
+        state.equippedItems.accessories.forEach((id, index) => {
+          if (id) {
+            const item = inventoryStore.getItemById(id)
+            if (item) {
+              this.equipItem(item, 'accessory', index)
+            }
+          }
+        })
+      }
 
       this.activeSetBonus = state.activeSetBonus ?? null
     },
