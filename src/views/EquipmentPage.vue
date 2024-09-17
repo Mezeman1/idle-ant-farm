@@ -232,9 +232,6 @@ const handleDoubleClickEquip = (item: any) => {
   const success = equipmentStore.equipItem(item, slotType, index)
 
   if (success) {
-    // Remove from inventory
-    inventoryStore.removeItemFromInventory(item.id, 1)
-
     log('Equipped item via double-click:', item)
   } else {
     alert('Cannot equip item.')
@@ -245,9 +242,6 @@ const handleDoubleClickEquip = (item: any) => {
 const handleDoubleClickUnequip = (item: any, slotType: string, index: number | null) => {
   // Unequip the item using the store method
   equipmentStore.unequipItem(slotType, index)
-
-  // Add back to inventory
-  inventoryStore.addItemToInventory({ id: item.id, amount: 1 })
 
   log('Unequipped item via double-click:', item)
 }

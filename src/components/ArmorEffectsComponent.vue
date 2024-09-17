@@ -4,28 +4,29 @@
     <h3 class="text-lg font-bold mb-2 text-yellow-300">
       Armor Effects
     </h3>
-    <ul>
-      <li
-        v-for="(item, index) in equippedItemsList"
-        :key="index"
-        class="flex flex-col gap-1"
-      >
-        <strong>{{ item.name }} (Level {{ item.level }})</strong>
-        {{ item.description }}
-        <span v-if="itemMultiplier(item)">
-          Bonus: {{ (itemMultiplier(item) * 100 - 100).toFixed(2) }}%
-        </span>
-      </li>
-    </ul>
-    <!-- Display the active set bonus -->
-    <div v-if="activeSetBonus">
-      <h4 class="text-md font-bold mt-4 text-green-300">
-        Set Bonus: {{ activeSetBonus }}
-      </h4>
-      <p>
-        {{ setBonusDescription }}
-        ({{ (setBonusMultiplier.value * 100 - 100).toFixed(2) }}% Bonus)
-      </p>
+    <div class="max-h-[200px] overflow-y-auto">
+      <ul class="flex flex-col gap-2 ">
+        <li
+          v-for="(item, index) in equippedItemsList"
+          :key="index"
+          class="flex flex-col gap-1"
+        >
+          <strong>{{ item.name }} (Level {{ item.level }})</strong>
+          {{ item.description }}
+          <span v-if="itemMultiplier(item)">
+            Bonus: {{ (itemMultiplier(item) * 100 - 100).toFixed(2) }}%
+          </span>
+        </li>
+      </ul>
+      <!-- Display the active set bonus -->
+      <div v-if="activeSetBonus">
+        <h4 class="text-md font-bold mt-4 text-green-300">
+          Set Bonus: {{ activeSetBonus }}
+        </h4>
+        <p>
+          {{ setBonusDescription }}
+        </p>
+      </div>
     </div>
   </div>
 </template>

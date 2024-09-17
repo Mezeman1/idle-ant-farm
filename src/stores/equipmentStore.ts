@@ -76,6 +76,18 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       // Remove the item from the inventory
       inventoryStore.removeItemFromInventory(item.id)
 
+      if (slotType === 'accessory' && index !== undefined) {
+        if (this.equippedItems.accessories[index]) {
+          // Unequip the current accessory
+          this.unequipItem('accessory', index)
+        }
+      } else {
+        if (this.equippedItems[slotType]) {
+          // Unequip the current item
+          this.unequipItem(slotType)
+        }
+      }
+
       // Equip the item
       if (slotType === 'accessory' && index !== undefined) {
         this.equippedItems.accessories[index] = item
@@ -117,7 +129,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
 
       // Add the item back to the inventory
       if (item) {
-        inventoryStore.addItemToInventory({ id: item.id, amount: 1 })
+        inventoryStore.addItemToInventory(item)
       }
 
       // Check for set bonuses

@@ -2,7 +2,7 @@
 <template>
   <div
     v-tooltip="tooltipText"
-    class="slot bg-white bg-opacity-50 rounded-lg shadow-md flex items-center justify-center p-1"
+    class="slot bg-opacity-50 rounded-lg shadow-md flex items-center justify-center p-1"
     :class="slotClasses"
     :draggable="isDraggable"
     @drop="onDrop"
@@ -68,7 +68,14 @@ const isDraggable = computed(() => {
 
 const slotClasses = computed(() => {
   return {
-    'bg-gray-700 text-white': props.isInventorySlot,
+
+    'bg-gray-700 text-white': !props.item,
+    'bg-green-500 text-white': props.item && props.slotType === 'head' || props.slotType === 'head' || props.item?.slotType === 'head',
+    'bg-blue-500 text-white': props.item && props.slotType === 'body' || props.slotType === 'body' || props.item?.slotType === 'body',
+    'bg-purple-500 text-white': props.item && props.slotType === 'legs' || props.slotType === 'legs' || props.item?.slotType === 'legs',
+    'bg-red-500 text-white': props.item && props.slotType === 'weapon' || props.slotType === 'weapon' || props.item?.slotType === 'weapon',
+    'bg-yellow-500 text-white': props.item && props.slotType === 'accessory' || props.slotType === 'accessory' || props.item?.slotType === 'accessory',
+
     'cursor-pointer': props.isMobile && props.item,
     'cursor-move': props.isDesktop && props.item,
   }
@@ -78,7 +85,7 @@ const tooltipText = computed(() => {
   if (props.isDesktop && props.item) {
     let text = ''
     if (props.item.level) {
-      text += `Level ${props.item.level}\n`
+      text += `Level ${props.item.level}/${props.item.maxLevel}\n`
     }
     if (props.item.description) {
       text += props.item.description

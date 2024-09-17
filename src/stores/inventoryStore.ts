@@ -1,9 +1,9 @@
 import {defineStore} from 'pinia'
 import {Item, itemRegistry} from '../types/itemRegistry'
 import {useAdventureStore} from '@/stores/adventureStore'
-import { v4 as uuidv4 } from 'uuid'
+import {v4 as uuidv4} from 'uuid'
 import {useEquipmentStore} from '@/stores/equipmentStore'
-import {useGameStore} from '@/stores/gameStore'
+
 export const useInventoryStore = defineStore('inventoryStore', {
   state: () => ({
     inventory: [] as Array<Item>,
@@ -24,6 +24,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
       // Handle equipment items
       if (registryItem.type === 'equipment') {
         const equippedItem = equipmentStore.findEquippedItemById(registryItem.id)
+        console.log(equippedItem)
         if (equippedItem) {
           // Level up equipped item
           if (equippedItem.level < equippedItem.maxLevel) {
@@ -49,7 +50,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
         const newItem: Item = {
           ...registryItem,
           amount: 1, // Ensure amount is set to 1
-          level: 1,
+          level: registryItem.level || 1,
           maxLevel: registryItem.maxLevel || 5,
           // Include other necessary properties
         }

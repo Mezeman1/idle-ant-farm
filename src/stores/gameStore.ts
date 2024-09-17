@@ -832,7 +832,6 @@ export const useGameStore = defineStore('gameStore', {
         }
 
         const gameState = this.getGameState(userId)
-        console.log('Game state:', gameState)
 
         await setDoc(doc(db, 'games', userId), gameState)
 
@@ -922,8 +921,6 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     async loadStateFromFirebase(savedState) {
-      console.log('Loading game state from Firestore...', savedState)
-
       this.resources = {
         ...this.resources,
         ...savedState.resources,
