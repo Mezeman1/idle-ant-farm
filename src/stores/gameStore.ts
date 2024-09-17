@@ -150,7 +150,7 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
     upgradeAntTo(antType: 'workers' | 'soldiers') {
-      if (this.resources.royalJellyAnts > 0 && this.resources[antType]) {
+      if (this.resources.royalJellyAnts > 0) {
         if (antType === 'workers' && this.resources.workers >= this.maxWorkers) {
           return
         }

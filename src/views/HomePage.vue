@@ -413,17 +413,15 @@ onBeforeUnmount(async () => {
 
 // Function to handle visibility change (works on mobile)
 function handleVisibilityChange() {
-  if (document.hidden) {
-    // Save game state when the tab goes into the background (or app is swiped away on mobile)
-    console.log('Tab is hidden (backgrounded), saving game state...')
-    gameStore.stopGameLoop()
-    gameStore.saveGameState()
-  } else {
-    // Reload the game state when tab becomes visible again (optional, if needed)
-    console.log('Tab is visible again, reloading game state...')
-    gameStore.loadGameState()
-    gameStore.startGameLoop()
-  }
+  // if (document.hidden) {
+  //   // Save game state when the tab goes into the background (or app is swiped away on mobile)
+  //   console.log('Tab is hidden (backgrounded), saving game state...')
+  //   gameStore.saveGameState()
+  // } else {
+  //   // Reload the game state when tab becomes visible again (optional, if needed)
+  //   console.log('Tab is visible again, reloading game state...')
+  //   gameStore.loadGameState()
+  // }
 }
 
 // Function to handle saving the game state before unloading the window (works on desktop only)
