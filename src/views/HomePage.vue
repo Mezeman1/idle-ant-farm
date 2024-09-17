@@ -305,7 +305,7 @@ import Adventure from './Adventure.vue'
 import Debugger from './DebuggerPage.vue'
 import Inventory from './Inventory.vue'
 import firebase from 'firebase/compat'
-import Settings from './Settings.vue'
+import Settings from './SettingsPage.vue'
 import {useAdventureStore} from '../stores/adventureStore'
 import {useDebounceFn} from '@vueuse/core'
 import Tunnels from '@/views/Tunnels.vue'
@@ -412,7 +412,7 @@ onBeforeUnmount(async () => {
 })
 
 // Function to handle visibility change (works on mobile)
-function handleVisibilityChange() {
+async function handleVisibilityChange() {
   if (document.hidden) {
     // Save game state when the tab goes into the background (or app is swiped away on mobile)
     console.log('Tab is hidden (backgrounded), saving game state...')
@@ -420,7 +420,7 @@ function handleVisibilityChange() {
   } else {
     // Reload the game state when tab becomes visible again (optional, if needed)
     console.log('Tab is visible again, reloading game state...')
-    gameStore.loadGameState()
+    await gameStore.loadGameState()
     gameStore.startGameLoop()
   }
 }

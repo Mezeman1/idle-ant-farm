@@ -32,6 +32,21 @@
         Resetting the game is also a good idea on updates to get the latest balance changes.
       </p>
 
+      <div class="flex flex-col gap-2">
+        <p class="text-xl font-bold">
+          Settings
+        </p>
+        <div class="flex gap-2 items-center">
+          <label>
+            Show prestige warning
+          </label>
+          <input
+            v-model="settingsStore.showPrestigeWarning"
+            type="checkbox"
+          >
+        </div>
+      </div>
+
       <button
         v-tooltip="'This will reset your game and give you a fresh start. Added for demo purposes.'"
         class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow"
@@ -72,11 +87,6 @@
         </div>
       </div>
     </div>
-    <p
-      class="text-center text-sm text-gray-500 mt-4"
-    >
-      More settings will be added here in the future.
-    </p>
   </div>
 </template>
 
@@ -84,8 +94,10 @@
 import Modal from '../components/Modal.vue'
 import {ref} from 'vue'
 import {useGameStore} from '../stores/gameStore'
+import {useSettingsStore} from '@/stores/settingsStore'
 
 const gameStore = useGameStore()
+const settingsStore = useSettingsStore()
 
 const isModalVisible = ref(false)
 const importString = ref('')

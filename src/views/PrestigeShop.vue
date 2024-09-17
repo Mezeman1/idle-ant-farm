@@ -25,7 +25,10 @@
         </ul>
       </div>
       <div class="flex items-center justify-between w-full">
-        <p>Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }} <br>Prestige Times: {{ formatNumber(prestigeStore.timesPrestiged) }}</p>
+        <p>
+          Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }} <br>Prestige Times:
+          {{ formatNumber(prestigeStore.timesPrestiged) }}
+        </p>
         <button
           :disabled="prestigeStore.calculatePrestigePoints() < 1"
           class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
@@ -136,11 +139,12 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+import {ref} from 'vue'
 
 import {useGameStore} from '../stores/gameStore'
 import Modal from '../components/Modal.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
+import {useSettingsStore} from '@/stores/settingsStore'
 
 const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()
@@ -193,8 +197,14 @@ const toggleCategory = (categoryName) => {
 }
 
 const isModalVisible = ref(false)
+const settingsStore = useSettingsStore()
 // Show the modal when clicking the prestige button
 const confirmPrestige = () => {
+  if (settingsStore.showPrestigeWarning === false) {
+    handleConfirm()
+    return
+  }
+
   isModalVisible.value = true
 }
 

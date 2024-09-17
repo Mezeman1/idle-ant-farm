@@ -7,6 +7,7 @@ import {db} from '../firebase'
 import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
 import {useToast} from 'vue-toast-notification'
 import {usePrestigeStore} from './prestigeStore'
+import {useSettingsStore} from '@/stores/settingsStore'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
@@ -493,7 +494,7 @@ export const useGameStore = defineStore('gameStore', {
         console.log(`Upgraded larvae storage ${affordableUpgrades} times.`)
       }
     },
-    calculateOfflineProgress() {
+    async calculateOfflineProgress() {
       this.simulatingOfflineProgress = true
 
       return new Promise((resolve, reject) => {
@@ -528,7 +529,7 @@ export const useGameStore = defineStore('gameStore', {
               this.progress = 100 // Set progress to 100% when done
               console.log('Offline progress simulation complete.')
               console.log(`New lastSavedTime: ${this.lastSavedTime}`)
-              resolve()
+              resolve(null)
               return
             }
 
@@ -847,6 +848,7 @@ export const useGameStore = defineStore('gameStore', {
       const prestigeStore = usePrestigeStore()
       const adventureStore = useAdventureStore()
       const inventoryStore = useInventoryStore()
+      const settingsStore = useSettingsStore()
 
       return {
         resources: this.resources,
@@ -866,6 +868,7 @@ export const useGameStore = defineStore('gameStore', {
         ...prestigeStore.getPrestigeState(),
         ...adventureStore.getAdventureState(),
         ...inventoryStore.getInventoryState(),
+        ...settingsStore.getSettingsState(),
       }
     },
 
@@ -947,6 +950,9 @@ export const useGameStore = defineStore('gameStore', {
 
       const inventoryStore = useInventoryStore()
       await inventoryStore.loadInventoryState(savedState)
+
+      const settingsStore = useSettingsStore()
+      settingsStore.loadSettingsState(savedState)
     },
     async resetGameState(debug = false) {
       console.log('Resetting game state...')

@@ -216,9 +216,7 @@ export const usePrestigeStore = defineStore('prestige', {
       const ants = gameStore.resources.ants
 
       // Calculate prestige points using log1.01 scaling for ants
-      const antPoints = this.calculatePrestigePointsFor(ants, this.baseAntThreshold)
-
-      return antPoints // Only ants will give prestige points
+      return this.calculatePrestigePointsFor(ants, this.baseAntThreshold) // Only ants will give prestige points
     },
 
     calculatePrestigePointsFor(currentResources: number, baseThreshold: number) {
@@ -228,7 +226,7 @@ export const usePrestigeStore = defineStore('prestige', {
       }
 
       // Calculate prestige points using log1.01 for faster scaling
-      const points = Math.floor(Math.log2(currentResources/baseThreshold) * 10)
+      const points = Math.floor(Math.log2(currentResources/baseThreshold) * 10) * (this.timesPrestiged * 0.2)
 
       // Ensure points don’t drop below 0
       return points > 0 ? points : 0
