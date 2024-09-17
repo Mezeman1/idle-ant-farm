@@ -285,6 +285,10 @@ export const useEquipmentStore = defineStore('equipmentStore', {
 
       // Load equipped items and apply their effects
       ['head', 'body', 'legs', 'weapon'].forEach((slotType) => {
+        if (!state.equippedItems) {
+          return
+        }
+
         const itemId = state.equippedItems[slotType]?.id || null
 
         if (itemId) {
@@ -302,6 +306,10 @@ export const useEquipmentStore = defineStore('equipmentStore', {
           this.equippedItems[slotType] = null
         }
       })
+
+      if (!state.equippedItems) {
+        return
+      }
 
       // Load accessories
       if (Array.isArray(state.equippedItems.accessories)) {
