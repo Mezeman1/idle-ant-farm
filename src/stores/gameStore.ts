@@ -873,6 +873,7 @@ export const useGameStore = defineStore('gameStore', {
           collectionRatePerAnt: this.productionRates.collectionRatePerAnt,
           collectionRatePerWorker: this.productionRates.collectionRatePerWorker,
           collectionRateModifier: this.productionRates.collectionRateModifier,
+          larvaeProductionRateModifier: this.productionRates.larvaeProductionRateModifier,
         },
         ...prestigeStore.getPrestigeState(),
         ...adventureStore.getAdventureState(),
@@ -1048,6 +1049,7 @@ export const useGameStore = defineStore('gameStore', {
 
           collectionRatePerWorker: 6000,
           collectionRateModifier: 1,
+          larvaeProductionModifier: 1,
         }
 
         // Reset storage to initial caps
