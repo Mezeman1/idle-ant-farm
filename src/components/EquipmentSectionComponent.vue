@@ -1,7 +1,7 @@
 <!-- EquipmentSectionComponent.vue -->
 <template>
   <div class="max-w-screen-lg mx-auto">
-    <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 gap-2">
       <!-- Accessory Slots -->
       <div class="space-y-2">
         <SlotComponent

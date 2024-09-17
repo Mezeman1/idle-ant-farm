@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import {Item} from './itemRegistry'
+import {useInventoryStore} from '@/stores/inventoryStore'
 
 interface EquipmentState {
   equippedItems: {
@@ -88,6 +89,33 @@ export const useEquipmentStore = defineStore('equipmentStore', {
         console.log(`Set bonus for ${this.activeSetBonus} removed!`)
         this.activeSetBonus = null
       }
+    },
+
+    getEquipmentState() {
+      const equipmentItemsOnlyId = Object.fromEntries(
+        Object.entries(this.equippedItems).map(([key, item]) => [key, item ? item.id : null]),
+      )
+
+      return {
+        equippedItems: equipmentItemsOnlyId,
+        activeSetBonus: this.activeSetBonus,
+      }
+    },
+
+    loadEquipmentState(state) {
+      const inventoryStore = useInventoryStore()
+
+      Object.entries(state.equippedItems).forEach(([key, id]) => {
+        if (id) {
+          const item = inventoryStore.getItemById(id)
+
+          if (item) {
+            this.equipItem(item, key as 'head' | 'body' | 'legs' | 'weapon' | 'accessory')
+          }
+        }
+      })
+
+      this.activeSetBonus = state.activeSetBonus ?? null
     },
   },
 })

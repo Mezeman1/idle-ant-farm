@@ -1,6 +1,10 @@
 <!-- MainComponent.vue -->
 <template>
   <div class="p-4 bg-gray-800 rounded-lg shadow-lg relative">
+    <h1 class="text-2xl font-bold text-red-500 mb-4 text-center">
+      IMPORTANT: This is a work in progress.
+    </h1>
+
     <h2 class="text-xl font-bold text-yellow-300 mb-4 text-center">
       Equip Your Ant Army
     </h2>
@@ -8,7 +12,7 @@
     <!-- Desktop Layout -->
     <div
       v-if="isDesktop"
-      class="flex space-x-4"
+      class="flex space-x-2"
     >
       <!-- Equipment Section -->
       <div class="flex-1">

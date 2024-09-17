@@ -8,6 +8,7 @@ import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
 import {useToast} from 'vue-toast-notification'
 import {usePrestigeStore} from './prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
+import {useEquipmentStore} from '@/stores/equipmentStore'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
@@ -849,6 +850,7 @@ export const useGameStore = defineStore('gameStore', {
       const adventureStore = useAdventureStore()
       const inventoryStore = useInventoryStore()
       const settingsStore = useSettingsStore()
+      const equipmentStore = useEquipmentStore()
 
       return {
         resources: this.resources,
@@ -869,6 +871,7 @@ export const useGameStore = defineStore('gameStore', {
         ...adventureStore.getAdventureState(),
         ...inventoryStore.getInventoryState(),
         ...settingsStore.getSettingsState(),
+        ...equipmentStore.getEquipmentState(),
       }
     },
 
@@ -953,6 +956,9 @@ export const useGameStore = defineStore('gameStore', {
 
       const settingsStore = useSettingsStore()
       settingsStore.loadSettingsState(savedState)
+
+      const equipmentStore = useEquipmentStore()
+      equipmentStore.loadEquipmentState(savedState)
     },
     async resetGameState(debug = false) {
       console.log('Resetting game state...')
