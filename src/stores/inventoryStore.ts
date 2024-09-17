@@ -24,14 +24,12 @@ export const useInventoryStore = defineStore('inventoryStore', {
       // Handle equipment items
       if (registryItem.type === 'equipment') {
         const equippedItem = equipmentStore.findEquippedItemById(registryItem.id)
-        console.log(equippedItem)
         if (equippedItem) {
           // Level up equipped item
           if (equippedItem.level < equippedItem.maxLevel) {
             equipmentStore.levelUpEquippedItem(equippedItem)
             return true
           }
-          console.log(`${equippedItem.name} is already at max level.`)
           return false // Early return
         }
 
@@ -42,7 +40,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
             this.levelUpInventoryItem(inventoryItem)
             return true
           }
-          console.log(`${inventoryItem.name} in inventory is already at max level.`)
           return false // Early return
         }
 
@@ -86,11 +83,9 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
     levelUpInventoryItem(item: Item) {
       if (item.level >= item.maxLevel) {
-        console.log(`${item.name} in inventory is already at max level.`)
         return // Early return
       }
       item.level += 1
-      console.log(`${item.name} in inventory has leveled up to level ${item.level}!`)
     },
 
     // Removes item from the inventory, decreasing amount or removing it

@@ -501,6 +501,8 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Offline progress calculation
     calculateOfflineProgress() {
+      if (!this.currentArea) return Promise.resolve() // No area to calculate progress for
+
       return new Promise((resolve, reject) => {
         try {
           const currentTime = Date.now()
