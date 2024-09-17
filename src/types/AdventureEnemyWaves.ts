@@ -49,6 +49,11 @@ export const adventureEnemyWaves = [
             chance: 0.1,
             amountBetween: [1, 1],
           },
+          {
+            name: 'Worker Helm', // New Item
+            chance: 0.05, // 5% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -69,6 +74,11 @@ export const adventureEnemyWaves = [
             chance: 0.1,
             amountBetween: [1, 2],
           },
+          {
+            name: 'Worker Body', // New Item
+            chance: 0.05, // 5% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -88,6 +98,16 @@ export const adventureEnemyWaves = [
             name: 'Wasp Stinger',
             chance: 0.075,
             amountBetween: [1, 2],
+          },
+          {
+            name: 'Worker Legs', // New Item
+            chance: 0.05, // 5% chance
+            amountBetween: [1, 1],
+          },
+          {
+            name: 'Worker Gloves', // New Item
+            chance: 0.05, // 5% chance
+            amountBetween: [1, 1],
           },
         ],
       },
@@ -111,6 +131,11 @@ export const adventureEnemyWaves = [
             chance: 0.05,
             amountBetween: [1, 2],
           },
+          {
+            name: 'Soldier Helm', // New Item
+            chance: 0.04, // 4% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -126,6 +151,11 @@ export const adventureEnemyWaves = [
             chance: 0.2,
             amountBetween: [1, 2],
           },
+          {
+            name: 'Soldier Body', // New Item
+            chance: 0.04, // 4% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -140,6 +170,11 @@ export const adventureEnemyWaves = [
             name: 'Moth Dust',
             chance: 0.1,
             amountBetween: [1, 2],
+          },
+          {
+            name: 'Soldier Legs', // New Item
+            chance: 0.04, // 4% chance
+            amountBetween: [1, 1],
           },
         ],
       },
@@ -161,6 +196,11 @@ export const adventureEnemyWaves = [
             amountBetween: [1, 1],
           },
           seedDrop(400, 1000, 0.5),
+          {
+            name: 'Soldier Shield', // New Item
+            chance: 0.03, // 3% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -182,6 +222,11 @@ export const adventureEnemyWaves = [
             amountBetween: [1, 2],
           },
           seedDrop(500, 1500, 0.5),
+          {
+            name: 'Soldier Sword', // New Item
+            chance: 0.02, // 2% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
     ],
@@ -204,6 +249,11 @@ export const adventureEnemyWaves = [
             chance: 0.15,
             amountBetween: [1, 3],
           },
+          {
+            name: 'Royal Crown', // New Item
+            chance: 0.02, // 2% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -219,6 +269,11 @@ export const adventureEnemyWaves = [
             chance: 0.1,
             amountBetween: [1, 2],
           },
+          {
+            name: 'Royal Robe', // New Item
+            chance: 0.02, // 2% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -232,6 +287,11 @@ export const adventureEnemyWaves = [
           {
             name: 'Mantis Claw',
             chance: 0.08,
+            amountBetween: [1, 1],
+          },
+          {
+            name: 'Royal Legs', // New Item
+            chance: 0.02, // 2% chance
             amountBetween: [1, 1],
           },
         ],
@@ -250,6 +310,11 @@ export const adventureEnemyWaves = [
             amountBetween: [1, 1],
           },
           seedDrop(2500, 5000, 0.5),
+          {
+            name: 'Royal Scepter', // New Item
+            chance: 0.01, // 1% chance (boss item)
+            amountBetween: [1, 1],
+          },
         ],
       },
     ],
@@ -272,6 +337,11 @@ export const adventureEnemyWaves = [
             chance: 0.1,
             amountBetween: [1, 2],
           },
+          {
+            name: 'Royal Ring', // New Item
+            chance: 0.005, // 0.5% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -287,6 +357,11 @@ export const adventureEnemyWaves = [
             chance: 0.1,
             amountBetween: [1, 1],
           },
+          {
+            name: 'Royal Ring', // New Item
+            chance: 0.005, // 0.5% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -300,6 +375,11 @@ export const adventureEnemyWaves = [
           {
             name: 'Scorpion Tail',
             chance: 0.05,
+            amountBetween: [1, 1],
+          },
+          {
+            name: 'Royal Ring', // New Item
+            chance: 0.005, // 0.5% chance
             amountBetween: [1, 1],
           },
         ],
@@ -318,10 +398,15 @@ export const adventureEnemyWaves = [
             amountBetween: [1, 1],
           },
           seedDrop(5000, 10000, 0.5),
+          {
+            name: 'Royal Ring', // New Item
+            chance: 0.01, // 1% chance (boss item)
+            amountBetween: [1, 1],
+          },
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 5000 || gameStore.resources.queens >= (5000 / 50),
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 5000 || gameStore.resources.queens >= 100,
     unlockText: 'Unlocked when you have 5000 ants or 100 queens.',
   },
   {

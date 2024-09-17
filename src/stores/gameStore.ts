@@ -68,6 +68,8 @@ export const useGameStore = defineStore('gameStore', {
       collectionRatePerAnt: 60, // Seeds collected per ant per minute
 
       collectionRatePerWorker: 6000, // Seeds collected per worker per minute
+      collectionRateModifier: 1.0, // Multiplicative modifier for seed collection rate
+      larvaeProductionModifier: 1.0, // Multiplicative modifier for larvae production
     },
 
     resourceCosts: {
@@ -111,13 +113,13 @@ export const useGameStore = defineStore('gameStore', {
 
   getters: {
     // Calculate larvae production per minute based on queens
-    larvaePerMinute: (state) => state.resources.queens * state.productionRates.larvaeProductionRate,
+    larvaePerMinute: (state) => state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier,
     // Calculate larvae production per second for real-time updates
     larvaePerSecond: (state) => (state.resources.queens * state.productionRates.larvaeProductionRate) / 60,
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => {
       const eliteMultiplier = state.resources.eliteAnts > 0 ? (state.resources.eliteAnts * state.multiplierPerEliteAnt) : 1
-      const seedsFromAnts = (state.productionRates.collectionRatePerAnt * state.resources.ants * eliteMultiplier) / 60
+      const seedsFromAnts = (state.productionRates.collectionRatePerAnt * state.resources.ants * eliteMultiplier) / 60 * state.productionRates.collectionRateModifier
       if (state.resources.workers > 0) {
         const seedsFromWorkers = (state.productionRates.collectionRatePerWorker * state.resources.workers * eliteMultiplier) / 60
         return seedsFromAnts + seedsFromWorkers
@@ -830,6 +832,7 @@ export const useGameStore = defineStore('gameStore', {
         }
 
         const gameState = this.getGameState(userId)
+        console.log('Game state:', gameState)
 
         await setDoc(doc(db, 'games', userId), gameState)
 
@@ -866,7 +869,12 @@ export const useGameStore = defineStore('gameStore', {
         attackPerAnt: this.attackPerAnt,
         healthPerAnt: this.healthPerAnt,
         defensePerAnt: this.defensePerAnt,
-        productionRates: this.productionRates,
+        productionRates: {
+          larvaeProductionRate: this.productionRates.larvaeProductionRate,
+          collectionRatePerAnt: this.productionRates.collectionRatePerAnt,
+          collectionRatePerWorker: this.productionRates.collectionRatePerWorker,
+          collectionRateModifier: this.productionRates.collectionRateModifier,
+        },
         ...prestigeStore.getPrestigeState(),
         ...adventureStore.getAdventureState(),
         ...inventoryStore.getInventoryState(),
@@ -934,6 +942,7 @@ export const useGameStore = defineStore('gameStore', {
       }
 
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
+
       this.productionRates = {
         ...this.productionRates,
         ...savedState.productionRates,
@@ -1041,6 +1050,7 @@ export const useGameStore = defineStore('gameStore', {
           collectionRatePerAnt: 60,
 
           collectionRatePerWorker: 6000,
+          collectionRateModifier: 1,
         }
 
         // Reset storage to initial caps

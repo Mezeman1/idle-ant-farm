@@ -30,6 +30,10 @@ export const useAdventureStore = defineStore('adventureStore', {
     armyDefense: 5,
     armyRegen: 5,
 
+    armyAttackModifier: 1.0, // Multiplicative modifier for army attack
+    armyDefenseModifier: 1.0, // Multiplicative modifier for army defense
+    armyMaxHealthModifier: 1.0, // Multiplicative modifier for army max health
+
     bugHealth: 0,
     bugMaxHealth: 0,
     bugAttack: 0,
@@ -626,9 +630,32 @@ export const useAdventureStore = defineStore('adventureStore', {
       const inventoryStore = useInventoryStore()
       if (gameStore.resources.ants === 0 && gameStore.resources.queens <= 1) return
 
-      this.armyMaxHealth = gameStore.resources.ants * gameStore.healthPerAnt + (gameStore.resources.queens - 1) * gameStore.healthPerAnt * gameStore.resourceCosts.antCostPerQueen
-      this.armyAttack = gameStore.resources.ants * gameStore.attackPerAnt + (gameStore.resources.queens - 1) * gameStore.attackPerAnt * gameStore.resourceCosts.antCostPerQueen
-      this.armyDefense = gameStore.resources.ants * gameStore.defensePerAnt + (gameStore.resources.queens - 1) * gameStore.defensePerAnt * gameStore.resourceCosts.antCostPerQueen
+      const baseAttack =
+        gameStore.resources.ants * gameStore.attackPerAnt +
+        (gameStore.resources.queens - 1) *
+        gameStore.attackPerAnt *
+        gameStore.resourceCosts.antCostPerQueen
+      const baseDefense =
+        gameStore.resources.ants * gameStore.defensePerAnt +
+        (gameStore.resources.queens - 1) *
+        gameStore.defensePerAnt *
+        gameStore.resourceCosts.antCostPerQueen
+      const baseHealth =
+        gameStore.resources.ants * gameStore.healthPerAnt +
+        (gameStore.resources.queens - 1) *
+        gameStore.healthPerAnt *
+        gameStore.resourceCosts.antCostPerQueen
+
+      // Apply modifiers
+      this.armyAttack = baseAttack * this.armyAttackModifier
+      this.armyDefense = baseDefense * this.armyDefenseModifier
+      this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier
+
+      // Ensure current health does not exceed max health
+      if (this.armyHealth > this.armyMaxHealth) {
+        this.armyHealth = this.armyMaxHealth
+      }
+
       this.armyRegen = 5
       this.activeBuffs = this.activeBuffs?.map((buff) => {
         return {

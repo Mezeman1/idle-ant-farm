@@ -1,10 +1,6 @@
 <!-- MainComponent.vue -->
 <template>
   <div class="p-4 bg-gray-800 rounded-lg shadow-lg relative">
-    <h1 class="text-2xl font-bold text-red-500 mb-4 text-center">
-      IMPORTANT: This is a work in progress.
-    </h1>
-
     <h2 class="text-xl font-bold text-yellow-300 mb-4 text-center">
       Equip Your Ant Army
     </h2>
@@ -170,25 +166,18 @@ const handleDrop = (slotType: string, index: number | null, event: DragEvent) =>
   const item = JSON.parse(itemData)
 
   if (item && item.slotType === slotType) {
-    // Equip the item
-    if (slotType === 'accessory' && index !== null) {
-      equipmentStore.equippedItems.accessories[index] = item
-    } else {
-      equipmentStore.equippedItems[slotType] = item
-    }
+    // Equip the item using the store method
+    const success = equipmentStore.equipItem(item, slotType, index)
 
-    // Remove item from inventory if it came from there
-    if (dragOrigin.value === 'inventory') {
-      const itemIndex = inventoryStore.inventory.findIndex((invItem) => invItem.id === item.id)
-      if (itemIndex !== -1) {
-        inventoryStore.inventory.splice(itemIndex, 1)
-      }
-    } else {
-      // Unequip from previous slot
-      if (dragOrigin.value.slotType === 'accessory') {
-        equipmentStore.equippedItems.accessories[dragOrigin.value.index] = null
+    if (success) {
+      // Remove item from inventory if it came from there
+      if (dragOrigin.value === 'inventory') {
+        inventoryStore.removeItemFromInventory(item.id, 1)
       } else {
-        equipmentStore.equippedItems[dragOrigin.value.slotType] = null
+        // Unequip from previous slot
+        if (dragOrigin.value.slotType) {
+          equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
+        }
       }
     }
 
@@ -204,15 +193,11 @@ const handleDropIntoInventory = (event: DragEvent) => {
   const item = JSON.parse(itemData)
 
   if (item && dragOrigin.value !== 'inventory') {
-    // Remove the item from the equipment slot
-    if (dragOrigin.value.slotType === 'accessory') {
-      equipmentStore.equippedItems.accessories[dragOrigin.value.index] = null
-    } else {
-      equipmentStore.equippedItems[dragOrigin.value.slotType] = null
-    }
+    // Remove the item from the equipment slot using the store method
+    equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
 
     // Add item back to inventory
-    inventoryStore.inventory.push(item)
+    inventoryStore.addItemToInventory({ id: item.id, amount: 1 })
 
     draggedItem.value = null
     dragOrigin.value = null
@@ -243,38 +228,28 @@ const handleDoubleClickEquip = (item: any) => {
     }
   }
 
-  // Equip the item
-  if (slotType === 'accessory' && index !== null) {
-    equipmentStore.equippedItems.accessories[index] = item
+  // Equip the item using the store method
+  const success = equipmentStore.equipItem(item, slotType, index)
+
+  if (success) {
+    // Remove from inventory
+    inventoryStore.removeItemFromInventory(item.id, 1)
+
+    log('Equipped item via double-click:', item)
   } else {
-    equipmentStore.equippedItems[slotType] = item
+    alert('Cannot equip item.')
   }
-
-  // Remove from inventory
-  const itemIndex = inventoryStore.inventory.findIndex((i) => i.id === item.id)
-  if (itemIndex !== -1) {
-    inventoryStore.inventory.splice(itemIndex, 1)
-  }
-
-  log('Equipped item via double-click:', item)
 }
 
 // Handle double-click to unequip from equipment slot
 const handleDoubleClickUnequip = (item: any, slotType: string, index: number | null) => {
-  let unequippedItem = null
-  if (slotType === 'accessory' && index !== null) {
-    unequippedItem = equipmentStore.equippedItems.accessories[index]
-    equipmentStore.equippedItems.accessories[index] = null
-  } else {
-    unequippedItem = equipmentStore.equippedItems[slotType]
-    equipmentStore.equippedItems[slotType] = null
-  }
+  // Unequip the item using the store method
+  equipmentStore.unequipItem(slotType, index)
 
   // Add back to inventory
-  if (unequippedItem) {
-    inventoryStore.inventory.push(unequippedItem)
-    log('Unequipped item via double-click:', unequippedItem)
-  }
+  inventoryStore.addItemToInventory({ id: item.id, amount: 1 })
+
+  log('Unequipped item via double-click:', item)
 }
 
 // Show context menu
@@ -290,9 +265,6 @@ const showContextMenu = (item: any, slotType: string, index: number | null, even
   if (slotType === 'inventory') {
     contextMenu.value.item = item
     contextMenu.value.action = 'equip'
-  } else if (slotType === 'accessory' && index !== null) {
-    contextMenu.value.item = item
-    contextMenu.value.action = 'unequip'
   } else {
     contextMenu.value.item = item
     contextMenu.value.action = 'unequip'
@@ -323,38 +295,37 @@ const handleEquip = (item: any) => {
     }
   }
 
-  // Equip the item
-  if (slotType === 'accessory' && index !== null) {
-    equipmentStore.equippedItems.accessories[index] = item
+  // Equip the item using the store method
+  const success = equipmentStore.equipItem(item, slotType, index)
+
+  if (success) {
+    // Remove from inventory
+    inventoryStore.removeItemFromInventory(item.id, 1)
+
+    log('Equipped item:', item)
   } else {
-    equipmentStore.equippedItems[slotType] = item
+    alert('Cannot equip item.')
   }
-
-  // Remove from inventory
-  const itemIndex = inventoryStore.inventory.findIndex((i) => i.id === item.id)
-  if (itemIndex !== -1) {
-    inventoryStore.inventory.splice(itemIndex, 1)
-  }
-
-  log('Equipped item:', item)
 
   closeContextMenu()
 }
 
 // Handle unequip action from context menu
 const handleUnequip = (slotType: string, index: number | null) => {
+  // Unequip the item using the store method
+  equipmentStore.unequipItem(slotType, index)
+
+  // Get the unequipped item
   let item = null
   if (slotType === 'accessory' && index !== null) {
     item = equipmentStore.equippedItems.accessories[index]
-    equipmentStore.equippedItems.accessories[index] = null
   } else {
     item = equipmentStore.equippedItems[slotType]
-    equipmentStore.equippedItems[slotType] = null
   }
 
   // Add back to inventory
   if (item) {
-    inventoryStore.inventory.push(item)
+    inventoryStore.addItemToInventory({ id: item.id, amount: 1 })
     log('Unequipped item:', item)
   }
   closeContextMenu()

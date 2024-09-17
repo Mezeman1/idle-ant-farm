@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { Item } from './itemRegistry'
 import { useInventoryStore } from '@/stores/inventoryStore'
+import { useGameStore } from '@/stores/gameStore'
+import { useAdventureStore } from '@/stores/adventureStore'
 
 interface EquipmentState {
   equippedItems: {
@@ -25,84 +27,236 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     activeSetBonus: null,
   }),
   actions: {
-    equipItem(
-      item: Item,
-      slotType: 'head' | 'body' | 'legs' | 'weapon' | 'accessory',
-      index?: number,
-    ): boolean {
-      // Check if the item belongs in the specified slot
-      if (item.slotType !== slotType) {
-        console.warn(`Cannot equip ${item.name} in the ${slotType} slot`)
-        return false
+    isItemEquipped(itemId) {
+      const equippedItems = [
+        this.equippedItems.head,
+        this.equippedItems.body,
+        this.equippedItems.legs,
+        this.equippedItems.weapon,
+        ...this.equippedItems.accessories,
+      ]
+      return equippedItems.some(item => item && item.id === itemId)
+    },
+    findEquippedItemById(itemId: string): Item | null {
+      const equippedItems = [
+        this.equippedItems.head,
+        this.equippedItems.body,
+        this.equippedItems.legs,
+        this.equippedItems.weapon,
+        ...this.equippedItems.accessories,
+      ]
+      return equippedItems.find((item) => item && item.id === itemId) || null
+    },
+    levelUpEquippedItem(item: Item) {
+      if (item.level >= item.maxLevel) {
+        console.log(`${item.name} is already at max level.`)
+        return // Early return
       }
+      // Remove old effect
+      const gameStore = useGameStore()
+      const adventureStore = useAdventureStore()
+      const context = { gameStore, adventureStore }
+      if (item.onRemove) {
+        item.onRemove(context, item)
+      }
+      // Level up
+      item.level += 1
+      // Apply new effect
+      if (item.effect) {
+        item.effect(context, item)
+      }
+      console.log(`${item.name} has leveled up to level ${item.level}!`)
+    },
+    equipItem(item: Item, slotType: string, index?: number): boolean {
+      const inventoryStore = useInventoryStore()
+      const gameStore = useGameStore()
+      const adventureStore = useAdventureStore()
+      const context = { gameStore, adventureStore }
 
-      // Equip item in the correct slot
-      if (slotType === 'accessory') {
-        if (index !== undefined) {
-          this.equippedItems.accessories[index] = item
-        }
+      // Remove the item from the inventory
+      inventoryStore.removeItemFromInventory(item.id)
+
+      // Equip the item
+      if (slotType === 'accessory' && index !== undefined) {
+        this.equippedItems.accessories[index] = item
       } else {
         this.equippedItems[slotType] = item
       }
 
+      // Apply the item's effect
+      if (item.effect) {
+        item.effect(context, item)
+      }
+
+      // Check for set bonuses
       this.checkForSetBonus()
 
       return true
     },
-    unequipItem(slotType: 'head' | 'body' | 'legs' | 'weapon' | 'accessory', index?: number) {
+
+    unequipItem(slotType: string, index?: number) {
+      const inventoryStore = useInventoryStore()
+      const gameStore = useGameStore()
+      const adventureStore = useAdventureStore()
+      const context = { gameStore, adventureStore }
+      let item: Item | null = null
+
+      // Unequip the item
       if (slotType === 'accessory' && index !== undefined) {
+        item = this.equippedItems.accessories[index]
         this.equippedItems.accessories[index] = null
       } else {
+        item = this.equippedItems[slotType]
         this.equippedItems[slotType] = null
       }
+
+      // Remove the item's effect
+      if (item && item.onRemove) {
+        item.onRemove(context, item)
+      }
+
+      // Add the item back to the inventory
+      if (item) {
+        inventoryStore.addItemToInventory({ id: item.id, amount: 1 })
+      }
+
+      // Check for set bonuses
       this.checkForSetBonus()
     },
-    checkForSetBonus() {
-      const equippedSet = new Set(
-        Object.values(this.equippedItems)
-          .flatMap((item) => (Array.isArray(item) ? item : [item]))
-          .filter((item): item is Item => item !== null && item.set !== undefined)
-          .map((item) => item.set),
-      )
 
-      if (equippedSet.size === 1) {
-        // All items are from the same set
-        this.applySetBonus([...equippedSet][0]!)
-      } else {
+    checkForSetBonus() {
+      const gameStore = useGameStore()
+      const adventureStore = useAdventureStore()
+
+      const equippedSetItems = []
+      const allEquippedItems = [
+        this.equippedItems.head,
+        this.equippedItems.body,
+        this.equippedItems.legs,
+        this.equippedItems.weapon,
+        ...this.equippedItems.accessories,
+      ]
+
+      allEquippedItems.forEach((item) => {
+        if (item && item.set) {
+          equippedSetItems.push(item.set)
+        }
+      })
+
+      // Count occurrences of each set
+      const setCounts = equippedSetItems.reduce((acc, setName) => {
+        acc[setName] = (acc[setName] || 0) + 1
+        return acc
+      }, {})
+
+      // Check for full sets
+      let fullSetFound = false
+      for (const [setName, count] of Object.entries(setCounts)) {
+        const setSize = this.getSetSize(setName)
+        if (count === setSize) {
+          // Full set equipped
+          if (this.activeSetBonus !== setName) {
+            this.applySetBonus(setName)
+          }
+          fullSetFound = true
+          break
+        }
+      }
+
+      if (!fullSetFound && this.activeSetBonus) {
         this.removeSetBonus()
       }
     },
-    applySetBonus(setName: string) {
+
+    getSetSize(setName) {
+      // Define the size of each set
+      const setSizes = {
+        'Worker Set': 4,
+        'Soldier Set': 5,
+        'Royal Set': 5,
+      }
+      return setSizes[setName] || 0
+    },
+
+    applySetBonus(setName) {
+      const gameStore = useGameStore()
+      const adventureStore = useAdventureStore()
+
       this.activeSetBonus = setName
 
       switch (setName) {
         case 'Worker Set':
-          // Example bonus for Worker Set
+          // Increase resource gathering by an additional 15%
+          gameStore.productionRates.collectionRateModifier *= 1.15
+          console.log(`Applied ${setName} bonus`)
           break
         case 'Soldier Set':
-          // Example bonus for Soldier Set
+          // Increase army attack and defense by an additional 15%
+          adventureStore.armyAttackModifier *= 1.15
+          adventureStore.armyDefenseModifier *= 1.15
+          console.log(`Applied ${setName} bonus`)
           break
         case 'Royal Set':
-          // Example bonus for Royal Set
+          // Increase larvae production rate by an additional 20%
+          gameStore.productionRates.larvaeProductionRate *= 1.20
+          console.log(`Applied ${setName} bonus`)
           break
         default:
-          break
+          console.warn(`Unknown set bonus: ${setName}`)
       }
     },
+
     removeSetBonus() {
+      const gameStore = useGameStore()
+      const adventureStore = useAdventureStore()
+
       if (this.activeSetBonus) {
-        console.log(`Set bonus for ${this.activeSetBonus} removed!`)
+        switch (this.activeSetBonus) {
+          case 'Worker Set':
+            // Reverse the additional 15% increase
+            gameStore.productionRates.collectionRateModifier /= 1.15
+            console.log(`Removed ${this.activeSetBonus} bonus`)
+            break
+          case 'Soldier Set':
+            // Reverse the additional 15% increase
+            adventureStore.armyAttackModifier /= 1.15
+            adventureStore.armyDefenseModifier /= 1.15
+            console.log(`Removed ${this.activeSetBonus} bonus`)
+            break
+          case 'Royal Set':
+            // Reverse the additional 20% increase
+            gameStore.productionRates.larvaeProductionRate /= 1.20
+            console.log(`Removed ${this.activeSetBonus} bonus`)
+            break
+          default:
+            console.warn(`Unknown set bonus: ${this.activeSetBonus}`)
+        }
         this.activeSetBonus = null
       }
     },
 
     getEquipmentState() {
       const equipmentItemsOnlyId = {
-        head: this.equippedItems.head ? this.equippedItems.head.id : null,
-        body: this.equippedItems.body ? this.equippedItems.body.id : null,
-        legs: this.equippedItems.legs ? this.equippedItems.legs.id : null,
-        weapon: this.equippedItems.weapon ? this.equippedItems.weapon.id : null,
-        accessories: this.equippedItems.accessories.map((item) => (item ? item.id : null)),
+        head: this.equippedItems.head ? {
+          id: this.equippedItems.head.id,
+          level: this.equippedItems.head.level,
+        } : null,
+        body: this.equippedItems.body ? {
+          id: this.equippedItems.body.id,
+          level: this.equippedItems.body.level,
+        } : null,
+        legs: this.equippedItems.legs ? {
+          id: this.equippedItems.legs.id,
+          level: this.equippedItems.legs.level,
+        } : null,
+        weapon: this.equippedItems.weapon ? {
+          id: this.equippedItems.weapon.id,
+          level: this.equippedItems.weapon.level,
+        } : null,
+        accessories: this.equippedItems.accessories.map((item) => (item ? {
+          id: item.id,
+          level: item.level,
+        } : null)),
       }
 
       return {
@@ -112,32 +266,52 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     },
 
     loadEquipmentState(state) {
-      const inventoryStore = useInventoryStore();
+      const inventoryStore = useInventoryStore()
+      const gameStore = useGameStore()
+      const adventureStore = useAdventureStore()
+      const context = { gameStore, adventureStore };
 
-      // Load single equipment slots
+      // Load equipped items and apply their effects
       ['head', 'body', 'legs', 'weapon'].forEach((slotType) => {
-        const id = state.equippedItems[slotType]
-        if (id) {
-          const item = inventoryStore.getItemById(id)
+        const itemId = state.equippedItems[slotType]?.id || null
+
+        if (itemId) {
+          const item = inventoryStore.getItemById(itemId)
           if (item) {
-            this.equipItem(item, slotType as 'head' | 'body' | 'legs' | 'weapon')
+            this.equippedItems[slotType] = item
+
+            item.level = state.equippedItems[slotType]?.level || 1 // Set level from state
+
+            if (item.effect) {
+              item.effect(context, item)
+            }
           }
+        } else {
+          this.equippedItems[slotType] = null
         }
       })
 
       // Load accessories
       if (Array.isArray(state.equippedItems.accessories)) {
-        state.equippedItems.accessories.forEach((id, index) => {
-          if (id) {
-            const item = inventoryStore.getItemById(id)
+        state.equippedItems.accessories.forEach((accessoryState, index) => {
+          const itemId = accessoryState?.id || null
+          if (itemId) {
+            const item = inventoryStore.getItemById(itemId)
             if (item) {
-              this.equipItem(item, 'accessory', index)
+              this.equippedItems.accessories[index] = item
+              item.level = accessoryState?.level || 1 // Set level from state
+              if (item.effect) {
+                item.effect(context, item)
+              }
             }
+          } else {
+            this.equippedItems.accessories[index] = null
           }
         })
       }
 
-      this.activeSetBonus = state.activeSetBonus ?? null
+      // Recalculate set bonuses
+      this.checkForSetBonus()
     },
   },
 })

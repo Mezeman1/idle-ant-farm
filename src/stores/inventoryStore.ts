@@ -2,6 +2,8 @@ import {defineStore} from 'pinia'
 import {Item, itemRegistry} from '../types/itemRegistry'
 import {useAdventureStore} from '@/stores/adventureStore'
 import { v4 as uuidv4 } from 'uuid'
+import {useEquipmentStore} from '@/stores/equipmentStore'
+import {useGameStore} from '@/stores/gameStore'
 export const useInventoryStore = defineStore('inventoryStore', {
   state: () => ({
     inventory: [] as Array<Item>,
@@ -9,23 +11,85 @@ export const useInventoryStore = defineStore('inventoryStore', {
   }),
 
   actions: {
-    async addItemToInventory(item) {
-      const existingItem = this.inventory.find(i => i.id === item.id)
-      if (existingItem) {
-        existingItem.amount += item.amount // Increment if the item already exists
-      } else {
-        const registryItem = this.getItemById(item.id)
-        if (registryItem) {
-          this.inventory.push({...registryItem, amount: item.amount})
-          if (registryItem.type === 'passive') {
-            this.applyItemEffect(registryItem)
-          }
+    // inventoryStore.ts
+    async addItemToInventory(itemData: Partial<Item>) {
+      const equipmentStore = useEquipmentStore()
 
-          this.sortInventory()
-        } else {
-          console.error(`Item ${item.id} not found in registry`)
-        }
+      const registryItem = this.getItemById(itemData.id)
+      if (!registryItem) {
+        console.error(`Item ${itemData.id} not found in registry`)
+        return false
       }
+
+      // Handle equipment items
+      if (registryItem.type === 'equipment') {
+        const equippedItem = equipmentStore.findEquippedItemById(registryItem.id)
+        if (equippedItem) {
+          // Level up equipped item
+          if (equippedItem.level < equippedItem.maxLevel) {
+            equipmentStore.levelUpEquippedItem(equippedItem)
+            return true
+          }
+          console.log(`${equippedItem.name} is already at max level.`)
+          return false // Early return
+        }
+
+        const inventoryItem = this.findEquipmentItemById(registryItem.id)
+        if (inventoryItem) {
+          // Level up inventory item
+          if (inventoryItem.level < inventoryItem.maxLevel) {
+            this.levelUpInventoryItem(inventoryItem)
+            return true
+          }
+          console.log(`${inventoryItem.name} in inventory is already at max level.`)
+          return false // Early return
+        }
+
+        // Add new equipment item to inventory with amount: 1
+        const newItem: Item = {
+          ...registryItem,
+          amount: 1, // Ensure amount is set to 1
+          level: 1,
+          maxLevel: registryItem.maxLevel || 5,
+          // Include other necessary properties
+        }
+        this.inventory.push(newItem)
+        this.sortInventory()
+        return true // Early return
+      }
+
+      // Handle non-equipment items (stackable)
+      const existingItem = this.inventory.find((i) => i.id === itemData.id)
+      if (existingItem) {
+        existingItem.amount += itemData.amount || 1
+        this.sortInventory()
+        return true // Early return
+      }
+
+      // Add new non-equipment item
+      const newItem: Item = {
+        ...registryItem,
+        amount: itemData.amount || 1,
+        // Include other necessary properties
+      }
+      this.inventory.push(newItem)
+      this.sortInventory()
+      return true
+    },
+
+    findEquipmentItemById(itemId: string): Item | null {
+      return this.inventory.find(
+        (item) => item.id === itemId && item.type === 'equipment',
+      ) || null
+    },
+
+    levelUpInventoryItem(item: Item) {
+      if (item.level >= item.maxLevel) {
+        console.log(`${item.name} in inventory is already at max level.`)
+        return // Early return
+      }
+      item.level += 1
+      console.log(`${item.name} in inventory has leveled up to level ${item.level}!`)
     },
 
     // Removes item from the inventory, decreasing amount or removing it
@@ -37,6 +101,10 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
         if (item.amount <= 0) {
           this.inventory = this.inventory.filter(i => i.id !== itemId) // Remove if amount is 0
+        }
+
+        if (item.type === 'equipment') {
+          this.inventory = this.inventory.filter(i => i.id !== itemId) // Remove if equipment
         }
 
         this.sortInventory() // Sort inventory after removing item
@@ -125,7 +193,16 @@ export const useInventoryStore = defineStore('inventoryStore', {
       return {
         inventory: this.inventory.map(item => ({
           id: item.id,
-          amount: item.amount,
+          name: item.name,
+          type: item.type,
+          description: item.description,
+          equipmentType: item.equipmentType ?? null,
+          slotType: item.slotType ?? null,
+          set: item.set ?? null,
+          rarity: item.rarity,
+          level: item.level ?? 1,     // Default to level 1 if undefined
+          maxLevel: item.maxLevel ?? 1, // Default to maxLevel 1 if undefined
+          amount: item.amount ?? 1,   // Default to amount 1 if undefined
         })),
         maxInventory: this.maxInventory,
       }
@@ -137,7 +214,12 @@ export const useInventoryStore = defineStore('inventoryStore', {
           if (registryItem.type === 'passive' && registryItem.applyOnLoad) {
             this.applyItemEffect(registryItem) // Reapply the item's effect
           }
-          return {...registryItem, amount: item.amount}
+          return {
+            ...registryItem,
+            amount: item.amount,
+            level: item.level ?? 1,
+            maxLevel: item.maxLevel ?? 5,
+          }
         } else {
           console.error(`Item ${item.id} not found in registry`)
           return item // Load the raw item if not found in registry

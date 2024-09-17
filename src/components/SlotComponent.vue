@@ -13,13 +13,17 @@
     @click="onClick"
   >
     <p class="font-bold text-center text-xs break-words">
-      {{ item?.name || defaultText }}
+      <span v-if="item">
+        {{ item.name }}
+        <span v-if="item.level"> (Level {{ item.level }})</span>
+      </span>
+      <span v-else>{{ defaultText }}</span>
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps } from 'vue'
+import { computed, defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
   item: Object,
@@ -71,7 +75,17 @@ const slotClasses = computed(() => {
 })
 
 const tooltipText = computed(() => {
-  return props.isDesktop ? props.item?.description : null
+  if (props.isDesktop && props.item) {
+    let text = ''
+    if (props.item.level) {
+      text += `Level ${props.item.level}\n`
+    }
+    if (props.item.description) {
+      text += props.item.description
+    }
+    return text
+  }
+  return null
 })
 
 const onDragStart = (event: DragEvent) => {
