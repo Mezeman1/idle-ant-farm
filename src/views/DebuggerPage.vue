@@ -116,6 +116,17 @@
       >
         Give underworld crown
       </button>
+
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+        @click="inventoryStore.addItemToInventory({
+          id: 'worker-helm',
+          name: 'Worker Helm',
+          amount: 1,
+        })"
+      >
+        Give worker helm
+      </button>
     </div>
   </div>
 </template>

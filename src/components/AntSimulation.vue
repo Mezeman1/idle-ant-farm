@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<{
   showAnimation: true,
 })
 
-const debugMode = import.meta.env.MODE === 'localhost'
+const debugMode = false
 
 interface AntEntity {
   id: number;

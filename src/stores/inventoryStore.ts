@@ -4,7 +4,7 @@ import {useAdventureStore} from '@/stores/adventureStore'
 import { v4 as uuidv4 } from 'uuid'
 export const useInventoryStore = defineStore('inventoryStore', {
   state: () => ({
-    inventory: [],
+    inventory: [] as Array<Item>,
     maxInventory: 20,
   }),
 
@@ -26,6 +26,24 @@ export const useInventoryStore = defineStore('inventoryStore', {
           console.error(`Item ${item.id} not found in registry`)
         }
       }
+    },
+
+    // Removes item from the inventory, decreasing amount or removing it
+    async removeItemFromInventory(itemId: string, amount = 1) {
+      const item = this.inventory.find(i => i.id === itemId)
+
+      if (item) {
+        item.amount -= amount // Decrease amount
+
+        if (item.amount <= 0) {
+          this.inventory = this.inventory.filter(i => i.id !== itemId) // Remove if amount is 0
+        }
+
+        this.sortInventory() // Sort inventory after removing item
+        return true // Return true if successfully removed
+      }
+
+      return false // Return false if item not found
     },
 
     // Apply the effect of an item (passive or buffs)

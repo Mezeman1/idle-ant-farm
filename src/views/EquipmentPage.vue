@@ -1,0 +1,362 @@
+<!-- MainComponent.vue -->
+<template>
+  <div class="p-4 bg-gray-800 rounded-lg shadow-lg relative">
+    <h2 class="text-xl font-bold text-yellow-300 mb-4 text-center">
+      Equip Your Ant Army
+    </h2>
+
+    <!-- Desktop Layout -->
+    <div
+      v-if="isDesktop"
+      class="flex space-x-4"
+    >
+      <!-- Equipment Section -->
+      <div class="flex-1">
+        <EquipmentSectionComponent
+          @start-drag-from-slot="startDragFromSlot"
+          @drag-end="onDragEnd"
+          @handle-drop="handleDrop"
+          @double-click-unequip="handleDoubleClickUnequip"
+          @show-context-menu="showContextMenu"
+        />
+      </div>
+
+      <!-- Armor Effects Section -->
+      <div class="flex-1">
+        <ArmorEffectsComponent />
+      </div>
+    </div>
+
+    <!-- Mobile Layout -->
+    <div v-else>
+      <!-- Equipment Section -->
+      <EquipmentSectionComponent
+        @start-drag-from-slot="startDragFromSlot"
+        @drag-end="onDragEnd"
+        @handle-drop="handleDrop"
+        @double-click-unequip="handleDoubleClickUnequip"
+        @show-context-menu="showContextMenu"
+      />
+
+      <!-- Collapsible Armor Effects Section -->
+      <div class="mt-4">
+        <button
+          class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center justify-between"
+          @click="toggleArmorEffects"
+        >
+          <span>Armor Effects</span>
+          <span v-if="showArmorEffects">▲</span>
+          <span v-else>▼</span>
+        </button>
+        <div
+          v-if="showArmorEffects"
+          class="mt-2"
+        >
+          <ArmorEffectsComponent />
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Section -->
+    <InventorySectionComponent
+      @start-drag="startDrag"
+      @drag-end="onDragEnd"
+      @double-click-equip="handleDoubleClickEquip"
+      @show-context-menu="showContextMenu"
+      @handle-drop-into-inventory="handleDropIntoInventory"
+    />
+
+    <!-- Context Menu -->
+    <ContextMenuComponent
+      :visible="contextMenu.visible"
+      :item="contextMenu.item"
+      :action="contextMenu.action"
+      :slot-type="contextMenu.slotType"
+      :index="contextMenu.index"
+      :is-mobile="isMobile"
+      :x="contextMenu.x"
+      :y="contextMenu.y"
+      @close="closeContextMenu"
+      @equip="handleEquip"
+      @unequip="handleUnequip"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import EquipmentSectionComponent from '../components/EquipmentSectionComponent.vue'
+import InventorySectionComponent from '../components/InventorySectionComponent.vue'
+import ContextMenuComponent from '../components/ContextMenuComponent.vue'
+import ArmorEffectsComponent from '../components/ArmorEffectsComponent.vue'
+import { useWindowSize } from '@vueuse/core'
+import { useEquipmentStore } from '../stores/equipmentStore'
+import { useInventoryStore } from '../stores/inventoryStore'
+
+// Use stores
+const equipmentStore = useEquipmentStore()
+const inventoryStore = useInventoryStore()
+
+// Get window width using @vueuse/core
+const { width } = useWindowSize()
+
+// Define a breakpoint for mobile devices (e.g., 640px)
+const mobileBreakpoint = 640
+
+// Determine if the device is mobile based on window width
+const isMobile = computed(() => width.value < mobileBreakpoint)
+const isDesktop = computed(() => !isMobile.value)
+
+// State to control the visibility of the armor effects on mobile
+const showArmorEffects = ref(false)
+
+const toggleArmorEffects = () => {
+  showArmorEffects.value = !showArmorEffects.value
+}
+
+// Context menu state
+const contextMenu = ref({
+  visible: false,
+  x: 0,
+  y: 0,
+  item: null,
+  slotType: '',
+  index: null,
+  action: '', // 'equip' or 'unequip'
+})
+
+// Drag and drop state
+const draggedItem = ref<any>(null)
+const dragOrigin = ref<any>(null)
+
+// Logging function
+const log = (...args: any[]) => {
+  if (import.meta.env.MODE === 'development') {
+    console.log(...args)
+  }
+}
+
+// Handle dragging from inventory to equipment slots
+const startDrag = (item: any, event: DragEvent) => {
+  draggedItem.value = item
+  dragOrigin.value = 'inventory'
+  event.dataTransfer.setData('application/json', JSON.stringify(item))
+}
+
+// Handle dragging from equipment slots to inventory or other slots
+const startDragFromSlot = (
+  item: any,
+  slotType: string,
+  index: number | null,
+  event: DragEvent,
+) => {
+  draggedItem.value = item
+  if (slotType === 'accessory' && index !== null) {
+    dragOrigin.value = { slotType, index }
+  } else {
+    dragOrigin.value = { slotType }
+  }
+  event.dataTransfer.setData('application/json', JSON.stringify(draggedItem.value))
+}
+
+// Handle dropping item into an equipment slot
+const handleDrop = (slotType: string, index: number | null, event: DragEvent) => {
+  event.preventDefault()
+  const itemData = event.dataTransfer.getData('application/json')
+  const item = JSON.parse(itemData)
+
+  if (item && item.slotType === slotType) {
+    // Equip the item
+    if (slotType === 'accessory' && index !== null) {
+      equipmentStore.equippedItems.accessories[index] = item
+    } else {
+      equipmentStore.equippedItems[slotType] = item
+    }
+
+    // Remove item from inventory if it came from there
+    if (dragOrigin.value === 'inventory') {
+      const itemIndex = inventoryStore.inventory.findIndex((invItem) => invItem.id === item.id)
+      if (itemIndex !== -1) {
+        inventoryStore.inventory.splice(itemIndex, 1)
+      }
+    } else {
+      // Unequip from previous slot
+      if (dragOrigin.value.slotType === 'accessory') {
+        equipmentStore.equippedItems.accessories[dragOrigin.value.index] = null
+      } else {
+        equipmentStore.equippedItems[dragOrigin.value.slotType] = null
+      }
+    }
+
+    draggedItem.value = null
+    dragOrigin.value = null
+  }
+}
+
+// Handle dropping item back into the inventory
+const handleDropIntoInventory = (event: DragEvent) => {
+  event.preventDefault()
+  const itemData = event.dataTransfer.getData('application/json')
+  const item = JSON.parse(itemData)
+
+  if (item && dragOrigin.value !== 'inventory') {
+    // Remove the item from the equipment slot
+    if (dragOrigin.value.slotType === 'accessory') {
+      equipmentStore.equippedItems.accessories[dragOrigin.value.index] = null
+    } else {
+      equipmentStore.equippedItems[dragOrigin.value.slotType] = null
+    }
+
+    // Add item back to inventory
+    inventoryStore.inventory.push(item)
+
+    draggedItem.value = null
+    dragOrigin.value = null
+  }
+}
+
+// Handle drag end to reset state if drop was invalid
+const onDragEnd = () => {
+  draggedItem.value = null
+  dragOrigin.value = null
+}
+
+// Handle double-click to equip from inventory
+const handleDoubleClickEquip = (item: any) => {
+  // Determine the correct equipment slot based on the item's slotType
+  let slotType = item.slotType
+  let index = null
+
+  // If it's an accessory, find the first empty accessory slot
+  if (slotType === 'accessory') {
+    const accessorySlots = equipmentStore.equippedItems.accessories
+    const emptyIndex = accessorySlots.findIndex((slot) => slot === null)
+    if (emptyIndex !== -1) {
+      index = emptyIndex
+    } else {
+      alert('No empty accessory slots available.')
+      return
+    }
+  }
+
+  // Equip the item
+  if (slotType === 'accessory' && index !== null) {
+    equipmentStore.equippedItems.accessories[index] = item
+  } else {
+    equipmentStore.equippedItems[slotType] = item
+  }
+
+  // Remove from inventory
+  const itemIndex = inventoryStore.inventory.findIndex((i) => i.id === item.id)
+  if (itemIndex !== -1) {
+    inventoryStore.inventory.splice(itemIndex, 1)
+  }
+
+  log('Equipped item via double-click:', item)
+}
+
+// Handle double-click to unequip from equipment slot
+const handleDoubleClickUnequip = (item: any, slotType: string, index: number | null) => {
+  let unequippedItem = null
+  if (slotType === 'accessory' && index !== null) {
+    unequippedItem = equipmentStore.equippedItems.accessories[index]
+    equipmentStore.equippedItems.accessories[index] = null
+  } else {
+    unequippedItem = equipmentStore.equippedItems[slotType]
+    equipmentStore.equippedItems[slotType] = null
+  }
+
+  // Add back to inventory
+  if (unequippedItem) {
+    inventoryStore.inventory.push(unequippedItem)
+    log('Unequipped item via double-click:', unequippedItem)
+  }
+}
+
+// Show context menu
+const showContextMenu = (item: any, slotType: string, index: number | null, event: MouseEvent) => {
+  if (isDesktop.value) return
+
+  event.preventDefault()
+
+  contextMenu.value.visible = true
+  contextMenu.value.slotType = slotType
+  contextMenu.value.index = index
+
+  if (slotType === 'inventory') {
+    contextMenu.value.item = item
+    contextMenu.value.action = 'equip'
+  } else if (slotType === 'accessory' && index !== null) {
+    contextMenu.value.item = item
+    contextMenu.value.action = 'unequip'
+  } else {
+    contextMenu.value.item = item
+    contextMenu.value.action = 'unequip'
+  }
+}
+
+// Close context menu
+const closeContextMenu = () => {
+  contextMenu.value.visible = false
+}
+
+// Handle equip action from context menu
+const handleEquip = (item: any) => {
+  // Determine the correct equipment slot based on the item's slotType
+  let slotType = item.slotType
+  let index = null
+
+  // If it's an accessory, find the first empty accessory slot
+  if (slotType === 'accessory') {
+    const accessorySlots = equipmentStore.equippedItems.accessories
+    const emptyIndex = accessorySlots.findIndex((slot) => slot === null)
+    if (emptyIndex !== -1) {
+      index = emptyIndex
+    } else {
+      alert('No empty accessory slots available.')
+      closeContextMenu()
+      return
+    }
+  }
+
+  // Equip the item
+  if (slotType === 'accessory' && index !== null) {
+    equipmentStore.equippedItems.accessories[index] = item
+  } else {
+    equipmentStore.equippedItems[slotType] = item
+  }
+
+  // Remove from inventory
+  const itemIndex = inventoryStore.inventory.findIndex((i) => i.id === item.id)
+  if (itemIndex !== -1) {
+    inventoryStore.inventory.splice(itemIndex, 1)
+  }
+
+  log('Equipped item:', item)
+
+  closeContextMenu()
+}
+
+// Handle unequip action from context menu
+const handleUnequip = (slotType: string, index: number | null) => {
+  let item = null
+  if (slotType === 'accessory' && index !== null) {
+    item = equipmentStore.equippedItems.accessories[index]
+    equipmentStore.equippedItems.accessories[index] = null
+  } else {
+    item = equipmentStore.equippedItems[slotType]
+    equipmentStore.equippedItems[slotType] = null
+  }
+
+  // Add back to inventory
+  if (item) {
+    inventoryStore.inventory.push(item)
+    log('Unequipped item:', item)
+  }
+  closeContextMenu()
+}
+</script>
+
+<style scoped>
+/* Add any necessary styles here */
+</style>

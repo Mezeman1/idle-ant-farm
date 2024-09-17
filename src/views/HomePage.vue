@@ -97,6 +97,16 @@
 
             <li class="flex-shrink-0">
               <button
+                :class="activeTab === 'equipment' ? activeTabClasses : defaultTabClasses"
+                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm"
+                @click.prevent="setActiveTab('equipment')"
+              >
+                Equipment
+              </button>
+            </li>
+
+            <li class="flex-shrink-0">
+              <button
                 :class="activeTab === 'tunnels' ? activeTabClasses : defaultTabClasses"
                 :disabled="!usePrestigeStore().upgradePurchased('tunnels')"
                 class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm disabled:cursor-not-allowed"
@@ -146,6 +156,7 @@
           <AntResources v-show="activeTab === 'resources'" />
           <PrestigeShop v-show="activeTab === 'prestige'" />
           <Adventure v-show="activeTab === 'adventure'" />
+          <EquipmentPage v-show="activeTab === 'equipment'" />
           <Inventory
             v-if="activeTab === 'passives'"
             only-passive
@@ -312,6 +323,7 @@ import Tunnels from '@/views/Tunnels.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
+import EquipmentPage from '@/views/EquipmentPage.vue'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()

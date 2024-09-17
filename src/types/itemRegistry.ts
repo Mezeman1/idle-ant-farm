@@ -4,17 +4,222 @@ import {useGameStore} from '../stores/gameStore'
 export interface Item {
   id: string;
   name: string;
-  type: 'consumable' | 'passive';
+  type: 'consumable' | 'passive' | 'equipment';
   description: string;
   effect: () => boolean;
   onRemove?: () => void;
   applyOnLoad?: boolean;
   applyOnPrestige?: boolean;
-  rarity: 'common' | 'uncommon' | 'rare' | 'legendary'; // New rarity field
+  rarity: 'common' | 'uncommon' | 'rare' | 'legendary';
   duration?: number;
+  equipmentType?: 'armor' | 'weapon' | 'accessory';
+  slotType?: 'head' | 'body' | 'legs' | 'weapon' | 'accessory';
+  set?: string;
 }
 
+const equipmentSets: Item[] = [
+  {
+    id: 'worker-helm',
+    name: 'Worker Helm',
+    type: 'equipment',
+    description: 'Head armor for workers, increases resource gathering by 5%.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    effect: () => {
+      // Increase resource gathering
+      return true
+    },
+  },
+  {
+    id: 'worker-body',
+    name: 'Worker Armor',
+    type: 'equipment',
+    description: 'Body armor for workers, increases resource gathering by 10%.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    effect: () => {
+      // Increase resource gathering
+      return true
+    },
+  },
+  {
+    id: 'worker-legs',
+    name: 'Worker Greaves',
+    type: 'equipment',
+    description: 'Leg armor for workers, increases resource gathering by 5%.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    effect: () => {
+      // Increase resource gathering
+      return true
+    },
+  },
+  {
+    id: 'worker-gloves',
+    name: 'Worker Gloves',
+    type: 'equipment',
+    description: 'Accessory for workers, increases resource gathering by 10%.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    effect: () => {
+      // Increase resource gathering
+      return true
+    },
+  },
+
+  {
+    id: 'soldier-helm',
+    name: 'Soldier Helm',
+    type: 'equipment',
+    description: 'Head armor for soldiers, increases defense by 5%.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    effect: () => {
+      // Increase defense
+      return true
+    },
+  },
+  {
+    id: 'soldier-body',
+    name: 'Soldier Armor',
+    type: 'equipment',
+    description: 'Body armor for soldiers, increases defense by 10%.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    effect: () => {
+      // Increase defense
+      return true
+    },
+  },
+  {
+    id: 'soldier-legs',
+    name: 'Soldier Greaves',
+    type: 'equipment',
+    description: 'Leg armor for soldiers, increases attack by 5%.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    effect: () => {
+      // Increase attack
+      return true
+    },
+  },
+  {
+    id: 'soldier-shield',
+    name: 'Soldier Shield',
+    type: 'equipment',
+    description: 'Accessory for soldiers, increases defense by 10%.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    effect: () => {
+      // Increase defense
+      return true
+    },
+  },
+  {
+    id: 'soldier-sword',
+    name: 'Soldier Sword',
+    type: 'equipment',
+    description: 'Weapon for soldiers, increases attack by 10%.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    effect: () => {
+      // Increase attack
+      return true
+    },
+  },
+
+  {
+    id: 'royal-crown',
+    name: 'Royal Crown',
+    type: 'equipment',
+    description: 'Crown for the queen, increases larvae production by 5%.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    effect: () => {
+      // Increase larvae production
+      return true
+    },
+  },
+  {
+    id: 'royal-robe',
+    name: 'Royal Robe',
+    type: 'equipment',
+    description: 'Body armor for the queen, increases larvae production by 10%.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    effect: () => {
+      // Increase larvae production
+      return true
+    },
+  },
+  {
+    id: 'royal-legs',
+    name: 'Royal Greaves',
+    type: 'equipment',
+    description: 'Leg armor for the queen, increases larvae production by 5%.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    effect: () => {
+      // Increase larvae production
+      return true
+    },
+  },
+  {
+    id: 'royal-scepter',
+    name: 'Royal Scepter',
+    type: 'equipment',
+    description: 'Weapon for the queen, increases larvae production by 10%.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    effect: () => {
+      // Increase larvae production
+      return true
+    },
+  },
+  {
+    id: 'royal-ring',
+    name: 'Royal Ring',
+    type: 'equipment',
+    description: 'Accessory for the queen, increases overall army stats by 5%.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    effect: () => {
+      // Increase overall army stats
+      return true
+    },
+  },
+]
+
 export const itemRegistry: Item[] = [
+  ...equipmentSets,
   {
     id: 'grasshopper-leg',
     name: 'Grasshopper Leg',

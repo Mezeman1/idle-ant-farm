@@ -43,9 +43,9 @@ app.use(VueFire, {
 
 initFirebase()
 
-
 app.use(createPinia())
 app.use(ToastPlugin)
+
 
 app.use(
   VueTippy,
