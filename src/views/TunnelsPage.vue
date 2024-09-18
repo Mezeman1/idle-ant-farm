@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-lg shadow-lg space-y-6">
+  <div class="p-6 bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-lg shadow-lg space-y-6 flex flex-col overflow-y-auto">
     <!-- Title and Tunnel Info -->
     <div class="text-center">
       <h1 class="text-2xl font-bold text-yellow-300 mb-1">
@@ -50,11 +50,13 @@
         :max="availableAnts"
         :step="getSteps"
         class="w-full slider"
+        :disabled="antsInTunnel > 0"
       >
       <p class="text-sm text-gray-300">
         Ants to send: <strong class="text-yellow-400">{{ formatNumber(selectedAnts, 0) }}</strong>
       </p>
     </div>
+
 
     <!-- Send button -->
     <div class="flex justify-center">
@@ -114,6 +116,44 @@
         </ul>
       </div>
     </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg font-bold text-yellow-400">
+        Tunnel Upgrades
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div
+          v-for="upgrade in tunnelUpgrades"
+          :key="upgrade.id"
+          class="bg-gray-800 rounded-lg p-4 shadow"
+        >
+          <h3 class="text-lg font-semibold text-yellow-400">
+            {{ upgrade.name }}
+          </h3>
+          <p class="text-sm text-gray-300">
+            {{ upgrade.description }}
+          </p>
+          <p class="text-sm text-blue-400">
+            Cost: {{ formatNumber(upgrade.cost) }} Mineral Shards
+          </p>
+          <button
+            v-if="upgrade.maxPurchases && tunnelStore.amountOfUpgrades(upgrade.id) >= upgrade.maxPurchases === false"
+            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300 mt-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            :disabled="resourcesStore.resources.mineralShards < upgrade.cost"
+            @click="purchaseUpgrade(upgrade.id)"
+          >
+            Buy Upgrade
+          </button>
+          <span
+            v-if="upgrade.maxPurchases && tunnelStore.amountOfUpgrades(upgrade.id) >= upgrade.maxPurchases"
+            class="text-red-500 text-sm"
+          >
+            Maxed
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -122,10 +162,12 @@ import {useTunnelStore} from '@/stores/tunnelStore'
 import {storeToRefs} from 'pinia'
 import {computed, ref} from 'vue'
 import {useGameStore} from '@/stores/gameStore'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 const tunnelStore = useTunnelStore()
 const gameStore = useGameStore()
 const formatNumber = gameStore.formatNumber
+const resourcesStore = useResourcesStore()
 
 // Destructure state and actions
 const {
@@ -135,9 +177,10 @@ const {
   resourcesFound,
   trapsEncountered,
   lootFound,
+  tunnelUpgrades,
 } = storeToRefs(tunnelStore)
 
-const {startTunnelExploration, stopTunnelExploration} = tunnelStore
+const {startTunnelExploration, stopTunnelExploration, purchaseUpgrade} = tunnelStore
 
 // Slider for selecting ants to send
 const selectedAnts = ref(10)

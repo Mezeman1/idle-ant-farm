@@ -15,10 +15,47 @@ export const useTunnelStore = defineStore('tunnelStore', {
     },
     trapsEncountered: 0,
     lootFound: [], // Loot added to the player's inventory
-    activeUpgrades: [], // Tunnel-related upgrades
     autoTunnelActive: false, // Whether the tunnel exploration is auto-running
+    animationFrameId: 0, // ID for managing animation frame
+
+    activeUpgrades: [], // Tunnel-related upgrades
+    tunnelUpgrades: [
+      {
+        id: 'tunnelSpeed',
+        name: 'Increase Tunnel Speed',
+        description: 'Increase the speed of tunnel exploration by 5%',
+        cost: 500, // Increased base cost in mineral shards
+        costMultiplier: 1.5, // Multiplies cost by 1.5 per purchase
+        applyOnPrestige: true,
+        effect: () => {
+          useTunnelStore().tunnelSpeedMultiplier *= 1.05 // Increase tunnel speed
+        },
+      },
+      {
+        id: 'trapReduction',
+        name: 'Trap Avoidance',
+        description: 'Reduce the chance of encountering traps by 1%',
+        cost: 750, // Increased cost
+        costMultiplier: 1.5,
+        maxPurchases: 25, // Limit the number of purchases
+        effect: () => {
+          useTunnelStore().trapReductionMultiplier *= 0.99 // Reduce trap chance
+        },
+      },
+      {
+        id: 'resourceBoost',
+        name: 'Increase Resource Discovery',
+        description: 'Increase the amount of resources found by 1%',
+        cost: 1000,
+        costMultiplier: 1.5,
+        effect: () => {
+          useTunnelStore().resourceMultiplier *= 1.01 // Boost resource gain
+        },
+      },
+    ],
     tunnelSpeedMultiplier: 1, // Affects speed of digging
-    animationFrameId: 0, // ID for managing animation frames
+    resourceMultiplier: 1, // Multiplier for resources found
+    trapReductionMultiplier: 1, // Multiplier for trap chance reduction
   }),
 
   getters: {
@@ -32,13 +69,35 @@ export const useTunnelStore = defineStore('tunnelStore', {
   },
 
   actions: {
+    purchaseUpgrade(upgradeId) {
+      const upgrade = this.tunnelUpgrades.find(up => up.id === upgradeId)
+      if (!upgrade) return // If the upgrade doesn't exist, do nothing
+
+      const resourcesStore = useResourcesStore()
+
+      if (upgrade.maxPurchases && this.amountOfUpgrades(upgradeId) >= upgrade.maxPurchases) {
+        console.log('Maximum purchases reached for this upgrade.')
+        return // Prevent purchasing more than max allowed
+      }
+
+      if (resourcesStore.resources.mineralShards >= upgrade.cost) {
+        resourcesStore.resources.mineralShards -= upgrade.cost // Deduct mineral shards
+        upgrade.effect() // Apply the upgrade effect
+        upgrade.cost *= upgrade.costMultiplier // Increase cost after each purchase
+        this.activeUpgrades.push(upgrade.id) // Store the upgrade as active
+      }
+    },
+
+    amountOfUpgrades(upgradeId: string) {
+      return this.activeUpgrades.filter(up => up === upgradeId).length
+    },
+
     // Start the tunnel exploration
     startTunnelExploration(antsToSend: number) {
       if (this.antsInTunnel > 0) return // Prevent sending more ants if the tunnel is active
       const gameStore = useResourcesStore()
       const availableAnts = gameStore.resources.ants
       if (antsToSend > availableAnts) return // Prevent sending more ants than available
-
 
       this.antsInTunnel = antsToSend
       this.initialAntsInTunnel = antsToSend // Store the starting number of ants
@@ -114,17 +173,17 @@ export const useTunnelStore = defineStore('tunnelStore', {
       const eventChance = Math.random()
 
       // Adjust depth multiplier to scale logarithmically for better control at higher depths
-      const depthMultiplier = Math.log2(this.tunnelDepth + 2) * 1.2// Logarithmic scaling
+      const depthMultiplier = Math.log2(this.tunnelDepth + 2) * 1.2 // Logarithmic scaling
 
       // Scale rewards based on the number of ants sent
       const antMultiplier = Math.pow(this.initialAntsInTunnel, 0.7) // Ant-based scaling
 
       // Define possible events with corresponding chance ranges
       const events = [
-        {chance: 0.5, handler: this.handleResourceEvent}, // 30% chance for resources
+        {chance: 0.5, handler: this.handleResourceEvent}, // 50% chance for resources
         {chance: this.getTrapChance(), handler: this.handleTrapEvent}, // Trap event based on tunnel depth
-        {chance: 0.01, handler: this.handleQueenFound}, // Trap event based on tunnel depth
-        // {chance: 0.1, handler: this.handleLootEvent}, // Remaining chance for loot
+        {chance: 0.01, handler: this.handleQueenFound}, // 1% chance to find a queen
+        // {chance: 0.1, handler: this.handleLootEvent}, // Optional loot event
       ]
 
       // Determine which event should occur
@@ -144,8 +203,8 @@ export const useTunnelStore = defineStore('tunnelStore', {
 
     // Handler for resource event (seeds and mineral shards)
     handleResourceEvent(depthMultiplier, antMultiplier) {
-      const seedsFound = Math.floor((Math.random() * 50 + 10) * depthMultiplier * antMultiplier)
-      const shardsFound = Math.floor((Math.random() * 5 + 1) * depthMultiplier * antMultiplier)
+      const seedsFound = Math.floor((Math.random() * 50 + 10) * depthMultiplier * antMultiplier * this.resourceMultiplier)
+      const shardsFound = Math.floor((Math.random() * 5 + 1) * depthMultiplier * antMultiplier * this.resourceMultiplier)
 
       this.resourcesFound.seeds += seedsFound
       this.resourcesFound.mineralShards += shardsFound
@@ -156,9 +215,9 @@ export const useTunnelStore = defineStore('tunnelStore', {
       if (this.tunnelDepth < this.depthBoost) return // Prevent traps early on
 
       const baseLossPercentage = 0.05 // Base 5% loss
-      const maxLossPercentage = 0.2 // Max 30% loss at deeper levels
+      const maxLossPercentage = 0.2 // Max 20% loss at deeper levels
       const depthFactor = Math.log2(this.tunnelDepth + 2) / 10 // Logarithmic scaling
-      const percentageLost = Math.min(baseLossPercentage + depthFactor, maxLossPercentage) // Scale loss based on depth
+      const percentageLost = Math.min(baseLossPercentage + depthFactor, maxLossPercentage) * this.trapReductionMultiplier // Scale loss based on depth and reduction
 
       const antsLost = Math.floor(this.initialAntsInTunnel * percentageLost)
       this.antsInTunnel = Math.max(0, this.antsInTunnel - antsLost)
@@ -167,33 +226,80 @@ export const useTunnelStore = defineStore('tunnelStore', {
       console.log(`Encountered a trap! Lost ${antsLost} ants.`)
     },
 
-    // Handler for loot event (finding rare items)
-    handleLootEvent(depthMultiplier, antMultiplier) {
-      const lootValue = Math.floor((Math.random() * 100 + 50) * depthMultiplier * antMultiplier)
-      const loot = {name: 'Rare Artifact', value: lootValue}
-
-      this.lootFound.push(loot)
-      console.log(`Found loot: ${loot.name} worth ${loot.value}!`)
-    },
-
     // Function to calculate the chance of encountering a trap based on depth
     getTrapChance() {
-      return Math.min(0.15 + this.tunnelDepth * 0.01, 0.5) // Max at 50% trap chance
+      return Math.min(0.15 + this.tunnelDepth * 0.01, 0.5) * this.trapReductionMultiplier // Max at 50%, reduced by multiplier
     },
-
 
     // Reset tunnel data
     resetTunnel() {
       this.antsInTunnel = 0
-      this.initialAntsInTunnel = 0 // Reset the initial ants as well
+      this.initialAntsInTunnel = 0
       this.tunnelDepth = 0
       this.tunnelProgress = 0
+      this.depthBoost = 0
       this.resourcesFound = {seeds: 0, mineralShards: 0, queens: 0}
       this.trapsEncountered = 0
       this.lootFound = []
       this.autoTunnelActive = false
       cancelAnimationFrame(this.animationFrameId)
-      console.log('Tunnel progress reset.')
+      this.activeUpgrades = []
+      this.resetCosts() // Reset costs for upgrades
+      this.tunnelSpeedMultiplier = 1 // Reset speed multiplier
+      this.resourceMultiplier = 1 // Reset resource multiplier
+      this.trapReductionMultiplier = 1 // Reset trap reduction multiplier
+    },
+
+    getTunnelState() {
+      return {
+        activeUpgrades: [
+          ...this.activeUpgrades,
+        ],
+        antsInTunnel: this.antsInTunnel,
+        initialAntsInTunnel: this.initialAntsInTunnel,
+        tunnelDepth: this.tunnelDepth,
+        tunnelProgress: this.tunnelProgress,
+        depthBoost: this.depthBoost,
+        resourcesFound: this.resourcesFound,
+        trapsEncountered: this.trapsEncountered,
+        lootFound: this.lootFound,
+        autoTunnelActive: this.autoTunnelActive,
+        animationFrameId: this.animationFrameId,
+      }
+    },
+
+    loadTunnelState(state) {
+      this.activeUpgrades = state.activeUpgrades ?? []
+      this.antsInTunnel = state.antsInTunnel ?? 0
+      this.initialAntsInTunnel = state.initialAntsInTunnel ?? 0
+      this.tunnelDepth = state.tunnelDepth ?? 0
+      this.tunnelProgress = state.tunnelProgress ?? 0
+      this.depthBoost = state.depthBoost ?? 0
+      this.resourcesFound = state.resourcesFound ?? {seeds: 0, mineralShards: 0, queens: 0}
+      this.trapsEncountered = state.trapsEncountered ?? 0
+      this.lootFound = state.lootFound ?? []
+      this.autoTunnelActive = state.autoTunnelActive ?? false
+      this.animationFrameId = state.animationFrameId ?? 0
+
+      this.applyActiveUpgrades()
+      this.resetCosts() // Reset costs for upgrades based on the current state
+
+      if (this.autoTunnelActive) {
+        this.runTunnelLoop(performance.now())
+      }
+    },
+    applyActiveUpgrades() {
+      this.activeUpgrades.forEach(upgradeId => {
+        const upgrade = this.tunnelUpgrades.find(up => up.id === upgradeId)
+        if (upgrade) {
+          upgrade.effect()
+        }
+      })
+    },
+    resetCosts() {
+      this.tunnelUpgrades.forEach(upgrade => {
+        upgrade.cost = this.amountOfUpgrades(upgrade.id) > 0 ? upgrade.cost * Math.pow(upgrade.costMultiplier, this.amountOfUpgrades(upgrade.id)) : upgrade.cost
+      })
     },
   },
 })

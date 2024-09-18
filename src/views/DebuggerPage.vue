@@ -28,13 +28,13 @@
 
       <div class="flex flex-col gap-2">
         <div
-          v-for="(value, key) in gameStore.resources"
+          v-for="(value, key) in resourcesStore.resources"
           :key="key + '-' + value"
           class="flex flex-col gap-1"
         >
           <label>{{ key }}</label>
           <input
-            v-model="gameStore.resources[key]"
+            v-model="resourcesStore.resources[key]"
             class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
             type="number"
           >
@@ -135,19 +135,21 @@
 import {useGameStore} from '../stores/gameStore'
 import {usePrestigeStore} from '../stores/prestigeStore'
 import {useInventoryStore} from '../stores/inventoryStore'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 const gameStore = useGameStore()
+const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
 
 const inventoryStore = useInventoryStore()
 
 const maxAllResources = () => {
-  gameStore.resources.seeds = gameStore.storage.maxSeeds
-  gameStore.resources.larvae = gameStore.storage.maxLarvae
-  gameStore.resources.ants = gameStore.storage.maxAnts
-  gameStore.resources.queens = gameStore.storage.maxQueens
+  resourcesStore.resources.seeds = gameStore.storage.maxSeeds
+  resourcesStore.resources.larvae = gameStore.storage.maxLarvae
+  resourcesStore.resources.ants = gameStore.storage.maxAnts
+  resourcesStore.resources.queens = gameStore.storage.maxQueens
   if (gameStore.eliteAntsUnlocked) {
-    gameStore.resources.eliteAnts = gameStore.storage.maxEliteAnts
+    resourcesStore.resources.eliteAnts = gameStore.storage.maxEliteAnts
   }
 }
 </script>

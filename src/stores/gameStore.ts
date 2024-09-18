@@ -13,6 +13,7 @@ import {useAchievementStore} from '@/stores/achievementStore'
 import LZString from 'lz-string'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import FirestoreError = firebase.firestore.FirestoreError;
+import {useTunnelStore} from '@/stores/tunnelStore'
 
 
 export const useGameStore = defineStore('gameStore', {
@@ -514,6 +515,7 @@ export const useGameStore = defineStore('gameStore', {
         ...settingsStore.getSettingsState(),
         ...equipmentStore.getEquipmentState(),
         ...achievementStore.getAchievementState(),
+        ...useTunnelStore().getTunnelState(),
       }
     },
 
@@ -592,6 +594,9 @@ export const useGameStore = defineStore('gameStore', {
 
       const achievementStore = useAchievementStore()
       achievementStore.loadAchievementState(savedState)
+
+      const tunnelStore = useTunnelStore()
+      tunnelStore.loadTunnelState(savedState)
     },
     async resetGameState(debug = false) {
       console.log('Resetting game state...')
@@ -708,6 +713,9 @@ export const useGameStore = defineStore('gameStore', {
         // Reset inventory store
         const inventoryStore = useInventoryStore()
         await inventoryStore.resetInventoryState()
+
+        const tunnelStore = useTunnelStore()
+        tunnelStore.resetTunnel()
       }
       // Reset adventure store
       const adventureStore = useAdventureStore()

@@ -23,15 +23,6 @@ export const usePrestigeStore = defineStore('prestige', {
     timesPrestiged: 0, // Number of times prestiged
     purchasedUpgrades: [] as Array<string>, // List of purchased prestige upgrades
     prestigeShop: [
-      // {
-      //   id: 'autoLarvae',
-      //   name: 'Auto Larvae Creation',
-      //   description: 'Automatically create larvae based on seeds',
-      //   cost: 10,
-      //   oneTimePurchase: true,
-      //   applyOnPrestige: true,
-      //   category: 'auto',
-      // },
       {
         id: 'autoAnts',
         name: 'Auto Ant Creation',
