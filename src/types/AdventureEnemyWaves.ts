@@ -320,6 +320,11 @@ export const adventureEnemyWaves = [
             chance: 0.01, // 1% chance (boss item)
             amountBetween: [1, 1],
           },
+          {
+            name: 'Royal Ring', // New Item
+            chance: 0.005, // 0.5% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
     ],
@@ -327,230 +332,290 @@ export const adventureEnemyWaves = [
     unlockText: 'Unlocked when you have 1000 ants or 20 queens.',
   },
   {
-    name: 'Volcano',
-    enemies: [
+    'name': 'Volcano',
+    'enemies': [
       {
-        name: 'Lava Ant',
-        health: 60000,
-        attack: 12000,
-        defense: 7000,
-        regen: 15,
-        dropOptions: [
+        'name': 'Lava Ant',
+        'health': 60000,
+        'attack': 12000,
+        'defense': 7000,
+        'regen': 15,
+        'dropOptions': [
           seedDrop(3000, 7000, 0.6),
           {
-            name: 'Lava Ant Tooth',
-            chance: 0.1,
-            amountBetween: [1, 2],
+            'name': 'Lava Ant Tooth',
+            'chance': 0.1,
+            'amountBetween': [1, 2],
           },
           {
-            name: 'Royal Ring', // New Item
-            chance: 0.005, // 0.5% chance
-            amountBetween: [1, 1],
+            'name': 'Volcano Helm', // New Item
+            'chance': 0.02, // 2% chance
+            'amountBetween': [1, 1],
           },
         ],
       },
       {
-        name: 'Magma Beetle',
-        health: 70000,
-        attack: 13000,
-        defense: 7500,
-        regen: 18,
-        dropOptions: [
+        'name': 'Magma Beetle',
+        'health': 70000,
+        'attack': 13000,
+        'defense': 7500,
+        'regen': 18,
+        'dropOptions': [
           seedDrop(3500, 7500, 0.7),
           {
-            name: 'Magma Carapace',
-            chance: 0.1,
-            amountBetween: [1, 1],
+            'name': 'Magma Carapace',
+            'chance': 0.1,
+            'amountBetween': [1, 1],
           },
           {
-            name: 'Royal Ring', // New Item
-            chance: 0.005, // 0.5% chance
-            amountBetween: [1, 1],
+            'name': 'Volcano Armor', // New Item
+            'chance': 0.02, // 2% chance
+            'amountBetween': [1, 1],
           },
         ],
       },
       {
-        name: 'Fire Scorpion',
-        health: 80000,
-        attack: 14000,
-        defense: 8000,
-        regen: 20,
-        dropOptions: [
+        'name': 'Fire Scorpion',
+        'health': 80000,
+        'attack': 14000,
+        'defense': 8000,
+        'regen': 20,
+        'dropOptions': [
           seedDrop(4000, 8000, 0.5),
           {
-            name: 'Scorpion Tail',
-            chance: 0.05,
-            amountBetween: [1, 1],
+            'name': 'Scorpion Tail',
+            'chance': 0.05,
+            'amountBetween': [1, 1],
           },
           {
-            name: 'Royal Ring', // New Item
-            chance: 0.005, // 0.5% chance
-            amountBetween: [1, 1],
+            'name': 'Volcano Greaves', // New Item
+            'chance': 0.02, // 2% chance
+            'amountBetween': [1, 1],
           },
         ],
       },
       {
-        name: 'Molten Dragon',
-        health: 100000,
-        attack: 16000,
-        defense: 9000,
-        regen: 25,
-        isBoss: true,
-        dropOptions: [
+        'name': 'Molten Dragon',
+        'health': 100000,
+        'attack': 16000,
+        'defense': 9000,
+        'regen': 25,
+        'isBoss': true,
+        'dropOptions': [
           {
-            name: 'Dragon Scale',
-            chance: 0.002,
-            amountBetween: [1, 1],
+            'name': 'Dragon Scale',
+            'chance': 0.002,
+            'amountBetween': [1, 1],
           },
           seedDrop(5000, 10000, 0.5),
           {
-            name: 'Royal Ring', // New Item
-            chance: 0.01, // 1% chance (boss item)
-            amountBetween: [1, 1],
+            'name': 'Volcano Scepter', // New Item
+            'chance': 0.01, // 1% chance (boss item)
+            'amountBetween': [1, 1],
+          },
+          {
+            'name': 'Volcano Ring', // New Item
+            'chance': 0.005, // 0.5% chance
+            'amountBetween': [1, 1],
           },
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 5000 || gameStore.resources.queens >= 100,
-    unlockText: 'Unlocked when you have 5000 ants or 100 queens.',
-  },
-  {
-    name: 'Underworld',
-    enemies: [
-      {
-        name: 'Hellfire Ant',
-        health: 120000,
-        attack: 30000,
-        defense: 16000,
-        regen: 25,
-        dropOptions: [
-          seedDrop(10000, 15000, 0.5),
-          {
-            name: 'Hellfire Ant Fang',
-            chance: 0.08,
-            amountBetween: [1, 2],
-          },
-        ],
-      },
-      {
-        name: 'Demonic Beetle',
-        health: 130000,
-        attack: 32000,
-        defense: 18000,
-        regen: 30,
-        dropOptions: [
-          seedDrop(12000, 18000, 0.6),
-          {
-            name: 'Demonic Carapace',
-            chance: 0.05,
-            amountBetween: [1, 1],
-          },
-        ],
-      },
-      {
-        name: 'Infernal Scorpion',
-        health: 150000,
-        attack: 35000,
-        defense: 20000,
-        regen: 40,
-        dropOptions: [
-          seedDrop(15000, 20000, 0.4),
-          {
-            name: 'Infernal Tail',
-            chance: 0.03,
-            amountBetween: [1, 1],
-          },
-        ],
-      },
-      {
-        name: 'Underworld Lord',
-        health: 180000,
-        attack: 40000,
-        defense: 24000,
-        regen: 50,
-        isBoss: true,
-        dropOptions: [
-          {
-            name: 'Underworld Crown',
-            chance: 0.001,
-            amountBetween: [1, 1],
-          },
-          seedDrop(20000, 30000, 0.5),
-        ],
-      },
-    ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 10000 || gameStore.resources.queens >= (10000 / gameStore.resourceCosts.antCostPerQueen),
-    unlockText: 'Unlocked when you have 10 thousand ants or 200 queens.',
+    'unlockedWhen': (gameStore) => gameStore.resources.ants >= 5000 || gameStore.resources.queens >= 100,
+    'unlockText': 'Unlocked when you have 5000 ants or 100 queens.',
   },
 
   {
-    name: 'Arctic Tundra',
-    enemies: [
+    'name': 'Underworld',
+    'enemies': [
       {
-        name: 'Ice Beetle',
-        health: 240_000, // Slightly lower than player health
-        attack: 48_000,  // Slightly lower attack than player
-        defense: 24_000, // Slightly lower defense than player
-        regen: 1_500,    // Moderate regen
-        dropOptions: [
-          seedDrop(25_000, 35_000, 0.6),
+        'name': 'Hellfire Ant',
+        'health': 120000,
+        'attack': 30000,
+        'defense': 16000,
+        'regen': 25,
+        'dropOptions': [
+          seedDrop(10000, 15000, 0.5),
           {
-            name: 'Ice Beetle Shell',
-            chance: 0.1,
-            amountBetween: [1, 2],
+            'name': 'Hellfire Ant Fang',
+            'chance': 0.08,
+            'amountBetween': [1, 2],
+          },
+          {
+            'name': 'Underworld Helm', // New Item
+            'chance': 0.02, // 2% chance
+            'amountBetween': [1, 1],
           },
         ],
       },
       {
-        name: 'Frost Scorpion',
-        health: 270_000, // Higher health than player
-        attack: 50_000,  // On par with player’s attack
-        defense: 25_000, // On par with player’s defense
-        regen: 1_800,    // High regen
-        dropOptions: [
-          seedDrop(30_000, 40_000, 0.7),
+        'name': 'Demonic Beetle',
+        'health': 130000,
+        'attack': 32000,
+        'defense': 18000,
+        'regen': 30,
+        'dropOptions': [
+          seedDrop(12000, 18000, 0.6),
           {
-            name: 'Frost Scorpion Tail',
-            chance: 0.08,
-            amountBetween: [1, 1],
+            'name': 'Demonic Carapace',
+            'chance': 0.05,
+            'amountBetween': [1, 1],
+          },
+          {
+            'name': 'Underworld Armor', // New Item
+            'chance': 0.02, // 2% chance
+            'amountBetween': [1, 1],
           },
         ],
       },
       {
-        name: 'Glacier Mantis',
-        health: 300_000, // Stronger health than player
-        attack: 55_000,  // Stronger attack than player
-        defense: 26_500, // Slightly stronger defense than player
-        regen: 2_000,    // High regen
-        dropOptions: [
-          seedDrop(35_000, 45_000, 0.5),
+        'name': 'Infernal Scorpion',
+        'health': 150000,
+        'attack': 35000,
+        'defense': 20000,
+        'regen': 40,
+        'dropOptions': [
+          seedDrop(15000, 20000, 0.4),
           {
-            name: 'Glacier Mantis Claw',
-            chance: 0.05,
-            amountBetween: [1, 1],
+            'name': 'Infernal Tail',
+            'chance': 0.03,
+            'amountBetween': [1, 1],
+          },
+          {
+            'name': 'Underworld Greaves', // New Item
+            'chance': 0.02, // 2% chance
+            'amountBetween': [1, 1],
           },
         ],
       },
       {
-        name: 'Frost Wyrm',
-        health: 350_000, // Significantly higher than player health
-        attack: 60_000,  // Strong attack for boss
-        defense: 28_000, // Strong defense
-        regen: 3_000,    // Very strong regen for a boss
-        isBoss: true,
-        dropOptions: [
+        'name': 'Underworld Lord',
+        'health': 180000,
+        'attack': 40000,
+        'defense': 24000,
+        'regen': 50,
+        'isBoss': true,
+        'dropOptions': [
           {
-            name: 'Frost Wyrm Scale',
-            chance: 0.005,
-            amountBetween: [1, 1],
+            'name': 'Underworld Crown',
+            'chance': 0.001,
+            'amountBetween': [1, 1],
           },
-          seedDrop(50_000, 60_000, 0.5),
+          seedDrop(20000, 30000, 0.5),
+          {
+            'name': 'Underworld Scepter', // New Item
+            'chance': 0.01, // 1% chance (boss item)
+            'amountBetween': [1, 1],
+          },
+          {
+            'name': 'Underworld Ring', // New Item
+            'chance': 0.005, // 0.5% chance
+            'amountBetween': [1, 1],
+          },
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 25_000 || gameStore.resources.queens >= 500,
-    unlockText: 'Unlocked when you have 25 thousand ants or 500 queens.',
+    'unlockedWhen': (gameStore) =>
+      gameStore.resources.ants >= 10000 ||
+      gameStore.resources.queens >= 10000 / gameStore.resourceCosts.antCostPerQueen,
+    'unlockText': 'Unlocked when you have 10 thousand ants or 200 queens.',
   },
+
+  {
+    'name': 'Arctic Tundra',
+    'enemies': [
+      {
+        'name': 'Ice Beetle',
+        'health': 240000,
+        'attack': 48000,
+        'defense': 24000,
+        'regen': 1500,
+        'dropOptions': [
+          seedDrop(25000, 35000, 0.6),
+          {
+            'name': 'Ice Beetle Shell',
+            'chance': 0.1,
+            'amountBetween': [1, 2],
+          },
+          {
+            'name': 'Arctic Helm', // New Item
+            'chance': 0.02, // 2% chance
+            'amountBetween': [1, 1],
+          },
+        ],
+      },
+      {
+        'name': 'Frost Scorpion',
+        'health': 270000,
+        'attack': 50000,
+        'defense': 25000,
+        'regen': 1800,
+        'dropOptions': [
+          seedDrop(30000, 40000, 0.7),
+          {
+            'name': 'Frost Scorpion Tail',
+            'chance': 0.08,
+            'amountBetween': [1, 1],
+          },
+          {
+            'name': 'Arctic Armor', // New Item
+            'chance': 0.02, // 2% chance
+            'amountBetween': [1, 1],
+          },
+        ],
+      },
+      {
+        'name': 'Glacier Mantis',
+        'health': 300000,
+        'attack': 55000,
+        'defense': 26500,
+        'regen': 2000,
+        'dropOptions': [
+          seedDrop(35000, 45000, 0.5),
+          {
+            'name': 'Glacier Mantis Claw',
+            'chance': 0.05,
+            'amountBetween': [1, 1],
+          },
+          {
+            'name': 'Arctic Greaves', // New Item
+            'chance': 0.02, // 2% chance
+            'amountBetween': [1, 1],
+          },
+        ],
+      },
+      {
+        'name': 'Frost Wyrm',
+        'health': 350000,
+        'attack': 60000,
+        'defense': 28000,
+        'regen': 3000,
+        'isBoss': true,
+        'dropOptions': [
+          {
+            'name': 'Frost Wyrm Scale',
+            'chance': 0.005,
+            'amountBetween': [1, 1],
+          },
+          seedDrop(50000, 60000, 0.5),
+          {
+            'name': 'Arctic Scepter', // New Item
+            'chance': 0.01, // 1% chance (boss item)
+            'amountBetween': [1, 1],
+          },
+          {
+            'name': 'Arctic Ring', // New Item
+            'chance': 0.005, // 0.5% chance
+            'amountBetween': [1, 1],
+          },
+        ],
+      },
+    ],
+    'unlockedWhen': (gameStore) =>
+      gameStore.resources.ants >= 25000 || gameStore.resources.queens >= 500,
+    'unlockText': 'Unlocked when you have 25 thousand ants or 500 queens.',
+  },
+
 
   {
     name: 'Abyssal Depths',

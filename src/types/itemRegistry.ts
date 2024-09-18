@@ -26,7 +26,7 @@ export type SetBonus = {
   remove: () => void;
 };
 
-export type SetName = 'Worker Set' | 'Soldier Set' | 'Royal Set';
+export type SetName = 'Worker Set' | 'Soldier Set' | 'Royal Set' | 'Volcano Set' | 'Underworld Set' | 'Arctic Tundra Set';
 
 export const setBonuses: Record<SetName, SetBonus> = {
   'Worker Set': {
@@ -65,6 +65,44 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const resourcesStore = useResourcesStore()
       resourcesStore.productionRates.larvaeProductionRate /= 1.20
       console.log('Removed Royal Set bonus')
+    },
+  },
+  'Volcano Set': {
+    apply: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier *= 1.25
+      console.log('Applied Volcano Set bonus: +25% attack')
+    },
+    remove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier /= 1.25
+      console.log('Removed Volcano Set bonus: -25% attack')
+    },
+  },
+  'Underworld Set': {
+    apply: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyMaxHealthModifier *= 1.30
+      console.log('Applied Underworld Set bonus: +30% max health')
+    },
+    remove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyMaxHealthModifier /= 1.30
+      console.log('Removed Underworld Set bonus: -30% max health')
+    },
+  },
+  'Arctic Tundra Set': {
+    apply: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefenseModifier *= 1.20
+      adventureStore.armyRegenModifier *= 1.20
+      console.log('Applied Arctic Tundra Set bonus: +20% defense and regen')
+    },
+    remove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefenseModifier /= 1.20
+      adventureStore.armyRegenModifier /= 1.20
+      console.log('Removed Arctic Tundra Set bonus: -20% defense and regen')
     },
   },
 }
@@ -674,6 +712,327 @@ export const equipmentSets: Item[] = [
       adventureStore.armyMaxHealthModifier /= bonusMultiplier
     },
   },
+  // Volcano Set
+  {
+    id: 'volcano-helm',
+    name: 'Volcano Helm',
+    type: 'equipment',
+    description: 'A fiery helm that increases attack by 0.5% per level.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Volcano Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.005 * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.005 * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'volcano-chest',
+    name: 'Volcano Chestplate',
+    type: 'equipment',
+    description: 'A molten chestplate that increases defense by 0.75% per level.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Volcano Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0075 * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0075 * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'volcano-boots',
+    name: 'Volcano Boots',
+    type: 'equipment',
+    description: 'Boots forged in lava that increase movement speed and health regeneration by 0.6% per level.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Volcano Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.006 * item.level
+      adventureStore.armyRegenModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.006 * item.level
+      adventureStore.armyRegenModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'volcano-gloves',
+    name: 'Volcano Gauntlets',
+    type: 'equipment',
+    description: 'Gauntlets that increase army attack and defense by 0.8% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Volcano Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.008 * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.008 * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'volcano-blade',
+    name: 'Volcano Blade',
+    type: 'equipment',
+    description: 'A sword forged in the depths of a volcano that increases attack by 1% per level.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Volcano Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.01 * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.01 * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+    },
+  },
+  // Underworld Set
+  {
+    id: 'underworld-helm',
+    name: 'Underworld Helm',
+    type: 'equipment',
+    description: 'Helm of the underworld, increases defense by 0.9% per level.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Underworld Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 750,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.009 * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.009 * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'underworld-chest',
+    name: 'Underworld Chestplate',
+    type: 'equipment',
+    description: 'Chestplate from the underworld, increases max health by 1.2% per level.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Underworld Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 750,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.012 * item.level
+      adventureStore.armyMaxHealthModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.012 * item.level
+      adventureStore.armyMaxHealthModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'underworld-legs',
+    name: 'Underworld Greaves',
+    type: 'equipment',
+    description: 'Leg armor from the underworld, increases defense by 0.6% per level.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Underworld Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 750,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.006 * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.006 * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'underworld-cloak',
+    name: 'Underworld Cloak',
+    type: 'equipment',
+    description: 'A cloak that increases army health regeneration by 0.9% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Underworld Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 750,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.009 * item.level
+      adventureStore.armyRegenModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.009 * item.level
+      adventureStore.armyRegenModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'underworld-blade',
+    name: 'Underworld Blade',
+    type: 'equipment',
+    description: 'A sword that increases attack by 1.5% per level.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Underworld Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 750,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.015 * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.015 * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+    },
+  },
+// Arctic Tundra Set
+  {
+    id: 'tundra-helm',
+    name: 'Tundra Helm',
+    type: 'equipment',
+    description: 'Helm that enhances defense by 0.7% per level.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Arctic Tundra Set',
+    rarity: 'epic',
+    level: 1,
+    maxLevel: 300,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.007 * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.007 * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'tundra-armor',
+    name: 'Tundra Armor',
+    type: 'equipment',
+    description: 'Body armor that increases defense by 1.1% per level.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Arctic Tundra Set',
+    rarity: 'epic',
+    level: 1,
+    maxLevel: 300,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.011 * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.011 * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'tundra-greaves',
+    name: 'Tundra Greaves',
+    type: 'equipment',
+    description: 'Leg armor that increases movement speed by 0.6% per level.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Arctic Tundra Set',
+    rarity: 'epic',
+    level: 1,
+    maxLevel: 300,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.006 * item.level
+      adventureStore.armySpeedModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.006 * item.level
+      adventureStore.armySpeedModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'tundra-cloak',
+    name: 'Tundra Cloak',
+    type: 'equipment',
+    description: 'A cloak that increases health regeneration by 1.3% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Arctic Tundra Set',
+    rarity: 'epic',
+    level: 1,
+    maxLevel: 300,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.013 * item.level
+      adventureStore.armyRegenModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.013 * item.level
+      adventureStore.armyRegenModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'tundra-blade',
+    name: 'Tundra Blade',
+    type: 'equipment',
+    description: 'An icy blade that increases attack by 0.8% per level.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Arctic Tundra Set',
+    rarity: 'epic',
+    level: 1,
+    maxLevel: 300,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.008 * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.008 * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+    },
+  },
+
 ]
 
 export const itemRegistry: Item[] = [

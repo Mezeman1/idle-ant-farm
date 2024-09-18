@@ -34,6 +34,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     armyAttackModifier: 1.0, // Multiplicative modifier for army attack
     armyDefenseModifier: 1.0, // Multiplicative modifier for army defense
     armyMaxHealthModifier: 1.0, // Multiplicative modifier for army max health
+    armyRegenModifier: 1.0, // Multiplicative modifier for army regen
 
     bugHealth: 0,
     bugMaxHealth: 0,
@@ -657,13 +658,13 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.armyAttack = baseAttack * this.armyAttackModifier
       this.armyDefense = baseDefense * this.armyDefenseModifier
       this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier
+      this.armyRegen = 5 * this.armyRegenModifier
 
       // Ensure current health does not exceed max health
       if (this.armyHealth > this.armyMaxHealth) {
         this.armyHealth = this.armyMaxHealth
       }
 
-      this.armyRegen = 5
       this.activeBuffs = this.activeBuffs?.map((buff) => {
         return {
           ...buff,

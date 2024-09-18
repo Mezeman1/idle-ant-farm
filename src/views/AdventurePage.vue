@@ -34,11 +34,11 @@
                 :key="wave.name"
                 :class="[
                   'cursor-pointer px-2 py-1 text-gray-700 hover:bg-gray-200',
-                  !wave.unlockedWhen(useGameStore()) && 'text-gray-400 cursor-not-allowed',
+                  !wave.unlockedWhen(useResourcesStore()) && 'text-gray-400 cursor-not-allowed',
                 ]"
                 @click="selectWave(wave)"
               >
-                <span v-if="wave.unlockedWhen(useGameStore())">{{ wave.name }}</span>
+                <span v-if="wave.unlockedWhen(useResourcesStore())">{{ wave.name }}</span>
                 <span v-else>{{ wave.name }} 🔒 ({{ wave.unlockText }})</span>
               </div>
             </div>
@@ -198,7 +198,7 @@ const toggleDropdown = () => {
 }
 
 const selectWave = (wave) => {
-  if (wave.unlockedWhen(useGameStore())) {
+  if (wave.unlockedWhen(useResourcesStore())) {
     selectedWave.value = wave
     dropdownOpen.value = false
     adventureStore.currentArea = wave.name
