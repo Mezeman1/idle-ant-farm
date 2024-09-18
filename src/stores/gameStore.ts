@@ -291,7 +291,11 @@ export const useGameStore = defineStore('gameStore', {
       this.resources.queens = Math.min(this.resources.queens + amount, this.storage.maxQueens)
     },
     // Buy max queens based on available ants and seeds
-    buyMaxQueens() {
+    buyMaxQueens(fromPrestige = false) {
+      if (fromPrestige && this.resources.ants < this.storage.maxAnts / 2) {
+        return
+      }
+
       const availableQueenSpace = Math.floor(this.storage.maxQueens) - this.resources.queens
       const maxPurchasableQueensByAnts = Math.floor(this.resources.ants / this.resourceCosts.antCostPerQueen)
       const maxPurchasableQueensBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerQueen)
