@@ -873,7 +873,7 @@ export const useGameStore = defineStore('gameStore', {
           collectionRatePerAnt: this.productionRates.collectionRatePerAnt,
           collectionRatePerWorker: this.productionRates.collectionRatePerWorker,
           collectionRateModifier: this.productionRates.collectionRateModifier,
-          larvaeProductionRateModifier: this.productionRates.larvaeProductionRateModifier,
+          larvaeProductionRateModifier: this.productionRates.larvaeProductionModifier,
         },
         ...prestigeStore.getPrestigeState(),
         ...adventureStore.getAdventureState(),
