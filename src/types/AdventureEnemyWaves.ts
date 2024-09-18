@@ -424,7 +424,6 @@ export const adventureEnemyWaves = [
     'unlockedWhen': (gameStore) => gameStore.resources.ants >= 5000 || gameStore.resources.queens >= 100,
     'unlockText': 'Unlocked when you have 5000 ants or 100 queens.',
   },
-
   {
     'name': 'Underworld',
     'enemies': [
@@ -520,7 +519,6 @@ export const adventureEnemyWaves = [
       gameStore.resources.queens >= 10000 / gameStore.resourceCosts.antCostPerQueen,
     'unlockText': 'Unlocked when you have 10 thousand ants or 200 queens.',
   },
-
   {
     'name': 'Arctic Tundra',
     'enemies': [
@@ -615,8 +613,6 @@ export const adventureEnemyWaves = [
       gameStore.resources.ants >= 25000 || gameStore.resources.queens >= 500,
     'unlockText': 'Unlocked when you have 25 thousand ants or 500 queens.',
   },
-
-
   {
     name: 'Abyssal Depths',
     enemies: [
@@ -685,7 +681,6 @@ export const adventureEnemyWaves = [
     unlockedWhen: (gameStore) => gameStore.resources.ants >= 50_000 || gameStore.resources.queens >= 1_000,
     unlockText: 'Unlocked when you have 50 thousand ants or 1 thousand queens.',
   },
-
   {
     name: 'Cosmic Rift',
     enemies: [

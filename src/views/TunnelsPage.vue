@@ -138,7 +138,7 @@
             Cost: {{ formatNumber(upgrade.cost) }} Mineral Shards
           </p>
           <button
-            v-if="upgrade.maxPurchases && tunnelStore.amountOfUpgrades(upgrade.id) >= upgrade.maxPurchases === false"
+            v-if="upgrade.maxPurchases && tunnelStore.amountOfUpgrades(upgrade.id) >= upgrade.maxPurchases === false || !upgrade.maxPurchases"
             class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300 mt-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
             :disabled="resourcesStore.resources.mineralShards < upgrade.cost"
             @click="purchaseUpgrade(upgrade.id)"

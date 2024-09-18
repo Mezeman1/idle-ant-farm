@@ -203,7 +203,6 @@ export const useAdventureStore = defineStore('adventureStore', {
         }
 
         if (buff.duration <= 0 && buff.active && buff.onRemove) {
-          console.log(`Buff ${buff.id} expired`)
           buff.onRemove()
           this.activeBuffs = this.activeBuffs.filter((activeBuff) => activeBuff.id !== buff.id)
         }
