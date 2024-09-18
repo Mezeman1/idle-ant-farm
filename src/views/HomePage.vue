@@ -439,7 +439,7 @@ async function handleVisibilityChange() {
   if (document.hidden) {
     // Save game state when the tab goes into the background (or app is swiped away on mobile)
     console.log('Tab is hidden (backgrounded), saving game state...')
-    gameStore.stopGameLoop()
+    await gameStore.saveGameState()
   } else {
     // Reload the game state when tab becomes visible again (optional, if needed)
     console.log('Tab is visible again, reloading game state...')
