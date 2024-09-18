@@ -3,6 +3,7 @@ import {useGameStore} from './gameStore'
 import {useToast} from 'vue-toast-notification'
 import {useInventoryStore} from './inventoryStore'
 import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 interface KillCounts {
   [key: string]: number
@@ -303,7 +304,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
           if (drop.name === 'Seeds') {
             // Add seeds to gameStore
-            useGameStore().resources.seeds += amount
+            useResourcesStore().resources.seeds += amount
           } else {
             // Handle item drops
             const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
@@ -613,7 +614,7 @@ export const useAdventureStore = defineStore('adventureStore', {
             }
 
             if (drop.name === 'Seeds') {
-              useGameStore().collectSeedsManually(amount)
+              useResourcesStore().collectSeedsManually(amount)
             } else {
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
               const item = useInventoryStore().getItemById(itemId)
@@ -632,24 +633,25 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     setupAdventureStats() {
       const gameStore = useGameStore()
+      const resourcesStore = useResourcesStore()
       const inventoryStore = useInventoryStore()
-      if (gameStore.resources.ants === 0 && gameStore.resources.queens <= 1) return
+      if (resourcesStore.resources.ants === 0 && resourcesStore.resources.queens <= 1) return
 
       const baseAttack =
-        gameStore.resources.ants * gameStore.attackPerAnt +
-        (gameStore.resources.queens - 1) *
+        resourcesStore.resources.ants * gameStore.attackPerAnt +
+        (resourcesStore.resources.queens - 1) *
         gameStore.attackPerAnt *
-        gameStore.resourceCosts.antCostPerQueen
+        resourcesStore.resourceCosts.antCostPerQueen
       const baseDefense =
-        gameStore.resources.ants * gameStore.defensePerAnt +
-        (gameStore.resources.queens - 1) *
+        resourcesStore.resources.ants * gameStore.defensePerAnt +
+        (resourcesStore.resources.queens - 1) *
         gameStore.defensePerAnt *
-        gameStore.resourceCosts.antCostPerQueen
+        resourcesStore.resourceCosts.antCostPerQueen
       const baseHealth =
-        gameStore.resources.ants * gameStore.healthPerAnt +
-        (gameStore.resources.queens - 1) *
+        resourcesStore.resources.ants * gameStore.healthPerAnt +
+        (resourcesStore.resources.queens - 1) *
         gameStore.healthPerAnt *
-        gameStore.resourceCosts.antCostPerQueen
+        resourcesStore.resourceCosts.antCostPerQueen
 
       // Apply modifiers
       this.armyAttack = baseAttack * this.armyAttackModifier

@@ -149,10 +149,12 @@ import ArmyImage from '../assets/army.webp'
 import Inventory from '@/views/InventoryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useToast} from 'vue-toast-notification'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
 const gameStore = useGameStore()
+const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
 const $toast = useToast()
 
@@ -171,16 +173,16 @@ onMounted(() => {
   selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
 })
 
-watchDebounced(() => gameStore.resources.ants, () => {
+watchDebounced(() => resourcesStore.resources.ants, () => {
   if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
 
-  if (prestigeStore.upgradePurchased('autoAdventure') && !adventureStore.battleRunning && gameStore.resources.ants >= 15) {
+  if (prestigeStore.upgradePurchased('autoAdventure') && !adventureStore.battleRunning && resourcesStore.resources.ants >= 15) {
     console.log('Starting battle automatically')
     $toast.info('Starting battle automatically')
     adventureStore.toggleBattle()
   }
 
-  if (!selectedWave.value && gameStore.resources.ants >= 15) {
+  if (!selectedWave.value && resourcesStore.resources.ants >= 15) {
     adventureStore.currentArea = 'Wasteland'
   }
 }, {

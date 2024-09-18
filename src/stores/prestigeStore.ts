@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import {useGameStore} from './gameStore'
 import {useInventoryStore} from './inventoryStore'
 import {useToast} from 'vue-toast-notification'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 
 interface PrestigeShopItem {
@@ -210,10 +211,10 @@ export const usePrestigeStore = defineStore('prestige', {
   },
   actions: {
     calculatePrestigePoints() {
-      const gameStore = useGameStore()
+      const resourcesStore = useResourcesStore()
 
       // Get current ants from the game store
-      const ants = gameStore.resources.ants
+      const ants = resourcesStore.resources.ants
 
       // Calculate prestige points using log1.01 scaling for ants
       return this.calculatePrestigePointsFor(ants, this.baseAntThreshold) // Only ants will give prestige points
@@ -344,6 +345,7 @@ export const usePrestigeStore = defineStore('prestige', {
     // Apply a purchased upgrade
     applyPrestigeUpgrade(upgradeId, fromPrestige = false) {
       const gameStore = useGameStore()
+      const resourcesStore = useResourcesStore()
       console.log('Try to apply upgrade:', upgradeId, fromPrestige)
       const prestigeInShop = this.prestigeShop.find(u => u.id === upgradeId)
       console.log('Prestige in shop:', prestigeInShop)
@@ -356,20 +358,20 @@ export const usePrestigeStore = defineStore('prestige', {
       // Object map for handling upgrade logic
       const upgrades = {
         storageUpgrade: () => {
-          gameStore.storage.maxSeeds += gameStore.initialCaps.maxSeeds // Increase seed storage
-          gameStore.storage.maxLarvae += gameStore.initialCaps.maxLarvae // Increase larvae storage
-          gameStore.storage.maxAnts += gameStore.initialCaps.maxAnts // Increase ant storage
-          gameStore.storage.maxQueens += 1 // Increase queen storage
+          resourcesStore.storage.maxSeeds += resourcesStore.initialCaps.maxSeeds // Increase seed storage
+          resourcesStore.storage.maxLarvae += resourcesStore.initialCaps.maxLarvae // Increase larvae storage
+          resourcesStore.storage.maxAnts += resourcesStore.initialCaps.maxAnts // Increase ant storage
+          resourcesStore.storage.maxQueens += 1 // Increase queen storage
         },
         eliteAntsStoreUpgrade: () => {
-          gameStore.storage.maxEliteAnts +=1 // Increase elite ant storage
+          resourcesStore.storage.maxEliteAnts +=1 // Increase elite ant storage
         },
         productionBoost: () => {
-          gameStore.productionRates.larvaeProductionRate *= 1.2
-          gameStore.productionRates.collectionRatePerAnt *= 1.2
+          resourcesStore.productionRates.larvaeProductionRate *= 1.2
+          resourcesStore.productionRates.collectionRatePerAnt *= 1.2
         },
         queenEfficiency: () => {
-          gameStore.productionRates.larvaeProductionRate *= 1.5
+          resourcesStore.productionRates.larvaeProductionRate *= 1.5
         },
         autoLarvae: () => {
           this.autoLarvaeCreation = true
@@ -404,7 +406,7 @@ export const usePrestigeStore = defineStore('prestige', {
           this.autoAdventure = true
         },
         startWithAnts: () => {
-          gameStore.resources.ants += 1
+          resourcesStore.resources.ants += 1
           this.antsFromPrestigeShop += 1
         },
         eliteAnts: () => {

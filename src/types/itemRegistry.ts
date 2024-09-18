@@ -1,5 +1,6 @@
 import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 export interface Item {
   id: string
@@ -30,13 +31,13 @@ export type SetName = 'Worker Set' | 'Soldier Set' | 'Royal Set';
 export const setBonuses: Record<SetName, SetBonus> = {
   'Worker Set': {
     apply: () => {
-      const gameStore = useGameStore()
-      gameStore.productionRates.collectionRateModifier *= 1.15
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.collectionRateModifier *= 1.15
       console.log('Applied Worker Set bonus')
     },
     remove: () => {
-      const gameStore = useGameStore()
-      gameStore.productionRates.collectionRateModifier /= 1.15
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.collectionRateModifier /= 1.15
       console.log('Removed Worker Set bonus')
     },
   },
@@ -56,13 +57,13 @@ export const setBonuses: Record<SetName, SetBonus> = {
   },
   'Royal Set': {
     apply: () => {
-      const gameStore = useGameStore()
-      gameStore.productionRates.larvaeProductionRate *= 1.20
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.larvaeProductionRate *= 1.20
       console.log('Applied Royal Set bonus')
     },
     remove: () => {
-      const gameStore = useGameStore()
-      gameStore.productionRates.larvaeProductionRate /= 1.20
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.larvaeProductionRate /= 1.20
       console.log('Removed Royal Set bonus')
     },
   },
@@ -214,8 +215,8 @@ export const passiveItems: Item[] = [
     description: 'Increases queen larvae production by 100%. ',
     applyOnPrestige: true,
     effect: () => {
-      const gameStore = useGameStore()
-      gameStore.productionRates.larvaeProductionRate *= 2
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.larvaeProductionRate *= 2
       return true
     },
     rarity: 'rare',

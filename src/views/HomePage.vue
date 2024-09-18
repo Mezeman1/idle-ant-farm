@@ -6,10 +6,10 @@
     <AntSimulation
       v-if="gameStore.loaded && showBackground"
       :show-animation="showAnimation"
-      :ant-count="gameStore.resources.ants"
-      :queen-count="gameStore.resources.queens"
-      :larvae-count="gameStore.resources.larvae"
-      :elite-count="gameStore.resources.eliteAnts"
+      :ant-count="resourcesStore.resources.ants"
+      :queen-count="resourcesStore.resources.queens"
+      :larvae-count="resourcesStore.resources.larvae"
+      :elite-count="resourcesStore.resources.eliteAnts"
     />
 
     <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
@@ -335,9 +335,11 @@ import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
 import EquipmentPage from '@/views/EquipmentPage.vue'
 import AchievementPage from '@/views/AchievementPage.vue'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
+const resourcesStore = useResourcesStore()
 const isMinimized = ref(false) // Minimized state
 const showBackground = ref(true) // Show background state
 const showAnimation = ref(true) // Show animation state
@@ -353,7 +355,7 @@ const privacyModalVisible = ref(false)
 
 // Classes for active and default tabs
 const activeTabClasses = 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500'
-const defaultTabClasses = 'inline-block p-4 text-gray-800 border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-500 dark:hover:text-blue-600'
+const defaultTabClasses = 'inline-block p-4 text-gray-800 border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-500 dark:hover:text-blue-600 disabled:cursor-not-allowed disabled:text-gray-800 disabled:border-gray-400 disabled:opacity-50'
 // Function to set the active tab
 const setActiveTab = (tab) => {
   activeTab.value = tab
@@ -401,12 +403,14 @@ onMounted(() => {
         // Save game state every 5 minutes (fallback for regular saves)
         saveInterval = window.setInterval(() => {
           gameStore.saveGameState()
-        }, 60000 * 5)
+        }, 60000)
       }
 
       // Add event listeners for window close (desktop) and visibility change (desktop + mobile)
       window.addEventListener('beforeunload', handleBeforeUnload) // Primarily for desktop
       document.addEventListener('visibilitychange', handleVisibilityChange) // Works for both desktop and mobile
+      window.addEventListener('pagehide', handlePageHide)
+      window.addEventListener('freeze', handleFreeze)
     }
   })
 })
@@ -448,13 +452,25 @@ async function handleVisibilityChange() {
   }
 }
 
+function handlePageHide(event: PageTransitionEvent) {
+  // Save game state when the page is hidden (e.g., when navigating to another page)
+  console.log('Page is hidden, saving game state...')
+  gameStore.saveGameState()
+}
+
+function handleFreeze() {
+  // Save game state when the page is frozen (e.g., when the app is sent to the background on mobile)
+  console.log('Page is frozen, saving game state...')
+  gameStore.saveGameState()
+}
+
 // Function to handle saving the game state before unloading the window (works on desktop only)
 function handleBeforeUnload() {
   // Save game state
   gameStore.saveGameState()
 }
 
-watch(() => gameStore.resources.ants, useDebounceFn(() => {
+watch(() => resourcesStore.resources.ants, useDebounceFn(() => {
   gameStore.setupAdventureStats()
 }, 300), {immediate: true})
 </script>

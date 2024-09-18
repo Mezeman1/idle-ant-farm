@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {useGameStore} from '@/stores/gameStore'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 export const useTunnelStore = defineStore('tunnelStore', {
   state: () => ({
@@ -26,8 +26,8 @@ export const useTunnelStore = defineStore('tunnelStore', {
       return Math.min(state.tunnelProgress / 100, 1)
     },
     getAvailableAnts() {
-      const gameStore = useGameStore()
-      return gameStore.resources.ants
+      const resourcesStore = useResourcesStore()
+      return resourcesStore.resources.ants
     },
   },
 
@@ -35,7 +35,7 @@ export const useTunnelStore = defineStore('tunnelStore', {
     // Start the tunnel exploration
     startTunnelExploration(antsToSend: number) {
       if (this.antsInTunnel > 0) return // Prevent sending more ants if the tunnel is active
-      const gameStore = useGameStore()
+      const gameStore = useResourcesStore()
       const availableAnts = gameStore.resources.ants
       if (antsToSend > availableAnts) return // Prevent sending more ants than available
 
@@ -101,7 +101,7 @@ export const useTunnelStore = defineStore('tunnelStore', {
       this.antsInTunnel = 0
 
       // Add found resources, traps, and loot to the player's inventory
-      const gameStore = useGameStore()
+      const gameStore = useResourcesStore()
       gameStore.collectSeedsManually(this.resourcesFound.seeds)
       gameStore.addQueen(this.resourcesFound.queens)
       gameStore.resources.mineralShards += this.resourcesFound.mineralShards
@@ -188,7 +188,7 @@ export const useTunnelStore = defineStore('tunnelStore', {
       this.initialAntsInTunnel = 0 // Reset the initial ants as well
       this.tunnelDepth = 0
       this.tunnelProgress = 0
-      this.resourcesFound = {seeds: 0, mineralShards: 0}
+      this.resourcesFound = {seeds: 0, mineralShards: 0, queens: 0}
       this.trapsEncountered = 0
       this.lootFound = []
       this.autoTunnelActive = false

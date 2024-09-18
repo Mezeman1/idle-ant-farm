@@ -4,6 +4,7 @@ import {useInventoryStore} from '@/stores/inventoryStore'
 import {useGameStore} from '@/stores/gameStore'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {equipmentSets, setBonuses, SetName} from '@/types/itemRegistry'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 interface EquipmentState {
   equippedItems: {
@@ -47,7 +48,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
         return // Early return
       }
       // Remove old effect
-      const gameStore = useGameStore()
+      const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
       const context = { gameStore, adventureStore }
       if (item.onRemove) {
@@ -64,7 +65,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     },
     async equipItem(item: Item, slotType: SlotType, index?: number) {
       const inventoryStore = useInventoryStore()
-      const gameStore = useGameStore()
+      const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
       const context = { gameStore, adventureStore }
 
@@ -256,7 +257,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
 
     loadEquipmentState(state) {
       const inventoryStore = useInventoryStore()
-      const gameStore = useGameStore()
+      const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
       const context = { gameStore, adventureStore }
 

@@ -16,17 +16,17 @@
           <!-- Left Column: Seed Count and Upgrade -->
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.seeds) }}/{{ formatNumber(gameStore.storage.maxSeeds) }}
-              ({{ formatNumber(gameStore.seedsPerSecond) }} /s)
+              Count: {{ formatNumber(resourcesStore.resources.seeds) }}/{{ formatNumber(resourcesStore.storage.maxSeeds) }}
+              ({{ formatNumber(resourcesStore.seedsPerSecond) }} /s)
             </p>
             <StorageButtons
               :cost-string="seedStorageCostString"
-              :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.seedStorageUpgradeCost"
-              @upgrade="gameStore.upgradeSeedStorage"
-              @upgradeMax="gameStore.upgradeMaxSeedStorage"
+              :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
+              @upgrade="resourcesStore.upgradeSeedStorage"
+              @upgradeMax="resourcesStore.upgradeMaxSeedStorage"
             />
             <p
-              v-if="gameStore.storage.maxSeeds < gameStore.upgradeCosts.seedStorageUpgradeCost"
+              v-if="resourcesStore.storage.maxSeeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
               class="text-xs"
             >
               If only there was a way to increase your seed storage...
@@ -97,19 +97,19 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.larvae, 0) }}/{{
-                formatNumber(gameStore.storage.maxLarvae, 0)
+              Count: {{ formatNumber(resourcesStore.resources.larvae, 0) }}/{{
+                formatNumber(resourcesStore.storage.maxLarvae, 0)
               }}
-              ({{ formatNumber(gameStore.larvaePerMinute) }} /min)
+              ({{ formatNumber(resourcesStore.larvaePerMinute) }} /min)
             </p>
             <StorageButtons
               :cost-string="larvaeStorageCostString"
-              :disabled="gameStore.resources.seeds < gameStore.upgradeCosts.larvaeStorageUpgradeCost"
-              @upgrade="gameStore.upgradeLarvaeStorage"
-              @upgradeMax="gameStore.upgradeMaxLarvaeStorage"
+              :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
+              @upgrade="resourcesStore.upgradeLarvaeStorage"
+              @upgradeMax="resourcesStore.upgradeMaxLarvaeStorage"
             />
             <p
-              v-if="gameStore.storage.maxSeeds < gameStore.upgradeCosts.larvaeStorageUpgradeCost"
+              v-if="resourcesStore.storage.maxSeeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
               class="text-xs"
             >
               If only there was a way to increase your seed storage...
@@ -120,14 +120,14 @@
             <button
               :disabled="createLarvaeDisabled"
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createLarvae"
+              @click="resourcesStore.createLarvae"
             >
-              Create Larvae ({{ formatNumber(gameStore.resourceCosts.seedCostPerLarva) }} seeds)
+              Create Larvae ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerLarva) }} seeds)
             </button>
             <button
               :disabled="createLarvaeDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createMaxLarvae"
+              @click="resourcesStore.createMaxLarvae"
             >
               Max
             </button>
@@ -177,21 +177,21 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.ants, 0) }}/{{ formatNumber(gameStore.maxAnts, 0) }}
+              Count: {{ formatNumber(resourcesStore.resources.ants, 0) }}/{{ formatNumber(resourcesStore.maxAnts, 0) }}
             </p>
           </div>
           <div class="w-full flex flex-wrap gap-2">
             <button
               class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              :disabled="gameStore.resources.seeds < gameStore.seedCostPerAntHousing"
-              @click="gameStore.createAntHousing"
+              :disabled="resourcesStore.resources.seeds < resourcesStore.seedCostPerAntHousing"
+              @click="resourcesStore.createAntHousing"
             >
-              Create housing ({{ formatNumber(gameStore.seedCostPerAntHousing) }} seeds)
+              Create housing ({{ formatNumber(resourcesStore.seedCostPerAntHousing) }} seeds)
             </button>
             <button
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              :disabled="gameStore.resources.seeds < gameStore.seedCostPerAntHousing"
-              @click="gameStore.createMaxAntHousing"
+              :disabled="resourcesStore.resources.seeds < resourcesStore.seedCostPerAntHousing"
+              @click="resourcesStore.createMaxAntHousing"
             >
               Max
             </button>
@@ -200,16 +200,16 @@
             <button
               :disabled="createAntDisabled"
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createAnts"
+              @click="resourcesStore.createAnts"
             >
-              Create Ant <br>({{ formatNumber(gameStore.resourceCosts.seedCostPerAnt) }} seeds, {{
-                formatNumber(gameStore.resourceCosts.larvaCostPerAnt)
+              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerAnt) }} seeds, {{
+                formatNumber(resourcesStore.resourceCosts.larvaCostPerAnt)
               }} larvae)
             </button>
             <button
               :disabled="createAntDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createMaxAnts"
+              @click="resourcesStore.createMaxAnts"
             >
               Max
             </button>
@@ -277,7 +277,7 @@
 
       <!-- Elite Ant Section -->
       <div
-        v-if="gameStore.eliteAntsUnlocked"
+        v-if="resourcesStore.eliteAntsUnlocked"
         class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
       >
         <div>
@@ -292,24 +292,24 @@
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
               Count: {{
-                formatNumber(gameStore.resources.eliteAnts, 0)
-              }}/{{ formatNumber(gameStore.storage.maxEliteAnts, 0) }}
+                formatNumber(resourcesStore.resources.eliteAnts, 0)
+              }}/{{ formatNumber(resourcesStore.storage.maxEliteAnts, 0) }}
             </p>
           </div>
           <div class="w-full flex flex-wrap gap-2">
             <button
               :disabled="createEliteAntDisabled"
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createEliteAnts"
+              @click="resourcesStore.createEliteAnts"
             >
-              Create Ant <br>({{ formatNumber(gameStore.resourceCosts.seedCostPerEliteAnt) }} seeds, {{
-                formatNumber(gameStore.resourceCosts.larvaCostPerEliteAnt)
+              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerEliteAnt) }} seeds, {{
+                formatNumber(resourcesStore.resourceCosts.larvaCostPerEliteAnt)
               }} larvae)
             </button>
             <button
               :disabled="createEliteAntDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.createEliteMaxAnts()"
+              @click="resourcesStore.createEliteMaxAnts()"
             >
               Max
             </button>
@@ -368,8 +368,8 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full ">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.queens, 0) }}/{{
-                formatNumber(gameStore.storage.maxQueens, 0)
+              Count: {{ formatNumber(resourcesStore.resources.queens, 0) }}/{{
+                formatNumber(resourcesStore.storage.maxQueens, 0)
               }}
             </p>
           </div>
@@ -377,15 +377,15 @@
             <button
               :disabled="createQueenDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.buyQueen"
+              @click="resourcesStore.buyQueen"
             >
-              Buy Queen 👑 ({{ formatNumber(gameStore.resourceCosts.seedCostPerQueen) }} seeds,
-              {{ formatNumber(gameStore.resourceCosts.antCostPerQueen) }} ants)
+              Buy Queen 👑 ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerQueen) }} seeds,
+              {{ formatNumber(resourcesStore.resourceCosts.antCostPerQueen) }} ants)
             </button>
             <button
               :disabled="createQueenDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="gameStore.buyMaxQueens"
+              @click="resourcesStore.buyMaxQueens(false)"
             >
               Max
             </button>
@@ -446,41 +446,41 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.royalJelly ?? 0, 0) }}/∞
+              Count: {{ formatNumber(resourcesStore.resources.royalJelly ?? 0, 0) }}/∞
             </p>
           </div>
         </div>
 
         <div class="flex flex-col gap-1">
           <button
-            :disabled="gameStore.resources.royalJelly < 1"
+            :disabled="resourcesStore.resources.royalJelly < 1"
             class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-            @click="gameStore.upgradeAnt"
+            @click="resourcesStore.upgradeAnt"
           >
             Upgrade Ant
           </button>
           <span>
-            You currently have {{ formatNumber(gameStore.resources.royalJellyAnts ?? 0, 0) }} Royal Jelly Ants.
+            You currently have {{ formatNumber(resourcesStore.resources.royalJellyAnts ?? 0, 0) }} Royal Jelly Ants.
           </span>
         </div>
 
         <div class="flex flex-col gap-2">
           <div class="flex items-center justify-between">
             <span>
-              Workers: {{ formatNumber(gameStore.resources.workers ?? 0, 0) }}/{{ formatNumber(gameStore.maxWorkers, 0) }}
+              Workers: {{ formatNumber(resourcesStore.resources.workers ?? 0, 0) }}/{{ formatNumber(resourcesStore.maxWorkers, 0) }}
             </span>
             <div class="flex gap-1">
               <button
-                :disabled="gameStore.resources.workers < 1"
+                :disabled="resourcesStore.resources.workers < 1"
                 class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.downgradeAntFrom('workers')"
+                @click="resourcesStore.downgradeAntFrom('workers')"
               >
                 -
               </button>
               <button
-                :disabled="gameStore.resources.royalJellyAnts < 1"
+                :disabled="resourcesStore.resources.royalJellyAnts < 1"
                 class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.upgradeAntTo('workers')"
+                @click="resourcesStore.upgradeAntTo('workers')"
               >
                 +
               </button>
@@ -494,20 +494,20 @@
             class="flex items-center justify-between"
           >
             <span>
-              Soldiers: {{ formatNumber(gameStore.resources.soldiers ?? 0, 0) }}
+              Soldiers: {{ formatNumber(resourcesStore.resources.soldiers ?? 0, 0) }}
             </span>
             <div class="flex gap-1">
               <button
-                :disabled="gameStore.resources.soldiers < 1"
+                :disabled="resourcesStore.resources.soldiers < 1"
                 class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.downgradeAntFrom('soldiers')"
+                @click="resourcesStore.downgradeAntFrom('soldiers')"
               >
                 -
               </button>
               <button
-                :disabled="gameStore.resources.royalJellyAnts < 1"
+                :disabled="resourcesStore.resources.royalJellyAnts < 1"
                 class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="gameStore.upgradeAntTo('workers')"
+                @click="resourcesStore.upgradeAntTo('workers')"
               >
                 +
               </button>
@@ -542,7 +542,7 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(gameStore.resources.mineralShards ?? 0, 0) }}
+              Count: {{ formatNumber(resourcesStore.resources.mineralShards ?? 0, 0) }}
             </p>
           </div>
         </div>
@@ -602,8 +602,10 @@ import PrestigeShop from './PrestigeShop.vue'
 import {usePrestigeStore} from '../stores/prestigeStore'
 import StorageButtons from '@/components/StorageButtons.vue'
 import {computed} from 'vue'
+import {useResourcesStore} from '@/stores/resourcesStore'
 
 const gameStore = useGameStore()
+const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
 
 // Format numbers using the store's function
@@ -614,11 +616,11 @@ const collectingIntervalTime = 25
 
 const startCollectingSeeds = () => {
   console.log('Start collecting seeds')
-  gameStore.collectSeedsManually() // Initial collection on click
+  resourcesStore.collectSeedsManually() // Initial collection on click
 
   // Start an interval for collecting seeds every 100ms while holding down
   collectingInterval = setInterval(() => {
-    gameStore.collectSeedsManually()
+    resourcesStore.collectSeedsManually()
   }, collectingIntervalTime)
 }
 
@@ -630,14 +632,14 @@ const stopCollectingSeeds = () => {
   }
 }
 
-const seedStorageCostString = computed(() => `${formatNumber(gameStore.upgradeCosts.seedStorageUpgradeCost)} seeds`)
-const larvaeStorageCostString = computed(() => `${formatNumber(gameStore.upgradeCosts.larvaeStorageUpgradeCost)} seeds`)
+const seedStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.seedStorageUpgradeCost)} seeds`)
+const larvaeStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.larvaeStorageUpgradeCost)} seeds`)
 
-const seedCollectingDisabled = computed(() => gameStore.resources.seeds >= gameStore.storage.maxSeeds)
-const createLarvaeDisabled = computed(() => gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerLarva || gameStore.resources.larvae >= gameStore.storage.maxLarvae)
-const createAntDisabled = computed(() => gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerAnt || gameStore.resources.ants >= gameStore.maxAnts)
-const createEliteAntDisabled = computed(() => gameStore.resources.larvae < gameStore.resourceCosts.larvaCostPerEliteAnt || gameStore.resources.seeds < gameStore.resourceCosts.seedCostPerEliteAnt || gameStore.resources.eliteAnts >= gameStore.storage.maxEliteAnts)
-const createQueenDisabled = computed(() => gameStore.resources.ants < 50 || gameStore.resources.seeds < 500 || gameStore.resources.queens >= gameStore.storage.maxQueens)
+const seedCollectingDisabled = computed(() => resourcesStore.resources.seeds >= resourcesStore.storage.maxSeeds)
+const createLarvaeDisabled = computed(() => resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerLarva || resourcesStore.resources.larvae >= resourcesStore.storage.maxLarvae)
+const createAntDisabled = computed(() => resourcesStore.resources.larvae < resourcesStore.resourceCosts.larvaCostPerAnt || resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerAnt || resourcesStore.resources.ants >= resourcesStore.maxAnts)
+const createEliteAntDisabled = computed(() => resourcesStore.resources.larvae < resourcesStore.resourceCosts.larvaCostPerEliteAnt || resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerEliteAnt || resourcesStore.resources.eliteAnts >= resourcesStore.storage.maxEliteAnts)
+const createQueenDisabled = computed(() => resourcesStore.resources.ants < 50 || resourcesStore.resources.seeds < 500 || resourcesStore.resources.queens >= resourcesStore.storage.maxQueens)
 </script>
 
 <style scoped>
