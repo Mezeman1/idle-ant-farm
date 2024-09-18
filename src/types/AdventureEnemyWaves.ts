@@ -79,6 +79,11 @@ export const adventureEnemyWaves = [
             chance: 0.05, // 5% chance
             amountBetween: [1, 1],
           },
+          {
+            name: 'Worker Pickaxe',
+            chance: 0.05, // 5% chance
+            amountBetween: [1, 1],
+          },
         ],
       },
       {
@@ -230,7 +235,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 100 || gameStore.resources.queens >= 2,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 100 || gameStore.resources.queens >= 5,
     unlockText: 'Unlocked when you have 100 ants or 2 queens.',
   },
   {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col max-h-screen-3/4 overflow-hidden">
     <h2
       class="font-bold mb-4"
     >
@@ -40,7 +40,7 @@
     </div>
     <section
       ref="gridContainer"
-      class="grid-stack"
+      class="grid-stack overflow-y-auto"
     >
       <!-- Loop through all slots, including empty slots -->
       <div
@@ -78,21 +78,22 @@ import 'gridstack/dist/gridstack.min.css'
 import {GridStack} from 'gridstack'
 import {computed, onMounted, ref, watch} from 'vue'
 import InventoryItem from '../components/InventoryItem.vue'
-import {useWindowSize} from '@vueuse/core'
+import {useElementSize} from '@vueuse/core'
 import {useInventoryStore} from '../stores/inventoryStore'
 import {useToast} from 'vue-toast-notification'
 import {v4 as uuidv4} from 'uuid'
 
-const {width} = useWindowSize() // Get the window size
+const gridContainer = ref<HTMLElement>(null) // Reference to the scrollable grid container
+const {width} = useElementSize(gridContainer)
 const inventoryStore = useInventoryStore() // Use the inventory store to get the items
 const totalSlots = computed(() => inventoryStore.maxInventory) // Total slots in the grid
 
 // Determine the number of columns based on screen size (responsive)
 // Determine the number of columns based on screen size (responsive)
 const amountOfColumns = computed(() => {
-  if (width.value > 1024) {
+  if (width.value > 1200) {
     return 10 // Large screens (desktops and larger)
-  } else if (width.value > 768) {
+  } else if (width.value > 800) {
     return 5 // Medium screens (tablets, smaller laptops)
   } else {
     return 3 // Small screens (mobile devices)
@@ -144,7 +145,6 @@ const gridSlots = computed(() => {
 })
 
 // GridStack Initialization
-const gridContainer = ref<HTMLElement>(null) // Reference to the scrollable grid container
 const grid = ref<any>(null)
 
 onMounted(() => {

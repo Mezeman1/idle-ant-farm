@@ -1,12 +1,8 @@
 <!-- InventorySectionComponent.vue -->
 <template>
   <div>
-    <h3 class="text-lg font-bold mb-2 text-yellow-300 text-center">
-      Inventory
-    </h3>
-
     <div
-      class="mt-4 overflow-y-auto max-h-screen-1/3"
+      class="mt-4"
       @drop="handleDropIntoInventory"
       @dragover.prevent
     >
@@ -64,7 +60,7 @@ const displayInventorySlots = computed(() => {
 })
 
 const gridClasses = computed(() => {
-  return isDesktop.value ? 'grid grid-cols-4 sm:grid-cols-8 gap-2' : 'grid grid-cols-3 sm:grid-cols-4 gap-2'
+  return isDesktop.value ? 'grid grid-cols-4 md:grid-cols-8 gap-2' : 'grid grid-cols-3 sm:grid-cols-4 gap-2'
 })
 
 const startDrag = (item: any, event: DragEvent) => {

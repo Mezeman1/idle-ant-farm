@@ -64,11 +64,11 @@
         <div
           class="text-sm md:text-sm font-medium text-center text-gray-700 border-b border-gray-300 dark:text-gray-200 dark:border-gray-600 overflow-x-auto overflow-y-hidden"
         >
-          <ul class="flex flex-nowrap -mb-px justify-start space-x-4">
+          <ul class="flex flex-nowrap -mb-px justify-start space-x-4 overflow-x-auto px-2 py-1">
             <li class="flex-shrink-0">
               <button
                 :class="activeTab === 'resources' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm"
+                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
                 @click.prevent="setActiveTab('resources')"
               >
                 Resources
@@ -78,7 +78,7 @@
             <li class="flex-shrink-0">
               <button
                 :class="activeTab === 'prestige' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm"
+                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
                 @click.prevent="setActiveTab('prestige')"
               >
                 Prestige
@@ -88,7 +88,7 @@
             <li class="flex-shrink-0">
               <button
                 :class="activeTab === 'adventure' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 disabled:cursor-not-allowed text-2xs md:text-sm"
+                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm disabled:cursor-not-allowed transition ease-in-out duration-150"
                 @click.prevent="setActiveTab('adventure')"
               >
                 Adventure
@@ -98,7 +98,7 @@
             <li class="flex-shrink-0">
               <button
                 :class="activeTab === 'equipment' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm"
+                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
                 @click.prevent="setActiveTab('equipment')"
               >
                 Equipment
@@ -107,9 +107,19 @@
 
             <li class="flex-shrink-0">
               <button
+                :class="activeTab === 'achievements' ? activeTabClasses : defaultTabClasses"
+                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
+                @click.prevent="setActiveTab('achievements')"
+              >
+                Achievements
+              </button>
+            </li>
+
+            <li class="flex-shrink-0">
+              <button
                 :class="activeTab === 'tunnels' ? activeTabClasses : defaultTabClasses"
                 :disabled="!usePrestigeStore().upgradePurchased('tunnels')"
-                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm disabled:cursor-not-allowed"
+                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm disabled:cursor-not-allowed transition ease-in-out duration-150"
                 @click.prevent="setActiveTab('tunnels')"
               >
                 Tunnels
@@ -119,7 +129,7 @@
             <li class="flex-shrink-0">
               <button
                 :class="activeTab === 'passives' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm disabled:cursor-not-allowed"
+                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm disabled:cursor-not-allowed transition ease-in-out duration-150"
                 @click.prevent="setActiveTab('passives')"
               >
                 Passives
@@ -132,7 +142,7 @@
             >
               <button
                 :class="activeTab === 'debugger' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm"
+                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
                 @click.prevent="setActiveTab('debugger')"
               >
                 Debugger
@@ -142,7 +152,7 @@
             <li class="flex-shrink-0">
               <button
                 :class="activeTab === 'settings' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-2xs md:text-sm"
+                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
                 @click.prevent="setActiveTab('settings')"
               >
                 Settings
@@ -151,8 +161,7 @@
           </ul>
         </div>
 
-
-        <div class="max-h-screen-4/5 overflow-y-auto">
+        <div class="max-h-screen-4/5 overflow-hidden flex flex-col">
           <AntResources v-show="activeTab === 'resources'" />
           <PrestigeShop v-show="activeTab === 'prestige'" />
           <Adventure v-show="activeTab === 'adventure'" />
@@ -162,6 +171,7 @@
             only-passive
           />
           <Tunnels v-show="activeTab === 'tunnels'" />
+          <AchievementPage v-if="activeTab === 'achievements'" />
           <Debugger v-show="activeTab === 'debugger'" />
           <Settings v-show="activeTab === 'settings'" />
         </div>
@@ -312,9 +322,9 @@ import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useGameStore} from '../stores/gameStore'
 import AntSimulation from '../components/AntSimulation.vue'
 import AntResources from './AntResources.vue'
-import Adventure from './Adventure.vue'
+import Adventure from './AdventurePage.vue'
 import Debugger from './DebuggerPage.vue'
-import Inventory from './Inventory.vue'
+import Inventory from './InventoryPage.vue'
 import firebase from 'firebase/compat'
 import Settings from './SettingsPage.vue'
 import {useAdventureStore} from '../stores/adventureStore'
@@ -324,6 +334,7 @@ import {usePrestigeStore} from '@/stores/prestigeStore'
 import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
 import EquipmentPage from '@/views/EquipmentPage.vue'
+import AchievementPage from '@/views/AchievementPage.vue'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
@@ -342,7 +353,7 @@ const privacyModalVisible = ref(false)
 
 // Classes for active and default tabs
 const activeTabClasses = 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500'
-const defaultTabClasses = 'inline-block p-4 text-gray-800 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
+const defaultTabClasses = 'inline-block p-4 text-gray-800 border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-500 dark:hover:text-blue-600'
 // Function to set the active tab
 const setActiveTab = (tab) => {
   activeTab.value = tab
@@ -468,4 +479,31 @@ button {
 .v-toast__item {
   font-size: 0.8rem;
 }
+
+/* For Webkit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 8px; /* Adjust the width of the scrollbar */
+  height: 8px; /* Adjust the height of the horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Background of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Scrollbar color */
+  border-radius: 10px; /* Roundness of the scrollbar */
+  border: 2px solid #f1f1f1; /* Adds padding between thumb and track */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Hover color */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin; /* Make the scrollbar thin */
+  scrollbar-color: #888 #f1f1f1; /* Thumb color and track color */
+}
+
 </style>

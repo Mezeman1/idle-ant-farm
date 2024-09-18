@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="max-h-screen-4/5 overflow-hidden flex flex-col">
     <!-- Modal Component -->
     <Modal
       v-if="isModalVisible"
@@ -10,20 +10,20 @@
       @cancel="handleCancel"
     />
 
-    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-4">
+    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-4 flex-grow overflow-hidden">
       <p class="font-bold text-lg">
         Prestige
       </p>
+
       <div class="bg-gray-800 text-white p-4 rounded-lg shadow-md max-w-sm mx-auto">
         <h2 class="text-base font-semibold mb-2 text-center">
           Prestige Point Calculation
         </h2>
         <ul class="space-y-2 text-xs text-center">
-          <li>
-            <strong>Ants:</strong> Calculated using Log2(ants / 16) * 10
-          </li>
+          <li><strong>Ants:</strong> Calculated using Log2(ants / 16) * 10</li>
         </ul>
       </div>
+
       <div class="flex items-center justify-between w-full">
         <p>
           Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }} <br>Prestige Times:
@@ -53,14 +53,13 @@
         </button>
       </div>
 
-      <!-- Collapsible Upgrade Sections -->
-      <div
-        v-for="category in categorizedUpgrades"
-        :key="category.name"
-        class="category-section"
-      >
+      <!-- This section is scrollable -->
+      <div class="flex-grow overflow-y-auto flex flex-col gap-2">
+        <!-- Collapsible Upgrade Sections -->
         <div
-          v-if="!allUpgradesInCategoryPurchaseableForOneTimePurchase(category.name)"
+          v-for="category in categorizedUpgrades"
+          :key="category.name"
+          class="category-section"
         >
           <button
             class="w-full flex items-center justify-between bg-blue-500 hover:bg-blue-600 p-2 rounded font-bold text-white"
@@ -81,31 +80,24 @@
               :key="upgrade.id"
             >
               <div
-                v-if="upgrade.unlockedWhen === undefined || (typeof upgrade.unlockedWhen === 'function' && upgrade.unlockedWhen())"
+                v-if="isUpgradeUnlocked(upgrade)"
                 class="flex flex-col bg-white p-2 rounded shadow mx-1"
               >
-                <div>
-                  <p>
-                    {{ upgrade.name }} {{
-                      !upgrade.oneTimePurchase && prestigeStore.amountOfUpgrade(upgrade.id) > 0 ? `(${prestigeStore.amountOfUpgrade(upgrade.id)})` : ''
-                    }}
-                  </p>
-                  <p class="text-xs text-gray-500">
-                    <span v-html="upgrade.description" />
-                  </p>
-                  <p
-                    v-if="upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id) || upgrade.maxPurchases !== undefined && prestigeStore.amountOfUpgrade(upgrade.id) >= upgrade.maxPurchases"
-                    class="text-xs text-blue-600"
-                  >
-                    Purchased
-                  </p>
-                </div>
+                <p>{{ upgrade.name }} {{ getUpgradeCount(upgrade) }}</p>
+                <p class="text-xs text-gray-500">
+                  {{ upgrade.description }}
+                </p>
+                <p
+                  v-if="isUpgradeMaxed(upgrade)"
+                  class="text-xs text-blue-600"
+                >
+                  Purchased
+                </p>
                 <div
-                  v-if="!(upgrade.maxPurchases !== undefined && prestigeStore.amountOfUpgrade(upgrade.id) >= upgrade.maxPurchases)"
+                  v-else
                   class="flex justify-between items-center"
                 >
                   <button
-                    v-if="!upgrade.oneTimePurchase || !prestigeStore.upgradePurchased(upgrade.id)"
                     :disabled="prestigeStore.prestigePoints < upgrade.cost"
                     class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
                     @click="prestigeStore.buyUpgrade(upgrade.id)"
@@ -124,7 +116,7 @@
               </div>
               <div
                 v-else
-                class="flex items-center justify-center bg-white 0 p-2 rounded shadow h-12 mx-1"
+                class="flex items-center justify-center bg-white p-2 rounded shadow h-12 mx-1"
               >
                 <p class="text-gray-500 text-xs">
                   Locked
@@ -173,14 +165,29 @@ const categories = [
   },
 ]
 
-const allUpgradesInCategoryPurchaseableForOneTimePurchase = (categoryName) => {
-  const category = categories.find(cat => cat.name === categoryName)
+// Function to check if an upgrade is unlocked
+const isUpgradeUnlocked = (upgrade) => {
+  // If there's no unlock condition, it's unlocked by default
+  if (!upgrade.unlockedWhen) return true
+  // If there's an unlock condition, check if it returns true
+  return typeof upgrade.unlockedWhen === 'function' && upgrade.unlockedWhen()
+}
 
-  if (!category) {
-    return false
-  }
+// Function to check if an upgrade is maxed out
+const isUpgradeMaxed = (upgrade) => {
+  if (upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id)) return true
 
-  return category.upgrades.every(upgrade => upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id))
+  // Check if the upgrade has a max purchase limit and if it's been reached
+  return upgrade.maxPurchases !== undefined && prestigeStore.amountOfUpgrade(upgrade.id) >= upgrade.maxPurchases
+}
+
+// Helper function to get the current upgrade count
+const getUpgradeCount = (upgrade) => {
+  if (upgrade.oneTimePurchase) return ''
+
+  return !upgrade.oneTimePurchase && prestigeStore.amountOfUpgrade(upgrade.id) > 0
+    ? `(${prestigeStore.amountOfUpgrade(upgrade.id)})`
+    : ''
 }
 
 // Make the categories reactive and add an "expanded" property to control visibility

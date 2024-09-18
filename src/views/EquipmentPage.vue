@@ -1,6 +1,6 @@
 <!-- MainComponent.vue -->
 <template>
-  <div class="p-4 bg-gray-800 rounded-lg shadow-lg relative">
+  <div class="max-h-screen-3/4 overflow-hidden p-4 bg-gray-800 bg-opacity-75 rounded-lg shadow-lg relative flex flex-col">
     <h2 class="text-xl font-bold text-yellow-300 mb-4 text-center">
       Equip Your Ant Army
     </h2>
@@ -28,7 +28,10 @@
     </div>
 
     <!-- Mobile Layout -->
-    <div v-else>
+    <div
+      v-else
+      class="flex-1 overflow-y-auto min-h-[260px]"
+    >
       <!-- Equipment Section -->
       <EquipmentSectionComponent
         @start-drag-from-slot="startDragFromSlot"
@@ -57,14 +60,16 @@
       </div>
     </div>
 
-    <!-- Inventory Section -->
-    <InventorySectionComponent
-      @start-drag="startDrag"
-      @drag-end="onDragEnd"
-      @double-click-equip="handleDoubleClickEquip"
-      @show-context-menu="showContextMenu"
-      @handle-drop-into-inventory="handleDropIntoInventory"
-    />
+    <div class="flex-1 mt-4 overflow-y-auto">
+      <!-- Inventory Section -->
+      <InventorySectionComponent
+        @start-drag="startDrag"
+        @drag-end="onDragEnd"
+        @double-click-equip="handleDoubleClickEquip"
+        @show-context-menu="showContextMenu"
+        @handle-drop-into-inventory="handleDropIntoInventory"
+      />
+    </div>
 
     <!-- Context Menu -->
     <ContextMenuComponent
@@ -160,23 +165,23 @@ const startDragFromSlot = (
 }
 
 // Handle dropping item into an equipment slot
-const handleDrop = (slotType: string, index: number | null, event: DragEvent) => {
+const handleDrop = async (slotType: string, index: number | null, event: DragEvent) => {
   event.preventDefault()
   const itemData = event.dataTransfer.getData('application/json')
   const item = JSON.parse(itemData)
 
   if (item && item.slotType === slotType) {
     // Equip the item using the store method
-    const success = equipmentStore.equipItem(item, slotType, index)
+    const success = await equipmentStore.equipItem(item, slotType, index)
 
     if (success) {
       // Remove item from inventory if it came from there
       if (dragOrigin.value === 'inventory') {
-        inventoryStore.removeItemFromInventory(item.id, 1)
+        await inventoryStore.removeItemFromInventory(item.id, 1)
       } else {
         // Unequip from previous slot
         if (dragOrigin.value.slotType) {
-          equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
+          await equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
         }
       }
     }
@@ -187,17 +192,17 @@ const handleDrop = (slotType: string, index: number | null, event: DragEvent) =>
 }
 
 // Handle dropping item back into the inventory
-const handleDropIntoInventory = (event: DragEvent) => {
+const handleDropIntoInventory = async (event: DragEvent) => {
   event.preventDefault()
   const itemData = event.dataTransfer.getData('application/json')
   const item = JSON.parse(itemData)
 
   if (item && dragOrigin.value !== 'inventory') {
     // Remove the item from the equipment slot using the store method
-    equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
+    await equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
 
     // Add item back to inventory
-    inventoryStore.addItemToInventory({ id: item.id, amount: 1 })
+    await inventoryStore.addItemToInventory({ id: item.id, amount: 1 })
 
     draggedItem.value = null
     dragOrigin.value = null
@@ -211,7 +216,7 @@ const onDragEnd = () => {
 }
 
 // Handle double-click to equip from inventory
-const handleDoubleClickEquip = (item: any) => {
+const handleDoubleClickEquip = async (item: any) => {
   // Determine the correct equipment slot based on the item's slotType
   let slotType = item.slotType
   let index = null
@@ -229,7 +234,7 @@ const handleDoubleClickEquip = (item: any) => {
   }
 
   // Equip the item using the store method
-  const success = equipmentStore.equipItem(item, slotType, index)
+  const success = await equipmentStore.equipItem(item, slotType, index)
 
   if (success) {
     log('Equipped item via double-click:', item)
@@ -271,7 +276,7 @@ const closeContextMenu = () => {
 }
 
 // Handle equip action from context menu
-const handleEquip = (item: any) => {
+const handleEquip = async (item: any) => {
   // Determine the correct equipment slot based on the item's slotType
   let slotType = item.slotType
   let index = null
@@ -290,11 +295,11 @@ const handleEquip = (item: any) => {
   }
 
   // Equip the item using the store method
-  const success = equipmentStore.equipItem(item, slotType, index)
+  const success = await equipmentStore.equipItem(item, slotType, index)
 
   if (success) {
     // Remove from inventory
-    inventoryStore.removeItemFromInventory(item.id, 1)
+    await inventoryStore.removeItemFromInventory(item.id, 1)
 
     log('Equipped item:', item)
   } else {

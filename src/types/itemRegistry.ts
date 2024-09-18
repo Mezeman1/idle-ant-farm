@@ -20,329 +20,57 @@ export interface Item {
   duration?: number;
 }
 
-export const equipmentSets: Item[] = [
-  // Worker Set
-  {
-    id: 'worker-helm',
-    name: 'Worker Helm',
-    type: 'equipment',
-    description: 'Head armor for workers, increases resource gathering by 2% per level.',
-    equipmentType: 'armor',
-    slotType: 'head',
-    set: 'Worker Set',
-    rarity: 'uncommon',
-    level: 1,
-    maxLevel: 100,
-    effect: ({gameStore}, item) => {
-      // Increase resource gathering by 2% per level
-      const bonusMultiplier = 1 + 0.02 * item.level
-      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({gameStore}, item) => {
-      // Reverse the resource gathering increase
-      const bonusMultiplier = 1 + 0.02 * item.level
-      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
-    },
-  },
-  {
-    id: 'worker-body',
-    name: 'Worker Armor',
-    type: 'equipment',
-    description: 'Body armor for workers, increases resource gathering by 3% per level.',
-    equipmentType: 'armor',
-    slotType: 'body',
-    set: 'Worker Set',
-    rarity: 'uncommon',
-    level: 1,
-    maxLevel: 100,
-    effect: ({gameStore}, item) => {
-      // Increase resource gathering by 3% per level
-      const bonusMultiplier = 1 + 0.03 * item.level
-      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.03 * item.level
-      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
-    },
-  },
-  {
-    id: 'worker-legs',
-    name: 'Worker Greaves',
-    type: 'equipment',
-    description: 'Leg armor for workers, increases resource gathering by 1.5% per level.',
-    equipmentType: 'armor',
-    slotType: 'legs',
-    set: 'Worker Set',
-    rarity: 'uncommon',
-    level: 1,
-    maxLevel: 100,
-    effect: ({gameStore}, item) => {
-      // Increase resource gathering by 1.5% per level
-      const bonusMultiplier = 1 + 0.015 * item.level
-      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.015 * item.level
-      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
-    },
-  },
-  {
-    id: 'worker-gloves',
-    name: 'Worker Gloves',
-    type: 'equipment',
-    description: 'Accessory for workers, increases resource gathering by 2.5% per level.',
-    equipmentType: 'accessory',
-    slotType: 'accessory',
-    set: 'Worker Set',
-    rarity: 'uncommon',
-    level: 1,
-    maxLevel: 100,
-    effect: ({gameStore}, item) => {
-      // Increase resource gathering by 2.5% per level
-      const bonusMultiplier = 1 + 0.025 * item.level
-      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.025 * item.level
-      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
-    },
-  },
+export type SetBonus = {
+  apply: () => void;
+  remove: () => void;
+};
 
-  // Soldier Set
-  {
-    id: 'soldier-helm',
-    name: 'Soldier Helm',
-    type: 'equipment',
-    description: 'Head armor for soldiers, increases defense by 2% per level.',
-    equipmentType: 'armor',
-    slotType: 'head',
-    set: 'Soldier Set',
-    rarity: 'rare',
-    level: 1,
-    maxLevel: 500,
-    effect: ({adventureStore}, item) => {
-      // Increase army defense by 2% per level
-      const bonusMultiplier = 1 + 0.02 * item.level
-      adventureStore.armyDefenseModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.02 * item.level
-      adventureStore.armyDefenseModifier /= bonusMultiplier
-    },
-  },
-  {
-    id: 'soldier-body',
-    name: 'Soldier Armor',
-    type: 'equipment',
-    description: 'Body armor for soldiers, increases defense by 4% per level.',
-    equipmentType: 'armor',
-    slotType: 'body',
-    set: 'Soldier Set',
-    rarity: 'rare',
-    level: 1,
-    maxLevel: 500,
-    effect: ({adventureStore}, item) => {
-      // Increase army defense by 4% per level
-      const bonusMultiplier = 1 + 0.04 * item.level
-      adventureStore.armyDefenseModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.04 * item.level
-      adventureStore.armyDefenseModifier /= bonusMultiplier
-    },
-  },
-  {
-    id: 'soldier-legs',
-    name: 'Soldier Greaves',
-    type: 'equipment',
-    description: 'Leg armor for soldiers, increases attack by 2% per level.',
-    equipmentType: 'armor',
-    slotType: 'legs',
-    set: 'Soldier Set',
-    rarity: 'rare',
-    level: 1,
-    maxLevel: 500,
-    effect: ({adventureStore}, item) => {
-      // Increase army attack by 2% per level
-      const bonusMultiplier = 1 + 0.02 * item.level
-      adventureStore.armyAttackModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.02 * item.level
-      adventureStore.armyAttackModifier /= bonusMultiplier
-    },
-  },
-  {
-    id: 'soldier-shield',
-    name: 'Soldier Shield',
-    type: 'equipment',
-    description: 'Accessory for soldiers, increases defense by 5% per level.',
-    equipmentType: 'accessory',
-    slotType: 'accessory',
-    set: 'Soldier Set',
-    rarity: 'rare',
-    level: 1,
-    maxLevel: 500,
-    effect: ({adventureStore}, item) => {
-      // Increase army defense by 5% per level
-      const bonusMultiplier = 1 + 0.05 * item.level
-      adventureStore.armyDefenseModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.05 * item.level
-      adventureStore.armyDefenseModifier /= bonusMultiplier
-    },
-  },
-  {
-    id: 'soldier-sword',
-    name: 'Soldier Sword',
-    type: 'equipment',
-    description: 'Weapon for soldiers, increases attack by 5% per level.',
-    equipmentType: 'weapon',
-    slotType: 'weapon',
-    set: 'Soldier Set',
-    rarity: 'rare',
-    level: 1,
-    maxLevel: 500,
-    effect: ({adventureStore}, item) => {
-      // Increase army attack by 5% per level
-      const bonusMultiplier = 1 + 0.05 * item.level
-      adventureStore.armyAttackModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.05 * item.level
-      adventureStore.armyAttackModifier /= bonusMultiplier
-    },
-  },
+export type SetName = 'Worker Set' | 'Soldier Set' | 'Royal Set';
 
-  // Royal Set
-  {
-    id: 'royal-crown',
-    name: 'Royal Crown',
-    type: 'equipment',
-    description: 'Crown for the queen, increases larvae production by 5% per level.',
-    equipmentType: 'armor',
-    slotType: 'head',
-    set: 'Royal Set',
-    rarity: 'legendary',
-    level: 1,
-    maxLevel: 1000,
-    effect: ({gameStore}, item) => {
-      // Increase larvae production rate by 5% per level
-      const bonusMultiplier = 1 + 0.05 * item.level
-      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
-      return true
+export const setBonuses: Record<SetName, SetBonus> = {
+  'Worker Set': {
+    apply: () => {
+      const gameStore = useGameStore()
+      gameStore.productionRates.collectionRateModifier *= 1.15
+      console.log('Applied Worker Set bonus')
     },
-    onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.05 * item.level
-      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+    remove: () => {
+      const gameStore = useGameStore()
+      gameStore.productionRates.collectionRateModifier /= 1.15
+      console.log('Removed Worker Set bonus')
     },
   },
-  {
-    id: 'royal-robe',
-    name: 'Royal Robe',
-    type: 'equipment',
-    description: 'Body armor for the queen, increases larvae production by 7% per level.',
-    equipmentType: 'armor',
-    slotType: 'body',
-    set: 'Royal Set',
-    rarity: 'legendary',
-    level: 1,
-    maxLevel: 1000,
-    effect: ({gameStore}, item) => {
-      // Increase larvae production rate by 7% per level
-      const bonusMultiplier = 1 + 0.07 * item.level
-      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
-      return true
+  'Soldier Set': {
+    apply: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier *= 1.15
+      adventureStore.armyDefenseModifier *= 1.15
+      console.log('Applied Soldier Set bonus')
     },
-    onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.07 * item.level
-      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+    remove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier /= 1.15
+      adventureStore.armyDefenseModifier /= 1.15
+      console.log('Removed Soldier Set bonus')
     },
   },
-  {
-    id: 'royal-legs',
-    name: 'Royal Greaves',
-    type: 'equipment',
-    description: 'Leg armor for the queen, increases larvae production by 3% per level.',
-    equipmentType: 'armor',
-    slotType: 'legs',
-    set: 'Royal Set',
-    rarity: 'legendary',
-    level: 1,
-    maxLevel: 1000,
-    effect: ({gameStore}, item) => {
-      // Increase larvae production rate by 3% per level
-      const bonusMultiplier = 1 + 0.03 * item.level
-      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
-      return true
+  'Royal Set': {
+    apply: () => {
+      const gameStore = useGameStore()
+      gameStore.productionRates.larvaeProductionRate *= 1.20
+      console.log('Applied Royal Set bonus')
     },
-    onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.03 * item.level
-      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+    remove: () => {
+      const gameStore = useGameStore()
+      gameStore.productionRates.larvaeProductionRate /= 1.20
+      console.log('Removed Royal Set bonus')
     },
   },
-  {
-    id: 'royal-scepter',
-    name: 'Royal Scepter',
-    type: 'equipment',
-    description: 'Weapon for the queen, increases larvae production by 10% per level.',
-    equipmentType: 'weapon',
-    slotType: 'weapon',
-    set: 'Royal Set',
-    rarity: 'legendary',
-    level: 1,
-    maxLevel: 1000,
-    effect: ({gameStore}, item) => {
-      // Increase larvae production rate by 10% per level
-      const bonusMultiplier = 1 + 0.1 * item.level
-      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
-      return true
-    },
-    onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.1 * item.level
-      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
-    },
-  },
-  {
-    id: 'royal-ring',
-    name: 'Royal Ring',
-    type: 'equipment',
-    description: 'Accessory for the queen, increases overall army stats by 3% per level.',
-    equipmentType: 'accessory',
-    slotType: 'accessory',
-    set: 'Royal Set',
-    rarity: 'legendary',
-    level: 1,
-    maxLevel: 1000,
-    effect: ({adventureStore}, item) => {
-      // Increase overall army stats by 3% per level
-      const bonusMultiplier = 1 + 0.03 * item.level
-      adventureStore.armyAttackModifier *= bonusMultiplier
-      adventureStore.armyDefenseModifier *= bonusMultiplier
-      adventureStore.armyMaxHealthModifier *= bonusMultiplier
-      return true
-    },
-    onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.03 * item.level
-      adventureStore.armyAttackModifier /= bonusMultiplier
-      adventureStore.armyDefenseModifier /= bonusMultiplier
-      adventureStore.armyMaxHealthModifier /= bonusMultiplier
-    },
-  },
-]
+}
 
-export const itemRegistry: Item[] = [
-  ...equipmentSets,
+// Separate exports for consumables and passives
+
+export const consumableItems: Item[] = [
   {
     id: 'grasshopper-leg',
     name: 'Grasshopper Leg',
@@ -411,67 +139,6 @@ export const itemRegistry: Item[] = [
     rarity: 'uncommon',
   },
   {
-    id: 'queen-crown',
-    name: 'Queen’s Crown',
-    type: 'passive',
-    description: 'Increases queen larvae production by 100%. (Does not stack)',
-    applyOnPrestige: true,
-    effect: () => {
-      const gameStore = useGameStore()
-      gameStore.productionRates.larvaeProductionRate *= 2
-
-      return true
-    },
-    rarity: 'rare',
-  },
-  {
-    id: 'wasp-stinger',
-    name: 'Wasp Stinger',
-    type: 'consumable',
-    description: 'Increases army attack by attack by 20% for 5 minutes.',
-    effect: () => {
-      const adventureStore = useAdventureStore()
-      adventureStore.armyAttack *= 1.20
-      return true
-    },
-    onRemove: () => {
-      const adventureStore = useAdventureStore()
-      adventureStore.armyAttack /= 1.20
-    },
-    duration: 60 * 5,
-    rarity: 'rare',
-  },
-  {
-    id: 'queen-stinger',
-    name: 'Queen Stinger',
-    type: 'passive',
-    description: 'Increases army health regeneration by 100%. (Does not stack)',
-    applyOnPrestige: true,
-    applyOnLoad: true,
-    effect: () => {
-      const adventureStore = useAdventureStore()
-      adventureStore.armyRegen *= 2
-
-      return true
-    },
-    rarity: 'rare',
-  },
-  {
-    id: 'spider-silk',
-    name: 'Spider Silk',
-    type: 'passive',
-    description: 'Increases army defense by 10%. (Does not stack)',
-    applyOnPrestige: true,
-    effect: () => {
-      const adventureStore = useAdventureStore()
-      adventureStore.armyDefense *= 1.10
-
-      return true
-    },
-    applyOnLoad: true,
-    rarity: 'uncommon',
-  },
-  {
     id: 'centipede-leg',
     name: 'Centipede Leg',
     type: 'consumable',
@@ -504,21 +171,6 @@ export const itemRegistry: Item[] = [
     rarity: 'rare',
   },
   {
-    id: 'butterfly-wing',
-    name: 'Butterfly Wing',
-    type: 'passive',
-    description: 'Health regeneration increased by 50%. (Does not stack)',
-    applyOnPrestige: true,
-    applyOnLoad: true,
-    effect: () => {
-      const adventureStore = useAdventureStore()
-      adventureStore.armyRegen *= 1.50
-
-      return true
-    },
-    rarity: 'rare',
-  },
-  {
     id: 'butterfly-dust',
     name: 'Butterfly Dust',
     type: 'consumable',
@@ -534,52 +186,67 @@ export const itemRegistry: Item[] = [
     },
     rarity: 'rare',
   },
-  // New items for the expanded waves
   {
-    id: 'mountain-ant-mandible',
-    name: 'Mountain Ant Mandible',
+    id: 'wasp-stinger',
+    name: 'Wasp Stinger',
     type: 'consumable',
-    description: 'Heals the army by 250 points.',
+    description: 'Increases army attack by attack by 20% for 5 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      if (adventureStore.armyHealth + 250 > adventureStore.armyMaxHealth) {
-        adventureStore.armyHealth = adventureStore.armyMaxHealth
-        return false
-      }
-      adventureStore.armyHealth += 250
+      adventureStore.armyAttack *= 1.20
+
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack /= 1.20
+    },
+    duration: 60 * 5,
+    rarity: 'rare',
+  },
+]
+
+export const passiveItems: Item[] = [
+  {
+    id: 'queen-crown',
+    name: 'Queen’s Crown',
+    type: 'passive',
+    description: 'Increases queen larvae production by 100%. ',
+    applyOnPrestige: true,
+    effect: () => {
+      const gameStore = useGameStore()
+      gameStore.productionRates.larvaeProductionRate *= 2
       return true
     },
     rarity: 'rare',
   },
   {
-    id: 'rock-carapace',
-    name: 'Rock Carapace',
+    id: 'queen-stinger',
+    name: 'Queen Stinger',
     type: 'passive',
-    description: 'Increases army defense by 20%.',
+    description: 'Increases army health regeneration by 100%. ',
     applyOnPrestige: true,
+    applyOnLoad: true,
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyDefense *= 1.20
-
+      adventureStore.armyRegen *= 2
       return true
     },
     rarity: 'rare',
-    applyOnLoad: true,
   },
   {
-    id: 'mantis-claw',
-    name: 'Mantis Claw',
+    id: 'spider-silk',
+    name: 'Spider Silk',
     type: 'passive',
-    description: 'Increases army attack by 15%.',
+    description: 'Increases army defense by 10%. ',
     applyOnPrestige: true,
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyAttack *= 1.15
-
+      adventureStore.armyDefense *= 1.10
       return true
     },
-    rarity: 'rare',
     applyOnLoad: true,
+    rarity: 'uncommon',
   },
   {
     id: 'stone-heart',
@@ -590,53 +257,48 @@ export const itemRegistry: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyMaxHealth *= 1.20
-
       return true
     },
     rarity: 'legendary',
     applyOnLoad: true,
   },
   {
-    id: 'lava-ant-tooth',
-    name: 'Lava Ant Tooth',
-    type: 'consumable',
-    description: 'Heals the army by 500 points.',
+    id: 'butterfly-wing',
+    name: 'Butterfly Wing',
+    type: 'passive',
+    description: 'Health regeneration increased by 50%. ',
+    applyOnPrestige: true,
+    applyOnLoad: true,
     effect: () => {
       const adventureStore = useAdventureStore()
-      if (adventureStore.armyHealth + 500 > adventureStore.armyMaxHealth) {
-        adventureStore.armyHealth = adventureStore.armyMaxHealth
-        return false
-      }
-      adventureStore.armyHealth += 500
+      adventureStore.armyRegen *= 1.50
       return true
     },
     rarity: 'rare',
   },
   {
-    id: 'magma-carapace',
-    name: 'Magma Carapace',
+    id: 'mantis-claw',
+    name: 'Mantis Claw',
     type: 'passive',
-    description: 'Increases army defense by 30%.',
+    description: 'Increases army attack by 15%.',
     applyOnPrestige: true,
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyDefense *= 1.30
-
+      adventureStore.armyAttack *= 1.15
       return true
     },
     rarity: 'rare',
     applyOnLoad: true,
   },
   {
-    id: 'scorpion-tail',
-    name: 'Scorpion Tail',
+    id: 'rock-carapace',
+    name: 'Rock Carapace',
     type: 'passive',
-    description: 'Increases army attack by 20%.',
+    description: 'Increases army defense by 20%.',
     applyOnPrestige: true,
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyAttack *= 1.20
-
+      adventureStore.armyDefense *= 1.20
       return true
     },
     rarity: 'rare',
@@ -652,56 +314,9 @@ export const itemRegistry: Item[] = [
       const adventureStore = useAdventureStore()
       adventureStore.armyMaxHealth *= 1.50
       adventureStore.armyDefense *= 1.50
-
       return true
     },
     rarity: 'legendary',
-    applyOnLoad: true,
-  },
-  {
-    id: 'hellfire-ant-fang',
-    name: 'Hellfire Ant Fang',
-    type: 'consumable',
-    description: 'Heals the army by 1000 points.',
-    effect: () => {
-      const adventureStore = useAdventureStore()
-      if (adventureStore.armyHealth + 1000 > adventureStore.armyMaxHealth) {
-        adventureStore.armyHealth = adventureStore.armyMaxHealth
-        return false
-      }
-      adventureStore.armyHealth += 1000
-      return true
-    },
-    rarity: 'rare',
-  },
-  {
-    id: 'demonic-carapace',
-    name: 'Demonic Carapace',
-    type: 'passive',
-    description: 'Increases defense by 40%.',
-    applyOnPrestige: true,
-    effect: () => {
-      const adventureStore = useAdventureStore()
-      adventureStore.armyDefense *= 1.40
-
-      return true
-    },
-    rarity: 'rare',
-    applyOnLoad: true,
-  },
-  {
-    id: 'infernal-tail',
-    name: 'Infernal Tail',
-    type: 'passive',
-    description: 'Increases attack by 30%.',
-    applyOnPrestige: true,
-    effect: () => {
-      const adventureStore = useAdventureStore()
-      adventureStore.armyAttack *= 1.30
-
-      return true
-    },
-    rarity: 'rare',
     applyOnLoad: true,
   },
   {
@@ -715,10 +330,353 @@ export const itemRegistry: Item[] = [
       adventureStore.armyAttack *= 2
       adventureStore.armyDefense *= 2
       adventureStore.armyMaxHealth *= 2
-
       return true
     },
     rarity: 'legendary',
     applyOnLoad: true,
   },
+  // Add more passives here
+]
+export const equipmentSets: Item[] = [
+  // Worker Set
+  {
+    id: 'worker-helm',
+    name: 'Worker Helm',
+    type: 'equipment',
+    description: 'Head armor for workers, increases resource gathering by 0.1035% per level.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 100,
+    effect: ({gameStore}, item) => {
+      // Increase resource gathering by 0.1035% per level
+      const bonusMultiplier = 1 + 0.001035313244622532 * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + 0.001035313244622532 * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'worker-body',
+    name: 'Worker Armor',
+    type: 'equipment',
+    description: 'Body armor for workers, increases resource gathering by 0.1553% per level.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 100,
+    effect: ({gameStore}, item) => {
+      // Increase resource gathering by 0.1553% per level
+      const bonusMultiplier = 1 + 0.0015529698669337984 * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + 0.0015529698669337984 * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'worker-legs',
+    name: 'Worker Greaves',
+    type: 'equipment',
+    description: 'Leg armor for workers, increases resource gathering by 0.0776% per level.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 100,
+    effect: ({gameStore}, item) => {
+      // Increase resource gathering by 0.0776% per level
+      const bonusMultiplier = 1 + 0.0007758055940675406 * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + 0.0007758055940675406 * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'worker-gloves',
+    name: 'Worker Gloves',
+    type: 'equipment',
+    description: 'Accessory for workers, increases resource gathering by 0.1293% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 100,
+    effect: ({gameStore}, item) => {
+      // Increase resource gathering by 0.1293% per level
+      const bonusMultiplier = 1 + 0.0012934622163788066 * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + 0.0012934622163788066 * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'worker-pickaxe',
+    name: 'Worker Pickaxe',
+    type: 'equipment',
+    description: 'Weapon for workers, increases resource gathering by 0.2071% per level.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 100,
+    effect: ({gameStore}, item) => {
+      // Increase resource gathering by 0.2071% per level
+      const bonusMultiplier = 1 + 0.002070626489245064 * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + 0.002070626489245064 * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+
+
+  // Soldier Set
+  {
+    id: 'soldier-helm',
+    name: 'Soldier Helm',
+    type: 'equipment',
+    description: 'Head armor for soldiers, increases defense by 0.31% per level.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0031 * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0031 * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'soldier-body',
+    name: 'Soldier Armor',
+    type: 'equipment',
+    description: 'Body armor for soldiers, increases defense by 0.62% per level.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0062 * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0062 * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'soldier-legs',
+    name: 'Soldier Greaves',
+    type: 'equipment',
+    description: 'Leg armor for soldiers, increases attack by 0.31% per level.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0031 * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0031 * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'soldier-shield',
+    name: 'Soldier Shield',
+    type: 'equipment',
+    description: 'Accessory for soldiers, increases defense by 0.77% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0077 * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0077 * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'soldier-sword',
+    name: 'Soldier Sword',
+    type: 'equipment',
+    description: 'Weapon for soldiers, increases attack by 0.77% per level.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Soldier Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0077 * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.0077 * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+    },
+  },
+
+  // Royal Set
+  {
+    id: 'royal-crown',
+    name: 'Royal Crown',
+    type: 'equipment',
+    description: 'Crown for the queen, increases larvae production by 0.112% per level.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 1000,
+    effect: ({gameStore}, item) => {
+      // Increase larvae production rate by 0.112% per level
+      const bonusMultiplier = 1 + 0.00112 * item.level
+      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + 0.00112 * item.level
+      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+    },
+  },
+  {
+    id: 'royal-robe',
+    name: 'Royal Robe',
+    type: 'equipment',
+    description: 'Body armor for the queen, increases larvae production by 0.157% per level.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 1000,
+    effect: ({gameStore}, item) => {
+      // Increase larvae production rate by 0.157% per level
+      const bonusMultiplier = 1 + 0.00157 * item.level
+      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + 0.00157 * item.level
+      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+    },
+  },
+  {
+    id: 'royal-legs',
+    name: 'Royal Greaves',
+    type: 'equipment',
+    description: 'Leg armor for the queen, increases larvae production by 0.067% per level.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 1000,
+    effect: ({gameStore}, item) => {
+      // Increase larvae production rate by 0.067% per level
+      const bonusMultiplier = 1 + 0.00067 * item.level
+      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + 0.00067 * item.level
+      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+    },
+  },
+  {
+    id: 'royal-scepter',
+    name: 'Royal Scepter',
+    type: 'equipment',
+    description: 'Weapon for the queen, increases larvae production by 0.224% per level.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 1000,
+    effect: ({gameStore}, item) => {
+      // Increase larvae production rate by 0.224% per level
+      const bonusMultiplier = 1 + 0.00224 * item.level
+      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + 0.00224 * item.level
+      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+    },
+  },
+  {
+    id: 'royal-ring',
+    name: 'Royal Ring',
+    type: 'equipment',
+    description: 'Accessory for the queen, increases overall army stats by 0.223% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Royal Set',
+    rarity: 'legendary',
+    level: 1,
+    maxLevel: 1000,
+    effect: ({adventureStore}, item) => {
+      // Increase overall army stats by 0.223% per level
+      const bonusMultiplier = 1 + 0.00223 * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      adventureStore.armyMaxHealthModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.00223 * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+      adventureStore.armyMaxHealthModifier /= bonusMultiplier
+    },
+  },
+]
+
+export const itemRegistry: Item[] = [
+  ...equipmentSets,
+  ...consumableItems,
+  ...passiveItems,
 ]

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex-grow overflow-y-auto">
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
       <!-- Seeds Section -->
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">

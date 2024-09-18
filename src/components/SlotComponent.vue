@@ -1,4 +1,3 @@
-<!-- SlotComponent.vue -->
 <template>
   <div
     v-tooltip="tooltipText"
@@ -12,19 +11,35 @@
     @dblclick="onDoubleClick"
     @click="onClick"
   >
-    <p class="font-bold text-center text-xs break-words">
+    <p
+      class="font-bold text-center break-words"
+      :class="{'text-3xs': isMobile, 'text-xs': !isMobile }"
+    >
+      <!-- Adjust text size dynamically -->
       <span v-if="item">
         {{ item.name }}
         <span v-if="item.level"> (Level {{ item.level }})</span>
       </span>
       <span v-else>{{ defaultText }}</span>
+      <!-- Show set information if item is part of a set -->
+      <span
+        v-if="item && item.set"
+        class="text-3xs sm:text-2xs"
+      >
+        <br>
+        <span>{{ item.set }} {{ currentEquippedItems }}/{{ setTotalItems }}</span>
+      </span>
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, defineProps, defineEmits } from 'vue'
+import { useEquipmentStore } from '@/stores/equipmentStore'
 
+const equipmentStore = useEquipmentStore()
+
+// Assume these props will be passed from the parent component
 const props = defineProps({
   item: Object,
   slotType: String,
@@ -43,6 +58,14 @@ const emit = defineEmits([
   'double-click-unequip',
   'show-context-menu',
 ])
+
+const currentEquippedItems = computed(() => {
+  return equipmentStore.getEquipedSetSize(props.item?.set) || 0
+})
+
+const setTotalItems = computed(() => {
+  return equipmentStore.getSetSize(props.item?.set) || 0
+})
 
 const defaultText = computed(() => {
   if (props.isInventorySlot) return 'Empty Slot'
@@ -68,7 +91,6 @@ const isDraggable = computed(() => {
 
 const slotClasses = computed(() => {
   return {
-
     'bg-gray-700 text-white': !props.item,
     'bg-green-500 text-white': props.item && props.slotType === 'head' || props.slotType === 'head' || props.item?.slotType === 'head',
     'bg-blue-500 text-white': props.item && props.slotType === 'body' || props.slotType === 'body' || props.item?.slotType === 'body',
@@ -88,7 +110,7 @@ const tooltipText = computed(() => {
       text += `Level ${props.item.level}/${props.item.maxLevel}\n`
     }
     if (props.item.description) {
-      text += props.item.description
+      text += props.item.description + '\n\n'
     }
     return text
   }
@@ -134,18 +156,18 @@ const onClick = (event: MouseEvent) => {
 
 <style scoped>
 .slot {
-  @apply w-16 h-16;
+  @apply w-20 h-20;
 }
 
 @media (min-width: 640px) {
   .slot {
-    @apply w-20 h-20;
+    @apply w-24 h-24;
   }
 }
 
 @media (min-width: 1024px) {
   .slot {
-    @apply w-24 h-24;
+    @apply w-28 h-28;
   }
 }
 </style>

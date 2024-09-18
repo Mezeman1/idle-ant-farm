@@ -54,6 +54,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Kill counts
     killCounts: {} as KillCounts,
+    enemyKillCount: 0,
 
     // For offline progress
     lastSavedTime: Date.now(),
@@ -103,7 +104,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.toggleCooldownTimeout = setTimeout(() => {
         this.toggleCooldown = false
         this.toggleCooldownTimeout = 0 // Clear the timeout reference after it's done
-      }, 3000) // Adjust cooldown period as needed
+      }, 3000 / useGameStore().deltaMultiplier) // Adjust cooldown period as needed
 
       // Check if the loop is already active to avoid multiple starts
       if (this.battleRunning) {
@@ -174,7 +175,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         return
       }
 
-      const deltaTime = (currentTime - this.lastFrameTime) / 1000 // Convert time to seconds
+      const deltaTime = (currentTime - this.lastFrameTime) / 1000 * useGameStore().deltaMultiplier
       this.lastFrameTime = currentTime
       this.accumulatedTime += deltaTime
 
@@ -285,6 +286,8 @@ export const useAdventureStore = defineStore('adventureStore', {
       } else {
         this.killCounts[killKey] = 1 // Initialize if not present
       }
+
+      this.enemyKillCount += 1
     },
     handleEnemyDrop() {
       this.currentEnemy?.dropOptions?.forEach((drop) => {
@@ -501,7 +504,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Offline progress calculation
     calculateOfflineProgress() {
-      if (!this.currentArea) return Promise.resolve() // No area to calculate progress for
+      if (!this.currentArea || this.currentArea === '') return Promise.resolve() // No area to calculate progress for
 
       return new Promise((resolve, reject) => {
         try {
@@ -531,7 +534,7 @@ export const useAdventureStore = defineStore('adventureStore', {
               console.log('Offline progress simulation complete.')
               this.isSimulatingOffline = false
               this.progress = 100 // Set progress to 100%
-              resolve()
+              resolve(null)
               return
             }
 
@@ -541,7 +544,7 @@ export const useAdventureStore = defineStore('adventureStore', {
             if (playerDied) {
               console.log('Player died during offline progress. Stopping simulation.')
               this.isSimulatingOffline = false
-              resolve() // End the simulation early
+              resolve(null) // End the simulation early
               return
             }
 

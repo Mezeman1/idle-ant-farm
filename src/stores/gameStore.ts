@@ -4,14 +4,20 @@ import {useInventoryStore} from './inventoryStore'
 import firebase from 'firebase/compat'
 import {getAuth, signInAnonymously} from 'firebase/auth'
 import {db} from '../firebase'
-import {deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
+import {addDoc, collection, deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
 import {useToast} from 'vue-toast-notification'
 import {usePrestigeStore} from './prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 import {useEquipmentStore} from '@/stores/equipmentStore'
+import {useAchievementStore} from '@/stores/achievementStore'
+import LZString from 'lz-string'
+import FirestoreError = firebase.firestore.FirestoreError;
+
+const MAX_SAFE_VALUE = Number.MAX_SAFE_INTEGER
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
+    compressedData: '',
     email: '',
     password: '',
     passwordConfirm: '',
@@ -413,7 +419,6 @@ export const useGameStore = defineStore('gameStore', {
         ['encrypt', 'decrypt'],
       )
     },
-    // Function to upgrade seed storage
     upgradeSeedStorage(fromPrestige = false) {
       if (fromPrestige && this.resources.seeds < this.storage.maxSeeds / 2) {
         return
@@ -422,11 +427,17 @@ export const useGameStore = defineStore('gameStore', {
       if (this.resources.seeds >= this.upgradeCosts.seedStorageUpgradeCost) {
         this.resources.seeds -= this.upgradeCosts.seedStorageUpgradeCost
 
-        // Increase storage by 20% of the current max
-        this.storage.maxSeeds = Math.floor(this.storage.maxSeeds * this.storageUpgradeFactor)
+        // Increase storage by 20% of the current max, but prevent it from exceeding MAX_SAFE_VALUE
+        this.storage.maxSeeds = Math.min(
+          Math.floor(this.storage.maxSeeds * this.storageUpgradeFactor),
+          MAX_SAFE_VALUE,
+        )
 
-        // Increase the upgrade cost by 30%
-        this.upgradeCosts.seedStorageUpgradeCost = Math.floor(this.upgradeCosts.seedStorageUpgradeCost * this.upgradeCostFactor)
+        // Increase the upgrade cost by 30%, but prevent it from exceeding MAX_SAFE_VALUE
+        this.upgradeCosts.seedStorageUpgradeCost = Math.min(
+          Math.floor(this.upgradeCosts.seedStorageUpgradeCost * this.upgradeCostFactor),
+          MAX_SAFE_VALUE,
+        )
       }
     },
     upgradeMaxSeedStorage() {
@@ -435,10 +446,13 @@ export const useGameStore = defineStore('gameStore', {
       let nextUpgradeCost = this.upgradeCosts.seedStorageUpgradeCost
 
       // Calculate how many upgrades can be afforded in one go
-      while (this.resources.seeds >= totalCost + nextUpgradeCost) {
+      while (this.resources.seeds >= totalCost + nextUpgradeCost && nextUpgradeCost < MAX_SAFE_VALUE) {
         affordableUpgrades += 1
         totalCost += nextUpgradeCost
-        nextUpgradeCost = Math.floor(nextUpgradeCost * this.upgradeCostFactor)
+        nextUpgradeCost = Math.min(
+          Math.floor(nextUpgradeCost * this.upgradeCostFactor),
+          MAX_SAFE_VALUE,
+        )
       }
 
       // If there are any affordable upgrades
@@ -446,8 +460,11 @@ export const useGameStore = defineStore('gameStore', {
         // Deduct the total cost
         this.resources.seeds -= totalCost
 
-        // Apply all upgrades at once
-        this.storage.maxSeeds = Math.floor(this.storage.maxSeeds * Math.pow(this.storageUpgradeFactor, affordableUpgrades))
+        // Apply all upgrades at once, but prevent exceeding MAX_SAFE_VALUE
+        this.storage.maxSeeds = Math.min(
+          Math.floor(this.storage.maxSeeds * Math.pow(this.storageUpgradeFactor, affordableUpgrades)),
+          MAX_SAFE_VALUE,
+        )
 
         // Update the upgrade cost
         this.upgradeCosts.seedStorageUpgradeCost = nextUpgradeCost
@@ -585,6 +602,9 @@ export const useGameStore = defineStore('gameStore', {
       this.isGameLoopRunning = true
       let lastFrameTime = performance.now()
       let timeAccumulator = 0
+      let achievementCheckAccumulator = 0 // Time tracking for achievement checks
+      const achievementUpdateInterval = 5 // Check achievements every second
+
       let lastAutoCreationTime = 0 // Time tracking for throttling auto creations
       const autoCreationInterval = 1 // Only allow auto-creation every second
 
@@ -593,6 +613,7 @@ export const useGameStore = defineStore('gameStore', {
         const updateInterval = 1 / 30 // Target update rate (e.g., 30 FPS)
 
         timeAccumulator += deltaTime
+        achievementCheckAccumulator += deltaTime
 
         if (timeAccumulator >= updateInterval) {
           this.updateResources(updateInterval) // Update resources based on the target update rate
@@ -605,6 +626,12 @@ export const useGameStore = defineStore('gameStore', {
 
           // Reset the time accumulator, subtracting the update interval to handle any leftover time
           timeAccumulator -= updateInterval
+        }
+
+        // Check achievements every 5 seconds
+        if (achievementCheckAccumulator >= achievementUpdateInterval) {
+          useAchievementStore().checkAchievements()
+          achievementCheckAccumulator = 0
         }
 
         lastFrameTime = currentTime
@@ -822,28 +849,83 @@ export const useGameStore = defineStore('gameStore', {
       })
     },
 
+    cleanGameState(gameState, userId) {
+      // Base case: If it's not an object (e.g., string, number), return it directly
+      if (typeof gameState !== 'object' || gameState === null) {
+        return gameState
+      }
+
+      // Iterate over each property in the object
+      for (const key in gameState) {
+        if (gameState.hasOwnProperty(key)) {
+          const value = gameState[key]
+
+          // If the value is undefined, log it and set to null
+          if (value === undefined) {
+            this.logInvalidData(userId, key, 'undefined')
+            gameState[key] = null
+          }
+          // If the value is NaN, log it and set to null
+          else if (typeof value === 'number' && isNaN(value)) {
+            this.logInvalidData(userId, key, 'NaN')
+            gameState[key] = null
+          }
+          // Recursively clean objects or arrays
+          else if (typeof value === 'object') {
+            this.cleanGameState(value, userId)
+          }
+        }
+      }
+      return gameState
+    },
     async saveGameState() {
       console.log('Game state is being saved...')
+      const userId = await this.getUserId()
+      if (!userId) {
+        console.error('User ID not found')
+        return
+      }
+
       try {
-        const userId = await this.getUserId()
-        if (!userId) {
-          console.error('User ID not found')
-          return
-        }
-
         const gameState = this.getGameState(userId)
+        const cleanedGameState = this.cleanGameState(gameState, userId)
+        const compressedGameState = LZString.compressToUTF16(JSON.stringify(cleanedGameState))
 
-        await setDoc(doc(db, 'games', userId), gameState)
+        console.log('Game state compressed:', compressedGameState.length, 'bytes')
+
+        await setDoc(doc(db, 'games', userId), {
+          data: compressedGameState,
+          version: 1,
+        })
 
         console.log('Game state saved to Firestore')
 
         const $toast = useToast()
         $toast.success('Game saved successfully')
         this.lastSavedTime = Date.now()
-      } catch (error) {
+      } catch (error: FirestoreError | any) {
         console.error('Error saving game state to Firebase:', error)
         const $toast = useToast()
         $toast.error('Failed to save game state')
+
+        await this.logInvalidData(userId, 'gameState', error?.message)
+      }
+    },
+    async logInvalidData(userId, key, type) {
+      try {
+        const logEntry = {
+          userId: userId,
+          field: key,
+          issueType: type, // Either 'undefined' or 'NaN'
+          timestamp: new Date().toISOString(),
+        }
+
+        // Add log to Firestore
+        await addDoc(collection(db, `gameStateLogs/${userId}/logs`), logEntry)
+
+        console.log(`Logged issue: ${type} for key: ${key}`)
+      } catch (error) {
+        console.error('Error logging data to Firebase:', error)
       }
     },
 
@@ -853,6 +935,7 @@ export const useGameStore = defineStore('gameStore', {
       const inventoryStore = useInventoryStore()
       const settingsStore = useSettingsStore()
       const equipmentStore = useEquipmentStore()
+      const achievementStore = useAchievementStore()
 
       return {
         resources: this.resources,
@@ -872,14 +955,13 @@ export const useGameStore = defineStore('gameStore', {
           larvaeProductionRate: this.productionRates.larvaeProductionRate,
           collectionRatePerAnt: this.productionRates.collectionRatePerAnt,
           collectionRatePerWorker: this.productionRates.collectionRatePerWorker,
-          collectionRateModifier: this.productionRates.collectionRateModifier,
-          larvaeProductionRateModifier: this.productionRates.larvaeProductionModifier,
         },
         ...prestigeStore.getPrestigeState(),
         ...adventureStore.getAdventureState(),
         ...inventoryStore.getInventoryState(),
         ...settingsStore.getSettingsState(),
         ...equipmentStore.getEquipmentState(),
+        ...achievementStore.getAchievementState(),
       }
     },
 
@@ -897,7 +979,14 @@ export const useGameStore = defineStore('gameStore', {
           const docSnap = await getDoc(docRef)
 
           if (docSnap.exists()) {
-            await this.loadStateFromFirebase(docSnap.data())
+            let data = docSnap.data()
+            if (data.version) {
+              console.log('Game state version:', data.version)
+              console.log('Game state compressed:', data.data.length, 'bytes')
+              data = JSON.parse(LZString.decompressFromUTF16(data.data))
+            }
+
+            await this.loadStateFromFirebase(data)
             console.log('Game state loaded from Firestore')
           } else {
             console.log('No saved game state found in Firestore')
@@ -966,6 +1055,9 @@ export const useGameStore = defineStore('gameStore', {
 
       const equipmentStore = useEquipmentStore()
       equipmentStore.loadEquipmentState(savedState)
+
+      const achievementStore = useAchievementStore()
+      achievementStore.loadAchievementState(savedState)
     },
     async resetGameState(debug = false) {
       console.log('Resetting game state...')

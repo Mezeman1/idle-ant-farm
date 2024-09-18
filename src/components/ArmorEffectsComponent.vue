@@ -13,9 +13,6 @@
         >
           <strong>{{ item.name }} (Level {{ item.level }})</strong>
           {{ item.description }}
-          <span v-if="itemMultiplier(item)">
-            Bonus: {{ (itemMultiplier(item) * 100 - 100).toFixed(2) }}%
-          </span>
         </li>
       </ul>
       <!-- Display the active set bonus -->
@@ -34,6 +31,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useEquipmentStore } from '../stores/equipmentStore'
+import {getItemBasePercentage} from '@/types/itemRegistry'
 
 // Access the equipment store
 const equipmentStore = useEquipmentStore()
@@ -63,13 +61,6 @@ const setBonusDescriptions: Record<string, string> = {
   'Royal Set': 'Increases larvae production rate by an additional 20%.',
 }
 
-// Define multipliers for each set bonus
-const setBonusMultipliers: Record<string, number> = {
-  'Worker Set': 1.15,
-  'Soldier Set': 1.15,
-  'Royal Set': 1.20,
-}
-
 // Get the description of the active set bonus
 const setBonusDescription = computed(() => {
   if (activeSetBonus.value) {
@@ -78,83 +69,6 @@ const setBonusDescription = computed(() => {
   return ''
 })
 
-// Get the multiplier of the active set bonus
-const setBonusMultiplier = computed(() => {
-  if (activeSetBonus.value) {
-    return setBonusMultipliers[activeSetBonus.value] || 1
-  }
-  return 1
-})
-
-// List of set names
-const setNames = ['Worker Set', 'Soldier Set', 'Royal Set']
-
-// Set sizes (number of items in each set)
-const setSizes: Record<string, number> = {
-  'Worker Set': 4,
-  'Soldier Set': 5,
-  'Royal Set': 5,
-}
-
-// Compute the count of equipped items per set
-const equippedSetCounts = computed(() => {
-  const counts: Record<string, number> = {}
-  setNames.forEach((set) => (counts[set] = 0))
-
-  equippedItemsList.value.forEach((item) => {
-    if (item.set && setNames.includes(item.set)) {
-      counts[item.set] += 1
-    }
-  })
-
-  return counts
-})
-
-// Function to compute the item multiplier
-const itemMultiplier = (item) => {
-  if (item.type === 'equipment' && item.level) {
-    // Calculate the multiplier based on the item's effect per level
-    // Adjust the base percentage per level according to your game design
-    let basePercentage = 0
-    switch (item.id) {
-      // Worker Set items
-      case 'worker-helm':
-      case 'worker-legs':
-        basePercentage = 0.02 // 2% per level
-        break
-      case 'worker-body':
-      case 'worker-gloves':
-        basePercentage = 0.025 // 2.5% per level
-        break
-      // Soldier Set items
-      case 'soldier-helm':
-      case 'soldier-body':
-      case 'soldier-shield':
-        basePercentage = 0.03 // 3% per level
-        break
-      case 'soldier-legs':
-      case 'soldier-sword':
-        basePercentage = 0.035 // 3.5% per level
-        break
-      // Royal Set items
-      case 'royal-crown':
-      case 'royal-legs':
-        basePercentage = 0.02 // 2% per level
-        break
-      case 'royal-robe':
-      case 'royal-scepter':
-        basePercentage = 0.025 // 2.5% per level
-        break
-      case 'royal-ring':
-        basePercentage = 0.03 // 3% per level
-        break
-      default:
-        return 1
-    }
-    return 1 + basePercentage * item.level
-  }
-  return 1
-}
 </script>
 
 <style scoped>

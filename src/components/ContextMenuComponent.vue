@@ -24,6 +24,12 @@
       >
         {{ item.description }}
       </p>
+      <p
+        v-if="item.set"
+        class="text-sm mb-2 text-center"
+      >
+        {{ item.set }}: {{ equipmentStore.getEquipedSetSize(item?.set) || 0 }}/{{ equipmentStore.getSetSize(item?.set) || 0 }} equiped
+      </p>
       <button
         v-if="action === 'equip'"
         class="bg-blue-500 text-white px-4 py-2 rounded mb-2 w-full"
@@ -50,6 +56,8 @@
 
 <script setup lang="ts">
 import { computed, defineProps} from 'vue'
+import {useEquipmentStore} from '@/stores/equipmentStore'
+const equipmentStore = useEquipmentStore()
 
 const props = defineProps({
   visible: Boolean,
