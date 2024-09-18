@@ -264,7 +264,6 @@ export const useResourcesStore = defineStore('resources', {
       // Calculate how many queens can actually be bought based on both ants and seeds
       const queensToBuy = Math.min(availableQueenSpace, maxPurchasableQueensByAnts, maxPurchasableQueensBySeeds)
 
-      console.log(`Queens to buy: ${queensToBuy}`)
       // If there is space and enough ants and seeds to buy queens
       if (queensToBuy > 0) {
         this.resources.queens += queensToBuy
