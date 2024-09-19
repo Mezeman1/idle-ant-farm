@@ -8,6 +8,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
   state: () => ({
     inventory: [] as Array<Item>,
     maxInventory: 20,
+    appliedPassiveEffects: [] as Array<string>,
   }),
 
   actions: {
@@ -113,6 +114,11 @@ export const useInventoryStore = defineStore('inventoryStore', {
     // Apply the effect of an item (passive or buffs)
     applyItemEffect(item, amount = 1) {
       const adventureStore = useAdventureStore()
+
+      if (this.appliedPassiveEffects.includes(item.id) && item.type === 'passive') {
+        return false // Effect already applied
+      }
+
       if (item.effect) {
         for (let i = 0; i < amount; i++) {
           if (item.duration) {
@@ -127,6 +133,10 @@ export const useInventoryStore = defineStore('inventoryStore', {
             const result = item.effect() // Apply the effect multiple times based on the amount
             if (!result) return false // Stop if the effect fails
           }
+        }
+
+        if (item.type === 'passive') {
+          this.appliedPassiveEffects.push(item.id)
         }
 
         return true // All effects applied successfully

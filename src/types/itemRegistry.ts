@@ -251,10 +251,10 @@ export const passiveItems: Item[] = [
     name: 'Queen’s Crown',
     type: 'passive',
     description: 'Increases queen larvae production by 100%. ',
-    applyOnPrestige: true,
+    applyOnLoad: true,
     effect: () => {
       const resourcesStore = useResourcesStore()
-      resourcesStore.productionRates.larvaeProductionRate *= 2
+      resourcesStore.productionRates.larvaeProductionModifier *= 2
       return true
     },
     rarity: 'rare',
