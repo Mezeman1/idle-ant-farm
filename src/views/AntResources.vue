@@ -394,7 +394,6 @@
           <div class="w-full flex">
             <label
               v-if="prestigeStore.upgradePurchased('autoQueens')"
-              v-tooltip="'Will automatically create queens for you when ants reach half capacity.'"
               class="flex items-center cursor-pointer"
             >
               <span class="mr-3 text-xs text-gray-600">Auto creating</span>
