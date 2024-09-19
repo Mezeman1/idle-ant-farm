@@ -20,7 +20,7 @@
     />
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="col-span-3">
+      <div class="md:col-span-3">
         <p class="text-xs md:text-sm font-bold leading-relaxed">
           Please note, this game is in early development and may have bugs or balance issues.
           I will be adding more features and balancing the game over time.
@@ -28,7 +28,7 @@
         </p>
       </div>
 
-      <div class="col-span-3">
+      <div class="md:col-span-3">
         <p class="text-lg md:text-2xl font-bold">
           Settings
         </p>
@@ -138,7 +138,7 @@
       </div>
 
       <!-- Reset and Delete buttons -->
-      <div class="flex flex-col gap-4 col-span-1">
+      <div class="flex flex-col gap-4 md:col-span-1">
         <button
           v-tooltip="'This will reset your game and give you a fresh start.'"
           class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded shadow"
@@ -157,7 +157,7 @@
       </div>
 
       <!-- Export/Import Data -->
-      <div class="flex flex-col gap-4 col-span-2">
+      <div class="flex flex-col gap-4 md:col-span-2">
         <textarea
           v-model="importString"
           class="w-full h-32 p-2 rounded shadow border"
