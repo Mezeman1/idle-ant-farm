@@ -566,6 +566,7 @@ export const useGameStore = defineStore('gameStore', {
 
     async loadStateFromFirebase(savedState) {
       const resourcesStore = useResourcesStore()
+      resourcesStore.resetResourcesState()
       resourcesStore.loadResourcesState(savedState)
 
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
@@ -575,6 +576,7 @@ export const useGameStore = defineStore('gameStore', {
       this.defensePerAnt = savedState.defensePerAnt ?? this.defensePerAnt
 
       const prestigeStore = usePrestigeStore()
+      prestigeStore.resetPrestigeState()
       prestigeStore.loadPrestigeState(savedState)
 
       this.eliteAntsUnlocked = prestigeStore.upgradePurchased('eliteAnts')
@@ -584,6 +586,7 @@ export const useGameStore = defineStore('gameStore', {
       await adventureStore.loadAdventureState(savedState)
 
       const inventoryStore = useInventoryStore()
+      inventoryStore.appliedPassiveEffects = []
       await inventoryStore.loadInventoryState(savedState)
 
       const settingsStore = useSettingsStore()
