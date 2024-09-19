@@ -277,7 +277,7 @@
 
       <!-- Elite Ant Section -->
       <div
-        v-if="resourcesStore.eliteAntsUnlocked"
+        v-if="gameStore.eliteAntsUnlocked"
         class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
       >
         <div>
