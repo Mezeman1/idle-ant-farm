@@ -205,6 +205,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
           if (registryItem.type === 'passive' && registryItem.applyOnLoad) {
             this.applyItemEffect(registryItem) // Reapply the item's effect
           }
+
           return {
             ...registryItem,
             amount: item.amount,
@@ -213,9 +214,9 @@ export const useInventoryStore = defineStore('inventoryStore', {
           }
         } else {
           console.error(`Item ${item.id} not found in registry`)
-          return item // Load the raw item if not found in registry
+          return null
         }
-      }) ?? []
+      }).filter() ?? []
 
       this.sortInventory()
       this.maxInventory = savedInventory.maxInventory ?? this.maxInventory
