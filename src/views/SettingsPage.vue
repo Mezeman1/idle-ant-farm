@@ -34,89 +34,110 @@
         </p>
       </div>
 
-      <div class="flex items-center justify-between">
-        <label class="text-sm md:text-base font-medium">Show prestige warning</label>
-        <input
-          v-model="settingsStore.showPrestigeWarning"
-          type="checkbox"
-          class="form-checkbox"
-        >
-      </div>
-
+      <!-- Slider for auto buy seed storage threshold -->
       <div class="flex flex-col gap-2">
         <label>Auto buy seed storage threshold</label>
         <input
           v-model="settingsStore.autoThresholds.autoSeedStorageUpgrade"
-          type="number"
-          :max="useResourcesStore().storage.maxSeeds"
-          class="form-input"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          class="form-range"
         >
+        <span>{{ settingsStore.autoThresholds.autoSeedStorageUpgrade }}%</span>
       </div>
 
+      <!-- Slider for auto buy larvae storage threshold -->
       <div class="flex flex-col gap-2">
         <label>Auto buy larvae storage threshold</label>
         <input
           v-model="settingsStore.autoThresholds.autoLarvaeStorageUpgrade"
-          type="number"
-          :max="useResourcesStore().storage.maxSeeds"
-          class="form-input"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          class="form-range"
         >
+        <span>{{ settingsStore.autoThresholds.autoLarvaeStorageUpgrade }}%</span>
       </div>
 
+      <!-- Slider for auto buy elite ants creation seeds threshold -->
       <div class="flex flex-col gap-2">
         <label>Auto buy elite ants creation seeds threshold</label>
         <input
           v-model="settingsStore.autoThresholds.autoEliteAntsCreationSeeds"
-          type="number"
-          :max="useResourcesStore().storage.maxSeeds"
-          class="form-input"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          class="form-range"
         >
+        <span>{{ settingsStore.autoThresholds.autoEliteAntsCreationSeeds }}%</span>
 
         <label>Auto buy elite ants creation larvae threshold</label>
         <input
           v-model="settingsStore.autoThresholds.autoEliteAntsCreationLarvae"
-          type="number"
-          :max="useResourcesStore().storage.maxLarvae"
-          class="form-input"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          class="form-range"
         >
+        <span>{{ settingsStore.autoThresholds.autoEliteAntsCreationLarvae }}%</span>
       </div>
 
+      <!-- Slider for auto buy ant creation seeds threshold -->
       <div class="flex flex-col gap-2">
         <label>Auto buy ant creation seeds threshold</label>
         <input
           v-model="settingsStore.autoThresholds.autoAntCreationSeeds"
-          type="number"
-          :max="useResourcesStore().storage.maxSeeds"
-          class="form-input"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          class="form-range"
         >
+        <span>{{ settingsStore.autoThresholds.autoAntCreationSeeds }}%</span>
 
         <label>Auto buy ant creation larvae threshold</label>
         <input
           v-model="settingsStore.autoThresholds.autoAntCreationLarvae"
-          type="number"
-          :max="useResourcesStore().storage.maxLarvae"
-          class="form-input"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          class="form-range"
         >
+        <span>{{ settingsStore.autoThresholds.autoAntCreationLarvae }}%</span>
       </div>
 
+      <!-- Slider for auto buy queen creation thresholds -->
       <div class="flex flex-col gap-2">
         <label>Auto buy queen creation seeds threshold</label>
         <input
           v-model="settingsStore.autoThresholds.autoQueenCreationSeeds"
-          type="number"
-          :max="useResourcesStore().storage.maxSeeds"
-          class="form-input"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          class="form-range"
         >
+        <span>{{ settingsStore.autoThresholds.autoQueenCreationSeeds }}%</span>
 
         <label>Auto buy queen creation ants threshold</label>
         <input
           v-model="settingsStore.autoThresholds.autoQueenCreationAnts"
-          type="number"
-          :max="useResourcesStore().maxAnts"
-          class="form-input"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          class="form-range"
         >
+        <span>{{ settingsStore.autoThresholds.autoQueenCreationAnts }}%</span>
       </div>
 
+      <!-- Reset and Delete buttons -->
       <div class="flex flex-col gap-4 col-span-1">
         <button
           v-tooltip="'This will reset your game and give you a fresh start.'"
@@ -162,7 +183,6 @@
     </div>
   </div>
 </template>
-
 
 <script setup lang="ts">
 import Modal from '../components/Modal.vue'
@@ -215,11 +235,11 @@ label {
   @apply font-bold text-sm;
 }
 
-textarea {
-  resize: none;
+.form-range {
+  @apply w-full;
 }
 
-.form-input {
-  @apply w-full p-2 rounded shadow border;
+textarea {
+  resize: none;
 }
 </style>
