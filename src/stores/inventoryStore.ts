@@ -188,18 +188,13 @@ export const useInventoryStore = defineStore('inventoryStore', {
     getInventoryState() {
       return {
         inventory: this.inventory.map(item => ({
-          id: item.id,
-          name: item.name,
-          type: item.type,
-          description: item.description,
-          equipmentType: item.equipmentType ?? null,
-          slotType: item.slotType ?? null,
-          set: item.set ?? null,
-          rarity: item.rarity,
-          level: item.level ?? 1,     // Default to level 1 if undefined
-          maxLevel: item.maxLevel ?? 1, // Default to maxLevel 1 if undefined
-          amount: item.amount ?? 1,   // Default to amount 1 if undefined
-        })),
+            id: item.id,
+            name: item.name,
+            level: item.level ?? 1,     // Default to level 1 if undefined
+            maxLevel: item.maxLevel ?? 1, // Default to maxLevel 1 if undefined
+            amount: item.amount ?? 1,   // Default to amount 1 if undefined
+          }),
+        ),
         maxInventory: this.maxInventory,
       }
     },
