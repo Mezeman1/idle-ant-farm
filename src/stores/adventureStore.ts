@@ -496,7 +496,6 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Reset adventure state and clear from Firebase Firestore
     async resetAdventureState() {
-
       // Reset the local adventure state
       this.armyHealth = 100
       this.armyMaxHealth = 100
@@ -507,6 +506,9 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.currentArea = ''
       this.enemySpawned = false
       this.currentEnemy = null
+      this.battleRunning = false
+      this.isFighting = false
+      this.battleCooldown = false
     },
 
     // Offline progress calculation
