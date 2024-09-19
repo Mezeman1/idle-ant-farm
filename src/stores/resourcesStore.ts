@@ -500,11 +500,6 @@ export const useResourcesStore = defineStore('resources', {
         ...savedState.resources,
       }
 
-      this.storage = {
-        ...this.storage,
-        ...savedState.storage,
-      }
-
       this.upgradeCosts = savedState.upgradeCosts ?? this.upgradeCosts
 
       this.resourceCosts = {
