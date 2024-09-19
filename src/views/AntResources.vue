@@ -19,10 +19,13 @@
               Count: {{ formatNumber(resourcesStore.resources.seeds) }}/{{ formatNumber(resourcesStore.storage.maxSeeds) }}
               ({{ formatNumber(resourcesStore.seedsPerSecond) }} /s)
             </p>
+            <p class="text-sm">
+              Total bonus: {{ formatNumber(resourcesStore.productionRates.collectionRateModifier * 100, 2) }}%
+            </p>
             <StorageButtons
               :cost-string="seedStorageCostString"
               :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
-              @upgrade="resourcesStore.upgradeSeedStorage"
+              @upgrade="resourcesStore.upgradeSeedStorage(false)"
               @upgradeMax="resourcesStore.upgradeMaxSeedStorage"
             />
             <p
@@ -105,7 +108,7 @@
             <StorageButtons
               :cost-string="larvaeStorageCostString"
               :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
-              @upgrade="resourcesStore.upgradeLarvaeStorage"
+              @upgrade="resourcesStore.upgradeLarvaeStorage(false)"
               @upgradeMax="resourcesStore.upgradeMaxLarvaeStorage"
             />
             <p
@@ -191,7 +194,7 @@
             <button
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               :disabled="resourcesStore.resources.seeds < resourcesStore.seedCostPerAntHousing"
-              @click="resourcesStore.createMaxAntHousing"
+              @click="resourcesStore.createMaxAntHousing(false)"
             >
               Max
             </button>
@@ -209,7 +212,7 @@
             <button
               :disabled="createAntDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="resourcesStore.createMaxAnts"
+              @click="resourcesStore.createMaxAnts(false)"
             >
               Max
             </button>
@@ -309,7 +312,7 @@
             <button
               :disabled="createEliteAntDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-              @click="resourcesStore.createEliteMaxAnts()"
+              @click="resourcesStore.createEliteMaxAnts(false)"
             >
               Max
             </button>
