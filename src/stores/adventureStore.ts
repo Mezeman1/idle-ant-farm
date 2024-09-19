@@ -505,6 +505,8 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.armyRegen = 5
       this.lastSavedTime = Date.now()
       this.currentArea = ''
+      this.enemySpawned = false
+      this.currentEnemy = null
     },
 
     // Offline progress calculation
