@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import {useGameStore} from '@/stores/gameStore'
 import {useToast} from 'vue-toast-notification'
 import {usePrestigeStore} from '@/stores/prestigeStore'
+import {useSettingsStore} from '@/stores/settingsStore'
 
 const MAX_SAFE_VALUE = Number.MAX_SAFE_INTEGER
 export const useResourcesStore = defineStore('resources', {
@@ -172,7 +173,15 @@ export const useResourcesStore = defineStore('resources', {
 
       return false
     },
-    createMaxAnts() {
+    createMaxAnts(fromPrestige = false) {
+      if (
+        fromPrestige
+        && this.resources.larvae < useSettingsStore().autoThresholds.autoAntCreationLarvae
+        && this.resources.seeds < useSettingsStore().autoThresholds.autoAntCreationSeeds
+      ) {
+        return
+      }
+
       const availableAntSpace = Math.floor(this.maxAnts) - this.resources.ants
       const maxCreatableAntsByLarvae = Math.floor(this.resources.larvae / this.resourceCosts.larvaCostPerAnt)
       const maxCreatableAntsBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerAnt)
@@ -198,24 +207,22 @@ export const useResourcesStore = defineStore('resources', {
       this.resources.antHousing += 1
     },
     createMaxAntHousing(fromPrestige = false) {
-      if (fromPrestige && this.resources.seeds < this.storage.maxSeeds / 2) {
-        // Not sure if we want to check on this yet, leaving it here for now
+      if (fromPrestige && this.resources.seeds < useSettingsStore().autoThresholds.autoCreateHousing) {
+        return
       }
 
       const seeds = this.resources.seeds
-      let antHousing = this.resources.antHousing
+      const antHousing = this.resources.antHousing
 
-      // Calculate how many housings we can afford
-      let totalCost = 0
-      let numberOfPurchases = 0
+      // Using a power function to calculate how many ant housings can be purchased in one go
+      const initialCost = antHousing + 1
 
-      while (seeds >= antHousing + 1) {
-        totalCost += antHousing + 1
-        if (totalCost > seeds) break
+      // The total cost formula is S = n * (initialCost + (initialCost + (n-1))) / 2
+      // Solving for n: n = (-initialCost + sqrt(initialCost^2 + 2 * seeds)) / 1
+      const numberOfPurchases = Math.floor((-initialCost + Math.sqrt(initialCost * initialCost + 2 * seeds)) / 1)
 
-        numberOfPurchases += 1
-        antHousing += 1
-      }
+      // Calculate the total cost based on number of purchases
+      const totalCost = numberOfPurchases * (initialCost + (initialCost + (numberOfPurchases - 1))) / 2
 
       // Deduct seeds and increase ant housing in bulk
       this.resources.seeds -= totalCost
@@ -236,7 +243,15 @@ export const useResourcesStore = defineStore('resources', {
 
       return false
     },
-    createEliteMaxAnts() {
+    createEliteMaxAnts(fromPrestige = false) {
+      if (
+        fromPrestige
+        && this.resources.larvae < useSettingsStore().autoThresholds.autoEliteAntsCreationLarvae
+        && this.resources.seeds < useSettingsStore().autoThresholds.autoEliteAntsCreationSeeds
+      ) {
+        return
+      }
+
       const availableEliteAntSpace = Math.floor(this.storage.maxEliteAnts) - this.resources.eliteAnts
       const maxCreatableEliteAntsByLarvae = Math.floor(this.resources.larvae / this.resourceCosts.larvaCostPerEliteAnt)
       const maxCreatableEliteAntsBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerEliteAnt)
@@ -267,7 +282,11 @@ export const useResourcesStore = defineStore('resources', {
     },
     // Buy max queens based on available ants and seeds
     buyMaxQueens(fromPrestige = false) {
-      if (fromPrestige && this.resources.ants < this.storage.maxAnts / 2) {
+      if (
+        fromPrestige
+        && this.resources.ants < useSettingsStore().autoThresholds.autoQueenCreationAnts
+        && this.resources.seeds < useSettingsStore().autoThresholds.autoQueenCreationSeeds
+      ) {
         return
       }
 
@@ -297,7 +316,7 @@ export const useResourcesStore = defineStore('resources', {
       this.resources.seeds += seedsToAdd
     },
     upgradeSeedStorage(fromPrestige = false) {
-      if (fromPrestige && this.resources.seeds < this.storage.maxSeeds / 2) {
+      if (fromPrestige && this.resources.seeds <= useSettingsStore().autoThresholds.autoSeedStorageUpgrade) {
         return
       }
 
@@ -351,7 +370,7 @@ export const useResourcesStore = defineStore('resources', {
     },
     // Function to upgrade larvae storage
     upgradeLarvaeStorage(fromPrestige = false) {
-      if (fromPrestige && this.resources.larvae < this.storage.maxLarvae / 2) {
+      if (fromPrestige && this.resources.larvae <= useSettingsStore().autoThresholds.autoLarvaeStorageUpgrade) {
         return
       }
 

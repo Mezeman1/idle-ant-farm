@@ -328,7 +328,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 1000 || gameStore.resources.queens >= 20,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 750 || gameStore.resources.queens >= 15,
     unlockText: 'Unlocked when you have 1000 ants or 20 queens.',
   },
   {
@@ -421,8 +421,8 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    'unlockedWhen': (gameStore) => gameStore.resources.ants >= 5000 || gameStore.resources.queens >= 100,
-    'unlockText': 'Unlocked when you have 5000 ants or 100 queens.',
+    'unlockedWhen': (gameStore) => gameStore.resources.ants >= 2500 || gameStore.resources.queens >= 50,
+    'unlockText': 'Unlocked when you have 2500 ants or 50 queens.',
   },
   {
     'name': 'Underworld',
@@ -515,9 +515,9 @@ export const adventureEnemyWaves = [
       },
     ],
     'unlockedWhen': (gameStore) =>
-      gameStore.resources.ants >= 10000 ||
-      gameStore.resources.queens >= 10000 / gameStore.resourceCosts.antCostPerQueen,
-    'unlockText': 'Unlocked when you have 10 thousand ants or 200 queens.',
+      gameStore.resources.ants >= 7500 ||
+      gameStore.resources.queens >= 7500 / gameStore.resourceCosts.antCostPerQueen,
+    'unlockText': 'Unlocked when you have 7.5 thousand ants or 150 queens.',
   },
   {
     'name': 'Arctic Tundra',
