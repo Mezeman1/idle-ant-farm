@@ -168,7 +168,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     // Main battle loop with requestAnimationFrame (tick-based)
-    battleLoop(currentTime) {
+    async battleLoop(currentTime) {
       if (this.loaded === false) return
 
       if (!this.battleRunning) {
@@ -183,7 +183,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       // Process combat every tick (based on how much time has passed)
       this.applyBuffs(deltaTime)
-      this.processCombat(deltaTime)
+      await this.processCombat(deltaTime)
 
       // Continue the loop as long as the battle is active
       if (this.battleRunning) {
@@ -208,7 +208,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         }
       })
     },
-    processCombat(deltaTime) {
+    async processCombat(deltaTime) {
       if (this.isFighting && this.enemySpawned) {
         // Calculate damage based on DPS and the time passed since the last frame (deltaTime)
         this.applyArmyDamage(deltaTime)
@@ -220,7 +220,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         }
 
         if (this.bugHealth <= 0) {
-          this.handleEnemyDefeat()
+          await this.handleEnemyDefeat()
         }
       }
 
@@ -290,35 +290,39 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       this.enemyKillCount += 1
     },
-    handleEnemyDrop() {
-      this.currentEnemy?.dropOptions?.forEach((drop) => {
-        if (Math.random() < drop.chance) {
-          const amount =
-            Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
-            drop.amountBetween[0]
+    async handleEnemyDrop() {
+      if (this.currentEnemy?.dropOptions) {
+        for (const drop of this.currentEnemy.dropOptions) {
+          // Check the drop chance
+          if (Math.random() < drop.chance) {
+            const amount =
+              Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
+              drop.amountBetween[0]
 
-          if (!this.isSimulatingOffline) {
-            const $toast = useToast()
-            $toast.success(`Loot: +${amount} ${drop.name}`)
-          }
+            if (!this.isSimulatingOffline) {
+              const $toast = useToast()
+              $toast.success(`Loot: +${amount} ${drop.name}`)
+            }
 
-          if (drop.name === 'Seeds') {
-            // Add seeds to gameStore
-            useResourcesStore().resources.seeds += amount
-          } else {
-            // Handle item drops
-            const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
-            const item = useInventoryStore().getItemById(itemId)
-            if (item) {
-              this.handleItemDrop(item, amount)
+            if (drop.name === 'Seeds') {
+              // Add seeds to gameStore
+              useResourcesStore().resources.seeds += amount
             } else {
-              console.error(`Item ${drop.name} not found in registry`)
+              // Handle item drops
+              const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
+              const item = useInventoryStore().getItemById(itemId)
+              if (item) {
+                // Await the item drop handling
+                await this.handleItemDrop(item, amount)
+              } else {
+                console.error(`Item ${drop.name} not found in registry`)
+              }
             }
           }
         }
-      })
+      }
     },
-    handleEnemyDefeat() {
+    async handleEnemyDefeat() {
       this.enemySpawned = false
       this.battleCooldown = true // Enter cooldown state
       this.isFighting = false
@@ -327,7 +331,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.handleKillCount()
 
       // Handle loot
-      this.handleEnemyDrop()
+      await this.handleEnemyDrop()
 
       // Spawn a new enemy
       setTimeout(() => {
@@ -377,9 +381,9 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     // Apply effects based on item type
-    handleItemDrop(item, amount) {
+    async handleItemDrop(item, amount) {
       const inventoryStore = useInventoryStore()
-      inventoryStore.addItemToInventory({
+      await inventoryStore.addItemToInventory({
         id: item.id,
         name: item.name,
         amount,
@@ -505,6 +509,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Offline progress calculation
     calculateOfflineProgress() {
+      this.loaded = false // Mark as not loaded
       if (!this.currentArea || this.currentArea === '') return Promise.resolve() // No area to calculate progress for
 
       return new Promise((resolve, reject) => {
@@ -563,6 +568,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           this.isSimulatingOffline = false
           reject(error)
         }
+      }).finally(() => {
+        this.loaded = true // Mark as loaded
       })
     },
 
