@@ -252,6 +252,7 @@ export const passiveItems: Item[] = [
     type: 'passive',
     description: 'Increases queen larvae production by 100%. ',
     applyOnLoad: true,
+    applyOnPrestige: true,
     effect: () => {
       const resourcesStore = useResourcesStore()
       resourcesStore.productionRates.larvaeProductionModifier *= 2
