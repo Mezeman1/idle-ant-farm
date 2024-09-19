@@ -487,7 +487,7 @@ export const useAdventureStore = defineStore('adventureStore', {
             const image = await import(`../assets/enemies/${enemy.name.toLowerCase().replace(' ', '-')}.webp`)
             enemy.image = image.default
           } catch (error) {
-            console.error(`Error loading image for ${enemy.name}:`, error)
+
           }
         }
       }

@@ -116,8 +116,11 @@ export const useInventoryStore = defineStore('inventoryStore', {
       const adventureStore = useAdventureStore()
 
       if (this.appliedPassiveEffects.includes(item.id) && item.type === 'passive') {
+        console.log(`Effect of item: ${item.name} already applied`)
         return false // Effect already applied
       }
+
+      console.log(`Applying effect of item: ${item.name}`)
 
       if (item.effect) {
         for (let i = 0; i < amount; i++) {

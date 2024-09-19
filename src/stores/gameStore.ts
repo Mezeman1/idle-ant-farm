@@ -671,10 +671,15 @@ export const useGameStore = defineStore('gameStore', {
 
         // Apply prestige upgrades
         const prestigeStore = usePrestigeStore()
+        prestigeStore.resetPrestigeState()
         prestigeStore.applyPrestigeUpgrades(true)
 
         const adventureStore = useAdventureStore()
         adventureStore.resetAdventureState()
+
+        const inventoryStore = useInventoryStore()
+        inventoryStore.appliedPassiveEffects = []
+        inventoryStore.applyPassiveEffects()
 
         // Resolve the promise once everything is done
         resolve()
