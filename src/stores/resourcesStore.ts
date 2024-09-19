@@ -181,8 +181,8 @@ export const useResourcesStore = defineStore('resources', {
     createMaxAnts(fromPrestige = false) {
       if (
         fromPrestige
-        && this.resources.larvae < useSettingsStore().autoThresholds.autoAntCreationLarvae / 100 * this.storage.maxLarvae
-        && this.resources.seeds < useSettingsStore().autoThresholds.autoAntCreationSeeds / 100 * this.storage.maxSeeds
+        && this.resources.larvae <= useSettingsStore().autoThresholds.autoAntCreationLarvae / 100 * this.storage.maxLarvae
+        && this.resources.seeds <= useSettingsStore().autoThresholds.autoAntCreationSeeds / 100 * this.storage.maxSeeds
       ) {
         return
       }
@@ -212,7 +212,7 @@ export const useResourcesStore = defineStore('resources', {
       this.resources.antHousing += 1
     },
     createMaxAntHousing(fromPrestige = false) {
-      if (fromPrestige && this.resources.seeds < this.storage.maxSeeds * useSettingsStore().autoThresholds.autoCreateHousing / 100) {
+      if (fromPrestige && this.resources.seeds <= this.storage.maxSeeds * useSettingsStore().autoThresholds.autoCreateHousing / 100) {
         return
       }
 
@@ -251,8 +251,8 @@ export const useResourcesStore = defineStore('resources', {
     createEliteMaxAnts(fromPrestige = false) {
       if (
         fromPrestige
-        && this.resources.larvae < useSettingsStore().autoThresholds.autoEliteAntsCreationLarvae / 100 * this.storage.maxLarvae
-        && this.resources.seeds < useSettingsStore().autoThresholds.autoEliteAntsCreationSeeds / 100 * this.storage.maxSeeds
+        && this.resources.larvae <= useSettingsStore().autoThresholds.autoEliteAntsCreationLarvae / 100 * this.storage.maxLarvae
+        && this.resources.seeds <= useSettingsStore().autoThresholds.autoEliteAntsCreationSeeds / 100 * this.storage.maxSeeds
       ) {
         return
       }
@@ -289,8 +289,8 @@ export const useResourcesStore = defineStore('resources', {
     buyMaxQueens(fromPrestige = false) {
       if (
         fromPrestige
-        && this.resources.ants < useSettingsStore().autoThresholds.autoQueenCreationAnts / 100 * this.storage.maxAnts
-        && this.resources.seeds < useSettingsStore().autoThresholds.autoQueenCreationSeeds / 100 * this.storage.maxSeeds
+        && this.resources.ants <= useSettingsStore().autoThresholds.autoQueenCreationAnts / 100 * this.storage.maxAnts
+        && this.resources.seeds <= useSettingsStore().autoThresholds.autoQueenCreationSeeds / 100 * this.storage.maxSeeds
       ) {
         return
       }
