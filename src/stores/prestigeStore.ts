@@ -222,7 +222,7 @@ export const usePrestigeStore = defineStore('prestige', {
       const prestigePointUpper = (this.timesPrestiged * 0.2) + 1 // Scale points based on times prestiged
 
       // Calculate prestige points using log1.01 for faster scaling
-      const points = Math.floor(Math.log2(currentResources/baseThreshold) * 15) * prestigePointUpper
+      const points = Math.floor(Math.log2(currentResources/baseThreshold) * 12) * prestigePointUpper
 
       // Ensure points don’t drop below 0
       return points > 0 ? points : 0
