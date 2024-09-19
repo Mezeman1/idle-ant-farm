@@ -74,7 +74,7 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'betterAnts',
         name: 'Stronger Ants',
-        description: 'Increase ants army strength by 10%',
+        description: 'Increase ants army strength by 10% (decreases with each purchase)',
         cost: 50,
         applyOnPrestige: false,
         category: 'combat',
@@ -82,7 +82,7 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'betterAntsDefense',
         name: 'Stronger Ants Defense',
-        description: 'Increase ants army defense by 10%',
+        description: 'Increase ants army defense by 10% (decreases with each purchase)',
         cost: 50,
         applyOnPrestige: false,
         category: 'combat',
@@ -91,7 +91,7 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'startWithAnts',
         name: 'Start with Ants',
         description: 'Start the game with ants!',
-        cost: 15,
+        cost: 20,
         applyOnPrestige: true,
         category: 'expansion',
       },
@@ -130,14 +130,14 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'productionBoost',
         name: 'Production Boost',
-        description: 'Increase production speed by 20%',
+        description: 'Increase production speed by 20% (decreases with each purchase)',
         cost: 10,
         category: 'production',
       },
       {
         id: 'queenEfficiency',
         name: 'Queen Efficiency',
-        description: 'Queens produce 50% more larvae',
+        description: 'Queens produce 50% more larvae (decreases with each purchase)',
         cost: 15,
         category: 'production',
       },
@@ -205,7 +205,7 @@ export const usePrestigeStore = defineStore('prestige', {
       const resourcesStore = useResourcesStore()
 
       // Get current ants from the game store
-      const ants = resourcesStore.resources.ants
+      const ants = resourcesStore.resources.ants - this.antsFromPrestigeShop
 
       // Calculate prestige points using log1.01 scaling for ants
       return this.calculatePrestigePointsFor(ants, this.baseAntThreshold) // Only ants will give prestige points
@@ -274,7 +274,7 @@ export const usePrestigeStore = defineStore('prestige', {
           defaultCostMultiplier = 3
           break
         case 'startWithAnts':
-          defaultCostMultiplier = 1.1
+          defaultCostMultiplier = 1.3
           break
       }
       return defaultCostMultiplier
@@ -297,8 +297,6 @@ export const usePrestigeStore = defineStore('prestige', {
 
         this.purchasedUpgrades.push(upgradeId)
         this.applyPrestigeUpgrade(upgradeId)
-
-        console.log(`Purchased upgrade: ${upgrade.name}`)
         return true
       } else {
         console.log('Not enough prestige points or invalid upgrade.')
@@ -337,15 +335,12 @@ export const usePrestigeStore = defineStore('prestige', {
     applyPrestigeUpgrade(upgradeId, fromPrestige = false) {
       const gameStore = useGameStore()
       const resourcesStore = useResourcesStore()
-      console.log('Try to apply upgrade:', upgradeId, fromPrestige)
       const prestigeInShop = this.prestigeShop.find(u => u.id === upgradeId)
-      console.log('Prestige in shop:', prestigeInShop)
       if (fromPrestige && prestigeInShop?.applyOnPrestige === false) {
         console.log('Upgrade not applicable for prestige purchase:', upgradeId)
         return
       }
 
-      console.log('Applying upgrade:', upgradeId)
       // Object map for handling upgrade logic
       const upgrades = {
         storageUpgrade: () => {
@@ -358,11 +353,26 @@ export const usePrestigeStore = defineStore('prestige', {
           resourcesStore.storage.maxEliteAnts +=1 // Increase elite ant storage
         },
         productionBoost: () => {
-          resourcesStore.productionRates.larvaeProductionRate *= 1.2
-          resourcesStore.productionRates.collectionRatePerAnt *= 1.2
+          const prestigeScalingFactor = Math.log2(this.amountOfUpgrade(upgradeId) + 1) + 1
+
+          if (this.amountOfUpgrade(upgradeId) === 1) {
+            resourcesStore.productionRates.collectionRatePerAnt *= 1.2
+
+            return
+          }
+
+          resourcesStore.productionRates.collectionRatePerAnt *= 1 + (0.2 / prestigeScalingFactor)
         },
         queenEfficiency: () => {
-          resourcesStore.productionRates.larvaeProductionRate *= 1.5
+          const prestigeScalingFactor = Math.log2(this.amountOfUpgrade(upgradeId) + 1) + 1
+
+          if (this.amountOfUpgrade(upgradeId) === 1) {
+            resourcesStore.productionRates.larvaeProductionRate *= 1.5
+
+            return
+          }
+
+          resourcesStore.productionRates.larvaeProductionRate *= 1 + (0.5 / prestigeScalingFactor)
         },
         autoLarvae: () => {
           this.autoLarvaeCreation = true
@@ -371,11 +381,27 @@ export const usePrestigeStore = defineStore('prestige', {
           this.autoEliteAntsCreation = true
         },
         betterAnts: () => {
-          gameStore.attackPerAnt *= 1.1
+          const prestigeScalingFactor = Math.log2(this.amountOfUpgrade(upgradeId) + 1) + 1
+          if (this.amountOfUpgrade(upgradeId) === 1) {
+            gameStore.attackPerAnt *= 1.1
+            gameStore.setupAdventureStats()
+
+            return
+          }
+
+          gameStore.attackPerAnt *= 1 + (0.1 / prestigeScalingFactor)
           gameStore.setupAdventureStats()
         },
         betterAntsDefense: () => {
-          gameStore.defensePerAnt *= 1.1
+          const prestigeScalingFactor = Math.log2(this.amountOfUpgrade(upgradeId) + 1) + 1
+          if (this.amountOfUpgrade(upgradeId) === 1) {
+            gameStore.defensePerAnt *= 1.1
+            gameStore.setupAdventureStats()
+
+            return
+          }
+
+          gameStore.defensePerAnt *= 1 + (0.1 / prestigeScalingFactor)
           gameStore.setupAdventureStats()
         },
         autoAnts: () => {

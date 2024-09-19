@@ -202,10 +202,24 @@ export const useResourcesStore = defineStore('resources', {
         // Not sure if we want to check on this yet, leaving it here for now
       }
 
-      while (this.resources.seeds >= this.seedCostPerAntHousing) {
-        this.resources.seeds -= this.seedCostPerAntHousing
-        this.resources.antHousing += 1
+      const seeds = this.resources.seeds
+      let antHousing = this.resources.antHousing
+
+      // Calculate how many housings we can afford
+      let totalCost = 0
+      let numberOfPurchases = 0
+
+      while (seeds >= antHousing + 1) {
+        totalCost += antHousing + 1
+        if (totalCost > seeds) break
+
+        numberOfPurchases += 1
+        antHousing += 1
       }
+
+      // Deduct seeds and increase ant housing in bulk
+      this.resources.seeds -= totalCost
+      this.resources.antHousing += numberOfPurchases
     },
     // Function to create ants using larvae and seeds
     createEliteAnts() {
