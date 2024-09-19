@@ -216,7 +216,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
           console.error(`Item ${item.id} not found in registry`)
           return null
         }
-      }) ?? []
+      }).filter(item => item !== null) ?? []
 
       this.sortInventory()
       this.maxInventory = savedInventory.maxInventory ?? this.maxInventory
