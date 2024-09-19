@@ -106,7 +106,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
 
     async unequipItem(slotType: string, index?: number) {
       const inventoryStore = useInventoryStore()
-      const gameStore = useGameStore()
+      const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
       const context = { gameStore, adventureStore }
       let item: Item | null = null
