@@ -105,6 +105,9 @@
               }}
               ({{ formatNumber(resourcesStore.larvaePerMinute) }} /min)
             </p>
+            <p class="text-sm">
+              Total bonus: {{ formatNumber(resourcesStore.productionRates.larvaeProductionModifier * 100, 2) }}%
+            </p>
             <StorageButtons
               :cost-string="larvaeStorageCostString"
               :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
