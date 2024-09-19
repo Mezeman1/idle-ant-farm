@@ -461,7 +461,7 @@ export const adventureEnemyWaves = [
             'amountBetween': [1, 1],
           },
           {
-            'name': 'Underworld Armor', // New Item
+            'name': 'Underworld Chestplate', // New Item
             'chance': 0.02, // 2% chance
             'amountBetween': [1, 1],
           },
@@ -502,12 +502,12 @@ export const adventureEnemyWaves = [
           },
           seedDrop(20000, 30000, 0.5),
           {
-            'name': 'Underworld Scepter', // New Item
+            'name': 'Underworld Blade', // New Item
             'chance': 0.01, // 1% chance (boss item)
             'amountBetween': [1, 1],
           },
           {
-            'name': 'Underworld Ring', // New Item
+            'name': 'Underworld Cloack', // New Item
             'chance': 0.005, // 0.5% chance
             'amountBetween': [1, 1],
           },
@@ -536,7 +536,7 @@ export const adventureEnemyWaves = [
             'amountBetween': [1, 2],
           },
           {
-            'name': 'Arctic Helm', // New Item
+            'name': 'Tundra Helm', // New Item
             'chance': 0.02, // 2% chance
             'amountBetween': [1, 1],
           },
@@ -556,7 +556,7 @@ export const adventureEnemyWaves = [
             'amountBetween': [1, 1],
           },
           {
-            'name': 'Arctic Armor', // New Item
+            'name': 'Tundra Armor', // New Item
             'chance': 0.02, // 2% chance
             'amountBetween': [1, 1],
           },
@@ -576,7 +576,7 @@ export const adventureEnemyWaves = [
             'amountBetween': [1, 1],
           },
           {
-            'name': 'Arctic Greaves', // New Item
+            'name': 'Tundra Greaves', // New Item
             'chance': 0.02, // 2% chance
             'amountBetween': [1, 1],
           },
@@ -597,12 +597,12 @@ export const adventureEnemyWaves = [
           },
           seedDrop(50000, 60000, 0.5),
           {
-            'name': 'Arctic Scepter', // New Item
+            'name': 'Tundra Blade', // New Item
             'chance': 0.01, // 1% chance (boss item)
             'amountBetween': [1, 1],
           },
           {
-            'name': 'Arctic Ring', // New Item
+            'name': 'Tundra Cloak', // New Item
             'chance': 0.005, // 0.5% chance
             'amountBetween': [1, 1],
           },
