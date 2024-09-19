@@ -33,6 +33,11 @@ export const useResourcesStore = defineStore('resources', {
       maxEliteAnts: 1,
     },
 
+    upgrades: {
+      maxSeedStorage: 0,
+      maxLarvaeStorage: 0,
+    },
+
     initialCaps: {
       maxSeeds: 1000,
       maxLarvae: 10,
@@ -329,6 +334,8 @@ export const useResourcesStore = defineStore('resources', {
           MAX_SAFE_VALUE,
         )
 
+        this.upgrades.maxSeedStorage += 1
+
         // Increase the upgrade cost by 30%, but prevent it from exceeding MAX_SAFE_VALUE
         this.upgradeCosts.seedStorageUpgradeCost = Math.min(
           Math.floor(this.upgradeCosts.seedStorageUpgradeCost * this.upgradeCostFactor),
@@ -365,8 +372,21 @@ export const useResourcesStore = defineStore('resources', {
         // Update the upgrade cost
         this.upgradeCosts.seedStorageUpgradeCost = nextUpgradeCost
 
+        this.upgrades.maxSeedStorage += affordableUpgrades
         console.log(`Upgraded seed storage ${affordableUpgrades} times.`)
       }
+    },
+    upgradeSeedStorageEffect() {
+      this.storage.maxSeeds = Math.min(
+        Math.floor(this.storage.maxSeeds * this.storageUpgradeFactor),
+        MAX_SAFE_VALUE,
+      )
+    },
+    upgradeLarvaeStorageEffect() {
+      this.storage.maxLarvae = Math.min(
+        Math.floor(this.storage.maxLarvae * this.storageUpgradeFactor),
+        MAX_SAFE_VALUE,
+      )
     },
     // Function to upgrade larvae storage
     upgradeLarvaeStorage(fromPrestige = false) {
@@ -382,6 +402,8 @@ export const useResourcesStore = defineStore('resources', {
 
         // Increase the upgrade cost by 30%
         this.upgradeCosts.larvaeStorageUpgradeCost = Math.floor(this.upgradeCosts.larvaeStorageUpgradeCost * this.upgradeCostFactor)
+
+        this.upgrades.maxLarvaeStorage += 1
       }
     },
     upgradeMaxLarvaeStorage() {
@@ -406,6 +428,8 @@ export const useResourcesStore = defineStore('resources', {
 
         // Update the upgrade cost
         this.upgradeCosts.larvaeStorageUpgradeCost = nextUpgradeCost
+
+        this.upgrades.maxLarvaeStorage += affordableUpgrades
 
         console.log(`Upgraded larvae storage ${affordableUpgrades} times.`)
       }
@@ -480,7 +504,7 @@ export const useResourcesStore = defineStore('resources', {
     getResourcesState() {
       return {
         resources: this.resources,
-        storage: this.storage,
+        upgrades: this.upgrades,
         upgradeCosts: this.upgradeCosts,
         resourceCosts: {
           seedCostPerEliteAnt: this.resourceCosts.seedCostPerEliteAnt,
@@ -502,6 +526,8 @@ export const useResourcesStore = defineStore('resources', {
 
       this.upgradeCosts = savedState.upgradeCosts ?? this.upgradeCosts
 
+      this.upgrades = savedState.upgrades ?? this.upgrades
+
       this.resourceCosts = {
         ...this.resourceCosts,
         ...savedState.resourceCosts,
@@ -511,6 +537,18 @@ export const useResourcesStore = defineStore('resources', {
         ...this.productionRates,
         ...savedState.productionRates,
       }
+
+      this.applyUpgrades()
+    },
+
+    applyUpgrades() {
+        for (let i = 0; i < this.upgrades.maxSeedStorage; i++) {
+          this.upgradeSeedStorageEffect()
+        }
+
+        for (let i = 0; i < this.upgrades.maxLarvaeStorage; i++) {
+          this.upgradeLarvaeStorageEffect()
+        }
     },
 
     resetResourcesState(isDebug = false) {
@@ -546,6 +584,11 @@ export const useResourcesStore = defineStore('resources', {
         maxAnts: this.initialCaps.maxAnts,
         maxQueens: this.initialCaps.maxQueens,
         maxEliteAnts: this.initialCaps.maxEliteAnts,
+      }
+
+      this.upgrades = {
+        maxSeedStorage: 0,
+        maxLarvaeStorage: 0,
       }
 
       // Reset upgrade costs
