@@ -182,6 +182,7 @@ export const useResourcesStore = defineStore('resources', {
       if (
         fromPrestige
         && this.resources.larvae < useSettingsStore().autoThresholds.autoAntCreationLarvae / 100 * this.storage.maxLarvae
+        || fromPrestige
         && this.resources.seeds < useSettingsStore().autoThresholds.autoAntCreationSeeds / 100 * this.storage.maxSeeds
       ) {
         return
@@ -252,6 +253,7 @@ export const useResourcesStore = defineStore('resources', {
       if (
         fromPrestige
         && this.resources.larvae < useSettingsStore().autoThresholds.autoEliteAntsCreationLarvae / 100 * this.storage.maxLarvae
+        || fromPrestige
         && this.resources.seeds < useSettingsStore().autoThresholds.autoEliteAntsCreationSeeds / 100 * this.storage.maxSeeds
       ) {
         return
@@ -290,6 +292,7 @@ export const useResourcesStore = defineStore('resources', {
       if (
         fromPrestige
         && this.resources.ants < useSettingsStore().autoThresholds.autoQueenCreationAnts / 100 * this.storage.maxAnts
+        || fromPrestige
         && this.resources.seeds < useSettingsStore().autoThresholds.autoQueenCreationSeeds / 100 * this.storage.maxSeeds
       ) {
         return
