@@ -89,7 +89,7 @@ export const useResourcesStore = defineStore('resources', {
     // Calculate larvae production per minute based on queens
     larvaePerMinute: (state) => state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier,
     // Calculate larvae production per second for real-time updates
-    larvaePerSecond: (state) => (state.resources.queens * state.productionRates.larvaeProductionRate) / 60,
+    larvaePerSecond: (state) => (state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier) / 60,
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => {
       const eliteMultiplier = state.resources.eliteAnts > 0 ? (state.resources.eliteAnts * state.multiplierPerEliteAnt) : 1
