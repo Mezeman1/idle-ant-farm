@@ -600,6 +600,8 @@ export const useGameStore = defineStore('gameStore', {
 
       const tunnelStore = useTunnelStore()
       tunnelStore.loadTunnelState(savedState)
+
+      resourcesStore.applyUpgrades()
     },
     async resetGameState(debug = false) {
       console.log('Resetting game state...')

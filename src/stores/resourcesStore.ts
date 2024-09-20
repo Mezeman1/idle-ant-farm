@@ -540,8 +540,6 @@ export const useResourcesStore = defineStore('resources', {
         ...this.productionRates,
         ...savedState.productionRates,
       }
-
-      this.applyUpgrades()
     },
 
     applyUpgrades() {
