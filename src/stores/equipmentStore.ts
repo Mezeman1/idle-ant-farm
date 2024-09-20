@@ -306,6 +306,9 @@ export const useEquipmentStore = defineStore('equipmentStore', {
 
       // Recalculate set bonuses
       this.checkForSetBonus()
+
+      // Add this line to recalculate adventure stats after loading equipment
+      useGameStore().setupAdventureStats()
     },
   },
 })

@@ -4,6 +4,8 @@ import {useGameStore} from '@/stores/gameStore'
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
     showPrestigeWarning: true,
+    showBackground: true,
+    showAnimation: true,
     autoThresholds: {
       // Thresholds for auto-creation of resources
       autoSeedStorageUpgrade: 0,
@@ -32,6 +34,8 @@ export const useSettingsStore = defineStore('settings', {
     },
     setDefaults() {
       this.showPrestigeWarning = this.showPrestigeWarning ?? true
+      this.showBackground = this.showBackground ?? true
+      this.showAnimation = this.showAnimation ?? true
       this.autoThresholds = {
           autoSeedStorageUpgrade: this.autoThresholds.autoSeedStorageUpgrade ?? 0,
           autoLarvaeStorageUpgrade: this.autoThresholds.autoLarvaeStorageUpgrade ?? 0,

@@ -616,9 +616,6 @@ export const useGameStore = defineStore('gameStore', {
         // Reset the local game state, including prestige points if in debug mode
         await this.resetLocalGameState({isDebug: debug})
 
-        // Apply any prestige-based bonuses
-        usePrestigeStore().applyPrestigeUpgrades()
-
         // Reset other stores (adventure, inventory, etc.)
         await this.resetOtherStores(debug)
 
@@ -657,7 +654,7 @@ export const useGameStore = defineStore('gameStore', {
       console.log('Game state cleared from Firestore')
     },
 
-    resetLocalGameState({isDebug}): Promise<void> {
+    async resetLocalGameState({isDebug}): Promise<void> {
       return new Promise((resolve) => {
         console.log('Resetting local game state...')
 

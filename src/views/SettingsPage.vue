@@ -34,6 +34,15 @@
         </p>
       </div>
 
+      <div class="flex flex-col gap-2">
+        <label>Show prestige warning</label>
+        <input
+          v-model="settingsStore.showPrestigeWarning"
+          type="checkbox"
+          class="form-checkbox"
+        >
+      </div>
+
       <!-- Slider for auto buy seed storage threshold -->
       <div class="flex flex-col gap-2">
         <label>Auto buy seed storage threshold</label>
@@ -137,6 +146,36 @@
         <span>{{ settingsStore.autoThresholds.autoQueenCreationAnts }}%</span>
       </div>
 
+      <div class="flex flex-col gap-2">
+        <label>Auto buy seed storage threshold</label>
+        <input
+          v-model="settingsStore.autoThresholds.autoCreateHousing"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          class="form-range"
+        >
+        <span>{{ settingsStore.autoThresholds.autoCreateHousing }}%</span>
+      </div>
+
+      <!-- New buttons for background and animation -->
+      <div class="flex flex-col gap-4 md:col-span-1">
+        <button
+          class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded shadow"
+          @click="toggleBackground"
+        >
+          {{ settingsStore.showBackground ? 'Hide Background' : 'Show Background' }}
+        </button>
+
+        <button
+          class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded shadow"
+          @click="toggleAnimation"
+        >
+          {{ settingsStore.showAnimation ? 'Hide Animation' : 'Show Animation' }}
+        </button>
+      </div>
+
       <!-- Reset and Delete buttons -->
       <div class="flex flex-col gap-4 md:col-span-1">
         <button
@@ -227,6 +266,14 @@ const handleDeleteCancel = () => {
 const exportGame = async () => {
   const data = await gameStore.exportData()
   importString.value = data
+}
+
+const toggleBackground = () => {
+  settingsStore.showBackground = !settingsStore.showBackground
+}
+
+const toggleAnimation = () => {
+  settingsStore.showAnimation = !settingsStore.showAnimation
 }
 </script>
 

@@ -421,7 +421,7 @@ export const usePrestigeStore = defineStore('prestige', {
           this.autoLarvaeStorageUpgrade = true
         },
         autoCreateHousing: () => {
-          this.autoCreateHousing = false
+          this.autoCreateHousing = true
         },
         autoAdventure: () => {
           this.autoAdventure = true

@@ -4,8 +4,8 @@
     class="relative h-screen w-screen overflow-hidden"
   >
     <AntSimulation
-      v-if="gameStore.loaded && showBackground"
-      :show-animation="showAnimation"
+      v-if="gameStore.loaded && settingsStore.showBackground"
+      :show-animation="settingsStore.showAnimation"
       :ant-count="resourcesStore.resources.ants"
       :queen-count="resourcesStore.resources.queens"
       :larvae-count="resourcesStore.resources.larvae"
@@ -19,20 +19,6 @@
         @click="isMinimized = !isMinimized"
       >
         {{ isMinimized ? 'Show UI' : 'Hide UI' }}
-      </button>
-
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white font-bold rounded m-1 shadow text-xs small py-1 px-2"
-        @click="showBackground = !showBackground"
-      >
-        {{ showBackground ? 'Hide Background' : 'Show Background' }}
-      </button>
-
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white font-bold rounded m-1 shadow text-xs small py-1 px-2"
-        @click="showAnimation = !showAnimation"
-      >
-        {{ showAnimation ? 'Hide Animation' : 'Show Animation' }}
       </button>
 
       <button
@@ -336,13 +322,13 @@ import PrestigeShop from '@/views/PrestigeShop.vue'
 import EquipmentPage from '@/views/EquipmentPage.vue'
 import AchievementPage from '@/views/AchievementPage.vue'
 import {useResourcesStore} from '@/stores/resourcesStore'
+import {useSettingsStore} from '@/stores/settingsStore'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
 const resourcesStore = useResourcesStore()
 const isMinimized = ref(false) // Minimized state
-const showBackground = ref(true) // Show background state
-const showAnimation = ref(true) // Show animation state
+const settingsStore = useSettingsStore()
 const activeTab = ref('resources')
 const progress = computed(() => {
   const gameProgress = gameStore.loaded ? 50 : (gameStore.progress / 2) // Half for game progress
