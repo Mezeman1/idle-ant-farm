@@ -351,6 +351,7 @@ const canSave = ref(true)
 const timeLeft = ref(10) // Time left for the cooldown in seconds
 let interval: number | null = null // To store the cooldown interval
 let saveInterval: number | null = null // To store the auto-save interval
+const enableSaveInterval = ref(true)
 
 // Function to handle the cooldown on the save button
 const saveGameWithCooldown = async () => {
@@ -376,7 +377,18 @@ const saveGameWithCooldown = async () => {
 const debugMode = import.meta.env.MODE === 'localhost'
 const loggedInUser = computed(() => gameStore.loggedIn)
 
+function saveIntervalFunction() {
+  // Ensure only one interval is set
+  if (!saveInterval && enableSaveInterval.value) {
+    // Save game state every 5 minutes (fallback for regular saves)
+    saveInterval = window.setInterval(() => {
+      gameStore.saveGameState()
+    }, 60000)
+  }
+}
+
 onMounted(() => {
+  enableSaveInterval.value = true
   // Handle authentication state and game loading
   firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
@@ -384,13 +396,7 @@ onMounted(() => {
       await gameStore.loadGameState() // Load game state and calculate offline progress
       gameStore.startGameLoop() // Start the game loop
 
-      // Ensure only one interval is set
-      if (!saveInterval) {
-        // Save game state every 5 minutes (fallback for regular saves)
-        saveInterval = window.setInterval(() => {
-          gameStore.saveGameState()
-        }, 60000)
-      }
+      saveIntervalFunction()
 
       // Add event listeners for window close (desktop) and visibility change (desktop + mobile)
       window.addEventListener('beforeunload', handleBeforeUnload) // Primarily for desktop
@@ -402,6 +408,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(async () => {
+  enableSaveInterval.value = false
+
   if (!loggedInUser.value) return
 
   // Save game state and stop game loop before leaving
@@ -427,10 +435,12 @@ onBeforeUnmount(async () => {
 // Function to handle visibility change (works on mobile)
 async function handleVisibilityChange() {
   if (document.hidden) {
+    enableSaveInterval.value = false
     // Save game state when the tab goes into the background (or app is swiped away on mobile)
     console.log('Tab is hidden (backgrounded), saving game state...')
     await gameStore.saveGameState()
   } else {
+    enableSaveInterval.value = true
     // Reload the game state when tab becomes visible again (optional, if needed)
     console.log('Tab is visible again, reloading game state...')
     await gameStore.loadGameState()
@@ -439,12 +449,14 @@ async function handleVisibilityChange() {
 }
 
 function handlePageHide(event: PageTransitionEvent) {
+  enableSaveInterval.value = false
   // Save game state when the page is hidden (e.g., when navigating to another page)
   console.log('Page is hidden, saving game state...')
   gameStore.saveGameState()
 }
 
 function handleFreeze() {
+  enableSaveInterval.value = false
   // Save game state when the page is frozen (e.g., when the app is sent to the background on mobile)
   console.log('Page is frozen, saving game state...')
   gameStore.saveGameState()
@@ -452,6 +464,7 @@ function handleFreeze() {
 
 // Function to handle saving the game state before unloading the window (works on desktop only)
 function handleBeforeUnload() {
+  enableSaveInterval.value = false
   // Save game state
   gameStore.saveGameState()
 }
