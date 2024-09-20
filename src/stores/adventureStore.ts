@@ -169,8 +169,6 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Main battle loop with requestAnimationFrame (tick-based)
     async battleLoop(currentTime) {
-      if (this.loaded === false) return
-
       if (!this.battleRunning) {
         console.log('Battle loop stopped')
         this.loopActive = this.loopActive.map(() => false) // Ensure the loop is fully inactive when stopped
