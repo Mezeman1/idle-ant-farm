@@ -147,7 +147,7 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <label>Auto buy seed storage threshold</label>
+        <label>Auto buy housing threshold</label>
         <input
           v-model="settingsStore.autoThresholds.autoCreateHousing"
           type="range"
