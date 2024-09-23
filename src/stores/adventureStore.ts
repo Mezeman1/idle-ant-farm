@@ -297,11 +297,6 @@ export const useAdventureStore = defineStore('adventureStore', {
               Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
               drop.amountBetween[0]
 
-            if (!this.isSimulatingOffline) {
-              const $toast = useToast()
-              $toast.success(`Loot: +${amount} ${drop.name}`)
-            }
-
             if (drop.name === 'Seeds') {
               // Add seeds to gameStore
               useResourcesStore().resources.seeds += amount
@@ -310,6 +305,10 @@ export const useAdventureStore = defineStore('adventureStore', {
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
               const item = useInventoryStore().getItemById(itemId)
               if (item) {
+                if (!this.isSimulatingOffline) {
+                  const $toast = useToast()
+                  $toast.success(`Loot: +${amount} ${drop.name}`)
+                }
                 // Await the item drop handling
                 await this.handleItemDrop(item, amount)
               } else {
@@ -616,11 +615,7 @@ export const useAdventureStore = defineStore('adventureStore', {
               Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
               drop.amountBetween[0]
 
-            // Only show toast notifications if not simulating offline progress
-            if (!this.isSimulatingOffline) {
-              const $toast = useToast()
-              $toast.success(`Loot: +${amount} ${drop.name}`)
-            }
+
 
             if (drop.name === 'Seeds') {
               useResourcesStore().collectSeedsManually(amount)
@@ -628,6 +623,11 @@ export const useAdventureStore = defineStore('adventureStore', {
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
               const item = useInventoryStore().getItemById(itemId)
               if (item) {
+                // Only show toast notifications if not simulating offline progress
+                if (!this.isSimulatingOffline) {
+                  const $toast = useToast()
+                  $toast.success(`Loot: +${amount} ${drop.name}`)
+                }
                 this.handleItemDrop(item, amount)
               } else {
                 console.error(`Item ${drop.name} not found in registry`)
