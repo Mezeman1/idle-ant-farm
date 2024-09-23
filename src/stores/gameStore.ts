@@ -716,6 +716,9 @@ export const useGameStore = defineStore('gameStore', {
       prestigeStore.autoCreateHousing = false
 
       inventoryStore.resetInventoryState()
+
+      const equipmentStore = useEquipmentStore()
+      equipmentStore.resetEquipmentState()
     },
 
     async resetOtherStores(debug) {
