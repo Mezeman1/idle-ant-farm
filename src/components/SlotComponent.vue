@@ -4,24 +4,27 @@
     class="slot bg-opacity-50 rounded-lg shadow-md flex items-center justify-center p-1"
     :class="slotClasses"
     :draggable="isDraggable"
+    tabindex="0"
+    role="button"
+    :aria-label="getAriaLabel"
     @drop="onDrop"
     @dragover.prevent
     @dragstart="onDragStart"
     @dragend="onDragEnd"
     @dblclick="onDoubleClick"
     @click="onClick"
+    @keydown.space.prevent="onKeyDownSpace"
+    @keydown.enter.prevent="onKeyDownSpace"
   >
     <p
       class="font-bold text-center break-words"
       :class="{'text-3xs': isMobile, 'text-xs': !isMobile }"
     >
-      <!-- Adjust text size dynamically -->
       <span v-if="item">
         {{ item.name }}
         <span v-if="item.level"> (Level {{ item.level }})</span>
       </span>
       <span v-else>{{ defaultText }}</span>
-      <!-- Show set information if item is part of a set -->
       <span
         v-if="item && item.set"
         class="text-3xs sm:text-2xs"
@@ -34,12 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, defineEmits } from 'vue'
-import { useEquipmentStore } from '@/stores/equipmentStore'
+import {computed, defineEmits, defineProps} from 'vue'
+import {useEquipmentStore} from '@/stores/equipmentStore'
 
 const equipmentStore = useEquipmentStore()
 
-// Assume these props will be passed from the parent component
 const props = defineProps({
   item: Object,
   slotType: String,
@@ -92,12 +94,11 @@ const isDraggable = computed(() => {
 const slotClasses = computed(() => {
   return {
     'bg-gray-700 text-white': !props.item,
-    'bg-green-500 text-white': props.item && props.slotType === 'head' || props.slotType === 'head' || props.item?.slotType === 'head',
-    'bg-blue-500 text-white': props.item && props.slotType === 'body' || props.slotType === 'body' || props.item?.slotType === 'body',
-    'bg-purple-500 text-white': props.item && props.slotType === 'legs' || props.slotType === 'legs' || props.item?.slotType === 'legs',
-    'bg-red-500 text-white': props.item && props.slotType === 'weapon' || props.slotType === 'weapon' || props.item?.slotType === 'weapon',
-    'bg-yellow-500 text-white': props.item && props.slotType === 'accessory' || props.slotType === 'accessory' || props.item?.slotType === 'accessory',
-
+    'bg-green-500 text-white': props.item && (props.slotType === 'head' || props.item?.slotType === 'head'),
+    'bg-blue-500 text-white': props.item && (props.slotType === 'body' || props.item?.slotType === 'body'),
+    'bg-purple-500 text-white': props.item && (props.slotType === 'legs' || props.item?.slotType === 'legs'),
+    'bg-red-500 text-white': props.item && (props.slotType === 'weapon' || props.item?.slotType === 'weapon'),
+    'bg-yellow-500 text-white': props.item && (props.slotType === 'accessory' || props.item?.slotType === 'accessory'),
     'cursor-pointer': props.isMobile && props.item,
     'cursor-move': props.isDesktop && props.item,
   }
@@ -151,6 +152,25 @@ const onClick = (event: MouseEvent) => {
   if (props.isMobile && props.item) {
     emit('show-context-menu', props.item, props.slotType, props.index, event)
   }
+}
+
+// Accessibility: Handle Space key to equip/unequip item
+const onKeyDownSpace = () => {
+  if (props.item) {
+    if (props.isInventorySlot) {
+      emit('double-click-equip', props.item)
+    } else {
+      emit('double-click-unequip', props.item, props.slotType, props.index)
+    }
+  }
+}
+
+const getAriaLabel = () => {
+  if (props.item) {
+    return `Slot ${props.slotType}, press space to equip or unequip ${props.item?.name}`
+  }
+
+  return 'Empty Slot'
 }
 </script>
 
