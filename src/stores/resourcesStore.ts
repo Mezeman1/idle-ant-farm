@@ -79,6 +79,7 @@ export const useResourcesStore = defineStore('resources', {
     },
 
     royalJellyCollectionChance: 0.001, // 0.1% chance to collect royal jelly when queen produces larvae
+    royalJellyCollectionModifier: 1.0, // Multiplicative modifier for royal jelly collection chance
 
     // Balancing factors
     storageUpgradeFactor: 1.4, // How much each upgrade increases storage by (20%)
@@ -117,6 +118,10 @@ export const useResourcesStore = defineStore('resources', {
       }
 
       return state.resources.antHousing + 1
+    },
+    royalJellyChance: (state) => {
+      console.log(state.royalJellyCollectionChance * state.royalJellyCollectionModifier)
+      return state.royalJellyCollectionChance * state.royalJellyCollectionModifier
     },
   },
   actions: {
@@ -475,7 +480,7 @@ export const useResourcesStore = defineStore('resources', {
 
     tryCollectJelly() {
       if (useGameStore().royalJellyUnlocked && !useGameStore().simulatingOfflineProgress) {
-        const royalJellyChance = this.royalJellyCollectionChance
+        const royalJellyChance = this.royalJellyCollectionChance * this.royalJellyCollectionModifier
         const random = Math.random()
         if (random < royalJellyChance) {
           this.resources.royalJelly += 1

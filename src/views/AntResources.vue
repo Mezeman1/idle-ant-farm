@@ -446,7 +446,8 @@
             These ants do not reset on prestige.
           </p>
           <p class="text-2xs">
-            Queens have a chance to produce Royal Jelly.
+            Queens have a chance to produce Royal Jelly. <br>
+            Currently, you have a {{ formatNumber(resourcesStore.royalJellyChance, 4) }}% chance to produce Royal Jelly.
           </p>
         </div>
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">

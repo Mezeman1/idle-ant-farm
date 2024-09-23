@@ -182,6 +182,16 @@ export const usePrestigeStore = defineStore('prestige', {
         applyOnPrestige: true,
         category: 'auto',
       },
+      {
+        id: 'jellyBoost',
+        name: 'Royal Jelly Boost',
+        description: 'Increase the chance of queens producing royal jelly by 1%',
+        cost: 100,
+        category: 'production',
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('royalJelly')
+        },
+      },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 
     // Prestige-related variables
@@ -436,6 +446,9 @@ export const usePrestigeStore = defineStore('prestige', {
         royalJelly: () => {
           gameStore.royalJellyUnlocked = true
         },
+        jellyBoost: () => {
+          resourcesStore.royalJellyCollectionModifier += 0.01
+        },
       }
 
       // Execute the appropriate upgrade or log an error if the upgrade ID is invalid
@@ -470,6 +483,7 @@ export const usePrestigeStore = defineStore('prestige', {
         betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 50,
         betterAntsDefensePrestigeCost: this.prestigeShop.find(u => u.id === 'betterAntsDefense')?.cost ?? 50,
         startWithAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'startWithAnts')?.cost ?? 15,
+        jellyBoostCost: this.prestigeShop.find(u => u.id === 'jellyBoost')?.cost ?? 100,
 
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,
@@ -481,6 +495,7 @@ export const usePrestigeStore = defineStore('prestige', {
         autoAdventure: this.autoAdventure,
         eliteAntsUnlocked: this.upgradePurchased('eliteAnts'),
         royalJellyUnlocked: this.upgradePurchased('royalJelly'),
+        jellyBoost: this.upgradePurchased('jellyBoost'),
       }
     },
 
@@ -507,6 +522,7 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'betterAnts') shop.cost = savedState.betterAntsPrestigeCost ?? 50
         if (shop.id === 'betterAntsDefense') shop.cost = savedState.betterAntsDefensePrestigeCost ?? 50
         if (shop.id === 'startWithAnts') shop.cost = savedState.startWithAntsPrestigeCost ?? 15
+        if (shop.id === 'jellyBoost') shop.cost = savedState.jellyBoostCost ?? 100
       })
 
       this.applyPrestigeUpgrades()
@@ -532,6 +548,7 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'tunnels') shop.cost = 500
         if (shop.id === 'autoCreateHousing') shop.cost = 20
         if (shop.id === 'autoAdventure') shop.cost = 50
+        if (shop.id === 'jellyBoost') shop.cost = 100
       })
     },
 

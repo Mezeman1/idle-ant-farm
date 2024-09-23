@@ -186,6 +186,7 @@ const {startTunnelExploration, stopTunnelExploration, purchaseUpgrade} = tunnelS
 const selectedAnts = ref(10)
 const availableAnts = computed(() => tunnelStore.getAvailableAnts) // Assume there's a method that returns available ants
 const getSteps = computed(() => (availableAnts.value > 100 ? 10 : 1))
+
 </script>
 
 <style scoped>
