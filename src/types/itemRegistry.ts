@@ -1,5 +1,4 @@
 import {useAdventureStore} from '../stores/adventureStore'
-import {useGameStore} from '../stores/gameStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
 
 export interface Item {
@@ -26,7 +25,13 @@ export type SetBonus = {
   remove: () => void;
 };
 
-export type SetName = 'Worker Set' | 'Soldier Set' | 'Royal Set' | 'Volcano Set' | 'Underworld Set' | 'Arctic Tundra Set';
+export type SetName =
+  'Worker Set'
+  | 'Soldier Set'
+  | 'Royal Set'
+  | 'Volcano Set'
+  | 'Underworld Set'
+  | 'Arctic Tundra Set';
 
 export const setBonuses: Record<SetName, SetBonus> = {
   'Worker Set': {
@@ -375,8 +380,22 @@ export const passiveItems: Item[] = [
     rarity: 'legendary',
     applyOnLoad: true,
   },
-  // Add more passives here
-]
+  {
+    id: 'hellfire-ant-fang',
+    name: 'Hellfire Ant Fang',
+    type: 'passive',
+    description: 'Increases army attack by 20%.',
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier *= 1.2
+      return true
+    },
+    rarity: 'legendary',
+    applyOnLoad: true,
+  },
+];
+
 export const equipmentSets: Item[] = [
   // Worker Set
   {
@@ -821,6 +840,48 @@ export const equipmentSets: Item[] = [
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
+  {
+    id: 'volcano-ring',
+    name: 'Volcano Ring',
+    type: 'equipment',
+    description: 'A ring that increases army health by 1.2% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Volcano Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.012 * item.level
+      adventureStore.armyMaxHealthModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.012 * item.level
+      adventureStore.armyMaxHealthModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'volcano-scepter',
+    name: 'Volcano Scepter',
+    type: 'equipment',
+    description: 'A scepter that increases army attack by 1.5% per level.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Volcano Set',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 500,
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.015 * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + 0.015 * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+    },
+  }
   // Underworld Set
   {
     id: 'underworld-helm',
@@ -1033,7 +1094,6 @@ export const equipmentSets: Item[] = [
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
-
 ]
 
 export const itemRegistry: Item[] = [

@@ -437,7 +437,7 @@ export const adventureEnemyWaves = [
           seedDrop(10000, 15000, 0.5),
           {
             'name': 'Hellfire Ant Fang',
-            'chance': 0.08,
+            'chance': 0.04,
             'amountBetween': [1, 2],
           },
           {
