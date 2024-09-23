@@ -120,7 +120,6 @@ export const useResourcesStore = defineStore('resources', {
       return state.resources.antHousing + 1
     },
     royalJellyChance: (state) => {
-      console.log(state.royalJellyCollectionChance * state.royalJellyCollectionModifier)
       return state.royalJellyCollectionChance * state.royalJellyCollectionModifier
     },
   },
@@ -581,6 +580,9 @@ export const useResourcesStore = defineStore('resources', {
         collectionRatePerWorker: 6000,
         collectionRateModifier: 1,
         larvaeProductionModifier: 1,
+
+        royalJellyCollectionChance: 0.001,
+        royalJellyCollectionModifier: 1,
       }
 
       // Reset storage to initial caps
