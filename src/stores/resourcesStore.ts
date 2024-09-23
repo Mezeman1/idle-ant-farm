@@ -580,10 +580,10 @@ export const useResourcesStore = defineStore('resources', {
         collectionRatePerWorker: 6000,
         collectionRateModifier: 1,
         larvaeProductionModifier: 1,
-
-        royalJellyCollectionChance: 0.001,
-        royalJellyCollectionModifier: 1,
       }
+
+      this.royalJellyCollectionChance = 0.001
+      this.royalJellyCollectionModifier = 1.0
 
       // Reset storage to initial caps
       this.storage = {
