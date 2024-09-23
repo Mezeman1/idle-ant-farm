@@ -374,8 +374,6 @@ export const usePrestigeStore = defineStore('prestige', {
           }
 
           resourcesStore.productionRates.collectionRateModifier *= 1 + (0.2 / prestigeScalingFactor)
-
-          console.log('Production rate modifier:', resourcesStore.productionRates.collectionRateModifier)
         },
         queenEfficiency: () => {
           const prestigeScalingFactor = Math.log(this.amountOfUpgrade(upgradeId) + 1) / Math.log(3) + 1

@@ -60,7 +60,9 @@ export const useInventoryStore = defineStore('inventoryStore', {
       // Handle non-equipment items (stackable)
       const existingItem = this.inventory.find((i) => i.id === itemData.id)
       if (existingItem) {
-        existingItem.amount += itemData.amount || 1
+        if (existingItem.type !== 'passive') {
+          existingItem.amount += itemData.amount || 1
+        }
         this.sortInventory()
         return true // Early return
       }
@@ -116,7 +118,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
       const adventureStore = useAdventureStore()
 
       if (this.appliedPassiveEffects.includes(item.id) && item.type === 'passive') {
-        console.log(`Effect of item: ${item.name} already applied`)
         return false // Effect already applied
       }
 
@@ -196,6 +197,14 @@ export const useInventoryStore = defineStore('inventoryStore', {
         }
 
         return sortByRarity.indexOf(a.rarity) - sortByRarity.indexOf(b.rarity)
+      })
+
+      // Make all passive items 1 amount
+      this.inventory = this.inventory.map(item => {
+        if (item.type === 'passive') {
+          item.amount = 1
+        }
+        return item
       })
     },
     getInventoryState() {
