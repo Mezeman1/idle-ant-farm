@@ -881,7 +881,7 @@ export const equipmentSets: Item[] = [
       const bonusMultiplier = 1 + 0.015 * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
-  }
+  },
   // Underworld Set
   {
     id: 'underworld-helm',
