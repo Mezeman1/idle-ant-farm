@@ -297,6 +297,22 @@ export const useTunnelStore = defineStore('tunnelStore', {
       })
     },
     resetCosts() {
+      this.tunnelUpgrades = this.tunnelUpgrades.map(upgrade => {
+        switch (upgrade.id) {
+          case 'tunnelSpeed':
+            upgrade.cost = 500
+            break
+          case 'trapReduction':
+            upgrade.cost = 750
+            break
+          case 'resourceBoost':
+            upgrade.cost = 1000
+            break
+        }
+
+        return upgrade
+      })
+
       this.tunnelUpgrades.forEach(upgrade => {
         upgrade.cost = this.amountOfUpgrades(upgrade.id) > 0 ? upgrade.cost * Math.pow(upgrade.costMultiplier, this.amountOfUpgrades(upgrade.id)) : upgrade.cost
       })
