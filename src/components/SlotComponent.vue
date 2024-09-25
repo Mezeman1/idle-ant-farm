@@ -6,7 +6,7 @@
     :draggable="isDraggable"
     tabindex="0"
     role="button"
-    :aria-label="getAriaLabel"
+    :aria-label="getAriaLabel()"
     @drop="onDrop"
     @dragover.prevent
     @dragstart="onDragStart"
