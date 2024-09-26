@@ -640,17 +640,20 @@ export const useAdventureStore = defineStore('adventureStore', {
         resourcesStore.resources.ants * gameStore.attackPerAnt +
         (resourcesStore.resources.queens - 1) *
         gameStore.attackPerAnt *
-        resourcesStore.resourceCosts.antCostPerQueen
+        resourcesStore.resourceCosts.antCostPerQueen +
+        resourcesStore.resources.soldiers * gameStore.attackPerSoldier
       const baseDefense =
         resourcesStore.resources.ants * gameStore.defensePerAnt +
         (resourcesStore.resources.queens - 1) *
         gameStore.defensePerAnt *
-        resourcesStore.resourceCosts.antCostPerQueen
+        resourcesStore.resourceCosts.antCostPerQueen +
+        resourcesStore.resources.soldiers * gameStore.defensePerSoldier
       const baseHealth =
         resourcesStore.resources.ants * gameStore.healthPerAnt +
         (resourcesStore.resources.queens - 1) *
         gameStore.healthPerAnt *
-        resourcesStore.resourceCosts.antCostPerQueen
+        resourcesStore.resourceCosts.antCostPerQueen +
+        resourcesStore.resources.soldiers * gameStore.healthPerSoldier
 
       // Apply modifiers
       this.armyAttack = baseAttack * this.armyAttackModifier

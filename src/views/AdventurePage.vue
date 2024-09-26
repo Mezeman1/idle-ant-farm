@@ -167,6 +167,8 @@ watch(() => adventureStore.currentArea, () => {
   selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
   adventureStore.battleStatus = 'fighting'
   adventureStore.spawnRandomEnemy()
+  adventureStore.stopAllBattles()
+  adventureStore.startBattle()
 })
 
 onMounted(() => {

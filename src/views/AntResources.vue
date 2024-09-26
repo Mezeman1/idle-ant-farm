@@ -493,6 +493,35 @@
               </button>
             </div>
           </div>
+
+          <p class="text-2xs">
+            Each worker ant produces 100x the resources of a normal ant.
+          </p>
+
+          <div class="flex items-center justify-between">
+            <span>
+              Soldiers: {{ formatNumber(resourcesStore.resources.soldiers ?? 0, 0) }}/{{ formatNumber(resourcesStore.maxSoldiers, 0) }}
+            </span>
+            <div class="flex gap-1">
+              <button
+                :disabled="resourcesStore.resources.workers < 1"
+                class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="resourcesStore.downgradeAntFrom('soldiers')"
+              >
+                -
+              </button>
+              <button
+                :disabled="resourcesStore.resources.royalJellyAnts < 1"
+                class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="resourcesStore.upgradeAntTo('soldiers')"
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <p class="text-2xs">
+            Each soldier ant is 10x more effective at fighting bugs.
+          </p>
           <p>
             More types of ants will be available in the future.
           </p>

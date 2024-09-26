@@ -112,6 +112,9 @@ export const useResourcesStore = defineStore('resources', {
     maxWorkers: (state) => {
       return state.storage.maxAnts * 0.01
     },
+    maxSoldiers: (state) => {
+      return state.storage.maxAnts * 0.01
+    },
     seedCostPerAntHousing: (state) => {
       if (state.resources.antHousing === 0) {
         return 1
@@ -133,6 +136,10 @@ export const useResourcesStore = defineStore('resources', {
     upgradeAntTo(antType: 'workers' | 'soldiers') {
       if (this.resources.royalJellyAnts > 0) {
         if (antType === 'workers' && this.resources.workers >= this.maxWorkers) {
+          return
+        }
+
+        if (antType === 'soldiers' && this.resources.soldiers >= this.maxSoldiers) {
           return
         }
 

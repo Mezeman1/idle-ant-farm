@@ -519,6 +519,7 @@ export const usePrestigeStore = defineStore('prestige', {
         startWithAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'startWithAnts')?.cost ?? 15,
         jellyBoostCost: this.prestigeShop.find(u => u.id === 'jellyBoost')?.cost ?? 100,
         prestigeMultiplierCost: this.prestigeShop.find(u => u.id === 'prestigeMultiplier')?.cost ?? 500,
+        antHousingUpgradeCost: this.prestigeShop.find(u => u.id === 'antHousingUpgrade')?.cost ?? 50,
 
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,

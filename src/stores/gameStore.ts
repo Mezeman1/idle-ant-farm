@@ -39,6 +39,10 @@ export const useGameStore = defineStore('gameStore', {
     healthPerAnt: 10, // Health value per ant
     defensePerAnt: 1, // Defense value per ant
 
+    attackPerSoldier: 20, // Attack value per soldier
+    healthPerSoldier: 100, // Health value per soldier
+    defensePerSoldier: 10, // Defense value per soldier
+
     gameLoopInterval: null as number | null,
     isGameLoopRunning: false,
     progress: 0, // Track progress for offline calculation
