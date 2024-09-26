@@ -64,12 +64,12 @@ export const setBonuses: Record<SetName, SetBonus> = {
   'Royal Set': {
     apply: () => {
       const resourcesStore = useResourcesStore()
-      resourcesStore.productionRates.larvaeProductionRate *= 1.20
+      resourcesStore.productionRates.larvaeProductionModifier *= 1.20
       console.log('Applied Royal Set bonus')
     },
     remove: () => {
       const resourcesStore = useResourcesStore()
-      resourcesStore.productionRates.larvaeProductionRate /= 1.20
+      resourcesStore.productionRates.larvaeProductionModifier /= 1.20
       console.log('Removed Royal Set bonus')
     },
   },
