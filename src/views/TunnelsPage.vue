@@ -11,7 +11,7 @@
     </div>
 
     <!-- Ants sent and progress section -->
-    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-8">
+    <div class="flex flex-col items-center justify-between space-y-4 md:space-y-0 md:space-x-8">
       <div class="flex items-center space-x-4">
         <p class="text-base font-semibold text-yellow-400">
           Ants in Tunnels: <strong>{{ formatNumber(antsInTunnel, 0) }}</strong>
@@ -147,7 +147,7 @@
               Cost: {{ formatNumber(upgrade.cost) }} Mineral Shards
             </p>
             <button
-              v-if="!isUpgradeMaxed(upgrade)"
+              v-if="!isUpgradeMaxed(upgrade.id)"
               class="mt-2 w-full bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md shadow-md font-medium transition disabled:bg-gray-500 disabled:cursor-not-allowed"
               :disabled="resourcesStore.resources.mineralShards < upgrade.cost"
               @click="purchaseUpgrade(upgrade.id)"

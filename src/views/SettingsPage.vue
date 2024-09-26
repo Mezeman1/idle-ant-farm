@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col overflow-y-auto">
+  <div class="flex flex-col overflow-y-auto p-2">
     <!-- Modal Components -->
     <Modal
       v-if="isModalVisible"
