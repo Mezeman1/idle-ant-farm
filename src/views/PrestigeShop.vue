@@ -1,5 +1,5 @@
 <template>
-  <div class="max-h-screen-4/5 overflow-hidden flex flex-col">
+  <div class="flex flex-col overflow-y-auto h-full">
     <!-- Modal Component -->
     <Modal
       v-if="isModalVisible"
@@ -10,7 +10,7 @@
       @cancel="handleCancel"
     />
 
-    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-4 flex-grow overflow-hidden">
+    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-4 flex-grow">
       <p class="font-bold text-lg">
         Prestige
       </p>

@@ -1,7 +1,7 @@
 <template>
   <div
     v-tooltip="tooltipText"
-    class="slot bg-opacity-50 rounded-lg shadow-md flex items-center justify-center p-1"
+    class="slot rounded-lg shadow-md flex items-center justify-center p-1"
     :class="slotClasses"
     :draggable="isDraggable"
     tabindex="0"

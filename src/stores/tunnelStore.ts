@@ -66,6 +66,12 @@ export const useTunnelStore = defineStore('tunnelStore', {
       const resourcesStore = useResourcesStore()
       return resourcesStore.resources.ants
     },
+    isUpgradeMaxed(state) {
+      return (upgradeId: string) => {
+        const upgrade = state.tunnelUpgrades.find(up => up.id === upgradeId)
+        if (!upgrade) return false
+      }
+    },
   },
 
   actions: {

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col max-h-screen-3/4 overflow-hidden">
+  <div class="flex flex-col overflow-y-auto">
     <h2
       class="font-bold mb-4"
     >
@@ -10,6 +10,13 @@
       v-if="activeItem"
       class="flex flex-col md:flex-row md:items-center md:justify-between p-4 border border-gray-300 rounded-lg mb-4 bg-white"
     >
+      <div class="flex flex-col items-center">
+        <img
+          v-if="activeItem.image"
+          :src="activeItem.image"
+          class="w-32 h-32 rounded-lg"
+        >
+      </div>
       <div>
         <h3 class="font-bold text-lg md:text-xl">
           {{ activeItem.name }}
@@ -164,15 +171,18 @@ watch([amountOfColumns], () => {
   grid.value.column(amountOfColumns.value, 'list')
 })
 
-const useItem = (itemId: number, amount = 1) => {
+const useItem = (itemId: string, amount = 1) => {
   const $toast = useToast()
 
   if (useInventoryStore().useItem(itemId, amount)) {
     $toast.success('Item used successfully')
-    return
+  } else {
+    $toast.error('Failed to use item')
   }
 
-  $toast.error('Failed to use item')
+  if (!inventoryStore.hasItem(itemId)) {
+    activeItem.value = null
+  }
 }
 
 const props = withDefaults(defineProps<{

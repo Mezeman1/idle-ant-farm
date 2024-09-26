@@ -552,8 +552,8 @@ export const useGameStore = defineStore('gameStore', {
         this.setupAdventureStats()
         const adventureStore = useAdventureStore()
         await adventureStore.calculateOfflineProgress()
-        console.log('Adventure state isFighting:', adventureStore.isFighting)
-        if (adventureStore.isFighting || adventureStore.battleCooldown) {
+        console.log('Adventure state status:', adventureStore.battleStatus)
+        if (adventureStore.battleStatus === 'fighting' || adventureStore.battleStatus === 'cooldown') {
           adventureStore.startBattle()
         }
 
@@ -669,6 +669,8 @@ export const useGameStore = defineStore('gameStore', {
         // Handle debug state reset if applicable
         if (isDebug) {
           this.resetDebugState()
+          const achievementStore = useAchievementStore()
+          achievementStore.resetAchievements()
         }
 
         // Apply prestige upgrades

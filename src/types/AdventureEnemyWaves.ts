@@ -116,9 +116,24 @@ export const adventureEnemyWaves = [
           },
         ],
       },
+      {
+        name: 'Termite',
+        health: 95,
+        attack: 17,
+        defense: 7,
+        regen: 3,
+        dropOptions: [
+          seedDrop(100, 500),
+          {
+            name: 'Termite Mandible',
+            chance: 0.2,
+            amountBetween: [1, 2],
+          },
+        ],
+      },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 15 || gameStore.resources.queens >= 3,
-    unlockText: 'Unlocked when you have 15 ants or 3 queens.',
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 10 || gameStore.resources.queens >= 2,
+    unlockText: 'Unlocked when you have 10 ants or 2 queens.',
   },
   {
     name: 'Forest',

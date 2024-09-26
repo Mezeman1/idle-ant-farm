@@ -10,6 +10,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@primevue/themes": "^4.0.5",
     "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/typography": "^0.5.2",

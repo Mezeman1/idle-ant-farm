@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-1 gap-4 p-4 max-h-half-screen overflow-y-auto">
+  <div class="grid grid-cols-1 gap-4 p-4 overflow-y-auto">
     <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2">
       <button
         class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"

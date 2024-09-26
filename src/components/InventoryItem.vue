@@ -28,6 +28,13 @@
     <span class="text-3xs sm:text-2xs md:text-xs lg:text-sm mt-1 text-gray-500">
       {{ itemFromRegistry?.type }}
     </span>
+
+    <!-- Item image -->
+    <img
+      v-if="itemFromRegistry?.image"
+      :src="itemFromRegistry.image"
+      class="w-16 h-16 mt-2 rounded"
+    >
   </button>
 </template>
 

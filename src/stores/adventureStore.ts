@@ -4,6 +4,7 @@ import {useToast} from 'vue-toast-notification'
 import {useInventoryStore} from './inventoryStore'
 import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
 import {useResourcesStore} from '@/stores/resourcesStore'
+import {itemRegistry} from '@/types/itemRegistry'
 
 interface KillCounts {
   [key: string]: number
@@ -18,12 +19,15 @@ interface ActiveBuff {
   active?: boolean
 }
 
+type BattleStatus = 'idle' | 'fighting' | 'cooldown'
+
 
 export const useAdventureStore = defineStore('adventureStore', {
   state: () => ({
     loaded: false, // To track when adventure state is fully loaded
     progress: 0, // Track progress for offline calculation
     activeBuffs: [] as Array<ActiveBuff>,
+    battleStatus: 'idle' as BattleStatus,
 
     armyHealth: 100,
     armyMaxHealth: 100,
@@ -47,9 +51,6 @@ export const useAdventureStore = defineStore('adventureStore', {
     currentEnemy: null as Enemy | null,
 
     enemySpawned: false,
-    battleRunning: false, // Combat status
-    isFighting: false, // Whether the combat is currently happening
-    battleCooldown: false,
     lastFrameTime: 0,
     accumulatedTime: 0, // To accumulate time between frames
     combatTick: 2000, // Combat happens every 2000ms (2 seconds)
@@ -73,19 +74,14 @@ export const useAdventureStore = defineStore('adventureStore', {
   actions: {
     toggleBattle() {
       // Always allow stopping the battle
-      if (this.isFighting || this.battleCooldown) {
+      if (this.battleStatus === 'fighting' || this.battleStatus === 'cooldown') {
         this.stopAllBattles() // Stop all active loops
         return
       }
 
       // Apply cooldown only when trying to start the battle
-      if (this.battleRunning || this.toggleCooldown) {
+      if (this.battleStatus === 'cooldown' || this.toggleCooldown) {
         return // Prevent starting multiple loops or rapid starts
-      }
-
-      if (this.toggleCooldown) {
-        console.log('Battle toggle is on cooldown')
-        return // Prevent starting multiple loops during cooldown
       }
 
       // Start the battle if not already running
@@ -109,16 +105,14 @@ export const useAdventureStore = defineStore('adventureStore', {
       }, 3000 / useGameStore().deltaMultiplier) // Adjust cooldown period as needed
 
       // Check if the loop is already active to avoid multiple starts
-      if (this.battleRunning) {
+      if (this.battleStatus === 'fighting') {
         console.warn('Battle loop is already running')
         return // Prevent starting multiple loops
       }
 
       // Set flags immediately to prevent further calls
-      this.battleRunning = true
-      this.isFighting = true
+      this.battleStatus = 'fighting'
 
-      console.log('Battle Loop Started')
       this.lastFrameTime = performance.now()
       this.accumulatedTime = 0
 
@@ -131,16 +125,12 @@ export const useAdventureStore = defineStore('adventureStore', {
       const animationFrameId = requestAnimationFrame(this.battleLoop)
       this.animationFrameIds.push(animationFrameId) // Store each new loop's ID
       this.loopActive.push(true) // Keep track of the active loop
-
-      console.log('Battle Started')
     },
 
     // Stop the battle loop
     stopBattle() {
       // Always allow stopping, regardless of cooldown
-      this.isFighting = false
-      this.battleRunning = false
-      this.battleCooldown = false
+      this.battleStatus = 'idle'
 
       // Cancel the animation frames to stop the loop
       if (this.animationFrameIds.length > 0) {
@@ -149,28 +139,21 @@ export const useAdventureStore = defineStore('adventureStore', {
       }
 
       this.loopActive = []  // Ensure the loops can be restarted after stopping
-
-      console.log('Battle Stopped')
     },
 
     // Stop all active battles (useful when managing multiple loops)
     stopAllBattles() {
       if (this.animationFrameIds.length > 0) {
-        console.log('Stopping all battles')
         this.animationFrameIds.forEach((id) => cancelAnimationFrame(id))
         this.animationFrameIds = [] // Clear the array of animation frame IDs
       }
       this.loopActive = []  // Clear all loop active states
-      this.battleRunning = false
-      this.isFighting = false
-      this.battleCooldown = false
-      console.log('All battles stopped')
+      this.battleStatus = 'idle'
     },
 
     // Main battle loop with requestAnimationFrame (tick-based)
     async battleLoop(currentTime) {
-      if (!this.battleRunning) {
-        console.log('Battle loop stopped')
+      if (this.battleStatus === 'idle') {
         this.loopActive = this.loopActive.map(() => false) // Ensure the loop is fully inactive when stopped
         return
       }
@@ -184,7 +167,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       await this.processCombat(deltaTime)
 
       // Continue the loop as long as the battle is active
-      if (this.battleRunning) {
+      if (this.battleStatus === 'fighting') {
         const newAnimationFrameId = requestAnimationFrame(this.battleLoop)
         this.animationFrameIds.push(newAnimationFrameId) // Keep adding new frame IDs to the array
       }
@@ -205,9 +188,11 @@ export const useAdventureStore = defineStore('adventureStore', {
           this.activeBuffs = this.activeBuffs.filter((activeBuff) => activeBuff.id !== buff.id)
         }
       })
+
+      this.activeBuffs = this.activeBuffs.filter((buff) => buff.duration > 0)
     },
     async processCombat(deltaTime) {
-      if (this.isFighting && this.enemySpawned) {
+      if (this.battleStatus === 'fighting' && this.enemySpawned) {
         // Calculate damage based on DPS and the time passed since the last frame (deltaTime)
         this.applyArmyDamage(deltaTime)
         this.applyBugDamage(deltaTime)
@@ -225,41 +210,40 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.applyRegeneration(deltaTime) // Regenerate health during the real-time loop
     },
 
+    calculateDamage(attackerAttack, defenderDefense) {
+      const variation = 0.9 + Math.random() * 0.2
+      const baseDamage = attackerAttack - defenderDefense
+      return Math.max(baseDamage * variation, 1)
+    },
+
     applyArmyDamage(deltaTime) {
-      // Calculate how much damage is applied per tick (DPS * deltaTime)
-      const variation = 0.9 + Math.random() * 0.2 // Random multiplier between 0.9 and 1.1
-      const armyDPS = Math.max(this.armyAttack - this.bugDefense, 1) // Calculate DPS
-      const damageThisTick = armyDPS * deltaTime * variation // Damage for this tick
-      this.bugHealth = Math.max(this.bugHealth - damageThisTick, 0)
+      const damage = this.calculateDamage(this.armyAttack, this.bugDefense) * deltaTime
+      this.bugHealth = Math.max(this.bugHealth - damage, 0)
     },
 
     applyBugDamage(deltaTime) {
-      // Calculate how much damage is applied per tick (DPS * deltaTime)
-      const variation = 0.9 + Math.random() * 0.2 // Random multiplier between 0.9 and 1.1
-      const bugDPS = Math.max(this.bugAttack - this.armyDefense, 1) // Calculate DPS
-      const damageThisTick = bugDPS * deltaTime * variation // Damage for this tick
-      this.armyHealth = Math.max(this.armyHealth - damageThisTick, 0)
+      const damage = this.calculateDamage(this.bugAttack, this.armyDefense) * deltaTime
+      this.armyHealth = Math.max(this.armyHealth - damage, 0)
     },
 
     handlePlayerDefeat() {
-      console.log('Bug Wins!')
       if (!this.isSimulatingOffline) {
         const $toast = useToast()
         $toast.error('You were defeated by the bug!')
       }
-      this.isFighting = false
+
+      this.battleStatus = 'idle'
 
       // Start a regeneration loop after defeat to limit full healing
       this.regenAfterDefeat()
     },
 
     regenAfterDefeat() {
-      if (this.battleCooldown) {
-        console.log('Regeneration is already running.')
+      if (this.battleStatus === 'cooldown') {
         return // Prevent multiple regen loops
       }
 
-      this.battleCooldown = true // Enter cooldown state
+      this.battleStatus = 'cooldown' // Set the battle status to regenerating
       const regenInterval = 100 // Apply regeneration every 100ms
 
       const defeatRegen = () => {
@@ -267,10 +251,7 @@ export const useAdventureStore = defineStore('adventureStore', {
           this.applyDefeatRegeneration() // Apply gradual regeneration
           setTimeout(defeatRegen, regenInterval) // Continue regeneration
         } else {
-          console.log('Regeneration after defeat finished')
-          this.battleCooldown = false // Exit cooldown state
-          this.isFighting = false // Stop fighting
-          this.battleRunning = false // Stop the battle loop
+          this.battleStatus = 'idle' // Reset the battle status
         }
       }
 
@@ -321,8 +302,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
     async handleEnemyDefeat() {
       this.enemySpawned = false
-      this.battleCooldown = true // Enter cooldown state
-      this.isFighting = false
+      this.battleStatus = 'cooldown' // Set the battle status to 'cooldown
 
       // Update kill counts
       this.handleKillCount()
@@ -335,9 +315,9 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.spawnRandomEnemy()
 
         setTimeout(() => {
-          if (this.battleRunning) {
-            this.isFighting = true
-            this.battleCooldown = false
+          if (this.battleStatus === 'cooldown') {
+            this.battleStatus = 'fighting' // Set the battle status back to 'fight
+            this.startBattle()
           }
         }, 1000)
       }, 2000)
@@ -355,7 +335,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.regenLoopActive = true // Mark the loop as active
 
         const cooldownRegen = () => {
-          if (this.battleCooldown || this.isFighting) {
+          if (this.battleStatus === 'cooldown') {
             this.applyRegeneration() // Apply regeneration
             setTimeout(cooldownRegen, regenInterval) // Continue regenerating during cooldown
           } else {
@@ -440,7 +420,7 @@ export const useAdventureStore = defineStore('adventureStore', {
           name: buff.name,
           duration: buff.duration,
         })),
-        isFighting: this.isFighting || this.battleCooldown, // Save the current battle state
+        battleStatus: this.battleStatus,
       }
     },
 
@@ -468,7 +448,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         }
       }) ?? []
 
-      this.isFighting = adventureState.isFighting ?? false
+      this.battleStatus = adventureState.battleStatus ?? 'idle'
       this.lastSavedTime = adventureState.lastSavedTime ?? Date.now()
 
       await this.loadEnemyImages()
@@ -481,11 +461,20 @@ export const useAdventureStore = defineStore('adventureStore', {
       for (const wave of adventureEnemyWaves) {
         for (const enemy of wave.enemies) {
           try {
-            const image = await import(`../assets/enemies/${enemy.name.toLowerCase().replace(' ', '-')}.webp`)
+            const image = await import(`../assets/enemies/${enemy.name.toLowerCase().replaceAll(' ', '-')}.webp`)
             enemy.image = image.default
           } catch (error) {
 
           }
+        }
+      }
+
+      // Load item images
+      for (const item in itemRegistry) {
+        try {
+          const image = await import(`../assets/items/${itemRegistry[item].name.toLowerCase().replaceAll(' ', '-')}.webp`)
+          itemRegistry[item].image = image.default
+        } catch (error) {
         }
       }
     },
@@ -503,75 +492,75 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.currentArea = ''
       this.enemySpawned = false
       this.currentEnemy = null
-      this.battleRunning = false
-      this.isFighting = false
-      this.battleCooldown = false
+      this.battleStatus = 'idle'
     },
 
     // Offline progress calculation
-    calculateOfflineProgress() {
+    async calculateOfflineProgress() {
       this.loaded = false // Mark as not loaded
       if (!this.currentArea || this.currentArea === '') return Promise.resolve() // No area to calculate progress for
 
-      return new Promise((resolve, reject) => {
-        try {
-          const currentTime = Date.now()
-          let timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
+      try {
+        return await new Promise((resolve, reject) => {
+          try {
+            const currentTime = Date.now()
+            let timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
 
-          // Define the offline cap (24 hours = 86400 seconds)
-          const OFFLINE_CAP = 86400
+            // Define the offline cap (24 hours = 86400 seconds)
+            const OFFLINE_CAP = 86400
 
-          // Cap the offline time to 24 hours
-          if (timeElapsed > OFFLINE_CAP) {
-            console.log('Offline time capped to 24 hours (86400 seconds)')
-            timeElapsed = OFFLINE_CAP
-          }
-
-          console.log(`Time elapsed (offline): ${timeElapsed} seconds`)
-
-          let remainingTime = timeElapsed
-          const chunkDuration = 60 // Simulate in chunks of 60 seconds
-
-          this.isSimulatingOffline = true
-          this.progress = 0 // Initialize progress
-
-          const simulateOffline = () => {
-            if (remainingTime <= 0) {
-              this.lastSavedTime = currentTime
-              console.log('Offline progress simulation complete.')
-              this.isSimulatingOffline = false
-              this.progress = 100 // Set progress to 100%
-              resolve(null)
-              return
+            // Cap the offline time to 24 hours
+            if (timeElapsed > OFFLINE_CAP) {
+              console.log('Offline time capped to 24 hours (86400 seconds)')
+              timeElapsed = OFFLINE_CAP
             }
 
-            const deltaTime = Math.min(chunkDuration, remainingTime)
-            const playerDied = this.updateCombat(deltaTime)
+            console.log(`Time elapsed (offline): ${timeElapsed} seconds`)
 
-            if (playerDied) {
-              console.log('Player died during offline progress. Stopping simulation.')
-              this.isSimulatingOffline = false
-              resolve(null) // End the simulation early
-              return
+            let remainingTime = timeElapsed
+            const chunkDuration = 60 // Simulate in chunks of 60 seconds
+
+            this.isSimulatingOffline = true
+            this.progress = 0 // Initialize progress
+
+            const simulateOffline = () => {
+              if (remainingTime <= 0) {
+                this.lastSavedTime = currentTime
+                console.log('Offline progress simulation complete.')
+                this.isSimulatingOffline = false
+                this.progress = 100 // Set progress to 100%
+                resolve(null)
+                return
+              }
+
+              const deltaTime = Math.min(chunkDuration, remainingTime)
+              const playerDied = this.updateCombat(deltaTime)
+
+              if (playerDied) {
+                console.log('Player died during offline progress. Stopping simulation.')
+                this.isSimulatingOffline = false
+                resolve(null) // End the simulation early
+                return
+              }
+
+              this.handleLoot() // Simulate loot collection
+
+              remainingTime -= deltaTime
+              this.progress = Math.min(100, ((timeElapsed - remainingTime) / timeElapsed) * 100) // Update progress
+
+              setTimeout(simulateOffline, 0) // Continue simulating in the next event loop cycle
             }
 
-            this.handleLoot() // Simulate loot collection
-
-            remainingTime -= deltaTime
-            this.progress = Math.min(100, ((timeElapsed - remainingTime) / timeElapsed) * 100) // Update progress
-
-            setTimeout(simulateOffline, 0) // Continue simulating in the next event loop cycle
+            simulateOffline()
+          } catch (error) {
+            console.error('Error during offline progress simulation:', error)
+            this.isSimulatingOffline = false
+            reject(error)
           }
-
-          simulateOffline()
-        } catch (error) {
-          console.error('Error during offline progress simulation:', error)
-          this.isSimulatingOffline = false
-          reject(error)
-        }
-      }).finally(() => {
+        })
+      } finally {
         this.loaded = true // Mark as loaded
-      })
+      }
     },
 
     updateCombat(deltaTime) {
@@ -614,7 +603,6 @@ export const useAdventureStore = defineStore('adventureStore', {
             const amount =
               Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
               drop.amountBetween[0]
-
 
 
             if (drop.name === 'Seeds') {

@@ -13,141 +13,56 @@
     />
 
     <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
-      <!-- Minimize/Maximize Button -->
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white font-bold rounded m-1 shadow text-xs small py-1 px-2"
-        @click="isMinimized = !isMinimized"
-      >
-        {{ isMinimized ? 'Show UI' : 'Hide UI' }}
-      </button>
+      <div class="flex items-center justify-between bg-gray-800 p-2 text-white">
+        <!-- Left Side Buttons -->
+        <div class="flex items-center space-x-2">
+          <!-- Minimize/Maximize Button -->
+          <button
+            class="flex items-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded"
+            @click="isMinimized = !isMinimized"
+          >
+            {{ isMinimized ? 'Hide the AntFarm' : 'Show the AntFarm' }}
+          </button>
 
-      <button
-        :disabled="!canSave"
-        class="ml-auto text-white rounded shadow text-xs small py-1 px-2"
-        :class="{
-          'bg-gray-300 cursor-not-allowed': !canSave,
-          'bg-blue-500': canSave
-        }"
-        @click="saveGameWithCooldown"
-      >
-        <span v-if="canSave">Save Game</span>
-        <span v-else>Wait {{ timeLeft }}s</span>
-      </button>
-
-      <button
-        class="bg-red-500 hover:bg-red-600 text-white font-bold rounded m-1 shadow text-xs small py-1 px-2"
-        @click="gameStore.logout()"
-      >
-        Log out
-      </button>
-
-
-      <div
-        v-show="!isMinimized"
-        class="bg-white p-4 rounded shadow-lg flex flex-col space-y-2 m-2 bg-opacity-50"
-      >
-        <!--        Navigation       -->
-        <div
-          class="text-sm md:text-sm font-medium text-center text-gray-700 border-b border-gray-300 dark:text-gray-200 dark:border-gray-600 overflow-x-auto overflow-y-hidden"
-        >
-          <ul class="flex flex-nowrap -mb-px justify-start space-x-4 overflow-x-auto px-2 py-1">
-            <li class="flex-shrink-0">
-              <button
-                :class="activeTab === 'resources' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
-                @click.prevent="setActiveTab('resources')"
-              >
-                Resources
-              </button>
-            </li>
-
-            <li class="flex-shrink-0">
-              <button
-                :class="activeTab === 'prestige' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
-                @click.prevent="setActiveTab('prestige')"
-              >
-                Prestige
-              </button>
-            </li>
-
-            <li class="flex-shrink-0">
-              <button
-                :class="activeTab === 'adventure' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm disabled:cursor-not-allowed transition ease-in-out duration-150"
-                @click.prevent="setActiveTab('adventure')"
-              >
-                Adventure
-              </button>
-            </li>
-
-            <li class="flex-shrink-0">
-              <button
-                :class="activeTab === 'equipment' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
-                @click.prevent="setActiveTab('equipment')"
-              >
-                Equipment
-              </button>
-            </li>
-
-            <li class="flex-shrink-0">
-              <button
-                :class="activeTab === 'achievements' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
-                @click.prevent="setActiveTab('achievements')"
-              >
-                Achievements
-              </button>
-            </li>
-
-            <li class="flex-shrink-0">
-              <button
-                :class="activeTab === 'tunnels' ? activeTabClasses : defaultTabClasses"
-                :disabled="!usePrestigeStore().upgradePurchased('tunnels')"
-                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm disabled:cursor-not-allowed transition ease-in-out duration-150"
-                @click.prevent="setActiveTab('tunnels')"
-              >
-                Tunnels
-              </button>
-            </li>
-
-            <li class="flex-shrink-0">
-              <button
-                :class="activeTab === 'passives' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm disabled:cursor-not-allowed transition ease-in-out duration-150"
-                @click.prevent="setActiveTab('passives')"
-              >
-                Passives
-              </button>
-            </li>
-
-            <li
-              v-if="debugMode"
-              class="flex-shrink-0"
-            >
-              <button
-                :class="activeTab === 'debugger' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
-                @click.prevent="setActiveTab('debugger')"
-              >
-                Debugger
-              </button>
-            </li>
-
-            <li class="flex-shrink-0">
-              <button
-                :class="activeTab === 'settings' ? activeTabClasses : defaultTabClasses"
-                class="inline-block p-1 md:p-2 w-auto border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 text-xs md:text-sm transition ease-in-out duration-150"
-                @click.prevent="setActiveTab('settings')"
-              >
-                Settings
-              </button>
-            </li>
-          </ul>
+          <!-- Save Game Button -->
+          <button
+            :disabled="!canSave"
+            class="flex items-center bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded disabled:opacity-50"
+            @click="saveGameWithCooldown"
+          >
+            <span v-if="canSave">Save Game</span>
+            <span v-else>Wait {{ timeLeft }}s</span>
+          </button>
         </div>
 
-        <div class="max-h-screen-4/5 overflow-hidden flex flex-col">
+        <!-- Right Side Button -->
+        <button
+          class="flex items-center bg-red-600 hover:bg-red-500 px-3 py-2 rounded"
+          @click="gameStore.logout()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <!-- Logout Icon -->
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7"
+            />
+          </svg>
+          Log out
+        </button>
+      </div>
+      <div
+        v-show="!isMinimized"
+        class="bg-white rounded shadow-lg flex flex-col sm:flex-row space-y-2 bg-opacity-50 h-[calc(100vh-65px)]"
+      >
+        <div class="flex flex-col flex-1 overflow-y-auto p-2">
           <AntResources v-show="activeTab === 'resources'" />
           <PrestigeShop v-show="activeTab === 'prestige'" />
           <Adventure v-show="activeTab === 'adventure'" />
@@ -158,9 +73,37 @@
           />
           <Tunnels v-show="activeTab === 'tunnels'" />
           <AchievementPage v-if="activeTab === 'achievements'" />
+          <BestiaryPage v-if="activeTab === 'bestiary'" />
           <Debugger v-show="activeTab === 'debugger'" />
           <Settings v-show="activeTab === 'settings'" />
         </div>
+
+        <nav class="bg-gray-800 text-white">
+          <div class="flex items-center justify-between px-2 py-1 overflow-x-auto">
+            <!-- Left Side Tabs -->
+            <div class="flex flex-row sm:flex-col gap-2">
+              <button
+                v-for="tab in tabs"
+                :key="tab.name"
+                :disabled="tab.disabled"
+                :class="[
+                  activeTab === tab.name
+                    ? 'bg-blue-600 hover:bg-blue-500'
+                    : 'bg-gray-700 hover:bg-gray-600',
+                  'px-3 py-2 rounded text-sm font-medium flex justify-between items-center gap-1 disabled:cursor-not-allowed disabled:opacity-50'
+                ]"
+                @click.prevent="setActiveTab(tab.name)"
+              >
+                <i
+                  class="ml-1"
+                  :class="tab.icon ?? ''"
+                />
+
+                {{ tab.label }}
+              </button>
+            </div>
+          </div>
+        </nav>
       </div>
     </div>
   </div>
@@ -169,19 +112,23 @@
       :visible="privacyModalVisible"
       @cancel="privacyModalVisible = false"
     />
+
     <div
       v-if="gameStore.loggedIn"
       class="flex flex-col items-center justify-center h-screen p-4"
     >
-      <div class="w-full bg-gray-800 rounded-full h-6 overflow-hidden shadow-inner">
-        <div
-          class="bg-green-500 h-6 rounded-full shadow"
-          :style="{ width: progress + '%' }"
-        />
+      <!-- Loading Progress Bar -->
+      <div class="flex flex-col items-center justify-center h-screen bg-gray-50">
+        <div class="w-3/4 bg-gray-200 rounded-full h-4 overflow-hidden">
+          <div
+            class="bg-blue-600 h-full rounded-full transition-all duration-500"
+            :style="{ width: progress + '%' }"
+          />
+        </div>
+        <p class="mt-2 text-gray-700 font-semibold">
+          Loading... {{ progress.toFixed(0) }}%
+        </p>
       </div>
-      <p class="text-center mt-2 text-gray-800 font-bold">
-        {{ progress.toFixed(0) }}% Complete
-      </p>
     </div>
     <div v-else>
       <AntSimulation
@@ -190,113 +137,176 @@
         :larvae-count="200"
       />
       <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden flex flex-col items-center justify-center">
-        <div class="flex flex-col bg-white bg-opacity-50 p-4 shadow-lg rounded-lg">
-          <p>
-            Welcome to your Idle Ant Farm! 🐜
-          </p>
-          <div class="flex flex-col gap-1">
-            <input
-              v-model="gameStore.email"
-              type="email"
-              placeholder="Email"
-              class="p-2 m-2 border-2 rounded"
-            >
-            <input
-              v-model="gameStore.password"
-              type="password"
-              placeholder="Password"
-              class="p-2 m-2 border-2 rounded"
-            >
-            <input
-              v-if="registerActive"
-              v-model="gameStore.passwordConfirm"
-              type="password"
-              placeholder="Confirm Password"
-              class="p-2 m-2 border-2 rounded"
-            >
-
-            <button
-              v-if="registerActive === false"
-              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
-              @click="gameStore.login()"
-            >
-              Login
-            </button>
-            <div
-              v-tooltip="gameStore.privacyAgreement === false ? 'Agree with the privacy policy before registering.' : ''"
-              class="w-full flex"
-            >
-              <button
+        <!-- Login/Register Card -->
+        <div class="flex flex-col items-center justify-center bg-gray-50 rounded">
+          <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">
+              {{ registerActive ? 'Create an Account' : 'Welcome Back' }}
+            </h2>
+            <form @submit.prevent="registerActive ? gameStore.register() : gameStore.login()">
+              <!-- Email Field -->
+              <div class="relative mb-4">
+                <input
+                  v-model="gameStore.email"
+                  type="email"
+                  placeholder="Email"
+                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <!-- Email Icon -->
+                  <svg
+                    class="w-5 h-5 text-gray-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v1l-8 5-8-5V5z" />
+                    <path d="M2 8l8 5 8-5v5a2 2 0 01-2 2H4a2 2 0 01-2-2V8z" />
+                  </svg>
+                </div>
+              </div>
+              <!-- Password Field -->
+              <div class="relative mb-4">
+                <input
+                  v-model="gameStore.password"
+                  type="password"
+                  placeholder="Password"
+                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <!-- Lock Icon -->
+                  <svg
+                    class="w-5 h-5 text-gray-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5 8V6a5 5 0 1110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h1zm2-2a3 3 0 116 0v2H7V6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <!-- Confirm Password Field -->
+              <div
                 v-if="registerActive"
-                :disabled="gameStore.privacyAgreement === false"
-                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2 disabled:cursor-not-allowed"
-                @click="gameStore.register()"
+                class="relative mb-4"
               >
-                Register
+                <input
+                  v-model="gameStore.passwordConfirm"
+                  type="password"
+                  placeholder="Confirm Password"
+                  class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <!-- Lock Icon -->
+                  <svg
+                    class="w-5 h-5 text-gray-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5 8V6a5 5 0 1110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h1zm2-2a3 3 0 116 0v2H7V6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <!-- Privacy Agreement -->
+              <div class="flex items-center mb-4">
+                <input
+                  v-model="gameStore.privacyAgreement"
+                  type="checkbox"
+                  class="mr-2"
+                >
+                <label class="text-sm text-gray-700">
+                  I agree to the
+                  <button
+                    class="text-blue-500 hover:underline"
+                    @click.prevent="privacyModalVisible = true"
+                  >
+                    Privacy Policy
+                  </button>
+                </label>
+              </div>
+              <!-- Error Message -->
+              <div
+                v-if="gameStore.error"
+                class="text-red-500 mb-4"
+              >
+                {{ gameStore.error }}
+              </div>
+              <!-- Submit Button -->
+              <button
+                :disabled="!gameStore.privacyAgreement"
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-lg disabled:opacity-50"
+              >
+                {{ registerActive ? 'Register' : 'Login' }}
               </button>
+            </form>
+            <!-- Or Divider -->
+            <div class="flex items-center my-4">
+              <hr class="flex-grow border-gray-300">
+              <span class="mx-2 text-gray-500">OR</span>
+              <hr class="flex-grow border-gray-300">
             </div>
-
-            <p v-if="gameStore.error">
-              <span class="text-red-500">{{ gameStore.error }}</span>
-            </p>
-          </div>
-          <div
-            v-tooltip="gameStore.privacyAgreement === false ? 'Agree with the privacy policy before logging in.' : ''"
-            class="w-full flex flex-col"
-          >
+            <!-- Login using Google Button -->
             <button
               v-if="!gameStore.loggedIn"
-              v-tooltip="'Will save your progress and allow you to play on multiple devices.'"
-              :disabled="gameStore.privacyAgreement === false"
-              class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2 disabled:cursor-not-allowed"
+              :disabled="!gameStore.privacyAgreement"
+              class="w-full bg-red-600 hover:bg-red-500 text-white font-semibold py-2 rounded-lg flex items-center justify-center disabled:opacity-50"
               @click="gameStore.loginUsingGoogle()"
             >
-              Login using google
+              <!-- Google Icon -->
+              <svg
+                class="w-5 h-5 mr-2"
+                viewBox="0 0 48 48"
+              >
+                <path
+                  fill="#EA4335"
+                  d="M24 9.5c3.94 0 6.63 1.69 8.15 3.09l5.98-5.98C34.4 3.68 29.68 1.5 24 1.5 14.62 1.5 6.75 6.76 2.99 14.26l7.07 5.5C11.69 15.38 17.24 9.5 24 9.5z"
+                />
+                <path
+                  fill="#4285F4"
+                  d="M46.09 24.5c0-1.74-.14-3.45-.41-5.09H24v9.64h12.46c-.54 2.9-2.2 5.38-4.69 7.05l7.22 5.56C43.54 37.32 46.09 31.28 46.09 24.5z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M10.06 28.64A14.48 14.48 0 019.5 24c0-1.62.28-3.19.77-4.64l-7.07-5.5A23.936 23.936 0 001 24c0 3.8.87 7.37 2.42 10.56l6.64-5.92z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M24 46.5c6.48 0 11.94-2.14 15.92-5.84l-7.22-5.56C29.92 36.94 27.07 38 24 38c-6.75 0-12.3-5.88-12.95-13.24l-7.07 5.92C6.75 41.24 14.62 46.5 24 46.5z"
+                />
+                <path
+                  fill="none"
+                  d="M1.5 1.5h45v45h-45z"
+                />
+              </svg>
+              Login with Google
             </button>
+            <!-- Play as Guest Button -->
             <button
               v-if="!gameStore.loggedIn"
-              v-tooltip="'Will save progress for current session only, progress may be lost.'"
-              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded m-2 border-2"
+              class="mt-4 w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 rounded-lg"
               @click="gameStore.loginAsGuest()"
             >
-              Play as guest
+              Play as Guest
             </button>
-            <p class="text-xs text-red-500">
-              <strong>Note:</strong> can't guarantee progress will be saved. There's an option to export your progress
-              in the settings.
-            </p>
+            <!-- Toggle Login/Register -->
+            <div class="mt-4 text-center">
+              <p class="text-gray-700">
+                {{ registerActive ? 'Already have an account?' : "Don't have an account?" }}
+                <button
+                  class="text-blue-500 hover:underline"
+                  @click="registerActive = !registerActive"
+                >
+                  {{ registerActive ? 'Log in' : 'Sign up' }}
+                </button>
+              </p>
+            </div>
           </div>
-          <p v-if="registerActive === false">
-            Don't have an account?
-            <button
-              class="text-blue-500 hover:text-blue-600"
-              @click="registerActive = !registerActive"
-            >
-              Sign up
-            </button>
-          </p>
-          <p v-else>
-            Already have an account?
-            <button
-              class="text-blue-500 hover:text-blue-600"
-              @click="registerActive = !registerActive"
-            >
-              Log in
-            </button>
-          </p>
-
-          <p class="flex text-2xs items-center">
-            <input
-              v-model="gameStore.privacyAgreement"
-              type="checkbox"
-              class="m-2"
-            >
-            I have read and agree to the <a
-              href="#"
-              class="ml-1 text-blue-500 hover:text-blue-600"
-              @click="privacyModalVisible = true"
-            > Privacy Policy</a>
-          </p>
         </div>
       </div>
     </div>
@@ -316,13 +326,14 @@ import Settings from './SettingsPage.vue'
 import {useAdventureStore} from '../stores/adventureStore'
 import {useDebounceFn} from '@vueuse/core'
 import Tunnels from '@/views/TunnelsPage.vue'
-import {usePrestigeStore} from '@/stores/prestigeStore'
 import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
 import EquipmentPage from '@/views/EquipmentPage.vue'
 import AchievementPage from '@/views/AchievementPage.vue'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useSettingsStore} from '@/stores/settingsStore'
+import BestiaryPage from '@/views/BestiaryPage.vue'
+import {usePrestigeStore} from '@/stores/prestigeStore'
 
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
@@ -335,6 +346,62 @@ const progress = computed(() => {
   const adventureProgress = adventureStore.loaded ? 50 : (adventureStore.progress / 2) // Half for adventure progress
   return gameProgress + adventureProgress
 })
+const debugMode = import.meta.env.MODE === 'localhost'
+
+const tabs = computed(() => [
+  {
+    name: 'resources',
+    label: 'Resources',
+    icon: 'fa-solid fa-chart-simple',
+  },
+  {
+    name: 'prestige',
+    label: 'Prestige',
+    icon: 'fa-solid fa-code-fork',
+  },
+  {
+    name: 'adventure',
+    label: 'Adventure',
+    icon: 'fa-solid fa-compass',
+  },
+  {
+    name: 'equipment',
+    label: 'Equipment',
+    icon: 'fa-solid fa-shield',
+  },
+  {
+    name: 'achievements',
+    label: 'Achievements',
+    icon: 'fa-solid fa-trophy',
+  },
+  {
+    name: 'tunnels',
+    label: 'Tunnels',
+    icon: 'fa-solid fa-dungeon',
+    disabled: usePrestigeStore().upgradePurchased('tunnels') === false,
+  },
+  {
+    name: 'passives',
+    label: 'Passives',
+    icon: 'fa-solid fa-cogs',
+  },
+  {
+    name: 'bestiary',
+    label: 'Bestiary',
+    icon: 'fa-solid fa-dragon',
+  },
+  {
+    name: 'settings',
+    label: 'Settings',
+    icon: 'fa-solid fa-cog',
+  },
+  // Add 'debugger' tab conditionally if in debug mode
+  ...(debugMode ? [{
+    name: 'debugger',
+    label: 'Debugger',
+    icon: 'fa-solid fa-bug',
+  }] : []),
+])
 
 const registerActive = ref(false)
 const privacyModalVisible = ref(false)
@@ -374,7 +441,6 @@ const saveGameWithCooldown = async () => {
   }
 }
 
-const debugMode = import.meta.env.MODE === 'localhost'
 const loggedInUser = computed(() => gameStore.loggedIn)
 
 function saveIntervalFunction() {
@@ -521,4 +587,7 @@ button {
   scrollbar-color: #888 #f1f1f1; /* Thumb color and track color */
 }
 
+nav {
+  margin-top: 0 !important;
+}
 </style>

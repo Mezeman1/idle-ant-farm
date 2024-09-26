@@ -192,6 +192,28 @@ export const usePrestigeStore = defineStore('prestige', {
           return usePrestigeStore().upgradePurchased('royalJelly')
         },
       },
+      {
+        id: 'prestigeMultiplier',
+        name: 'Prestige Multiplier',
+        description: 'Increase the benefits gained from prestiging by 10%',
+        cost: 500,
+        category: 'expansion',
+        applyOnPrestige: true,
+        unlockedWhen: () => {
+          return usePrestigeStore().timesPrestiged >= 5
+        },
+      },
+      {
+        id: 'antHousingUpgrade',
+        name: 'Ant Housing Upgrade',
+        description: 'Increase the capacity of ant housing by 1',
+        cost: 250,
+        category: 'storage',
+        applyOnPrestige: true,
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('autoCreateHousing')
+        },
+      },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 
     // Prestige-related variables
@@ -207,6 +229,8 @@ export const usePrestigeStore = defineStore('prestige', {
     antsFromPrestigeShop: 0, // Ants from the prestige shop
 
     baseAntThreshold: 16,
+
+    prestigeMultiplierNumber: 1.0,
   }),
   getters: {
     upgradePurchased: (state) => (upgradeId: string) => state.purchasedUpgrades.includes(upgradeId),
@@ -220,7 +244,7 @@ export const usePrestigeStore = defineStore('prestige', {
       const ants = resourcesStore.resources.ants - this.antsFromPrestigeShop
 
       // Calculate prestige points using log1.01 scaling for ants
-      return this.calculatePrestigePointsFor(ants, this.baseAntThreshold) // Only ants will give prestige points
+      return this.calculatePrestigePointsFor(ants, this.baseAntThreshold) * this.prestigeMultiplierNumber
     },
 
     calculatePrestigePointsFor(currentResources: number, baseThreshold: number) {
@@ -287,6 +311,12 @@ export const usePrestigeStore = defineStore('prestige', {
           break
         case 'startWithAnts':
           defaultCostMultiplier = 1.3
+          break
+        case 'prestigeMultiplier':
+          defaultCostMultiplier = 2
+          break
+        case 'antHousingUpgrade':
+          defaultCostMultiplier = 2
           break
       }
       return defaultCostMultiplier
@@ -447,6 +477,12 @@ export const usePrestigeStore = defineStore('prestige', {
         jellyBoost: () => {
           resourcesStore.royalJellyCollectionModifier += 0.01
         },
+        prestigeMultiplier: () => {
+          this.prestigeMultiplierNumber += 0.1
+        },
+        antHousingUpgrade: () => {
+          resourcesStore.antsPerHousing += 1
+        },
       }
 
       // Execute the appropriate upgrade or log an error if the upgrade ID is invalid
@@ -482,6 +518,7 @@ export const usePrestigeStore = defineStore('prestige', {
         betterAntsDefensePrestigeCost: this.prestigeShop.find(u => u.id === 'betterAntsDefense')?.cost ?? 50,
         startWithAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'startWithAnts')?.cost ?? 15,
         jellyBoostCost: this.prestigeShop.find(u => u.id === 'jellyBoost')?.cost ?? 100,
+        prestigeMultiplierCost: this.prestigeShop.find(u => u.id === 'prestigeMultiplier')?.cost ?? 500,
 
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,
@@ -494,6 +531,8 @@ export const usePrestigeStore = defineStore('prestige', {
         eliteAntsUnlocked: this.upgradePurchased('eliteAnts'),
         royalJellyUnlocked: this.upgradePurchased('royalJelly'),
         jellyBoost: this.upgradePurchased('jellyBoost'),
+        prestigeMultiplier: this.upgradePurchased('prestigeMultiplier'),
+        antHousingUpgrade: this.upgradePurchased('antHousingUpgrade'),
       }
     },
 
@@ -521,6 +560,8 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'betterAntsDefense') shop.cost = savedState.betterAntsDefensePrestigeCost ?? 50
         if (shop.id === 'startWithAnts') shop.cost = savedState.startWithAntsPrestigeCost ?? 15
         if (shop.id === 'jellyBoost') shop.cost = savedState.jellyBoostCost ?? 100
+        if (shop.id === 'prestigeMultiplier') shop.cost = savedState.prestigeMultiplierCost ?? 500
+        if (shop.id === 'antHousingUpgrade') shop.cost = savedState.antHousingUpgradeCost ?? 50
       })
 
       this.applyPrestigeUpgrades()
@@ -547,6 +588,8 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'autoCreateHousing') shop.cost = 20
         if (shop.id === 'autoAdventure') shop.cost = 50
         if (shop.id === 'jellyBoost') shop.cost = 100
+        if (shop.id === 'prestigeMultiplier') shop.cost = 500
+        if (shop.id === 'antHousingUpgrade') shop.cost = 50
       })
     },
 

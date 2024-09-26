@@ -13,6 +13,9 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
   actions: {
     // inventoryStore.ts
+    hasItem(itemId: string): boolean {
+      return this.inventory.some(item => item.id === itemId)
+    },
     async addItemToInventory(itemData: Partial<Item>) {
       const equipmentStore = useEquipmentStore()
 

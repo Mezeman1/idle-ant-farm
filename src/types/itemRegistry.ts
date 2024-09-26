@@ -18,6 +18,7 @@ export interface Item {
   applyOnLoad?: boolean;
   applyOnPrestige?: boolean;
   duration?: number;
+  image?: string;
 }
 
 export type SetBonus = {
@@ -127,6 +128,22 @@ export const consumableItems: Item[] = [
         return false
       }
       adventureStore.armyHealth += 20
+      return true
+    },
+    rarity: 'common',
+  },
+  {
+    id: 'termite-mandible',
+    name: 'Termite Mandible',
+    type: 'consumable',
+    description: 'Heals the army by 30 points.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      if (adventureStore.armyHealth + 30 > adventureStore.armyMaxHealth) {
+        adventureStore.armyHealth = adventureStore.armyMaxHealth
+        return false
+      }
+      adventureStore.armyHealth += 30
       return true
     },
     rarity: 'common',
@@ -394,7 +411,7 @@ export const passiveItems: Item[] = [
     rarity: 'legendary',
     applyOnLoad: true,
   },
-];
+]
 
 export const equipmentSets: Item[] = [
   // Worker Set

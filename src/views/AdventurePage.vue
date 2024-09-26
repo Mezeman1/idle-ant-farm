@@ -1,5 +1,5 @@
 <template>
-  <div class="max-h-screen-3/4 flex flex-col overflow-hidden">
+  <div class="flex flex-col">
     <div :class="isLargeScreen ? 'grid grid-cols-2 gap-4' : 'flex flex-col'">
       <!-- Left Column: Adventure Mode -->
       <div class="space-y-4">
@@ -111,12 +111,12 @@
 
         <div class="flex justify-center">
           <button
-            :class="adventureStore.isFighting || adventureStore.battleCooldown ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'"
+            :class="adventureStore.battleStatus === 'fighting' || adventureStore.battleStatus === 'cooldown' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'"
             class="small text-white px-4 py-1 rounded shadow focus:outline-none focus:ring-2 focus:ring-opacity-50 text-sm md:text-base disabled:bg-gray-400 disabled:cursor-not-allowed"
-            :disabled="!adventureStore.currentArea"
+            :disabled="!adventureStore.currentArea || (adventureStore.toggleCooldown && adventureStore.battleStatus === 'idle')"
             @click="adventureStore.toggleBattle()"
           >
-            {{ adventureStore.isFighting || adventureStore.battleCooldown ? 'Stop Battle' : 'Start Battle' }}
+            {{ adventureStore.battleStatus === 'fighting' || adventureStore.battleStatus === 'cooldown' ? 'Stop Battle' : 'Start Battle' }}
           </button>
         </div>
       </div>
@@ -165,7 +165,7 @@ const isLargeScreen = computed(() => width.value >= 1024)
 
 watch(() => adventureStore.currentArea, () => {
   selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
-  adventureStore.battleCooldown = false
+  adventureStore.battleStatus = 'fighting'
   adventureStore.spawnRandomEnemy()
 })
 
@@ -176,7 +176,7 @@ onMounted(() => {
 watchDebounced(() => resourcesStore.resources.ants, () => {
   if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
 
-  if (prestigeStore.upgradePurchased('autoAdventure') && !adventureStore.battleRunning && resourcesStore.resources.ants >= 15) {
+  if (prestigeStore.upgradePurchased('autoAdventure') && adventureStore.battleStatus !== 'fighting' && resourcesStore.resources.ants >= 10) {
     console.log('Starting battle automatically')
     $toast.info('Starting battle automatically')
     adventureStore.toggleBattle()
