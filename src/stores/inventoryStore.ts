@@ -21,7 +21,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
       const registryItem = this.getItemById(itemData.id)
       if (!registryItem) {
-        console.error(`Item ${itemData.id} not found in registry`)
         return false
       }
 
@@ -238,7 +237,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
             maxLevel: item.maxLevel ?? 5,
           }
         } else {
-          console.error(`Item ${item.id} not found in registry`)
           return null
         }
       }).filter(item => item !== null) ?? []

@@ -620,7 +620,7 @@ export const useAdventureStore = defineStore('adventureStore', {
                 }
                 this.handleItemDrop(item, amount)
               } else {
-                console.error(`Item ${drop.name} not found in registry`)
+
               }
             }
           }

@@ -1005,7 +1005,7 @@ export const equipmentSets: Item[] = [
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
-// Arctic Tundra Set
+  // Arctic Tundra Set
   {
     id: 'tundra-helm',
     name: 'Tundra Helm',
