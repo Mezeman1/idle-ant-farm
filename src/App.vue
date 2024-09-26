@@ -9,7 +9,9 @@ import {useToast} from 'vue-toast-notification'
 onMounted(() => {
   if (document.fullscreenElement === null) {
     const toast = useToast()
-    toast.info('You are not in fullscreen mode. You need to be fullscreen to see the entire UI.')
+    toast.info('You are not in fullscreen mode. You need to be fullscreen to see the entire UI.', {
+      position: 'top',
+    })
     document.documentElement.requestFullscreen()
   }
 })
