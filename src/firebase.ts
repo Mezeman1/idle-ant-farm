@@ -1,6 +1,7 @@
 import firebase from 'firebase/compat/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAnalytics } from 'firebase/analytics'
+import { getPerformance } from 'firebase/performance'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 // ... other firebase imports
 
@@ -18,6 +19,8 @@ export const firebaseApp = firebase.initializeApp({
 const db = getFirestore()
 const analytics = getAnalytics()
 
+const performance = getPerformance(firebaseApp)
+
 // const appCheck = initializeAppCheck(firebaseApp, {
 //   provider: new ReCaptchaV3Provider(import.meta.env.VITE_APP_RECAPTCHA_SITEKEY),
 //
@@ -30,5 +33,5 @@ const initFirebase = async () => {
 }
 
 
-export { db, analytics, initFirebase }
+export { db, analytics, performance, initFirebase }
 
