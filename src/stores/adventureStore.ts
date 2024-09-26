@@ -414,6 +414,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         armyDefense: this.armyDefense,
         armyRegen: this.armyRegen,
         killCounts: this.killCounts,
+        enemyKillCount: this.enemyKillCount,
         currentArea: this.currentArea,
         activeBuffs: this.activeBuffs.map((buff) => ({
           id: buff.id,
@@ -436,6 +437,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.armyRegen = adventureState.armyRegen ?? this.armyRegen
       this.killCounts = adventureState.killCounts ?? this.killCounts
       this.currentArea = adventureState.currentArea ?? this.currentArea
+      this.enemyKillCount = adventureState.enemyKillCount ?? this.enemyKillCount
 
       const inventoryStore = useInventoryStore()
       this.activeBuffs = adventureState.activeBuffs?.map((buff) => {
