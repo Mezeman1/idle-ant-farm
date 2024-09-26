@@ -132,6 +132,7 @@
     </div>
     <div v-else>
       <AntSimulation
+        show-animation
         :queen-count="5"
         :ant-count="250"
         :larvae-count="200"
@@ -406,9 +407,6 @@ const tabs = computed(() => [
 const registerActive = ref(false)
 const privacyModalVisible = ref(false)
 
-// Classes for active and default tabs
-const activeTabClasses = 'inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg dark:text-blue-500 dark:border-blue-500'
-const defaultTabClasses = 'inline-block p-4 text-gray-800 border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-500 dark:hover:text-blue-600 disabled:cursor-not-allowed disabled:text-gray-800 disabled:border-gray-400 disabled:opacity-50'
 // Function to set the active tab
 const setActiveTab = (tab) => {
   activeTab.value = tab

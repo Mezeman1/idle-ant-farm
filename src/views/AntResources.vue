@@ -572,7 +572,7 @@
           <p
             class="text-2xs"
           >
-            Used to upgrade the tunnels. (Coming soon)
+            Used to upgrade the tunnels.
           </p>
         </div>
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
