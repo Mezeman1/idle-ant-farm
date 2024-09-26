@@ -183,7 +183,7 @@ watchDebounced(() => resourcesStore.resources.ants, () => {
     adventureStore.toggleBattle()
   }
 
-  if (!selectedWave.value && resourcesStore.resources.ants >= 15) {
+  if (!selectedWave.value && resourcesStore.resources.ants >= 15 && prestigeStore.upgradePurchased('autoAdventure')) {
     adventureStore.currentArea = 'Wasteland'
   }
 }, {
