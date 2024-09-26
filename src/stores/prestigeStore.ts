@@ -286,7 +286,9 @@ export const usePrestigeStore = defineStore('prestige', {
 
         if (this.timesPrestiged === 5) {
           const $toast = useToast()
-          $toast.info('You have unlocked the Elite Ants upgrade in the prestige shop!')
+          $toast.info('You have unlocked the Elite Ants upgrade in the prestige shop!', {
+            position: 'top-left',
+          })
         }
 
         // Reset the game state for prestige without deleting the Firestore doc

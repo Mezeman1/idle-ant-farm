@@ -229,7 +229,9 @@ export const useAdventureStore = defineStore('adventureStore', {
     handlePlayerDefeat() {
       if (!this.isSimulatingOffline) {
         const $toast = useToast()
-        $toast.error('You were defeated by the bug!')
+        $toast.error('You were defeated by the bug!', {
+          position: 'top-left',
+        })
       }
 
       this.battleStatus = 'idle'
@@ -288,7 +290,9 @@ export const useAdventureStore = defineStore('adventureStore', {
               if (item) {
                 if (!this.isSimulatingOffline) {
                   const $toast = useToast()
-                  $toast.success(`Loot: +${amount} ${drop.name}`)
+                  $toast.success(`Loot: +${amount} ${drop.name}`, {
+                    position: 'top-left',
+                  })
                 }
                 // Await the item drop handling
                 await this.handleItemDrop(item, amount)
@@ -616,7 +620,9 @@ export const useAdventureStore = defineStore('adventureStore', {
                 // Only show toast notifications if not simulating offline progress
                 if (!this.isSimulatingOffline) {
                   const $toast = useToast()
-                  $toast.success(`Loot: +${amount} ${drop.name}`)
+                  $toast.success(`Loot: +${amount} ${drop.name}`, {
+                    position: 'top-left',
+                  })
                 }
                 this.handleItemDrop(item, amount)
               } else {

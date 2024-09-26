@@ -179,7 +179,9 @@ watchDebounced(() => resourcesStore.resources.ants, () => {
   if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
 
   if (prestigeStore.upgradePurchased('autoAdventure') && adventureStore.battleStatus === 'idle' && resourcesStore.resources.ants >= 10) {
-    $toast.info('Starting battle automatically')
+    $toast.info('Starting battle automatically', {
+      position: 'top-left',
+    })
     adventureStore.toggleBattle()
   }
 

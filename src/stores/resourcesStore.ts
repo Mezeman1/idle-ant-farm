@@ -491,7 +491,9 @@ export const useResourcesStore = defineStore('resources', {
         if (random < royalJellyChance) {
           this.resources.royalJelly += 1
           const $toast = useToast()
-          $toast.info('Royal jelly collected!')
+          $toast.info('Royal jelly collected!', {
+            position: 'top-left',
+          })
         }
       }
     },

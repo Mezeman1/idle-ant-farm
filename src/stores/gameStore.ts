@@ -467,12 +467,16 @@ export const useGameStore = defineStore('gameStore', {
         console.log('Game state saved to Firestore')
 
         const $toast = useToast()
-        $toast.success('Game saved successfully')
+        $toast.success('Game saved successfully', {
+          position: 'top-left',
+        })
         this.lastSavedTime = Date.now()
       } catch (error: FirestoreError | any) {
         console.error('Error saving game state to Firebase:', error)
         const $toast = useToast()
-        $toast.error('Failed to save game state')
+        $toast.error('Failed to save game state', {
+          position: 'top-left',
+        })
 
         await this.logInvalidData(userId, 'gameState', error?.message)
       }
@@ -644,12 +648,16 @@ export const useGameStore = defineStore('gameStore', {
       auth.currentUser?.delete().then(async () => {
         console.log('User deleted')
         const $toast = useToast()
-        $toast.success('User deleted successfully')
+        $toast.success('User deleted successfully', {
+          position: 'top-left',
+        })
         await this.logout(true)
       }).catch((error) => {
         console.error('Error deleting user:', error)
         const $toast = useToast()
-        $toast.error('Failed to delete user: ' + error.message)
+        $toast.error('Failed to delete user: ' + error.message, {
+          position: 'top-left',
+        })
       })
     },
 

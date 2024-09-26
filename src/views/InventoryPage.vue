@@ -175,9 +175,13 @@ const useItem = (itemId: string, amount = 1) => {
   const $toast = useToast()
 
   if (useInventoryStore().useItem(itemId, amount)) {
-    $toast.success('Item used successfully')
+    $toast.success('Item used successfully', {
+      position: 'top-left',
+    })
   } else {
-    $toast.error('Failed to use item')
+    $toast.error('Failed to use item', {
+      position: 'top-left',
+    })
   }
 
   if (!inventoryStore.hasItem(itemId)) {
