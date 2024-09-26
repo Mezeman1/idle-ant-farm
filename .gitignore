@@ -5,3 +5,4 @@ dist
 .vscode
 *.local
 .en
+.env.localhost
