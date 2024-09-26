@@ -649,12 +649,12 @@ export const equipmentSets: Item[] = [
     effect: ({gameStore}, item) => {
       // Increase larvae production rate by 0.112% per level
       const bonusMultiplier = 1 + 0.00112 * item.level
-      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
+      gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
       const bonusMultiplier = 1 + 0.00112 * item.level
-      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+      gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
   {
@@ -671,12 +671,12 @@ export const equipmentSets: Item[] = [
     effect: ({gameStore}, item) => {
       // Increase larvae production rate by 0.157% per level
       const bonusMultiplier = 1 + 0.00157 * item.level
-      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
+      gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
       const bonusMultiplier = 1 + 0.00157 * item.level
-      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+      gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
   {
@@ -693,12 +693,12 @@ export const equipmentSets: Item[] = [
     effect: ({gameStore}, item) => {
       // Increase larvae production rate by 0.067% per level
       const bonusMultiplier = 1 + 0.00067 * item.level
-      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
+      gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
       const bonusMultiplier = 1 + 0.00067 * item.level
-      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+      gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
   {
@@ -715,12 +715,12 @@ export const equipmentSets: Item[] = [
     effect: ({gameStore}, item) => {
       // Increase larvae production rate by 0.224% per level
       const bonusMultiplier = 1 + 0.00224 * item.level
-      gameStore.productionRates.larvaeProductionRate *= bonusMultiplier
+      gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
       const bonusMultiplier = 1 + 0.00224 * item.level
-      gameStore.productionRates.larvaeProductionRate /= bonusMultiplier
+      gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
   {
