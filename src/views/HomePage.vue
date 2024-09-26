@@ -33,6 +33,15 @@
             <span v-if="canSave">Save Game</span>
             <span v-else>Wait {{ timeLeft }}s</span>
           </button>
+
+          <div v-if="deferredPrompt">
+            <button
+              class="flex items-center bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded"
+              @click="deferredPrompt.prompt()"
+            >
+              Install
+            </button>
+          </div>
         </div>
 
         <!-- Right Side Button -->
@@ -336,6 +345,7 @@ import {useSettingsStore} from '@/stores/settingsStore'
 import BestiaryPage from '@/views/BestiaryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 
+const deferredPrompt = ref(null)
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
 const resourcesStore = useResourcesStore()
@@ -469,6 +479,17 @@ onMounted(() => {
       window.addEventListener('freeze', handleFreeze)
     }
   })
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault()
+    deferredPrompt.value = e
+  })
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt.value = null
+  })
+
+  deferredPrompt.value?.prompt()
 })
 
 onBeforeUnmount(async () => {

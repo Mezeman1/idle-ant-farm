@@ -3,8 +3,9 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue'
+import {onMounted, ref} from 'vue'
 import {useToast} from 'vue-toast-notification'
+
 
 onMounted(() => {
   if (document.fullscreenElement === null && isMobile) {
@@ -15,6 +16,7 @@ onMounted(() => {
     document.documentElement.requestFullscreen()
   }
 })
+
 
 const isMobile = window.innerWidth < 640
 </script>
