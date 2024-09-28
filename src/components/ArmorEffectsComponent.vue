@@ -13,6 +13,7 @@
         >
           <strong>{{ item.name }} (Level {{ item.level }})</strong>
           {{ item.description }}
+          <strong>Total bonus: {{ formatNumber(item.level * item.multiplier * 100) }}%</strong>
         </li>
       </ul>
       <!-- Display the active set bonus -->
@@ -31,10 +32,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useEquipmentStore } from '../stores/equipmentStore'
-import {getItemBasePercentage} from '@/types/itemRegistry'
+import { useGameStore } from '@/stores/gameStore'
 
 // Access the equipment store
 const equipmentStore = useEquipmentStore()
+const gameStore = useGameStore()
+
+const formatNumber = gameStore.formatNumber
 
 // Compute the list of equipped items
 const equippedItemsList = computed(() => {

@@ -78,7 +78,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Stronger Ants',
         description: 'Increase ants army strength by 10% (decreases with each purchase)',
         cost: 50,
-        applyOnPrestige: false,
+        applyOnPrestige: true,
         category: 'combat',
       },
       {
@@ -86,7 +86,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Stronger Ants Defense',
         description: 'Increase ants army defense by 10% (decreases with each purchase)',
         cost: 50,
-        applyOnPrestige: false,
+        applyOnPrestige: true,
         category: 'combat',
       },
       {

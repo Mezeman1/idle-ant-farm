@@ -19,6 +19,7 @@ export interface Item {
   applyOnPrestige?: boolean;
   duration?: number;
   image?: string;
+  multiplier?: number;
 }
 
 export type SetBonus = {
@@ -426,14 +427,15 @@ export const equipmentSets: Item[] = [
     rarity: 'uncommon',
     level: 1,
     maxLevel: 100,
+    multiplier: 0.001035313244622532,
     effect: ({gameStore}, item) => {
       // Increase resource gathering by 0.1035% per level
-      const bonusMultiplier = 1 + 0.001035313244622532 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.001035313244622532 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
   },
@@ -448,14 +450,14 @@ export const equipmentSets: Item[] = [
     rarity: 'uncommon',
     level: 1,
     maxLevel: 100,
+    multiplier: 0.0015529698669337984, // Already done
     effect: ({gameStore}, item) => {
-      // Increase resource gathering by 0.1553% per level
-      const bonusMultiplier = 1 + 0.0015529698669337984 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.0015529698669337984 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
   },
@@ -470,14 +472,14 @@ export const equipmentSets: Item[] = [
     rarity: 'uncommon',
     level: 1,
     maxLevel: 100,
+    multiplier: 0.0007758055940675406, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      // Increase resource gathering by 0.0776% per level
-      const bonusMultiplier = 1 + 0.0007758055940675406 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.0007758055940675406 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
   },
@@ -492,14 +494,14 @@ export const equipmentSets: Item[] = [
     rarity: 'uncommon',
     level: 1,
     maxLevel: 100,
+    multiplier: 0.0012934622163788066, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      // Increase resource gathering by 0.1293% per level
-      const bonusMultiplier = 1 + 0.0012934622163788066 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.0012934622163788066 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
   },
@@ -514,18 +516,17 @@ export const equipmentSets: Item[] = [
     rarity: 'uncommon',
     level: 1,
     maxLevel: 100,
+    multiplier: 0.002070626489245064, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      // Increase resource gathering by 0.2071% per level
-      const bonusMultiplier = 1 + 0.002070626489245064 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.002070626489245064 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
   },
-
 
   // Soldier Set
   {
@@ -539,13 +540,14 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.0031, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0031 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0031 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
@@ -560,13 +562,14 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.0062, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0062 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0062 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
@@ -581,13 +584,14 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.0031, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0031 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0031 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
@@ -602,13 +606,14 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.0077, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0077 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0077 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
@@ -623,17 +628,19 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.0077, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0077 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0077 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
 
+  // Royal Set
   // Royal Set
   {
     id: 'royal-crown',
@@ -646,14 +653,14 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 1000,
+    multiplier: 0.00112, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      // Increase larvae production rate by 0.112% per level
-      const bonusMultiplier = 1 + 0.00112 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.00112 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
@@ -668,14 +675,14 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 1000,
+    multiplier: 0.00157, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      // Increase larvae production rate by 0.157% per level
-      const bonusMultiplier = 1 + 0.00157 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.00157 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
@@ -690,14 +697,14 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 1000,
+    multiplier: 0.00067, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      // Increase larvae production rate by 0.067% per level
-      const bonusMultiplier = 1 + 0.00067 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.00067 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
@@ -712,14 +719,14 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 1000,
+    multiplier: 0.00224, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      // Increase larvae production rate by 0.224% per level
-      const bonusMultiplier = 1 + 0.00224 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = 1 + 0.00224 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
@@ -734,21 +741,23 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 1000,
+    multiplier: 0.00223, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      // Increase overall army stats by 0.223% per level
-      const bonusMultiplier = 1 + 0.00223 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier *= bonusMultiplier
       adventureStore.armyDefenseModifier *= bonusMultiplier
       adventureStore.armyMaxHealthModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.00223 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
       adventureStore.armyDefenseModifier /= bonusMultiplier
       adventureStore.armyMaxHealthModifier /= bonusMultiplier
     },
   },
+
+  // Volcano Set
   // Volcano Set
   {
     id: 'volcano-helm',
@@ -761,13 +770,14 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.005, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.005 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.005 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
@@ -782,13 +792,14 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.0075, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0075 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.0075 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
@@ -803,13 +814,14 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.006, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.006 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyRegenModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.006 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyRegenModifier /= bonusMultiplier
     },
   },
@@ -824,14 +836,15 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.008, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.008 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier *= bonusMultiplier
       adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.008 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
       adventureStore.armyDefenseModifier /= bonusMultiplier
     },
@@ -847,13 +860,14 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.01, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.01 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.01 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
@@ -868,13 +882,14 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.012, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.012 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyMaxHealthModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.012 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyMaxHealthModifier /= bonusMultiplier
     },
   },
@@ -889,16 +904,18 @@ export const equipmentSets: Item[] = [
     rarity: 'rare',
     level: 1,
     maxLevel: 500,
+    multiplier: 0.015, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.015 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.015 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
+  // Underworld Set
   // Underworld Set
   {
     id: 'underworld-helm',
@@ -911,13 +928,14 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 750,
+    multiplier: 0.009, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.009 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.009 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
@@ -932,13 +950,14 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 750,
+    multiplier: 0.012, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.012 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyMaxHealthModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.012 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyMaxHealthModifier /= bonusMultiplier
     },
   },
@@ -953,13 +972,14 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 750,
+    multiplier: 0.006, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.006 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.006 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
@@ -974,13 +994,14 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 750,
+    multiplier: 0.009, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.009 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyRegenModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.009 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyRegenModifier /= bonusMultiplier
     },
   },
@@ -995,16 +1016,19 @@ export const equipmentSets: Item[] = [
     rarity: 'legendary',
     level: 1,
     maxLevel: 750,
+    multiplier: 0.015, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.015 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.015 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
+
+  // Arctic Tundra Set
   // Arctic Tundra Set
   {
     id: 'tundra-helm',
@@ -1017,13 +1041,14 @@ export const equipmentSets: Item[] = [
     rarity: 'epic',
     level: 1,
     maxLevel: 300,
+    multiplier: 0.007, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.007 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.007 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
@@ -1038,13 +1063,14 @@ export const equipmentSets: Item[] = [
     rarity: 'epic',
     level: 1,
     maxLevel: 300,
+    multiplier: 0.011, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.011 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.011 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
@@ -1059,13 +1085,14 @@ export const equipmentSets: Item[] = [
     rarity: 'epic',
     level: 1,
     maxLevel: 300,
+    multiplier: 0.006, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.006 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armySpeedModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.006 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armySpeedModifier /= bonusMultiplier
     },
   },
@@ -1080,13 +1107,14 @@ export const equipmentSets: Item[] = [
     rarity: 'epic',
     level: 1,
     maxLevel: 300,
+    multiplier: 0.013, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.013 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyRegenModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.013 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyRegenModifier /= bonusMultiplier
     },
   },
@@ -1101,13 +1129,14 @@ export const equipmentSets: Item[] = [
     rarity: 'epic',
     level: 1,
     maxLevel: 300,
+    multiplier: 0.008, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.008 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = 1 + 0.008 * item.level
+      const bonusMultiplier = 1 + item.multiplier * item.level
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
