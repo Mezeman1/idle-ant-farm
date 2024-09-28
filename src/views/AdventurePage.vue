@@ -200,7 +200,6 @@ watchDebounced(() => resourcesStore.resources.ants, () => {
     $toast.info('Starting battle automatically', {
       position: 'top-left',
     })
-    adventureStore.toggleBattle()
   }
 
   if (!selectedWave.value && resourcesStore.resources.ants >= 15 && prestigeStore.upgradePurchased('autoAdventure')) {
