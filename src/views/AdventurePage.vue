@@ -3,47 +3,13 @@
     <div :class="isLargeScreen ? 'grid grid-cols-2 gap-4' : 'flex flex-col'">
       <!-- Left Column: Adventure Mode -->
       <div class="space-y-4">
-        <div class="flex flex-col space-y-2">
-          <label
-            for="area"
-            class="text-sm font-semibold"
-          >Select Area:</label>
-          <div class="relative inline-block w-full">
-            <button
-              ref="target"
-              class="block w-full bg-white border border-gray-300 text-sm text-gray-700 py-1 px-2 pr-8 rounded focus:outline-none focus:border-blue-500"
-              @click="toggleDropdown"
-            >
-              {{ selectedWave ? selectedWave.name : 'Select a wave' }}
-              <span class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <svg
-                  class="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M5.5 7l4.5 4.5L14.5 7z" />
-                </svg>
-              </span>
-            </button>
-            <div
-              v-if="dropdownOpen"
-              class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow-lg text-sm"
-            >
-              <div
-                v-for="wave in adventureStore.enemyWaves"
-                :key="wave.name"
-                :class="[
-                  'cursor-pointer px-2 py-1 text-gray-700 hover:bg-gray-200',
-                  !wave.unlockedWhen(useResourcesStore()) && 'text-gray-400 cursor-not-allowed',
-                ]"
-                @click="selectWave(wave)"
-              >
-                <span v-if="wave.unlockedWhen(useResourcesStore())">{{ wave.name }}</span>
-                <span v-else>{{ wave.name }} 🔒 ({{ wave.unlockText }})</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <WaveSelector
+          :selected-wave="selectedWave"
+          :can-go-next="canGoNext"
+          :can-go-previous="canGoPrevious"
+          @previousWave="previousWave"
+          @nextWave="nextWave"
+        />
 
         <!-- Ant Army and Enemy Bug Display -->
         <div class="grid grid-cols-2 gap-2">
@@ -62,7 +28,10 @@
               <p class="font-bold">
                 Ant Army
               </p>
-              <p>Health: <br>{{ formatNumber(adventureStore.armyHealth) }} / {{ formatNumber(adventureStore.armyMaxHealth) }}</p>
+              <p>
+                Health: <br>{{ formatNumber(adventureStore.armyHealth) }} /
+                {{ formatNumber(adventureStore.armyMaxHealth) }}
+              </p>
               <div class="progress-container h-1 bg-gray-300 rounded">
                 <div
                   class="progress-bar bg-green-500 h-full rounded"
@@ -78,7 +47,10 @@
           </div>
 
           <!-- Enemy Bug Side -->
-          <div class="bg-white rounded-lg shadow flex flex-col h-52 sm:h-64 md:h-96">
+          <div
+            v-if="adventureStore.currentEnemy"
+            class="bg-white rounded-lg shadow flex flex-col h-52 sm:h-64 md:h-96"
+          >
             <!-- Top Half: Background Image -->
             <div
               class="h-1/4 md:h-1/2 bg-cover bg-center rounded-t-lg"
@@ -90,9 +62,14 @@
             <!-- Bottom Half: Info and Progress Bar -->
             <div class="h-3/4 md:h-1/2 bg-white bg-opacity-80 p-2 rounded-b-lg text-center text-2xs md:text-sm">
               <p class="font-bold">
-                {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }} {{ adventureStore.currentEnemy?.isBoss ? '👑' : '' }}
+                {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }}
+                {{ adventureStore.currentEnemy?.isBoss ? '👑' : '' }}
               </p>
-              <p>Health: <br>{{ formatNumber(adventureStore.bugHealth) }} / {{ formatNumber(adventureStore.bugMaxHealth) }}</p>
+              <p>
+                Health: <br>{{ formatNumber(adventureStore.bugHealth) }} / {{
+                  formatNumber(adventureStore.bugMaxHealth)
+                }}
+              </p>
               <div class="progress-container h-1 bg-gray-300 rounded">
                 <div
                   class="progress-bar bg-red-500 h-full rounded"
@@ -106,18 +83,15 @@
               </div>
             </div>
           </div>
-        </div>
-
-
-        <div class="flex justify-center">
-          <button
-            :class="adventureStore.battleStatus === 'fighting' || adventureStore.battleStatus === 'cooldown' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'"
-            class="small text-white px-4 py-1 rounded shadow focus:outline-none focus:ring-2 focus:ring-opacity-50 text-sm md:text-base disabled:bg-gray-400 disabled:cursor-not-allowed"
-            :disabled="!adventureStore.currentArea || (adventureStore.toggleCooldown && adventureStore.battleStatus === 'idle')"
-            @click="adventureStore.toggleBattle()"
-          >
-            {{ adventureStore.battleStatus === 'fighting' || adventureStore.battleStatus === 'cooldown' ? 'Stop Battle' : 'Start Battle' }}
-          </button>
+          <div v-else>
+            <div class="bg-white rounded-lg shadow flex flex-col h-52 sm:h-64 md:h-96">
+              <div class="h-1/4 md:h-1/2 bg-cover bg-center rounded-t-lg">
+                <div class="flex items-center justify-center h-full text-sm text-gray-400">
+                  You're safe for now
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -150,6 +124,7 @@ import Inventory from '@/views/InventoryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useToast} from 'vue-toast-notification'
 import {useResourcesStore} from '@/stores/resourcesStore'
+import WaveSelector from '@/components/WaveSelector.vue'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
@@ -164,7 +139,7 @@ const {width} = useWindowSize()
 const isLargeScreen = computed(() => width.value >= 1024)
 
 watch(() => adventureStore.currentArea, () => {
-  selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
+  selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)
   adventureStore.battleStatus = 'fighting'
   adventureStore.spawnRandomEnemy()
   adventureStore.stopAllBattles()
@@ -172,8 +147,43 @@ watch(() => adventureStore.currentArea, () => {
 })
 
 onMounted(() => {
-  selectedWave.value = adventureStore.enemyWaves.find(wave => wave.name === adventureStore.currentArea)
+  selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)
+  updateCurrentAreaByIndex(selectedWaveIndex.value)
 })
+
+const updateCurrentAreaByIndex = (index) => {
+  if (index < 0 || index >= adventureStore.enemyWaves.length) return
+
+  if (getAreaByIndex(index).unlockedWhen(useResourcesStore())) {
+    adventureStore.currentArea = getAreaByIndex(index).name
+  }
+}
+
+const getAreaByIndex = (index) => {
+  return adventureStore.enemyWaves[index]
+}
+
+const selectedWaveIndex = ref(0)
+const selectedWave = computed(() => {
+  return adventureStore.enemyWaves[selectedWaveIndex.value]
+})
+
+const canGoPrevious = computed(() => selectedWaveIndex.value > 0)
+const canGoNext = computed(() => selectedWaveIndex.value < adventureStore.enemyWaves.length - 1 && getAreaByIndex(selectedWaveIndex.value + 1).unlockedWhen(useResourcesStore()))
+
+const previousWave = () => {
+  if (canGoPrevious.value) {
+    selectedWaveIndex.value--
+    updateCurrentAreaByIndex(selectedWaveIndex.value)
+  }
+}
+
+const nextWave = () => {
+  if (canGoNext.value) {
+    selectedWaveIndex.value++
+    updateCurrentAreaByIndex(selectedWaveIndex.value)
+  }
+}
 
 watchDebounced(() => resourcesStore.resources.ants, () => {
   if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
@@ -194,7 +204,6 @@ watchDebounced(() => resourcesStore.resources.ants, () => {
 
 
 const dropdownOpen = ref(false)
-const selectedWave = ref(null)
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value

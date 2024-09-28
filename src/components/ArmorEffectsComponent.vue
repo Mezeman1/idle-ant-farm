@@ -73,6 +73,26 @@ const setBonusDescription = computed(() => {
   return ''
 })
 
+const getTotalBonus = computed(() => {
+  const equippedItems = equipmentStore.equippedItems
+  const allEquipped = [
+    equippedItems.head,
+    equippedItems.body,
+    equippedItems.legs,
+    equippedItems.weapon,
+    ...equippedItems.accessories,
+  ]
+
+  // Calculate the total bonus based on equipped items
+  return allEquipped.reduce((total, item) => {
+    if (item) {
+      return total + item.level * item.multiplier
+    }
+
+    return total
+  }, 0) * 100
+})
+
 </script>
 
 <style scoped>

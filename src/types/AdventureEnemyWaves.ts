@@ -29,6 +29,12 @@ export interface AdventureEnemyWave {
 
 export const adventureEnemyWaves = [
   {
+    name: 'Safe Zone',
+    enemies: [],
+    unlockedWhen: () => true,
+    unlockText: 'Always available.',
+  },
+  {
     name: 'Wasteland',
     enemies: [
       {

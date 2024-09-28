@@ -10,13 +10,6 @@
       v-if="activeItem"
       class="flex flex-col md:flex-row md:items-center md:justify-between p-4 border border-gray-300 rounded-lg mb-4 bg-white"
     >
-      <div class="flex flex-col items-center">
-        <img
-          v-if="activeItem.image"
-          :src="activeItem.image"
-          class="w-32 h-32 rounded-lg"
-        >
-      </div>
       <div>
         <h3 class="font-bold text-lg md:text-xl">
           {{ activeItem.name }}

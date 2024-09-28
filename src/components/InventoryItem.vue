@@ -2,8 +2,13 @@
   <button
     :class="[
       'p-2 flex flex-col items-center h-full w-full cursor-pointer relative overflow-hidden rounded-lg transition-all duration-200 shadow-md hover:shadow-lg',
-      rarityColorClass(itemFromRegistry?.rarity)
+      itemFromRegistry?.image ? 'text-white' : rarityColorClass(itemFromRegistry?.rarity)
     ]"
+    :style="{
+      backgroundImage: itemFromRegistry?.image ? `url(${itemFromRegistry.image})` : '',
+      backgroundSize: itemFromRegistry?.image ? 'cover' : '',
+      backgroundPosition: itemFromRegistry?.image ? 'center' : '',
+    }"
     @click="$emit('setActiveItem', item)"
   >
     <!-- Amount badge in the top-right corner -->
@@ -14,9 +19,15 @@
       {{ formatNumber(item.amount, 0) }}
     </div>
 
+    <!-- Overlay to darken the background for better text readability -->
+    <div
+      v-if="itemFromRegistry?.image"
+      class="absolute inset-0 bg-black bg-opacity-50 rounded-lg"
+    />
+
     <!-- Item name -->
     <div
-      class="text-3xs sm:text-2xs md:text-xs lg:text-sm text-center break-words"
+      class="text-3xs sm:text-2xs md:text-xs lg:text-sm text-center break-words relative z-10"
       :class="{
         'mt-6': itemFromRegistry?.type !== 'passive',
       }"
@@ -25,16 +36,9 @@
     </div>
 
     <!-- Item type -->
-    <span class="text-3xs sm:text-2xs md:text-xs lg:text-sm mt-1 text-gray-500">
+    <span class="text-3xs sm:text-2xs md:text-xs lg:text-sm mt-1 relative z-10">
       {{ itemFromRegistry?.type }}
     </span>
-
-    <!-- Item image -->
-    <img
-      v-if="itemFromRegistry?.image"
-      :src="itemFromRegistry.image"
-      class="w-16 h-16 mt-2 rounded"
-    >
   </button>
 </template>
 

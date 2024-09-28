@@ -46,7 +46,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     bugDefense: 0,
     bugRegen: 2,
 
-    currentArea: '',
+    currentArea: 'Safe Zone',
     enemyWaves: adventureEnemyWaves,
     currentEnemy: null as Enemy | null,
 
@@ -234,6 +234,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         })
       }
 
+      this.currentArea = 'Safe Zone' // Reset the area to the safe zone
       this.battleStatus = 'idle'
 
       // Start a regeneration loop after defeat to limit full healing
@@ -253,7 +254,7 @@ export const useAdventureStore = defineStore('adventureStore', {
           this.applyDefeatRegeneration() // Apply gradual regeneration
           setTimeout(defeatRegen, regenInterval) // Continue regeneration
         } else {
-          this.battleStatus = 'idle' // Reset the battle status
+          this.battleStatus = 'fighting' // Reset the battle status
         }
       }
 
@@ -400,6 +401,11 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       const randomIndex = Math.floor(Math.random() * enemies.length)
       const enemy = enemies[randomIndex]
+      if (!enemy) {
+        this.currentEnemy = null
+        return
+      }
+
       this.currentEnemy = enemy
 
       this.bugHealth = enemy.health
@@ -495,7 +501,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.armyDefense = 5
       this.armyRegen = 5
       this.lastSavedTime = Date.now()
-      this.currentArea = ''
+      this.currentArea = 'Safe Zone'
       this.enemySpawned = false
       this.currentEnemy = null
       this.battleStatus = 'idle'

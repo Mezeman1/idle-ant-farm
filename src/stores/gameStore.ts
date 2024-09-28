@@ -560,11 +560,7 @@ export const useGameStore = defineStore('gameStore', {
         this.setupAdventureStats()
         const adventureStore = useAdventureStore()
         await adventureStore.calculateOfflineProgress()
-        console.log('Adventure state status:', adventureStore.battleStatus)
-        if (adventureStore.battleStatus === 'fighting' || adventureStore.battleStatus === 'cooldown') {
-          adventureStore.startBattle()
-        }
-
+        adventureStore.startBattle()
         this.loaded = true
         console.log('Game state loaded successfully', this.lastSavedTime)
       } catch (error) {
