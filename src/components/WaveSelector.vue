@@ -50,14 +50,6 @@
         </svg>
       </button>
     </div>
-
-    <!-- Optional display for locked wave details -->
-    <div
-      v-if="!selectedWave?.unlockedWhen(useResourcesStore())"
-      class="text-xs text-gray-400"
-    >
-      {{ selectedWave?.unlockText }} 🔒
-    </div>
   </div>
 </template>
 

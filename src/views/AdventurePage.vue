@@ -11,6 +11,14 @@
           @nextWave="nextWave"
         />
 
+        <!-- Optional display for locked wave details -->
+        <div
+          v-if="!getAreaByIndex(selectedWaveIndex + 1).unlockedWhen(resourcesStore)"
+          class="text-xs text-gray-700"
+        >
+          Next Area: {{ getAreaByIndex(selectedWaveIndex + 1)?.unlockText }} 🔒
+        </div>
+
         <!-- Ant Army and Enemy Bug Display -->
         <div class="grid grid-cols-2 gap-2">
           <!-- Ant Army Side -->
