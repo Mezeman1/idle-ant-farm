@@ -104,6 +104,10 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.toggleCooldownTimeout = 0 // Clear the timeout reference after it's done
       }, 3000 / useGameStore().deltaMultiplier) // Adjust cooldown period as needed
 
+      if (this.loopActive.some(active => active)) {
+        return // Stop if a loop is already running
+      }
+
       // Check if the loop is already active to avoid multiple starts
       if (this.battleStatus === 'fighting') {
         console.warn('Battle loop is already running')
@@ -168,8 +172,11 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       // Continue the loop as long as the battle is active
       if (this.battleStatus === 'fighting') {
-        const newAnimationFrameId = requestAnimationFrame(this.battleLoop)
+        // Request the next animation frame
+        const newAnimationFrameId = requestAnimationFrame(this.battleLoop.bind(this)) // Bind `this` to preserve the context
         this.animationFrameIds.push(newAnimationFrameId) // Keep adding new frame IDs to the array
+      } else {
+        this.loopActive = this.loopActive.map(() => false) // Ensure the loop stops when battleStatus changes
       }
     },
     applyBuffs(deltaTime) {

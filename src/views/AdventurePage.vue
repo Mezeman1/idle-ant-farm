@@ -179,7 +179,7 @@ const selectedWave = computed(() => {
 })
 
 const canGoPrevious = computed(() => selectedWaveIndex.value > 0)
-const canGoNext = computed(() => selectedWaveIndex.value < adventureStore.enemyWaves.length - 1 && getAreaByIndex(selectedWaveIndex.value + 1)?.unlockedWhen(useResourcesStore()))
+const canGoNext = computed(() => selectedWaveIndex.value + 1 < adventureStore.enemyWaves.length - 1 && getAreaByIndex(selectedWaveIndex.value + 1)?.unlockedWhen(useResourcesStore()))
 
 const previousWave = () => {
   if (canGoPrevious.value) {
@@ -204,7 +204,7 @@ watchDebounced(() => resourcesStore.resources.ants, () => {
     })
   }
 
-  if (!selectedWave.value && resourcesStore.resources.ants >= 15 && prestigeStore.upgradePurchased('autoAdventure')) {
+  if (selectedWave.value === 'Safe Zone' && resourcesStore.resources.ants >= 15 && prestigeStore.upgradePurchased('autoAdventure')) {
     adventureStore.currentArea = 'Wasteland'
   }
 }, {
