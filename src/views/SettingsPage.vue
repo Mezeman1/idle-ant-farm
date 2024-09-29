@@ -43,6 +43,21 @@
         >
       </div>
 
+      <div class="flex flex-col gap-2">
+        <label>Number notation</label>
+        <select
+          v-model="settingsStore.notation"
+          class="form-select"
+        >
+          <option value="scientific">
+            Scientific
+          </option>
+          <option value="longText">
+            Letters
+          </option>
+        </select>
+      </div>
+
       <!-- Slider for auto buy seed storage threshold -->
       <div class="flex flex-col gap-2">
         <label>Auto buy seed storage threshold</label>

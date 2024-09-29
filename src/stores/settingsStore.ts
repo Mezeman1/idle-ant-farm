@@ -18,6 +18,7 @@ export const useSettingsStore = defineStore('settings', {
       autoQueenCreationAnts: 0,
       autoCreateHousing: 0,
     },
+    notation: 'scientific',
   }),
   actions: {
     getSettingsState() {

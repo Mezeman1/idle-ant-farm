@@ -791,7 +791,29 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     formatNumber(num: number, toFixed = 2): string {
+      if (num > Number.MAX_SAFE_INTEGER) return 'Infinity'
+
       if (toFixed === 0) num = Math.floor(num)
+
+      const notation = useSettingsStore().notation
+
+      const longTextSuffixes = [
+        '', 'Thousand', 'Million', 'Billion', 'Trillion', 'Quadrillion', 'Quintillion',
+        'Sextillion', 'Septillion', 'Octillion', 'Nonillion', 'Decillion', 'Undecillion',
+        'Duodecillion', 'Tredecillion', 'Quattuordecillion', 'Quindecillion', 'Sexdecillion',
+        'Septendecillion', 'Octodecillion', 'Novemdecillion', 'Vigintillion',
+      ]
+
+      if (notation === 'longText') {
+        if (num < 1000) return num.toFixed(toFixed)
+
+        const exponent = Math.floor(Math.log10(Math.abs(num)) / 3)
+        const scaledNumber = num / Math.pow(1000, exponent)
+        const suffix = longTextSuffixes[exponent] || `E${exponent * 3}`
+
+        return scaledNumber.toFixed(toFixed) + ' ' + suffix
+      }
+
       // Use normal formatting for numbers below 1 million
       if (num < 100e6) {
         if (num < 1000) return num.toFixed(toFixed)

@@ -179,6 +179,9 @@
           <p class="text-2xs">
             Ants collect seeds and fight bugs.
           </p>
+          <p>
+            {{ resourcesStore.antsPerHousing }} {{ resourcesStore.resources.antHousing }}
+          </p>
         </div>
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">

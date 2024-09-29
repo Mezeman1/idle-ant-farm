@@ -593,6 +593,7 @@ export const useResourcesStore = defineStore('resources', {
 
       this.royalJellyCollectionChance = 0.001
       this.royalJellyCollectionModifier = 1.0
+      this.antsPerHousing = 1
 
       // Reset storage to initial caps
       this.storage = {
