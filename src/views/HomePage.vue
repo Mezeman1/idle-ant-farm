@@ -130,7 +130,7 @@
       <div class="flex flex-col items-center justify-center bg-gray-50 p-3">
         <div class="w-3/4 bg-gray-200 rounded-full h-4 overflow-hidden">
           <div
-            class="bg-blue-600 h-full rounded-full transition-all duration-500"
+            class="bg-blue-600 h-full rounded-full"
             :style="{ width: progress + '%' }"
           />
         </div>
