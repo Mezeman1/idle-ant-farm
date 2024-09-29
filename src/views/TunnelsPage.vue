@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 bg-gray-900 text-white rounded-lg shadow-lg space-y-8 flex flex-col h-full overflow-hidden">
+  <div class="p-6 bg-gray-900 text-white rounded-lg shadow-lg space-y-8 flex flex-col h-full overflow-y-auto">
     <!-- Title and Tunnel Info -->
     <div class="text-center">
       <h1 class="text-3xl font-bold text-yellow-400 mb-2">

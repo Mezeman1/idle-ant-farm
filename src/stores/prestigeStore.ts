@@ -381,7 +381,6 @@ export const usePrestigeStore = defineStore('prestige', {
       const adventureStore = useAdventureStore()
       const prestigeInShop = this.prestigeShop.find(u => u.id === upgradeId)
       if (fromPrestige && prestigeInShop?.applyOnPrestige === false) {
-        console.log('Upgrade not applicable for prestige purchase:', upgradeId)
         return
       }
 
@@ -419,10 +418,10 @@ export const usePrestigeStore = defineStore('prestige', {
           resourcesStore.productionRates.larvaeProductionModifier *= 1 + (0.5 / prestigeScalingFactor)
         },
         autoLarvae: () => {
-          this.autoLarvaeCreation = true
+          // this.autoLarvaeCreation = true
         },
         autoEliteAntsCreation: () => {
-          this.autoEliteAntsCreation = true
+          // this.autoEliteAntsCreation = true
         },
         betterAnts: () => {
           const prestigeScalingFactor = Math.log2(this.amountOfUpgrade(upgradeId) + 1) + 1
@@ -449,19 +448,19 @@ export const usePrestigeStore = defineStore('prestige', {
           adventureStore.setupAdventureStats()
         },
         autoAnts: () => {
-          this.autoAntCreation = true
+          // this.autoAntCreation = true
         },
         autoQueens: () => {
-          this.autoQueenCreation = true
+          // this.autoQueenCreation = true
         },
         autoSeedStorageUpgrade: () => {
-          this.autoSeedStorageUpgrade = true
+          // this.autoSeedStorageUpgrade = true
         },
         autoLarvaeStorageUpgrade: () => {
-          this.autoLarvaeStorageUpgrade = true
+          // this.autoLarvaeStorageUpgrade = true
         },
         autoCreateHousing: () => {
-          this.autoCreateHousing = true
+          // this.autoCreateHousing = true
         },
         autoAdventure: () => {
           this.autoAdventure = true

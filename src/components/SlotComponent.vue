@@ -30,7 +30,7 @@
         class="text-3xs sm:text-2xs"
       >
         <br>
-        <span>{{ item.set }} {{ currentEquippedItems }}/{{ setTotalItems }}</span>
+        <span>{{ item.set }} {{ currentEquippedItems }}/{{ setTotalItems }} equipped</span>
       </span>
     </p>
   </div>
