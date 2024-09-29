@@ -811,7 +811,7 @@ export const useGameStore = defineStore('gameStore', {
         const scaledNumber = num / Math.pow(1000, exponent)
         const suffix = longTextSuffixes[exponent] || `E${exponent * 3}`
 
-        return scaledNumber.toFixed(toFixed) + ' ' + suffix
+        return scaledNumber.toFixed(2) + ' ' + suffix
       }
 
       // Use normal formatting for numbers below 1 million
