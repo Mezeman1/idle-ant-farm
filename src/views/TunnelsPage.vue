@@ -71,7 +71,7 @@
     </div>
 
     <!-- Events section -->
-    <div class="space-y-4 flex-grow overflow-auto">
+    <div class="space-y-4 flex-grow">
       <h2 class="text-xl font-bold text-yellow-400">
         Events
       </h2>
