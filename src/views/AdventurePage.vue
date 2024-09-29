@@ -162,12 +162,14 @@ onMounted(() => {
 const updateCurrentAreaByIndex = (index) => {
   if (index < 0 || index >= adventureStore.enemyWaves.length) return
 
-  if (getAreaByIndex(index).unlockedWhen(useResourcesStore())) {
-    adventureStore.currentArea = getAreaByIndex(index).name
+  if (getAreaByIndex(index)?.unlockedWhen(useResourcesStore())) {
+    adventureStore.currentArea = getAreaByIndex(index)?.name ?? 'Safe Zone'
   }
 }
 
 const getAreaByIndex = (index) => {
+  if (index < 0 || index >= adventureStore.enemyWaves.length) return null
+
   return adventureStore.enemyWaves[index]
 }
 
@@ -177,7 +179,7 @@ const selectedWave = computed(() => {
 })
 
 const canGoPrevious = computed(() => selectedWaveIndex.value > 0)
-const canGoNext = computed(() => selectedWaveIndex.value < adventureStore.enemyWaves.length - 1 && getAreaByIndex(selectedWaveIndex.value + 1).unlockedWhen(useResourcesStore()))
+const canGoNext = computed(() => selectedWaveIndex.value < adventureStore.enemyWaves.length - 1 && getAreaByIndex(selectedWaveIndex.value + 1)?.unlockedWhen(useResourcesStore()))
 
 const previousWave = () => {
   if (canGoPrevious.value) {
@@ -211,18 +213,6 @@ watchDebounced(() => resourcesStore.resources.ants, () => {
 
 
 const dropdownOpen = ref(false)
-
-const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value
-}
-
-const selectWave = (wave) => {
-  if (wave.unlockedWhen(useResourcesStore())) {
-    selectedWave.value = wave
-    dropdownOpen.value = false
-    adventureStore.currentArea = wave.name
-  }
-}
 
 const target = ref(null)
 
