@@ -261,6 +261,8 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const adventureStore = useAdventureStore()
       const context = { gameStore, adventureStore }
 
+      this.activeSetBonus = null
+
       if (!state.equippedItems) {
         return
       }

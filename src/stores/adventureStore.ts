@@ -66,54 +66,11 @@ export const useAdventureStore = defineStore('adventureStore', {
     regenLoopActive: false,
     toggleCooldown: false,
 
-    animationFrameIds: [] as Array<number>,  // Array to store multiple animation frame IDs
-    loopActive: [] as Array<number>,  // Array to track if loops are active
-
     toggleCooldownTimeout: 0,
   }),
   actions: {
-    toggleBattle() {
-      // Always allow stopping the battle
-      if (this.battleStatus === 'fighting' || this.battleStatus === 'cooldown') {
-        this.stopAllBattles() // Stop all active loops
-        return
-      }
-
-      // Apply cooldown only when trying to start the battle
-      if (this.battleStatus === 'cooldown' || this.toggleCooldown) {
-        return // Prevent starting multiple loops or rapid starts
-      }
-
-      // Start the battle if not already running
-      this.startBattle()
-    },
-
     // Start the battle loop
     startBattle() {
-      this.stopAllBattles() // Stop any existing battle before starting a new one
-
-      // Clear any previous toggle cooldown timeout
-      if (this.toggleCooldownTimeout) {
-        clearTimeout(this.toggleCooldownTimeout)
-      }
-
-      // Set a cooldown to prevent rapid toggling
-      this.toggleCooldown = true
-      this.toggleCooldownTimeout = setTimeout(() => {
-        this.toggleCooldown = false
-        this.toggleCooldownTimeout = 0 // Clear the timeout reference after it's done
-      }, 3000 / useGameStore().deltaMultiplier) // Adjust cooldown period as needed
-
-      if (this.loopActive.some(active => active)) {
-        return // Stop if a loop is already running
-      }
-
-      // Check if the loop is already active to avoid multiple starts
-      if (this.battleStatus === 'fighting') {
-        console.warn('Battle loop is already running')
-        return // Prevent starting multiple loops
-      }
-
       // Set flags immediately to prevent further calls
       this.battleStatus = 'fighting'
 
@@ -121,63 +78,14 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.accumulatedTime = 0
 
       // Spawn a new enemy if necessary
-      if (this.bugHealth === 0 || !this.enemySpawned) {
+      if (this.bugHealth === 0 || !this.enemySpawned || !this.currentEnemy) {
         this.spawnRandomEnemy()
       }
-
-      // Start the battle loop and store the animation frame ID in the array
-      const animationFrameId = requestAnimationFrame(this.battleLoop)
-      this.animationFrameIds.push(animationFrameId) // Store each new loop's ID
-      this.loopActive.push(true) // Keep track of the active loop
-    },
-
-    // Stop the battle loop
-    stopBattle() {
-      // Always allow stopping, regardless of cooldown
-      this.battleStatus = 'idle'
-
-      // Cancel the animation frames to stop the loop
-      if (this.animationFrameIds.length > 0) {
-        this.animationFrameIds.forEach((id) => cancelAnimationFrame(id))
-        this.animationFrameIds = [] // Clear the array of animation frame IDs
-      }
-
-      this.loopActive = []  // Ensure the loops can be restarted after stopping
     },
 
     // Stop all active battles (useful when managing multiple loops)
     stopAllBattles() {
-      if (this.animationFrameIds.length > 0) {
-        this.animationFrameIds.forEach((id) => cancelAnimationFrame(id))
-        this.animationFrameIds = [] // Clear the array of animation frame IDs
-      }
-      this.loopActive = []  // Clear all loop active states
       this.battleStatus = 'idle'
-    },
-
-    // Main battle loop with requestAnimationFrame (tick-based)
-    async battleLoop(currentTime) {
-      if (this.battleStatus === 'idle') {
-        this.loopActive = this.loopActive.map(() => false) // Ensure the loop is fully inactive when stopped
-        return
-      }
-
-      const deltaTime = (currentTime - this.lastFrameTime) / 1000 * useGameStore().deltaMultiplier
-      this.lastFrameTime = currentTime
-      this.accumulatedTime += deltaTime
-
-      // Process combat every tick (based on how much time has passed)
-      this.applyBuffs(deltaTime)
-      await this.processCombat(deltaTime)
-
-      // Continue the loop as long as the battle is active
-      if (this.battleStatus === 'fighting') {
-        // Request the next animation frame
-        const newAnimationFrameId = requestAnimationFrame(this.battleLoop.bind(this)) // Bind `this` to preserve the context
-        this.animationFrameIds.push(newAnimationFrameId) // Keep adding new frame IDs to the array
-      } else {
-        this.loopActive = this.loopActive.map(() => false) // Ensure the loop stops when battleStatus changes
-      }
     },
     applyBuffs(deltaTime) {
       this.activeBuffs.forEach((buff) => {
@@ -198,8 +106,8 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       this.activeBuffs = this.activeBuffs.filter((buff) => buff.duration > 0)
     },
-    async processCombat(deltaTime) {
-      if (this.battleStatus === 'fighting' && this.enemySpawned) {
+    processCombat(deltaTime) {
+      if (this.battleStatus === 'fighting' && this.currentEnemy) {
         // Calculate damage based on DPS and the time passed since the last frame (deltaTime)
         this.applyArmyDamage(deltaTime)
         this.applyBugDamage(deltaTime)
@@ -210,7 +118,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         }
 
         if (this.bugHealth <= 0) {
-          await this.handleEnemyDefeat()
+          this.handleEnemyDefeat()
         }
       }
 
@@ -303,7 +211,7 @@ export const useAdventureStore = defineStore('adventureStore', {
                   })
                 }
                 // Await the item drop handling
-                await this.handleItemDrop(item, amount)
+                this.handleItemDrop(item, amount)
               } else {
 
               }
@@ -312,7 +220,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         }
       }
     },
-    async handleEnemyDefeat() {
+    handleEnemyDefeat() {
       this.enemySpawned = false
       this.battleStatus = 'cooldown' // Set the battle status to 'cooldown
 
@@ -320,7 +228,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.handleKillCount()
 
       // Handle loot
-      await this.handleEnemyDrop()
+       this.handleEnemyDrop()
 
       // Spawn a new enemy
       setTimeout(() => {
@@ -328,8 +236,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
         setTimeout(() => {
           if (this.battleStatus === 'cooldown') {
-            this.battleStatus = 'fighting' // Set the battle status back to 'fight
-            this.startBattle()
+            this.battleStatus = 'fighting' // Set the battle status back to 'fighting'
           }
         }, 1000)
       }, 2000)
@@ -578,6 +485,7 @@ export const useAdventureStore = defineStore('adventureStore', {
           }
         })
       } finally {
+        this.isSimulatingOffline = false
         this.loaded = true // Mark as loaded
       }
     },
@@ -622,7 +530,6 @@ export const useAdventureStore = defineStore('adventureStore', {
             const amount =
               Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
               drop.amountBetween[0]
-
 
             if (drop.name === 'Seeds') {
               useResourcesStore().collectSeedsManually(amount)

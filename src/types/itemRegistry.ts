@@ -266,9 +266,267 @@ export const consumableItems: Item[] = [
     duration: 60 * 5,
     rarity: 'rare',
   },
+  {
+    id: 'mountain-ant-mandible',
+    name: 'Mountain Ant Mandible',
+    type: 'consumable',
+    description: 'Increases army defense by 20% for 5 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense *= 1.20
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense /= 1.20
+    },
+    duration: 60 * 5,
+    rarity: 'rare',
+  },
+  {
+    id: 'lava-ant-tooth',
+    name: 'Lava Ant Tooth',
+    type: 'consumable',
+    description: 'Increases army attack and defense by 20% for 5 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack *= 1.20
+      adventureStore.armyDefense *= 1.20
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack /= 1.20
+      adventureStore.armyDefense /= 1.20
+    },
+    duration: 60 * 5,
+    rarity: 'rare',
+  },
+  {
+    id: 'magma-carapace',
+    name: 'Magma Carapace',
+    type: 'consumable',
+    description: 'Increases army defense by 50% for 5 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense *= 1.50
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense /= 1.50
+    },
+    duration: 60 * 5,
+    rarity: 'rare',
+  },
+  {
+    id: 'scorpion-tail',
+    name: 'Scorpion Tail',
+    type: 'consumable',
+    description: 'Heals the army by 2500 points.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + 2500, adventureStore.armyMaxHealth)
+      return true
+    },
+    rarity: 'rare',
+  },
+  {
+    id: 'infernal-tail',
+    name: 'Infernal Tail',
+    type: 'consumable',
+    description: 'Increases army attack and defense by 100% for 30 seconds.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack *= 2
+      adventureStore.armyDefense *= 2
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack /= 2
+      adventureStore.armyDefense /= 2
+    },
+    duration: 30,
+    rarity: 'epic',
+  },
+  {
+    id: 'ice-beetle-shell',
+    name: 'Ice Beetle Shell',
+    type: 'passive',
+    description: 'Increases army defense by 50% for 2 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense *= 1.50
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense /= 1.50
+    },
+    duration: 60 * 2,
+    rarity: 'epic',
+  },
+  {
+    id: 'frost-scorpion-tail',
+    name: 'Frost Scorpion Tail',
+    type: 'consumable',
+    description: 'Heals the army by 5000 points.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + 5000, adventureStore.armyMaxHealth)
+      return true
+    },
+    rarity: 'epic',
+  },
+  {
+    id: 'frost-wyrm-scale',
+    name: 'Frost Wyrm Scale',
+    type: 'consumable',
+    description: 'Increases army defense by 100% for 2 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense *= 2
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefense /= 2
+    },
+    duration: 60 * 2,
+    rarity: 'legendary',
+  },
+  {
+    id: 'kraken-ink',
+    name: 'Kraken Ink',
+    type: 'consumable',
+    description: 'Increases army regen by 100% for 2 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyRegen *= 2
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyRegen /= 2
+    },
+    duration: 60 * 2,
+    rarity: 'legendary',
+  },
+  {
+    id: 'leviathan-scale',
+    name: 'Leviathan Scale',
+    type: 'consumable',
+    description: 'Heals the army by 10000 points.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + 10000, adventureStore.armyMaxHealth)
+      return true
+    },
+    rarity: 'epic',
+  },
+  {
+    name: 'Cosmic Wasp Wing',
+    id: 'cosmic-wasp-wing',
+    type: 'consumable',
+    description: 'Increases army attack by 100% for 2 minutes.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack *= 2
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttack /= 2
+    },
+    duration: 60 * 2,
+    rarity: 'epic',
+  },
+  {
+    name: 'Celestial Scale',
+    id: 'celestial-scale',
+    type: 'consumable',
+    description: 'Heals the army by 25000 points.',
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + 25000, adventureStore.armyMaxHealth)
+      return true
+    },
+    rarity: 'legendary',
+  },
 ]
 
 export const passiveItems: Item[] = [
+  {
+    name: 'Galaxy Web',
+    id: 'galaxy-web',
+    type: 'passive',
+    description: 'Increases resource gathering by 100%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.collectionRateModifier *= 2
+      return true
+    },
+    rarity: 'legendary',
+  },
+  {
+    name: 'Void Mantis Claw',
+    id: 'void-mantis-claw',
+    type: 'passive',
+    description: 'Increases army attack by 100%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier *= 2
+      return true
+    },
+    rarity: 'legendary',
+  },
+  {
+    id: 'abyss-crab-claw',
+    name: 'Abyss Crab Claw',
+    type: 'passive',
+    description: 'Increases army attack by 50%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier *= 1.50
+      return true
+    },
+    rarity: 'legendary',
+  },
+  {
+    id: 'angler-teeth',
+    name: 'Angler Teeth',
+    type: 'passive',
+    description: 'Increases regenration by 100%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyRegen *= 2
+      return true
+    },
+    rarity: 'rare',
+  },
+  {
+    id: 'glacier-mantis-claw',
+    name: 'Glacier Mantis Claw',
+    type: 'passive',
+    description: 'Increases army attack by 50%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier *= 1.50
+      return true
+    },
+    rarity: 'legendary',
+  },
   {
     id: 'queen-crown',
     name: 'Queen’s Crown',
@@ -407,6 +665,20 @@ export const passiveItems: Item[] = [
     effect: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttackModifier *= 1.2
+      return true
+    },
+    rarity: 'legendary',
+    applyOnLoad: true,
+  },
+  {
+    id: 'demonic-carapace',
+    name: 'Demonic Carapace',
+    type: 'passive',
+    description: 'Increases army defense by 20%.',
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefenseModifier *= 1.2
       return true
     },
     rarity: 'legendary',

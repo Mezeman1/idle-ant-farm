@@ -1,10 +1,5 @@
 <template>
   <div class="flex flex-col overflow-y-auto">
-    <h2
-      class="font-bold mb-4"
-    >
-      Inventory
-    </h2>
     <!-- Show the current selected item and action buttons -->
     <div
       v-if="activeItem"

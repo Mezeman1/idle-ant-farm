@@ -279,9 +279,9 @@ export const useResourcesStore = defineStore('resources', {
 
       // If there is space and enough larvae and seeds to create elite ants
       if (eliteAntsToCreate > 0) {
-        this.resources.eliteAnts += eliteAntsToCreate
-        this.resources.larvae -= eliteAntsToCreate * this.resourceCosts.larvaCostPerEliteAnt
-        this.resources.seeds -= eliteAntsToCreate * this.resourceCosts.seedCostPerEliteAnt
+        for (let i = 0; i < eliteAntsToCreate; i++) {
+          this.createEliteAnts()
+        }
       }
     },
     // Function to buy more queens

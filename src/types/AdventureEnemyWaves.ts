@@ -349,7 +349,7 @@ export const adventureEnemyWaves = [
         ],
       },
     ],
-    unlockedWhen: (gameStore) => gameStore.resources.ants >= 750 || gameStore.resources.queens >= 15,
+    unlockedWhen: (gameStore) => gameStore.resources.ants >= 500 || gameStore.resources.queens >= 20,
     unlockText: 'Unlocked when you have 1000 ants or 20 queens.',
   },
   {
@@ -478,7 +478,7 @@ export const adventureEnemyWaves = [
           seedDrop(12000, 18000, 0.6),
           {
             'name': 'Demonic Carapace',
-            'chance': 0.05,
+            'chance': 0.02,
             'amountBetween': [1, 1],
           },
           {
@@ -647,7 +647,7 @@ export const adventureEnemyWaves = [
           seedDrop(70_000, 90_000, 0.6),
           {
             name: 'Abyss Crab Claw',
-            chance: 0.07,
+            chance: 0.006,
             amountBetween: [1, 2],
           },
         ],

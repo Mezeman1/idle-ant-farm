@@ -245,9 +245,10 @@ export const useGameStore = defineStore('gameStore', {
       let lastAutoCreationTime = 0 // Time tracking for throttling auto creations
       const autoCreationInterval = 1 // Only allow auto-creation every second
       const resourcesStore = useResourcesStore()
+      const adventureStore = useAdventureStore()
       const gameLoop = (currentTime) => {
         const deltaTime = (currentTime - lastFrameTime) / 1000 * this.deltaMultiplier // Delta time in seconds
-        const updateInterval = 1 / 30 // Target update rate (e.g., 30 FPS)
+        const updateInterval = 1 / 60 // Target update rate (e.g., 30 FPS)
 
         timeAccumulator += deltaTime
         achievementCheckAccumulator += deltaTime
@@ -260,6 +261,9 @@ export const useGameStore = defineStore('gameStore', {
             resourcesStore.handleAutoCreations()
             lastAutoCreationTime = currentTime // Reset the auto-creation throttle timer
           }
+
+          adventureStore.applyBuffs(updateInterval) // Apply active buffs
+          adventureStore.processCombat(updateInterval) // Process combat
 
           // Reset the time accumulator, subtracting the update interval to handle any leftover time
           timeAccumulator -= updateInterval
