@@ -199,13 +199,13 @@ watchDebounced(() => resourcesStore.resources.ants, () => {
   if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
 
   if (prestigeStore.upgradePurchased('autoAdventure') && adventureStore.battleStatus === 'idle' && resourcesStore.resources.ants >= 10) {
-    $toast.info('Starting battle automatically', {
-      position: 'top-left',
-    })
-  }
+    if (adventureStore.currentArea === 'Safe Zone') {
+      adventureStore.currentArea = 'Wasteland'
 
-  if (selectedWave.value === 'Safe Zone' && resourcesStore.resources.ants >= 15 && prestigeStore.upgradePurchased('autoAdventure')) {
-    adventureStore.currentArea = 'Wasteland'
+      $toast.info('Starting battle automatically', {
+        position: 'top-left',
+      })
+    }
   }
 }, {
   debounce: 1000,
