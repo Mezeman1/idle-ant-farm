@@ -50,7 +50,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
         const newItem: Item = {
           ...registryItem,
           amount: 1, // Ensure amount is set to 1
-          level: registryItem.level || 1,
+          level: itemData.level || 1,
           maxLevel: registryItem.maxLevel || 5,
           // Include other necessary properties
         }

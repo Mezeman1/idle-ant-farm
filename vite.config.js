@@ -14,6 +14,9 @@ export default {
         description: 'Idle Ant Farm idle incremental',
         theme_color: '#ffffff',
       },
+      workbox: {
+        cleanupOutdatedCaches: true, // Clean outdated caches
+      },
     }),
   ],
   resolve: {

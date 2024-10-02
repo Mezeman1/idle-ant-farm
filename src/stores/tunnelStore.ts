@@ -125,8 +125,14 @@ export const useTunnelStore = defineStore('tunnelStore', {
 
       this.trapsEncountered = 0
       this.lootFound = []
+    },
 
-      this.runTunnelLoop(performance.now()) // Start the loop
+    handleTunnel(timestamp: number) {
+      if (this.antsInTunnel > 0) {
+        this.runTunnelLoop(timestamp)
+      } else if (this.autoTunnelActive) {
+        this.stopTunnelExploration()
+      }
     },
 
     // Main tunnel loop to run exploration and events
@@ -148,14 +154,6 @@ export const useTunnelStore = defineStore('tunnelStore', {
 
         // Handle events (find resources, encounter traps, etc.)
         this.triggerTunnelEvent()
-      }
-
-      // Continue the loop using requestAnimationFrame
-      if (this.antsInTunnel > 0) {
-        this.animationFrameId = requestAnimationFrame((time) => this.runTunnelLoop(currentTime))
-      } else {
-        console.log('Tunnel exploration complete.')
-        this.stopTunnelExploration() // Stop if no ants remain
       }
     },
 

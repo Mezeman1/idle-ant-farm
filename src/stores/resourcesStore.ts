@@ -236,7 +236,7 @@ export const useResourcesStore = defineStore('resources', {
 
       // The total cost formula is S = n * (initialCost + (initialCost + (n-1))) / 2
       // Solving for n: n = (-initialCost + sqrt(initialCost^2 + 2 * seeds)) / 1
-      const numberOfPurchases = Math.floor((-initialCost + Math.sqrt(initialCost * initialCost + 2 * seeds)) / 1)
+      const numberOfPurchases = Math.floor((-initialCost + Math.sqrt(initialCost * initialCost + 2 * seeds)))
 
       // Calculate the total cost based on number of purchases
       const totalCost = numberOfPurchases * (initialCost + (initialCost + (numberOfPurchases - 1))) / 2
@@ -342,11 +342,7 @@ export const useResourcesStore = defineStore('resources', {
       if (this.resources.seeds >= this.upgradeCosts.seedStorageUpgradeCost) {
         this.resources.seeds -= this.upgradeCosts.seedStorageUpgradeCost
 
-        // Increase storage by 20% of the current max, but prevent it from exceeding MAX_SAFE_VALUE
-        this.storage.maxSeeds = Math.min(
-          Math.floor(this.storage.maxSeeds * this.storageUpgradeFactor),
-          MAX_SAFE_VALUE,
-        )
+        this.upgradeSeedStorageEffect(this.upgrades.maxSeedStorage)
 
         this.upgrades.maxSeedStorage += 1
 
@@ -377,28 +373,34 @@ export const useResourcesStore = defineStore('resources', {
         // Deduct the total cost
         this.resources.seeds -= totalCost
 
-        // Apply all upgrades at once, but prevent exceeding MAX_SAFE_VALUE
-        this.storage.maxSeeds = Math.min(
-          Math.floor(this.storage.maxSeeds * Math.pow(this.storageUpgradeFactor, affordableUpgrades)),
-          MAX_SAFE_VALUE,
-        )
+        for (let i = 0; i < affordableUpgrades; i++) {
+          this.upgradeSeedStorageEffect(i)
+        }
 
         // Update the upgrade cost
         this.upgradeCosts.seedStorageUpgradeCost = nextUpgradeCost
 
+        // Apply the total number of upgrades
         this.upgrades.maxSeedStorage += affordableUpgrades
-        console.log(`Upgraded seed storage ${affordableUpgrades} times.`)
       }
     },
-    upgradeSeedStorageEffect() {
+    upgradeSeedStorageEffect(amount = 1) {
+      const diminishingFactor = 1 / (1 + amount / 50)
+      const multiplier = Math.max(this.storageUpgradeFactor * diminishingFactor, 1.01)
+      const nextUpgrade = Math.floor(this.storage.maxSeeds * multiplier)
+
       this.storage.maxSeeds = Math.min(
-        Math.floor(this.storage.maxSeeds * this.storageUpgradeFactor),
+        nextUpgrade,
         MAX_SAFE_VALUE,
       )
     },
-    upgradeLarvaeStorageEffect() {
+    upgradeLarvaeStorageEffect(amount = 1) {
+      const diminishingFactor = 1 / (1 + amount / 50)
+      const multiplier = Math.max(this.storageUpgradeFactor * diminishingFactor, 1.01)
+      const nextUpgrade = Math.floor(this.storage.maxLarvae * multiplier)
+
       this.storage.maxLarvae = Math.min(
-        Math.floor(this.storage.maxLarvae * this.storageUpgradeFactor),
+        nextUpgrade,
         MAX_SAFE_VALUE,
       )
     },
@@ -412,7 +414,7 @@ export const useResourcesStore = defineStore('resources', {
         this.resources.seeds -= this.upgradeCosts.larvaeStorageUpgradeCost
 
         // Increase storage by 20% of the current max
-        this.storage.maxLarvae = Math.floor(this.storage.maxLarvae * this.storageUpgradeFactor)
+        this.upgradeLarvaeStorageEffect(this.upgrades.maxLarvaeStorage)
 
         // Increase the upgrade cost by 30%
         this.upgradeCosts.larvaeStorageUpgradeCost = Math.floor(this.upgradeCosts.larvaeStorageUpgradeCost * this.upgradeCostFactor)
@@ -438,7 +440,9 @@ export const useResourcesStore = defineStore('resources', {
         this.resources.seeds -= totalCost
 
         // Apply all upgrades at once
-        this.storage.maxLarvae = Math.floor(this.storage.maxLarvae * Math.pow(this.storageUpgradeFactor, affordableUpgrades))
+        for (let i = 0; i < affordableUpgrades; i++) {
+          this.upgradeLarvaeStorageEffect(i)
+        }
 
         // Update the upgrade cost
         this.upgradeCosts.larvaeStorageUpgradeCost = nextUpgradeCost
@@ -557,12 +561,15 @@ export const useResourcesStore = defineStore('resources', {
 
     applyUpgrades() {
         for (let i = 0; i < this.upgrades.maxSeedStorage; i++) {
-          this.upgradeSeedStorageEffect()
+          this.upgradeSeedStorageEffect(i)
         }
 
         for (let i = 0; i < this.upgrades.maxLarvaeStorage; i++) {
-          this.upgradeLarvaeStorageEffect()
+          this.upgradeLarvaeStorageEffect(i)
         }
+
+        this.resources.seeds = Math.min(this.resources.seeds, this.storage.maxSeeds)
+        this.resources.larvae = Math.min(this.resources.larvae, this.storage.maxLarvae)
     },
 
     resetResourcesState(isDebug = false) {
