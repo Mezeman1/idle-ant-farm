@@ -374,7 +374,7 @@ export const useResourcesStore = defineStore('resources', {
         this.resources.seeds -= totalCost
 
         for (let i = 0; i < affordableUpgrades; i++) {
-          this.upgradeSeedStorageEffect(i)
+          this.upgradeSeedStorageEffect(this.upgrades.maxSeedStorage + i)
         }
 
         // Update the upgrade cost
@@ -441,7 +441,7 @@ export const useResourcesStore = defineStore('resources', {
 
         // Apply all upgrades at once
         for (let i = 0; i < affordableUpgrades; i++) {
-          this.upgradeLarvaeStorageEffect(i)
+          this.upgradeLarvaeStorageEffect(this.upgrades.maxLarvaeStorage + i)
         }
 
         // Update the upgrade cost
