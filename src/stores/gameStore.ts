@@ -690,18 +690,20 @@ export const useGameStore = defineStore('gameStore', {
         const resourcesStore = useResourcesStore()
         resourcesStore.resetResourcesState(isDebug || isEvolution)
 
-        const evolveStore = useEvolveStore()
-        await evolveStore.applyEvolution()
-
-        // Set the last saved time
-        this.lastSavedTime = Date.now()
-
         // Handle debug state reset if applicable
         if (isDebug) {
           this.resetDebugState()
           const achievementStore = useAchievementStore()
           achievementStore.resetAchievements()
         }
+
+        const evolveStore = useEvolveStore()
+        await evolveStore.applyEvolution()
+
+        // Set the last saved time
+        this.lastSavedTime = Date.now()
+
+
 
         if (isEvolution) {
           const prestigeStore = usePrestigeStore()
