@@ -1,6 +1,6 @@
 {
   "name": "idle-ant-farm",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite --mode localhost",
     "build": "rm -rf dist && vite build",
