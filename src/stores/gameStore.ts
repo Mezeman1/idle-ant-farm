@@ -13,8 +13,8 @@ import {useAchievementStore} from '@/stores/achievementStore'
 import LZString from 'lz-string'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useTunnelStore} from '@/stores/tunnelStore'
-import FirestoreError = firebase.firestore.FirestoreError
 import {useEvolveStore} from '@/stores/evolveStore'
+import FirestoreError = firebase.firestore.FirestoreError;
 
 
 export const useGameStore = defineStore('gameStore', {
@@ -690,6 +690,9 @@ export const useGameStore = defineStore('gameStore', {
         const resourcesStore = useResourcesStore()
         resourcesStore.resetResourcesState(isDebug || isEvolution)
 
+        const evolveStore = useEvolveStore()
+        evolveStore.applyEvolution()
+
         // Set the last saved time
         this.lastSavedTime = Date.now()
 
@@ -729,8 +732,6 @@ export const useGameStore = defineStore('gameStore', {
         const adventureStore = useAdventureStore()
         adventureStore.resetAdventureState()
 
-        const evolveStore = useEvolveStore()
-        evolveStore.applyEvolution()
 
         const inventoryStore = useInventoryStore()
         inventoryStore.appliedPassiveEffects = []
