@@ -50,10 +50,10 @@ const isDesktop = computed(() => !isMobile.value)
 const maxInventory = computed(() => inventoryStore.maxInventory)
 
 const equipmentItems = computed(() =>
-  inventoryStore.inventory.filter((item) => item.type === 'equipment'),
+  inventoryStore.inventory.filter((item) => item.type === 'equipment') ?? [],
 )
 
-const emptySlots = computed(() => maxInventory.value - equipmentItems.value.length)
+const emptySlots = computed(() => Math.max(maxInventory.value - equipmentItems.value.length, 1))
 
 const displayInventorySlots = computed(() => {
   return [...equipmentItems.value, ...Array(emptySlots.value).fill(null)]
