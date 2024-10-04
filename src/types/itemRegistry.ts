@@ -25,12 +25,14 @@ export interface Item {
 export type SetBonus = {
   apply: () => void;
   remove: () => void;
+  explanation?: string;
 };
 
 export type SetName =
   'Worker Set'
   | 'Worker Set II'
   | 'Soldier Set'
+  | 'Soldier Set II'
   | 'Royal Set'
   | 'Volcano Set'
   | 'Underworld Set'
@@ -46,6 +48,18 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const resourcesStore = useResourcesStore()
       resourcesStore.productionRates.collectionRateModifier /= 1.15
     },
+    explanation: 'Increases resource gathering by 15%.',
+  },
+  'Worker Set II': {
+    apply: () => {
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.collectionRateModifier *= 1.20
+    },
+    remove: () => {
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.collectionRateModifier /= 1.20
+    },
+    explanation: 'Increases resource gathering by 20%.',
   },
   'Soldier Set': {
     apply: () => {
@@ -58,6 +72,7 @@ export const setBonuses: Record<SetName, SetBonus> = {
       adventureStore.armyAttackModifier /= 1.15
       adventureStore.armyDefenseModifier /= 1.15
     },
+    explanation: 'Increases army attack and defense by 15%.',
   },
   'Royal Set': {
     apply: () => {
@@ -68,6 +83,7 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const resourcesStore = useResourcesStore()
       resourcesStore.productionRates.larvaeProductionModifier /= 1.20
     },
+    explanation: 'Increases queen larvae production by 20%.',
   },
   'Volcano Set': {
     apply: () => {
@@ -78,6 +94,7 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttackModifier /= 1.25
     },
+    explanation: 'Increases army attack by 25%.',
   },
   'Underworld Set': {
     apply: () => {
@@ -88,6 +105,7 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const adventureStore = useAdventureStore()
       adventureStore.armyMaxHealthModifier /= 1.30
     },
+    explanation: 'Increases max health of the army by 30%.',
   },
   'Arctic Tundra Set': {
     apply: () => {
@@ -100,6 +118,7 @@ export const setBonuses: Record<SetName, SetBonus> = {
       adventureStore.armyDefenseModifier /= 1.20
       adventureStore.armyRegenModifier /= 1.20
     },
+    explanation: 'Increases army defense and regeneration by 20%.',
   },
 }
 

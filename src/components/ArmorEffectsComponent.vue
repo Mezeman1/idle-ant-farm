@@ -33,6 +33,7 @@
 import { computed } from 'vue'
 import { useEquipmentStore } from '../stores/equipmentStore'
 import { useGameStore } from '@/stores/gameStore'
+import {setBonuses} from '@/types/itemRegistry'
 
 // Access the equipment store
 const equipmentStore = useEquipmentStore()
@@ -58,17 +59,11 @@ const equippedItemsList = computed(() => {
 // Access the active set bonus from the equipment store
 const activeSetBonus = computed(() => equipmentStore.activeSetBonus)
 
-// Define descriptions for each set bonus
-const setBonusDescriptions: Record<string, string> = {
-  'Worker Set': 'Increases resource gathering by an additional 15%.',
-  'Soldier Set': 'Increases army attack and defense by an additional 15%.',
-  'Royal Set': 'Increases larvae production rate by an additional 20%.',
-}
 
 // Get the description of the active set bonus
 const setBonusDescription = computed(() => {
   if (activeSetBonus.value) {
-    return setBonusDescriptions[activeSetBonus.value] || ''
+    return setBonuses[activeSetBonus.value]?.explanation || ''
   }
   return ''
 })
