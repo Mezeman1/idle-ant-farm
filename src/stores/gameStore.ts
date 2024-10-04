@@ -719,7 +719,6 @@ export const useGameStore = defineStore('gameStore', {
           prestigeStore.autoLarvaeStorageUpgrade = false
           prestigeStore.autoEliteAntsCreation = false
           prestigeStore.autoCreateHousing = false
-
         }
 
         // Apply prestige upgrades
@@ -735,7 +734,8 @@ export const useGameStore = defineStore('gameStore', {
         inventoryStore.applyPassiveEffects()
 
         const equipmentStore = useEquipmentStore()
-        equipmentStore.loadEquipmentState(equipmentStore.getEquipmentState())
+        equipmentStore.checkForSetBonus()
+        adventureStore.setupAdventureStats()
 
         // Resolve the promise once everything is done
         resolve()
