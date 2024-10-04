@@ -4,9 +4,9 @@
 COMMIT_MSG_FILE=$1
 COMMIT_MSG=$(cat $COMMIT_MSG_FILE)
 
-if [[ $COMMIT_MSG =~ ^feat: ]]; then
+if echo "$COMMIT_MSG" | grep -q "feat:"; then
   npx standard-version --release-as minor
-elif [[ $COMMIT_MSG =~ ^fix: ]]; then
+elif echo "$COMMIT_MSG" | grep -q "fix:"; then
   npx standard-version --release-as patch
 else
   echo "Commit message does not indicate a version bump. Proceeding without bumping."
