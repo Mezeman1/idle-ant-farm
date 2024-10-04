@@ -26,6 +26,9 @@
           I will be adding more features and balancing the game over time.
           Also, any progress made may be reset at any time during the current development stage.
         </p>
+        <p>
+          Version: {{ version }}
+        </p>
       </div>
 
       <div class="md:col-span-3">
@@ -251,6 +254,7 @@ const settingsStore = useSettingsStore()
 const isModalVisible = ref(false)
 const importString = ref('')
 
+const version = import.meta.env.PACKAGE_VERSION
 const confirmReset = () => {
   isModalVisible.value = true
 }

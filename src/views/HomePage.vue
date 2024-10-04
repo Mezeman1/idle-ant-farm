@@ -42,6 +42,12 @@
               Install
             </button>
           </div>
+
+          <div
+            class="flex items-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded"
+          >
+            Version: {{ version }}
+          </div>
         </div>
 
         <!-- Right Side Button -->
@@ -557,6 +563,8 @@ function handleBeforeUnload() {
 watch(() => resourcesStore.resources.ants, useDebounceFn(() => {
   gameStore.setupAdventureStats()
 }, 300), {immediate: true})
+
+const version = import.meta.env.PACKAGE_VERSION
 </script>
 
 

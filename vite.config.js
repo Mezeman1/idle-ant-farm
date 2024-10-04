@@ -1,5 +1,6 @@
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
+import loadVersion from 'vite-plugin-package-version'
 
 /** @type {import('vite').UserConfig} */
 export default {
@@ -18,6 +19,7 @@ export default {
         cleanupOutdatedCaches: true, // Clean outdated caches
       },
     }),
+    loadVersion(),
   ],
   resolve: {
     alias: {

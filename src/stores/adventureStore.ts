@@ -247,7 +247,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     // Add regeneration during cooldown phase
     regenDuringCooldown() {
-      const regenInterval = 100 // Apply regeneration every 100ms
+      const regenInterval = 300 // Apply regeneration every 100ms
 
       // Check if the regeneration loop is already running
       if (!this.regenLoopActive) {
