@@ -737,6 +737,9 @@ export const useGameStore = defineStore('gameStore', {
         equipmentStore.checkForSetBonus()
         adventureStore.setupAdventureStats()
 
+        const evolveStore = useEvolveStore()
+        evolveStore.applyEvolution()
+
         // Resolve the promise once everything is done
         resolve()
       })
