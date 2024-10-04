@@ -29,6 +29,7 @@ export type SetBonus = {
 
 export type SetName =
   'Worker Set'
+  | 'Worker Set II'
   | 'Soldier Set'
   | 'Royal Set'
   | 'Volcano Set'
@@ -40,12 +41,10 @@ export const setBonuses: Record<SetName, SetBonus> = {
     apply: () => {
       const resourcesStore = useResourcesStore()
       resourcesStore.productionRates.collectionRateModifier *= 1.15
-      console.log('Applied Worker Set bonus')
     },
     remove: () => {
       const resourcesStore = useResourcesStore()
       resourcesStore.productionRates.collectionRateModifier /= 1.15
-      console.log('Removed Worker Set bonus')
     },
   },
   'Soldier Set': {
@@ -53,49 +52,41 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttackModifier *= 1.15
       adventureStore.armyDefenseModifier *= 1.15
-      console.log('Applied Soldier Set bonus')
     },
     remove: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttackModifier /= 1.15
       adventureStore.armyDefenseModifier /= 1.15
-      console.log('Removed Soldier Set bonus')
     },
   },
   'Royal Set': {
     apply: () => {
       const resourcesStore = useResourcesStore()
       resourcesStore.productionRates.larvaeProductionModifier *= 1.20
-      console.log('Applied Royal Set bonus')
     },
     remove: () => {
       const resourcesStore = useResourcesStore()
       resourcesStore.productionRates.larvaeProductionModifier /= 1.20
-      console.log('Removed Royal Set bonus')
     },
   },
   'Volcano Set': {
     apply: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttackModifier *= 1.25
-      console.log('Applied Volcano Set bonus: +25% attack')
     },
     remove: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttackModifier /= 1.25
-      console.log('Removed Volcano Set bonus: -25% attack')
     },
   },
   'Underworld Set': {
     apply: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyMaxHealthModifier *= 1.30
-      console.log('Applied Underworld Set bonus: +30% max health')
     },
     remove: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyMaxHealthModifier /= 1.30
-      console.log('Removed Underworld Set bonus: -30% max health')
     },
   },
   'Arctic Tundra Set': {
@@ -103,13 +94,11 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const adventureStore = useAdventureStore()
       adventureStore.armyDefenseModifier *= 1.20
       adventureStore.armyRegenModifier *= 1.20
-      console.log('Applied Arctic Tundra Set bonus: +20% defense and regen')
     },
     remove: () => {
       const adventureStore = useAdventureStore()
       adventureStore.armyDefenseModifier /= 1.20
       adventureStore.armyRegenModifier /= 1.20
-      console.log('Removed Arctic Tundra Set bonus: -20% defense and regen')
     },
   },
 }
@@ -686,8 +675,7 @@ export const passiveItems: Item[] = [
   },
 ]
 
-export const equipmentSets: Item[] = [
-  // Worker Set
+const workerSet = [
   {
     id: 'worker-helm',
     name: 'Worker Helm',
@@ -799,6 +787,170 @@ export const equipmentSets: Item[] = [
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
   },
+  {
+    id: 'worker-shield',
+    name: 'Worker Shield',
+    type: 'equipment',
+    description: 'Accessory for workers, increases resource gathering by 0.1553% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Worker Set',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 100,
+    multiplier: 0.0015529698669337984, // Refactored multiplier
+    effect: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+]
+
+const workerSetII = [
+  {
+    id: 'worker-helm-ii',
+    name: 'Worker Helm II',
+    type: 'equipment',
+    description: 'Head armor for workers, increases resource gathering by 0.1035% per level.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Worker Set II',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 250,
+    multiplier: 0.001035313244622532,
+    effect: ({gameStore}, item) => {
+      // Increase resource gathering by 0.1035% per level
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'worker-body-ii',
+    name: 'Worker Armor II',
+    type: 'equipment',
+    description: 'Body armor for workers, increases resource gathering by 0.1553% per level.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Worker Set II',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 250,
+    multiplier: 0.0015529698669337984, // Already done
+    effect: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'worker-legs-ii',
+    name: 'Worker Greaves II',
+    type: 'equipment',
+    description: 'Leg armor for workers, increases resource gathering by 0.0776% per level.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Worker Set II',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 250,
+    multiplier: 0.0007758055940675406, // Refactored multiplier
+    effect: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'worker-gloves-ii',
+    name: 'Worker Gloves II',
+    type: 'equipment',
+    description: 'Accessory for workers, increases resource gathering by 0.1293% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Worker Set II',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 250,
+    multiplier: 0.0012934622163788066, // Refactored multiplier
+    effect: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'worker-pickaxe-ii',
+    name: 'Worker Pickaxe II',
+    type: 'equipment',
+    description: 'Weapon for workers, increases resource gathering by 0.2071% per level.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Worker Set II',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 250,
+    multiplier: 0.002070626489245064, // Refactored multiplier
+    effect: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'worker-shield-ii',
+    name: 'Worker Shield II',
+    type: 'equipment',
+    description: 'Accessory for workers, increases resource gathering by 0.1553% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Worker Set II',
+    rarity: 'uncommon',
+    level: 1,
+    maxLevel: 250,
+    multiplier: 0.0015529698669337984, // Refactored multiplier
+    effect: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({gameStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+    },
+  },
+]
+
+export const equipmentSets: Item[] = [
+  // Worker Set
+  ...workerSet,
+  ...workerSetII,
 
   // Soldier Set
   {

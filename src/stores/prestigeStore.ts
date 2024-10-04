@@ -219,7 +219,7 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'evolve',
         name: 'Evolve',
         description: 'Evolve to the next stage (made cheap for testing purposes)',
-        cost: 5000,
+        cost: 10000,
         category: 'expansion',
         applyOnPrestige: true,
         oneTimePurchase: true,

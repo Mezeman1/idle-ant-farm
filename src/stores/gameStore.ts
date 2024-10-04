@@ -250,12 +250,14 @@ export const useGameStore = defineStore('gameStore', {
       const tunnelStore = useTunnelStore()
       const gameLoop = (currentTime) => {
         const deltaTime = (currentTime - lastFrameTime) / 1000 * this.deltaMultiplier // Delta time in seconds
-        const updateInterval = 1 / 60 // Target update rate (e.g., 30 FPS)
+        let updateInterval = 1 / 60 // Target update rate (60 FPS)
 
         timeAccumulator += deltaTime
         achievementCheckAccumulator += deltaTime
 
         if (timeAccumulator >= updateInterval) {
+          updateInterval = updateInterval * this.deltaMultiplier // Adjust update interval based on delta multiplier
+
           resourcesStore.updateResources(updateInterval) // Update resources based on the target update rate
 
           // Throttle auto-creations to once per second

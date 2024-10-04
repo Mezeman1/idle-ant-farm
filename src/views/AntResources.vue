@@ -653,7 +653,6 @@ let collectingInterval: number | undefined = undefined
 const collectingIntervalTime = 25
 
 const startCollectingSeeds = () => {
-  console.log('Start collecting seeds')
   resourcesStore.collectSeedsManually() // Initial collection on click
 
   // Start an interval for collecting seeds every 100ms while holding down

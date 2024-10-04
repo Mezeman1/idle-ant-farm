@@ -131,9 +131,16 @@
               <div class="text-gray-700">
                 {{ drop.name }}
               </div>
-              <div class="text-sm text-gray-600">
-                Chance: {{ (drop.chance * 100).toFixed(1) }}% | Amount:
-                {{ drop.amountBetween[0] }} - {{ drop.amountBetween[1] }}
+              <div class="text-sm text-gray-600 flex flex-col">
+                <span>
+                  Chance: {{ (drop.chance * 100).toFixed(1) }}%
+                </span>
+                <span>
+                  Amount between: {{ drop.amountBetween[0] }} - {{ drop.amountBetween[1] }}
+                </span>
+                <span v-if="drop.unlockText">
+                  Unlocked when: {{ drop.unlockText }}
+                </span>
               </div>
             </li>
           </ul>
@@ -152,8 +159,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { adventureEnemyWaves, Enemy } from '@/types/AdventureEnemyWaves'
+import {computed, ref} from 'vue'
+import {adventureEnemyWaves, Enemy} from '@/types/AdventureEnemyWaves'
 
 const searchQuery = ref('')
 const selectedEnemy = ref<Enemy | null>(null)

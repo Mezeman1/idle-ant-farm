@@ -472,7 +472,6 @@ onMounted(() => {
   // Handle authentication state and game loading
   firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
-      console.log('User logged in')
       await gameStore.loadGameState() // Load game state and calculate offline progress
       gameStore.startGameLoop() // Start the game loop
 
@@ -527,13 +526,9 @@ onBeforeUnmount(async () => {
 async function handleVisibilityChange() {
   if (document.hidden) {
     enableSaveInterval.value = false
-    // Save game state when the tab goes into the background (or app is swiped away on mobile)
-    console.log('Tab is hidden (backgrounded), saving game state...')
     await gameStore.saveGameState()
   } else {
     enableSaveInterval.value = true
-    // Reload the game state when tab becomes visible again (optional, if needed)
-    console.log('Tab is visible again, reloading game state...')
     await gameStore.loadGameState()
     gameStore.startGameLoop()
   }
@@ -541,15 +536,11 @@ async function handleVisibilityChange() {
 
 function handlePageHide(event: PageTransitionEvent) {
   enableSaveInterval.value = false
-  // Save game state when the page is hidden (e.g., when navigating to another page)
-  console.log('Page is hidden, saving game state...')
   gameStore.saveGameState()
 }
 
 function handleFreeze() {
   enableSaveInterval.value = false
-  // Save game state when the page is frozen (e.g., when the app is sent to the background on mobile)
-  console.log('Page is frozen, saving game state...')
   gameStore.saveGameState()
 }
 

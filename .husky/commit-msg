@@ -1,0 +1,13 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat $COMMIT_MSG_FILE)
+
+if [[ $COMMIT_MSG == feat:* ]]; then
+  npx version minor
+elif [[ $COMMIT_MSG == fix:* ]]; then
+  npx version patch
+else
+  echo "Commit message does not indicate a version bump. Proceeding without bumping."
+fi

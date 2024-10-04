@@ -5,6 +5,7 @@ import {useInventoryStore} from './inventoryStore'
 import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {itemRegistry} from '@/types/itemRegistry'
+import {useEvolveStore} from '@/stores/evolveStore'
 
 interface KillCounts {
   [key: string]: number
@@ -188,8 +189,16 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.enemyKillCount += 1
     },
     async handleEnemyDrop() {
+      const evolveStore = useEvolveStore()
       if (this.currentEnemy?.dropOptions) {
         for (const drop of this.currentEnemy.dropOptions) {
+          // Some drops have unlockedWhen function to check if they should drop
+          if (drop.unlockedWhen && !drop.unlockedWhen({
+            evolveStore,
+          })) {
+            continue
+          }
+
           // Check the drop chance
           if (Math.random() < drop.chance) {
             const amount =

@@ -123,8 +123,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
         return false // Effect already applied
       }
 
-      console.log(`Applying effect of item: ${item.name}`)
-
       if (item.effect) {
         for (let i = 0; i < amount; i++) {
           if (item.duration) {

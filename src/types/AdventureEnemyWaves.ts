@@ -15,7 +15,9 @@ export interface Enemy {
   dropOptions: {
     name: string
     chance: number
-    amountBetween: [number, number]
+    amountBetween: [number, number],
+    unlockedWhen?: (context: any) => boolean
+    unlockText?: string
   }[]
   isBoss?: boolean
 }
@@ -60,6 +62,13 @@ export const adventureEnemyWaves = [
             chance: 0.05, // 5% chance
             amountBetween: [1, 1],
           },
+          {
+            name: 'Worker Helm II',
+            chance: 0.05,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
+          },
         ],
       },
       {
@@ -90,6 +99,21 @@ export const adventureEnemyWaves = [
             chance: 0.05, // 5% chance
             amountBetween: [1, 1],
           },
+
+          {
+            name: 'Worker Pickaxe II',
+            chance: 0.05,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
+          },
+          {
+            name: 'Worker Body II',
+            chance: 0.05,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
+          },
         ],
       },
       {
@@ -110,6 +134,7 @@ export const adventureEnemyWaves = [
             chance: 0.075,
             amountBetween: [1, 2],
           },
+
           {
             name: 'Worker Legs', // New Item
             chance: 0.05, // 5% chance
@@ -119,6 +144,21 @@ export const adventureEnemyWaves = [
             name: 'Worker Gloves', // New Item
             chance: 0.05, // 5% chance
             amountBetween: [1, 1],
+          },
+
+          {
+            name: 'Worker Legs II',
+            chance: 0.05,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
+          },
+          {
+            name: 'Worker Gloves II',
+            chance: 0.05,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
           },
         ],
       },
@@ -134,6 +174,18 @@ export const adventureEnemyWaves = [
             name: 'Termite Mandible',
             chance: 0.2,
             amountBetween: [1, 2],
+          },
+          {
+            name: 'Worker Shield', // New Item
+            chance: 0.05, // 5% chance
+            amountBetween: [1, 1],
+          },
+          {
+            name: 'Worker Shield II',
+            chance: 0.05,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
           },
         ],
       },
