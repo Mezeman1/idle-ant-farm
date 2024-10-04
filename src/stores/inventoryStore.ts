@@ -266,6 +266,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
     },
 
     applyPassiveEffects() {
+      console.log('Applying passive effects')
       this.inventory.forEach(item => {
         const registryItem = this.getItemById(item.id)
         if (registryItem && registryItem.type === 'passive' && registryItem.applyOnPrestige) {

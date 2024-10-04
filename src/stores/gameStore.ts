@@ -737,6 +737,7 @@ export const useGameStore = defineStore('gameStore', {
         inventoryStore.applyPassiveEffects()
 
         const equipmentStore = useEquipmentStore()
+        equipmentStore.loadEquipmentState(equipmentStore.getEquipmentState())
         equipmentStore.checkForSetBonus()
         adventureStore.setupAdventureStats()
 

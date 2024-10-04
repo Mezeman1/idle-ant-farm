@@ -307,9 +307,6 @@ export const usePrestigeStore = defineStore('prestige', {
         // Reset the game state for prestige without deleting the Firestore doc
         await gameStore.resetLocalGameState({isDebug: false})
 
-        await gameStore.resetOtherStores(false)
-        inventoryStore.applyPassiveEffects()  // Apply passive effects from inventory items
-
         // Save the updated state to Firestore
         await gameStore.saveGameState()
         console.log(`Prestige successful! You earned ${earnedPrestigePoints} prestige points.`)
