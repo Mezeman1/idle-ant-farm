@@ -139,7 +139,7 @@
                   Amount between: {{ drop.amountBetween[0] }} - {{ drop.amountBetween[1] }}
                 </span>
                 <span v-if="drop.unlockText">
-                  Unlocked when: {{ drop.unlockText }}
+                  {{ drop.unlockText }}
                 </span>
               </div>
             </li>

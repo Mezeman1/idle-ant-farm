@@ -130,6 +130,13 @@ export const adventureEnemyWaves = [
             amountBetween: [1, 1],
           },
           {
+            name: 'Queen’s Crown II',
+            chance: 0.05,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
+          },
+          {
             name: 'Wasp Stinger',
             chance: 0.075,
             amountBetween: [1, 2],
@@ -214,6 +221,13 @@ export const adventureEnemyWaves = [
             chance: 0.04, // 4% chance
             amountBetween: [1, 1],
           },
+          {
+            name: 'Solider Helm II',
+            chance: 0.04,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
+          },
         ],
       },
       {
@@ -234,6 +248,13 @@ export const adventureEnemyWaves = [
             chance: 0.04, // 4% chance
             amountBetween: [1, 1],
           },
+          {
+            name: 'Soldier Body II',
+            chance: 0.04,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
+          },
         ],
       },
       {
@@ -253,6 +274,13 @@ export const adventureEnemyWaves = [
             name: 'Soldier Legs', // New Item
             chance: 0.04, // 4% chance
             amountBetween: [1, 1],
+          },
+          {
+            name: 'Soldier Legs II',
+            chance: 0.04,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
           },
         ],
       },
@@ -279,6 +307,13 @@ export const adventureEnemyWaves = [
             chance: 0.03, // 3% chance
             amountBetween: [1, 1],
           },
+          {
+            name: 'Soldier Shield II',
+            chance: 0.03,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
+          },
         ],
       },
       {
@@ -295,6 +330,13 @@ export const adventureEnemyWaves = [
             amountBetween: [1, 1],
           },
           {
+            name: 'Queen head',
+            chance: 0.01,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
+          },
+          {
             name: 'Wasp Stinger',
             chance: 0.08,
             amountBetween: [1, 2],
@@ -304,6 +346,13 @@ export const adventureEnemyWaves = [
             name: 'Soldier Sword', // New Item
             chance: 0.02, // 2% chance
             amountBetween: [1, 1],
+          },
+          {
+            name: 'Soldier Sword II',
+            chance: 0.02,
+            amountBetween: [1, 1],
+            unlockedWhen: (context) => context.evolveStore.currentEvolution >= 1,
+            unlockText: 'Unlocked when evolved to at least Leafcutter Ant.',
           },
         ],
       },

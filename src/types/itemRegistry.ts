@@ -550,10 +550,24 @@ export const passiveItems: Item[] = [
     rarity: 'rare',
   },
   {
+    id: 'queen-crown-ii',
+    name: 'Queen’s Crown II',
+    type: 'passive',
+    description: 'Increases queen larvae production by 100%. ',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.larvaeProductionModifier *= 2
+      return true
+    },
+    rarity: 'rare',
+  },
+  {
     id: 'queen-stinger',
     name: 'Queen Stinger',
     type: 'passive',
-    description: 'Increases army health regeneration by 100%. ',
+    description: 'Increases army health regeneration by 100%.',
     applyOnPrestige: true,
     applyOnLoad: true,
     effect: () => {
@@ -562,6 +576,19 @@ export const passiveItems: Item[] = [
       return true
     },
     rarity: 'rare',
+  },
+  {
+    id: 'queen-head',
+    name: 'Queen Head',
+    type: 'passive',
+    description: 'Increases ant production by 100%.',
+    applyOnPrestige: true,
+    applyOnLoad: true,
+    effect: () => {
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.collectionRateModifier *= 2
+      return true
+    },
   },
   {
     id: 'spider-silk',
@@ -720,7 +747,7 @@ const workerSet = [
   },
   {
     id: 'worker-body',
-    name: 'Worker Armor',
+    name: 'Worker Chestplate',
     type: 'equipment',
     description: 'Body armor for workers, increases resource gathering by 0.1553% per level.',
     equipmentType: 'armor',
@@ -742,7 +769,7 @@ const workerSet = [
   },
   {
     id: 'worker-legs',
-    name: 'Worker Greaves',
+    name: 'Worker Legs',
     type: 'equipment',
     description: 'Leg armor for workers, increases resource gathering by 0.0776% per level.',
     equipmentType: 'armor',
@@ -856,7 +883,7 @@ const workerSetII = [
   },
   {
     id: 'worker-body-ii',
-    name: 'Worker Armor II',
+    name: 'Worker Chestplate II',
     type: 'equipment',
     description: 'Body armor for workers, increases resource gathering by 0.1553% per level.',
     equipmentType: 'armor',
@@ -878,7 +905,7 @@ const workerSetII = [
   },
   {
     id: 'worker-legs-ii',
-    name: 'Worker Greaves II',
+    name: 'Worker Legs II',
     type: 'equipment',
     description: 'Leg armor for workers, increases resource gathering by 0.0776% per level.',
     equipmentType: 'armor',
@@ -966,12 +993,7 @@ const workerSetII = [
   },
 ]
 
-export const equipmentSets: Item[] = [
-  // Worker Set
-  ...workerSet,
-  ...workerSetII,
-
-  // Soldier Set
+const soldierSet = [
   {
     id: 'soldier-helm',
     name: 'Soldier Helm',
@@ -996,7 +1018,7 @@ export const equipmentSets: Item[] = [
   },
   {
     id: 'soldier-body',
-    name: 'Soldier Armor',
+    name: 'Soldier Chestplate',
     type: 'equipment',
     description: 'Body armor for soldiers, increases defense by 0.62% per level.',
     equipmentType: 'armor',
@@ -1018,7 +1040,7 @@ export const equipmentSets: Item[] = [
   },
   {
     id: 'soldier-legs',
-    name: 'Soldier Greaves',
+    name: 'Soldier Legs',
     type: 'equipment',
     description: 'Leg armor for soldiers, increases attack by 0.31% per level.',
     equipmentType: 'armor',
@@ -1082,8 +1104,130 @@ export const equipmentSets: Item[] = [
       adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
+]
 
-  // Royal Set
+const soldierSetII = [
+  {
+    id: 'soldier-helm-ii',
+    name: 'Soldier Helm II',
+    type: 'equipment',
+    description: 'Head armor for soldiers, increases defense by 0.31% per level.',
+    equipmentType: 'armor',
+    slotType: 'head',
+    set: 'Soldier Set II',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 800,
+    multiplier: 0.0031, // Refactored multiplier
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'soldier-body-ii',
+    name: 'Soldier Chestplate II',
+    type: 'equipment',
+    description: 'Body armor for soldiers, increases defense by 0.62% per level.',
+    equipmentType: 'armor',
+    slotType: 'body',
+    set: 'Soldier Set II',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 800,
+    multiplier: 0.0062, // Refactored multiplier
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'soldier-legs-ii',
+    name: 'Soldier Legs II',
+    type: 'equipment',
+    description: 'Leg armor for soldiers, increases attack by 0.31% per level.',
+    equipmentType: 'armor',
+    slotType: 'legs',
+    set: 'Soldier Set II',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 800,
+    multiplier: 0.0031, // Refactored multiplier
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'soldier-shield-ii',
+    name: 'Soldier Shield II',
+    type: 'equipment',
+    description: 'Accessory for soldiers, increases defense by 0.77% per level.',
+    equipmentType: 'accessory',
+    slotType: 'accessory',
+    set: 'Soldier Set II',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 800,
+    multiplier: 0.0077, // Refactored multiplier
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+    },
+  },
+  {
+    id: 'soldier-sword-ii',
+    name: 'Soldier Sword II',
+    type: 'equipment',
+    description: 'Weapon for soldiers, increases attack by 0.77% per level.',
+    equipmentType: 'weapon',
+    slotType: 'weapon',
+    set: 'Soldier Set II',
+    rarity: 'rare',
+    level: 1,
+    maxLevel: 800,
+    multiplier: 0.0077, // Refactored multiplier
+    effect: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      return true
+    },
+    onRemove: ({adventureStore}, item) => {
+      const bonusMultiplier = 1 + item.multiplier * item.level
+      adventureStore.armyAttackModifier /= bonusMultiplier
+    },
+  },
+]
+
+export const equipmentSets: Item[] = [
+  // Worker Set
+  ...workerSet,
+  ...workerSetII,
+
+  // Soldier Set
+  ...soldierSet,
+  ...soldierSetII,
+
   // Royal Set
   {
     id: 'royal-crown',

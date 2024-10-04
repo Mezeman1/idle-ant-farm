@@ -1,12 +1,19 @@
 <template>
   <div
     v-tooltip="tooltipText"
-    class="slot rounded-lg shadow-md flex items-center justify-center p-1"
-    :class="slotClasses"
+    class="slot rounded-lg shadow-md flex items-center justify-center p-1 relative"
+    :class="[
+      slotClasses,
+    ]"
     :draggable="isDraggable"
     tabindex="0"
     role="button"
     :aria-label="getAriaLabel()"
+    :style="{
+      backgroundImage: item?.image ? `url(${item.image})` : '',
+      backgroundSize: item?.image ? 'cover' : '',
+      backgroundPosition: item?.image ? 'center' : '',
+    }"
     @drop="onDrop"
     @dragover.prevent
     @dragstart="onDragStart"
@@ -17,7 +24,7 @@
     @keydown.enter.prevent="onKeyDownSpace"
   >
     <p
-      class="font-bold text-center break-words"
+      class="font-bold text-center break-words absolute z-10"
       :class="{'text-3xs': isMobile, 'text-xs': !isMobile }"
     >
       <span v-if="item">
@@ -33,6 +40,12 @@
         <span>{{ item.set }} {{ currentEquippedItems }}/{{ setTotalItems }} equipped</span>
       </span>
     </p>
+
+    <div
+      v-if="item?.image"
+      class="absolute inset-0 bg-opacity-50 rounded-lg"
+      :class="slotClasses"
+    />
   </div>
 </template>
 

@@ -340,7 +340,7 @@ import Inventory from './InventoryPage.vue'
 import firebase from 'firebase/compat'
 import Settings from './SettingsPage.vue'
 import {useAdventureStore} from '../stores/adventureStore'
-import {useDebounceFn} from '@vueuse/core'
+import {useDebounceFn, useThrottleFn} from '@vueuse/core'
 import Tunnels from '@/views/TunnelsPage.vue'
 import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
@@ -551,7 +551,7 @@ function handleBeforeUnload() {
   gameStore.saveGameState()
 }
 
-watch(() => resourcesStore.resources.ants, useDebounceFn(() => {
+watch(() => resourcesStore.resources.ants, useThrottleFn(() => {
   gameStore.setupAdventureStats()
 }, 300), {immediate: true})
 
