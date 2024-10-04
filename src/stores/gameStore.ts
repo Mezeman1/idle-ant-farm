@@ -697,14 +697,6 @@ export const useGameStore = defineStore('gameStore', {
           achievementStore.resetAchievements()
         }
 
-        const evolveStore = useEvolveStore()
-        await evolveStore.applyEvolution()
-
-        // Set the last saved time
-        this.lastSavedTime = Date.now()
-
-
-
         if (isEvolution) {
           const prestigeStore = usePrestigeStore()
           prestigeStore.prestigePoints = 0
@@ -726,6 +718,12 @@ export const useGameStore = defineStore('gameStore', {
           prestigeStore.autoCreateHousing = false
         }
 
+        const evolveStore = useEvolveStore()
+        await evolveStore.applyEvolution()
+
+        // Set the last saved time
+        this.lastSavedTime = Date.now()
+
         // Apply prestige upgrades
         const prestigeStore = usePrestigeStore()
         prestigeStore.resetPrestigeState()
@@ -742,6 +740,7 @@ export const useGameStore = defineStore('gameStore', {
         equipmentStore.loadEquipmentState(equipmentStore.getEquipmentState())
         equipmentStore.checkForSetBonus()
         adventureStore.setupAdventureStats()
+
 
         // Resolve the promise once everything is done
         resolve()

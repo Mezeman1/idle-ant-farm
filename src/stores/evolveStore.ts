@@ -606,7 +606,9 @@ export const useEvolveStore = defineStore({
         duration: 5000,
       })
 
-      this.applyEvolution()
+      gameStore.saveGameState().then(() => {
+        gameStore.loadGameState()
+      })
     },
     async applyEvolution() {
       return new Promise<void>((resolve) => {
