@@ -729,12 +729,12 @@ export const useGameStore = defineStore('gameStore', {
         const adventureStore = useAdventureStore()
         adventureStore.resetAdventureState()
 
+        const evolveStore = useEvolveStore()
+        evolveStore.applyEvolution()
+
         const inventoryStore = useInventoryStore()
         inventoryStore.appliedPassiveEffects = []
         inventoryStore.applyPassiveEffects()
-
-        const evolveStore = useEvolveStore()
-        evolveStore.applyEvolution()
 
         const equipmentStore = useEquipmentStore()
         equipmentStore.checkForSetBonus()
