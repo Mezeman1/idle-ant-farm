@@ -733,12 +733,12 @@ export const useGameStore = defineStore('gameStore', {
         inventoryStore.appliedPassiveEffects = []
         inventoryStore.applyPassiveEffects()
 
+        const evolveStore = useEvolveStore()
+        evolveStore.applyEvolution()
+
         const equipmentStore = useEquipmentStore()
         equipmentStore.checkForSetBonus()
         adventureStore.setupAdventureStats()
-
-        const evolveStore = useEvolveStore()
-        evolveStore.applyEvolution()
 
         // Resolve the promise once everything is done
         resolve()
