@@ -24,6 +24,8 @@
 <script setup lang="ts">
 import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useWindowSize} from '@vueuse/core'
+import {useEvolveStore} from '@/stores/evolveStore'
+
 
 const props = withDefaults(defineProps<{
   antCount: number;
@@ -99,6 +101,15 @@ let lastFpsUpdateTime = performance.now()
 let totalFrameTime = 0
 let animationFrameId: number
 const boundaryMargin = 20
+const evolveStore = useEvolveStore()
+
+watch(
+  () => evolveStore.currentEvolution,
+  () => {
+    updateVisualsForEvolution()
+    createOffscreenBackground()
+  },
+)
 
 const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min
 
@@ -362,6 +373,7 @@ const drawAll = () => {
     drawEntities(queens.value)
     drawEntities(eliteAnts.value)
     drawSeeds() // Draw seeds only once every second
+    updateVisualsForEvolution()
   }
 
   if (currentTime - lastSeedRotationTime >= 1000) {
@@ -485,6 +497,7 @@ onMounted(() => {
       addQueens(props.queenCount)
       addLarvae(props.larvaeCount)
       addEliteAnts(props.eliteCount || 0)
+      updateVisualsForEvolution()
 
       setInterval(() => {
         if (seeds.value.length < 10)
@@ -670,7 +683,7 @@ const drawAntNest = () => {
 }
 
 
-const { width, height } = useWindowSize()
+const {width, height} = useWindowSize()
 
 const drawSeeds = () => {
   ctx.value!.fillStyle = '#928a42' // Yellow-green color for seeds
@@ -704,70 +717,77 @@ const createOffscreenBackground = () => {
 
   if (!offscreenCtx) return
 
-  // Draw the main dirt background
-  offscreenCtx.fillStyle = '#c2b280' // Light tan color for base dirt
-  offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+  const currentEvolution = evolveStore.currentEvolutionData // Get the current evolution
 
-  // Draw irregular dirt patches (bigger, less frequent)
-  const drawDirtPatch = (x: number, y: number, width: number, height: number) => {
-    offscreenCtx.beginPath()
-    offscreenCtx.moveTo(x, y)
-    offscreenCtx.lineTo(x + width * Math.random(), y + height * 0.6)
-    offscreenCtx.lineTo(x + width * 0.8, y + height)
-    offscreenCtx.lineTo(x + width * 0.4, y + height * Math.random())
-    offscreenCtx.closePath()
-    offscreenCtx.fillStyle = '#a67c52' // Darker brown for dirt patches
-    offscreenCtx.fill()
+  switch (currentEvolution.name) {
+    case 'Leaf cutters':
+      // Draw a leafy green background
+      offscreenCtx.fillStyle = '#2e8b57' // Dark green base color
+      offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      drawLeafyPatches()
+      createLeafObjects() // Draw scattered leaves
+      break
+
+    case 'Fire Ants':
+      // Draw a fiery background
+      offscreenCtx.fillStyle = '#ff4500' // Orange-red base color
+      offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      drawAshPatches()
+      createAshObjects() // Draw ash objects like burnt wood or rocks
+      break
+
+    case 'Harvester Ants':
+      // Draw a desert-like background
+      offscreenCtx.fillStyle = '#deb887' // Sandy brown base color
+      offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      drawDesertPatches()
+      createSeedObjects() // Draw scattered seeds
+      break
+
+    case 'Weaver Ants':
+      // Draw a forest or tree background
+      offscreenCtx.fillStyle = '#6b8e23' // Olive green base color
+      offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      drawTreePatches()
+      createNestObjects() // Draw tree branches or nests
+      break
+
+    case 'Desert Ants':
+      offscreenCtx.fillStyle = '#8b4513' // Darker brown
+      offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      drawDesertPatches()
+      createCactusObjects() // Draw desert cacti or dry bushes
+      break
+
+    case 'Bullet Ants':
+      offscreenCtx.fillStyle = '#2b2b2b' // Dark gray base color
+      offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      drawJunglePatches()
+      createJungleObjects() // Draw large leaves and jungle debris
+      break
+
+    case 'Army Ants':
+      offscreenCtx.fillStyle = '#4e4e4e' // Dark earth color
+      offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      drawBattlefieldPatches()
+      createBoneObjects() // Draw small bones or debris from battles
+      break
+
+    case 'Carpenter Ants':
+      offscreenCtx.fillStyle = '#8b5a2b' // Brown wood base color
+      offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      drawWoodPatches()
+      createWoodObjects() // Draw wood chips or logs
+      break
+
+    default:
+      offscreenCtx.fillStyle = '#c2b280' // Light tan color for base dirt
+      offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      drawDefaultPatches()
+      createSeedObjects() // Draw generic objects like stones
   }
 
-  // Reduce the frequency of dirt patches but make them bigger
-  for (let i = 0; i < 15; i++) {
-    const x = Math.random() * offscreenCanvas.width
-    const y = Math.random() * offscreenCanvas.height
-    const width = Math.random() * 200 + 150
-    const height = Math.random() * 120 + 80
-    drawDirtPatch(x, y, width, height)
-  }
-
-  // Draw small pebbles (irregular shapes)
-  const drawPebble = (x: number, y: number, size: number) => {
-    offscreenCtx.beginPath()
-    const angleOffset = Math.random() * Math.PI * 2 // Randomize angle offset to make the pebble irregular
-    offscreenCtx.ellipse(x, y, size * 1.2, size * 0.8, angleOffset, 0, Math.PI * 2)
-    offscreenCtx.fillStyle = '#8B8B7A' // Gray color for stones
-    offscreenCtx.fill()
-  }
-
-  for (let i = 0; i < 40; i++) {
-    const x = Math.random() * offscreenCanvas.width
-    const y = Math.random() * offscreenCanvas.height
-    const size = Math.random() * 4 + 1 // Slightly larger and less frequent pebbles
-    drawPebble(x, y, size)
-  }
-
-  // Draw realistic grass patches
-  const drawGrassPatch = (x: number, y: number, blades: number) => {
-    offscreenCtx.fillStyle = '#006400' // Dark green grass color
-    for (let i = 0; i < blades; i++) {
-      const bladeHeight = Math.random() * 12 + 8 // Grass blade height
-      const bladeWidth = Math.random() * 2 + 1 // Grass blade thickness
-      const angle = Math.random() * 0.4 - 0.2 // Slight angle variation for natural look
-
-      offscreenCtx.save()
-      offscreenCtx.translate(x, y)
-      offscreenCtx.rotate(angle) // Slightly tilt the grass blades
-      offscreenCtx.fillRect(-bladeWidth / 2, 0, bladeWidth, -bladeHeight)
-      offscreenCtx.restore()
-    }
-  }
-
-  for (let i = 0; i < 50; i++) {
-    const x = Math.random() * offscreenCanvas.width
-    const y = Math.random() * offscreenCanvas.height
-    drawGrassPatch(x, y, Math.floor(Math.random() * 5 + 3)) // Each patch has 3-7 grass blades
-  }
-
-  // Add some shadowed areas to simulate depth
+  // Add shadowed areas for depth (applies to all backgrounds)
   const gradient = offscreenCtx.createRadialGradient(
     offscreenCanvas.width / 2,
     offscreenCanvas.height / 2,
@@ -783,12 +803,335 @@ const createOffscreenBackground = () => {
   offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
 }
 
+const createCactusObjects = () => {
+  const cactusColors = ['#228b22', '#2e8b57', '#006400'] // Shades of green for cacti
+
+  for (let i = 0; i < 15; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const cactusHeight = Math.random() * 30 + 20 // Random cactus height
+    const cactusWidth = cactusHeight / 3 // Cacti are generally tall and narrow
+
+    offscreenCtx.fillStyle = cactusColors[Math.floor(Math.random() * cactusColors.length)]
+
+    // Draw the main stem of the cactus
+    offscreenCtx.save()
+    offscreenCtx.translate(x, y)
+    offscreenCtx.fillRect(-cactusWidth / 2, -cactusHeight, cactusWidth, cactusHeight)
+
+    // Draw the arms of the cactus (two smaller rectangles)
+    offscreenCtx.fillRect(-cactusWidth / 1.5, -cactusHeight * 0.7, cactusWidth / 2, cactusHeight / 2) // Left arm
+    offscreenCtx.fillRect(cactusWidth / 2.5, -cactusHeight * 0.5, cactusWidth / 2, cactusHeight / 2) // Right arm
+
+    offscreenCtx.restore()
+  }
+}
+
+const createJungleObjects = () => {
+  const jungleLeafColors = ['#006400', '#228B22', '#2E8B57'] // Dark green jungle leaves
+
+  for (let i = 0; i < 20; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const leafLength = Math.random() * 50 + 30 // Random jungle leaf length
+    const leafWidth = Math.random() * 20 + 10  // Random jungle leaf width
+
+    offscreenCtx.fillStyle = jungleLeafColors[Math.floor(Math.random() * jungleLeafColors.length)]
+
+    offscreenCtx.save()
+    offscreenCtx.translate(x, y)
+    offscreenCtx.rotate(Math.random() * Math.PI * 2) // Random rotation
+    offscreenCtx.beginPath()
+    offscreenCtx.ellipse(0, 0, leafWidth, leafLength, 0, 0, Math.PI * 2) // Elliptical jungle leaf
+    offscreenCtx.fill()
+    offscreenCtx.restore()
+  }
+
+  // Add some vines or debris
+  for (let i = 0; i < 10; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const vineLength = Math.random() * 100 + 50
+    const vineThickness = Math.random() * 3 + 1
+
+    offscreenCtx.fillStyle = '#3e8f4e' // Darker green for vines
+    offscreenCtx.save()
+    offscreenCtx.translate(x, y)
+    offscreenCtx.rotate(Math.random() * Math.PI * 2) // Random rotation for vine
+    offscreenCtx.fillRect(-vineThickness / 2, -vineLength / 2, vineThickness, vineLength)
+    offscreenCtx.restore()
+  }
+}
+
+const createBoneObjects = () => {
+  const boneColors = ['#e0e0e0', '#dcdcdc', '#c0c0c0'] // Different shades of bone color
+
+  for (let i = 0; i < 20; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const boneLength = Math.random() * 15 + 10 // Random bone size
+    const boneThickness = Math.random() * 5 + 2 // Random bone thickness
+
+    offscreenCtx.fillStyle = boneColors[Math.floor(Math.random() * boneColors.length)]
+
+    offscreenCtx.save()
+    offscreenCtx.translate(x, y)
+    offscreenCtx.rotate(Math.random() * Math.PI * 2) // Random rotation for bone
+
+    // Draw the main shaft of the bone (rectangular part)
+    offscreenCtx.fillRect(-boneLength / 2, -boneThickness / 2, boneLength, boneThickness)
+
+    // Draw the rounded ends of the bone (ellipse for each end)
+    offscreenCtx.beginPath()
+    offscreenCtx.ellipse(-boneLength / 2, 0, boneThickness, boneThickness / 2, 0, 0, Math.PI * 2) // Left end
+    offscreenCtx.ellipse(boneLength / 2, 0, boneThickness, boneThickness / 2, 0, 0, Math.PI * 2) // Right end
+    offscreenCtx.fill()
+
+    offscreenCtx.restore()
+  }
+}
+
+
+const createLeafObjects = () => {
+  const leafColors = ['#66bb66', '#4caf50', '#2e7d32'] // Shades of green
+  for (let i = 0; i < 30; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const width = Math.random() * 20 + 10
+    const height = Math.random() * 10 + 5
+    offscreenCtx.fillStyle = leafColors[Math.floor(Math.random() * leafColors.length)]
+
+    offscreenCtx.save()
+    offscreenCtx.translate(x, y)
+    offscreenCtx.rotate(Math.random() * Math.PI * 2) // Random leaf rotation
+    offscreenCtx.beginPath()
+    offscreenCtx.ellipse(0, 0, width, height, 0, 0, Math.PI * 2) // Elliptical leaf shape
+    offscreenCtx.fill()
+    offscreenCtx.restore()
+  }
+}
+
+const createAshObjects = () => {
+  const ashColors = ['#d3d3d3', '#a9a9a9', '#696969'] // Shades of gray
+  for (let i = 0; i < 20; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const size = Math.random() * 15 + 5
+    offscreenCtx.fillStyle = ashColors[Math.floor(Math.random() * ashColors.length)]
+
+    offscreenCtx.save()
+    offscreenCtx.translate(x, y)
+    offscreenCtx.rotate(Math.random() * Math.PI * 2) // Random rotation
+    offscreenCtx.fillRect(-size / 2, -size / 2, size, size) // Draw burnt rock/wood
+    offscreenCtx.restore()
+  }
+}
+
+const createSeedObjects = () => {
+  const seedColors = ['#c4a484', '#a67b5b', '#8c6239'] // Shades of brown for seeds
+  for (let i = 0; i < 40; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const size = Math.random() * 5 + 3 // Seed size
+    offscreenCtx.fillStyle = seedColors[Math.floor(Math.random() * seedColors.length)]
+
+    offscreenCtx.save()
+    offscreenCtx.translate(x, y)
+    offscreenCtx.rotate(Math.random() * Math.PI * 2) // Random rotation
+    offscreenCtx.beginPath()
+    offscreenCtx.ellipse(0, 0, size, size * 1.5, 0, 0, Math.PI * 2) // Elliptical seed shape
+    offscreenCtx.fill()
+    offscreenCtx.restore()
+  }
+}
+
+
+const createNestObjects = () => {
+  offscreenCtx.fillStyle = '#8b4513' // Brown color for branches
+  for (let i = 0; i < 10; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const width = Math.random() * 50 + 30
+    const height = Math.random() * 15 + 10
+
+    offscreenCtx.save()
+    offscreenCtx.translate(x, y)
+    offscreenCtx.rotate(Math.random() * Math.PI * 2) // Random branch rotation
+    offscreenCtx.fillRect(-width / 2, -height / 2, width, height) // Draw branch/nest
+    offscreenCtx.restore()
+  }
+}
+
+const createWoodObjects = () => {
+  const woodColors = ['#8b5a2b', '#a0522d', '#d2691e'] // Different shades of wood
+  for (let i = 0; i < 15; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const width = Math.random() * 40 + 20
+    const height = Math.random() * 10 + 5
+
+    offscreenCtx.fillStyle = woodColors[Math.floor(Math.random() * woodColors.length)]
+    offscreenCtx.save()
+    offscreenCtx.translate(x, y)
+    offscreenCtx.rotate(Math.random() * Math.PI * 2) // Random rotation for logs/wood chips
+    offscreenCtx.fillRect(-width / 2, -height / 2, width, height) // Draw log/wood chip
+    offscreenCtx.restore()
+  }
+}
+
+
+// Define additional functions to handle the specific patches based on evolution
+const drawLeafyPatches = () => {
+  // Logic for drawing green leafy patches
+  // You can use similar drawing methods as your dirt patches, but adjust the color
+  // Example:
+  drawPatches('#66bb66', 15, 200, 120)
+}
+
+const drawAshPatches = () => {
+  // Logic for drawing ash or burnt ground patches
+  drawPatches('#a67c52', 10, 150, 100)
+}
+
+const drawDesertPatches = () => {
+  // Logic for drawing desert-like patches
+  drawPatches('#d2b48c', 15, 200, 150)
+}
+
+const drawTreePatches = () => {
+  // Logic for drawing tree or branch-like patches
+  drawPatches('#556b2f', 15, 180, 120)
+}
+
+const drawJunglePatches = () => {
+  // Logic for drawing jungle patches
+  drawPatches('#3e3e3e', 10, 150, 100)
+}
+
+const drawBattlefieldPatches = () => {
+  // Logic for drawing battlefield patches
+  drawPatches('#6e6e6e', 12, 180, 120)
+}
+
+const drawWoodPatches = () => {
+  // Logic for drawing wood grain or bark-like patches
+  drawPatches('#8b5a2b', 15, 200, 150)
+}
+
+const drawDefaultPatches = () => {
+  // Logic for drawing default dirt patches
+  drawPatches('#a67c52', 15, 200, 150)
+}
+
+// Utility function to draw irregular patches
+const drawPatches = (color: string, numPatches: number, maxWidth: number, maxHeight: number) => {
+  offscreenCtx.fillStyle = color
+  for (let i = 0; i < numPatches; i++) {
+    const x = Math.random() * offscreenCanvas.width
+    const y = Math.random() * offscreenCanvas.height
+    const width = Math.random() * maxWidth + 50
+    const height = Math.random() * maxHeight + 50
+    offscreenCtx.beginPath()
+    offscreenCtx.moveTo(x, y)
+    offscreenCtx.lineTo(x + width * Math.random(), y + height * 0.6)
+    offscreenCtx.lineTo(x + width * 0.8, y + height)
+    offscreenCtx.lineTo(x + width * 0.4, y + height * Math.random())
+    offscreenCtx.closePath()
+    offscreenCtx.fill()
+  }
+}
+
+
 // Function to draw the offscreen background onto the main canvas
 const drawBackground = () => {
   if (offscreenCanvas && ctx.value) {
     ctx.value.drawImage(offscreenCanvas, 0, 0)
   }
 }
+
+const updateVisualsForEvolution = () => {
+  const currentEvolution = evolveStore.currentEvolutionData // Get the current evolution
+
+  switch (currentEvolution.name) {
+    case 'Leaf cutters':
+      ants.value.forEach(ant => ant.color = '#66bb66') // Green for leafcutters
+      queens.value.forEach(queen => queen.color = '#66bb66')
+      eliteAnts.value.forEach(elite => elite.color = '#66bb66')
+      // createLeafBackground(); // Leafy green background
+      break
+
+    case 'Fire Ants':
+      ants.value.forEach(ant => ant.color = '#e72e2e') // Red for fire ants
+      queens.value.forEach(queen => queen.color = '#b22222')
+      eliteAnts.value.forEach(elite => elite.color = '#b22222')
+      // createFireBackground(); // Fiery background
+      break
+
+    case 'Harvester Ants':
+      ants.value.forEach(ant => ant.color = '#8b4513') // Brown for harvester ants
+      queens.value.forEach(queen => queen.color = '#5f370e')
+      eliteAnts.value.forEach(elite => elite.color = '#5f370e')
+      // createDesertBackground(); // Desert background
+      break
+
+    case 'Weaver Ants':
+      ants.value.forEach(ant => ant.color = '#aaddaa') // Pale green for weaver ants
+      queens.value.forEach(queen => queen.color = '#aaddaa')
+      eliteAnts.value.forEach(elite => elite.color = '#aaddaa')
+      // createTreeBackground(); // Tree branches background
+      break
+
+    case 'Desert Ants':
+      ants.value.forEach(ant => ant.color = '#8b5113') // Brown for desert ants
+      queens.value.forEach(queen => queen.color = '#5f370e')
+      eliteAnts.value.forEach(elite => elite.color = '#5f370e')
+      // createDesertBackground(); // Desert background
+      break
+
+    case 'Bullet Ants':
+      ants.value.forEach(ant => ant.color = '#2e2b2b') // Dark gray for bullet ants
+      queens.value.forEach(queen => queen.color = '#2e2b2b')
+      eliteAnts.value.forEach(elite => elite.color = '#2e2b2b')
+      // createJungleBackground(); // Jungle-like background
+      break
+
+    case 'Army Ants':
+      ants.value.forEach(ant => ant.color = '#4e4e4e') // Gray for army ants
+      queens.value.forEach(queen => queen.color = '#4e4e4e')
+      eliteAnts.value.forEach(elite => elite.color = '#4e4e4e')
+      // createArmyAntBackground(); // Army ant colony background
+      break
+
+    case 'Carpenter Ants':
+      ants.value.forEach(ant => ant.color = '#4b3621') // Dark brown for carpenter ants
+      queens.value.forEach(queen => queen.color = '#4b3621')
+      eliteAnts.value.forEach(elite => elite.color = '#4b3621')
+      // createWoodBackground(); // Wood/tree background
+      break
+
+    case 'Weaver Ants':
+      ants.value.forEach(ant => ant.color = '#aaddaa') // Pale green for weaver ants
+      queens.value.forEach(queen => queen.color = '#aaddaa')
+      eliteAnts.value.forEach(elite => elite.color = '#aaddaa')
+      // createTreeBackground(); // Weaver background
+      break
+
+    default:
+      ants.value.forEach(ant => ant.color = '#4a4541') // Default color
+      queens.value.forEach(queen => queen.color = '#383838')
+      eliteAnts.value.forEach(elite => elite.color = '#383838')
+    // createDefaultBackground(); // Default background
+  }
+}
+
+
+watch(
+  () => evolveStore.currentEvolutionData, // Watching for evolution changes
+  () => {
+    updateVisualsForEvolution() // Update visuals based on new evolution
+  },
+  {immediate: true}, // Trigger immediately on mount as well
+)
 </script>
 
 <style scoped>

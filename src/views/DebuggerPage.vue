@@ -21,6 +21,12 @@
       >
       <button
         class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+        @click="useEvolveStore().evolve()"
+      >
+        Evolve
+      </button>
+      <button
+        class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
         @click="maxAllResources()"
       >
         Max all resources
@@ -136,6 +142,7 @@ import {useGameStore} from '../stores/gameStore'
 import {usePrestigeStore} from '../stores/prestigeStore'
 import {useInventoryStore} from '../stores/inventoryStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
+import {useEvolveStore} from '@/stores/evolveStore'
 
 const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()

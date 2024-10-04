@@ -5,10 +5,10 @@
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
         <div>
           <p class="font-bold text-lg">
-            Seeds
+            {{ evolveStore.currentEvolutionData.resources.seeds.name }}
           </p>
           <p class="text-2xs">
-            You have a species of ants that collect seeds.
+            {{ evolveStore.currentEvolutionData.resources.seeds.description }}
           </p>
         </div>
 
@@ -32,7 +32,7 @@
               v-if="resourcesStore.storage.maxSeeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
               class="text-xs"
             >
-              If only there was a way to increase your seed storage...
+              If only there was a way to increase your {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }} storage...
             </p>
           </div>
 
@@ -48,7 +48,7 @@
               @touchend="stopCollectingSeeds"
               @contextmenu.prevent
             >
-              Hold to collect 🌱
+              Hold to collect {{ evolveStore.currentEvolutionData.resources.seeds.emoji }}
             </button>
           </div>
 
@@ -92,7 +92,7 @@
               Larvae
             </p>
             <p class="text-2xs">
-              Larvae are the main resource used to create ants.
+              Larvae are the main resource used to create {{ evolveStore.currentEvolutionData.resources.ants.lowerName }}.
             </p>
           </div>
         </div>
@@ -128,7 +128,7 @@
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="resourcesStore.createLarvae"
             >
-              Create Larvae ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerLarva) }} seeds)
+              Create Larvae ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerLarva) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }})
             </button>
             <button
               :disabled="createLarvaeDisabled"
@@ -174,10 +174,10 @@
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
         <div>
           <p class="font-bold text-lg">
-            Ants
+            {{ evolveStore.currentEvolutionData.resources.ants.name }}
           </p>
           <p class="text-2xs">
-            Ants collect seeds and fight bugs.
+            {{ evolveStore.currentEvolutionData.resources.ants.description }}
           </p>
         </div>
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
@@ -192,7 +192,7 @@
               :disabled="resourcesStore.resources.seeds < resourcesStore.seedCostPerAntHousing"
               @click="resourcesStore.createAntHousing"
             >
-              Create housing ({{ formatNumber(resourcesStore.seedCostPerAntHousing) }} seeds)
+              Create housing ({{ formatNumber(resourcesStore.seedCostPerAntHousing) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }})
             </button>
             <button
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
@@ -208,9 +208,9 @@
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="resourcesStore.createAnts"
             >
-              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerAnt) }} seeds, {{
+              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerAnt) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }}, {{
                 formatNumber(resourcesStore.resourceCosts.larvaCostPerAnt)
-              }} larvae)
+              }} {{ evolveStore.currentEvolutionData.resources.larvae.lowerName }})
             </button>
             <button
               :disabled="createAntDisabled"
@@ -308,9 +308,9 @@
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="resourcesStore.createEliteAnts"
             >
-              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerEliteAnt) }} seeds, {{
+              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerEliteAnt) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }}, {{
                 formatNumber(resourcesStore.resourceCosts.larvaCostPerEliteAnt)
-              }} larvae)
+              }} {{ evolveStore.currentEvolutionData.resources.larvae.lowerName }})
             </button>
             <button
               :disabled="createEliteAntDisabled"
@@ -365,10 +365,10 @@
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
         <div>
           <p class="font-bold text-lg">
-            Queens
+            {{ evolveStore.currentEvolutionData.resources.queens.name }}
           </p>
           <p class="text-2xs">
-            Queens are the main producers of larvae.
+            {{ evolveStore.currentEvolutionData.resources.queens.description }}
           </p>
         </div>
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
@@ -385,8 +385,8 @@
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="resourcesStore.buyQueen"
             >
-              Buy Queen 👑 ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerQueen) }} seeds,
-              {{ formatNumber(resourcesStore.resourceCosts.antCostPerQueen) }} ants)
+              Buy Queen 👑 ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerQueen) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }},
+              {{ formatNumber(resourcesStore.resourceCosts.antCostPerQueen) }} {{ evolveStore.currentEvolutionData.resources.ants.lowerName }})
             </button>
             <button
               :disabled="createQueenDisabled"
@@ -639,10 +639,12 @@ import {usePrestigeStore} from '../stores/prestigeStore'
 import StorageButtons from '@/components/StorageButtons.vue'
 import {computed} from 'vue'
 import {useResourcesStore} from '@/stores/resourcesStore'
+import {useEvolveStore} from '@/stores/evolveStore'
 
 const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
+const evolveStore = useEvolveStore()
 
 // Format numbers using the store's function
 const formatNumber = gameStore.formatNumber
@@ -668,8 +670,8 @@ const stopCollectingSeeds = () => {
   }
 }
 
-const seedStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.seedStorageUpgradeCost)} seeds`)
-const larvaeStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.larvaeStorageUpgradeCost)} seeds`)
+const seedStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.seedStorageUpgradeCost)} ${evolveStore.currentEvolutionData.resources.seeds.lowerName}`)
+const larvaeStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.larvaeStorageUpgradeCost)} ${evolveStore.currentEvolutionData.resources.seeds.lowerName}`)
 
 const seedCollectingDisabled = computed(() => resourcesStore.resources.seeds >= resourcesStore.storage.maxSeeds)
 const createLarvaeDisabled = computed(() => resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerLarva || resourcesStore.resources.larvae >= resourcesStore.storage.maxLarvae)

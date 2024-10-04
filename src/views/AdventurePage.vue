@@ -13,7 +13,7 @@
 
         <!-- Optional display for locked wave details -->
         <div
-          v-if="!getAreaByIndex(selectedWaveIndex + 1).unlockedWhen(resourcesStore)"
+          v-if="!getAreaByIndex(selectedWaveIndex + 1)?.unlockedWhen(resourcesStore)"
           class="text-xs text-gray-700"
         >
           Next Area: {{ getAreaByIndex(selectedWaveIndex + 1)?.unlockText }} 🔒

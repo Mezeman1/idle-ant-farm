@@ -12,8 +12,9 @@ import {useEquipmentStore} from '@/stores/equipmentStore'
 import {useAchievementStore} from '@/stores/achievementStore'
 import LZString from 'lz-string'
 import {useResourcesStore} from '@/stores/resourcesStore'
-import FirestoreError = firebase.firestore.FirestoreError;
 import {useTunnelStore} from '@/stores/tunnelStore'
+import FirestoreError = firebase.firestore.FirestoreError
+import {useEvolveStore} from '@/stores/evolveStore'
 
 
 export const useGameStore = defineStore('gameStore', {
@@ -417,6 +418,9 @@ export const useGameStore = defineStore('gameStore', {
         console.log('Logged out successfully')
         this.loggedIn = false
         this.stopGameLoop()
+        this.resetLocalGameState({
+          isDebug: true,
+        })
       }).catch((error) => {
         console.error('Error signing out:', error)
       })
@@ -514,6 +518,7 @@ export const useGameStore = defineStore('gameStore', {
       const equipmentStore = useEquipmentStore()
       const achievementStore = useAchievementStore()
       const resourcesStore = useResourcesStore()
+      const evolveStore = useEvolveStore()
 
       return {
         ...resourcesStore.getResourcesState(),
@@ -531,6 +536,7 @@ export const useGameStore = defineStore('gameStore', {
         ...equipmentStore.getEquipmentState(),
         ...achievementStore.getAchievementState(),
         ...useTunnelStore().getTunnelState(),
+        ...evolveStore.getEvolveState(),
       }
     },
 
@@ -573,12 +579,17 @@ export const useGameStore = defineStore('gameStore', {
       } catch (error) {
         console.error('Error loading game state from Firestore:', error)
       }
+
+      this.saveGameState()
     },
 
     async loadStateFromFirebase(savedState) {
       const resourcesStore = useResourcesStore()
       resourcesStore.resetResourcesState()
       resourcesStore.loadResourcesState(savedState)
+
+      const evolveStore = useEvolveStore()
+      evolveStore.loadEvolveState(savedState)
 
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
 
@@ -671,12 +682,13 @@ export const useGameStore = defineStore('gameStore', {
       console.log('Game state cleared from Firestore')
     },
 
-    async resetLocalGameState({isDebug}): Promise<void> {
+    async resetLocalGameState({
+                                isDebug,
+                                isEvolution,
+                              }): Promise<void> {
       return new Promise((resolve) => {
-        console.log('Resetting local game state...')
-
         const resourcesStore = useResourcesStore()
-        resourcesStore.resetResourcesState(isDebug)
+        resourcesStore.resetResourcesState(isDebug || isEvolution)
 
         // Set the last saved time
         this.lastSavedTime = Date.now()
@@ -686,6 +698,28 @@ export const useGameStore = defineStore('gameStore', {
           this.resetDebugState()
           const achievementStore = useAchievementStore()
           achievementStore.resetAchievements()
+        }
+
+        if (isEvolution) {
+          const prestigeStore = usePrestigeStore()
+          prestigeStore.prestigePoints = 0
+          prestigeStore.timesPrestiged = 0
+          prestigeStore.purchasedUpgrades = []
+
+          this.healthPerAnt = 10
+          this.attackPerAnt = 2
+          this.defensePerAnt = 1
+
+          prestigeStore.resetPrestigeShopCosts()
+
+          prestigeStore.autoQueenCreation = false
+          prestigeStore.autoAntCreation = false
+          prestigeStore.autoLarvaeCreation = false
+          prestigeStore.autoSeedStorageUpgrade = false
+          prestigeStore.autoLarvaeStorageUpgrade = false
+          prestigeStore.autoEliteAntsCreation = false
+          prestigeStore.autoCreateHousing = false
+
         }
 
         // Apply prestige upgrades
@@ -736,6 +770,9 @@ export const useGameStore = defineStore('gameStore', {
 
       const equipmentStore = useEquipmentStore()
       equipmentStore.resetEquipmentState()
+
+      const evolveStore = useEvolveStore()
+      evolveStore.resetEvolveState()
     },
 
     async resetOtherStores(debug) {
@@ -750,7 +787,6 @@ export const useGameStore = defineStore('gameStore', {
       // Reset adventure store
       const adventureStore = useAdventureStore()
       await adventureStore.resetAdventureState()
-      adventureStore.stopBattle()
     },
 
     setupAdventureStats() {

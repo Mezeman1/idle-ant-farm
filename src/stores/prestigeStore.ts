@@ -4,6 +4,7 @@ import {useInventoryStore} from './inventoryStore'
 import {useToast} from 'vue-toast-notification'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useAdventureStore} from '@/stores/adventureStore'
+import {useEvolveStore} from '@/stores/evolveStore'
 
 
 interface PrestigeShopItem {
@@ -214,6 +215,18 @@ export const usePrestigeStore = defineStore('prestige', {
           return usePrestigeStore().upgradePurchased('autoCreateHousing')
         },
       },
+      {
+        id: 'evolve',
+        name: 'Evolve',
+        description: 'Evolve to the next stage (made cheap for testing purposes)',
+        cost: 5000,
+        category: 'expansion',
+        applyOnPrestige: true,
+        oneTimePurchase: true,
+        unlockedWhen: () => {
+          return true
+        },
+      },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 
     // Prestige-related variables
@@ -377,6 +390,7 @@ export const usePrestigeStore = defineStore('prestige', {
     // Apply a purchased upgrade
     applyPrestigeUpgrade(upgradeId, fromPrestige = false) {
       const gameStore = useGameStore()
+      const evolveStore = useEvolveStore()
       const resourcesStore = useResourcesStore()
       const adventureStore = useAdventureStore()
       const prestigeInShop = this.prestigeShop.find(u => u.id === upgradeId)
@@ -483,6 +497,15 @@ export const usePrestigeStore = defineStore('prestige', {
         },
         antHousingUpgrade: () => {
           resourcesStore.antsPerHousing += 1
+        },
+        evolve: () => {
+          evolveStore.evolve()
+            .then(() => {
+              const toast = useToast()
+              toast.info('You have evolved to the next stage!', {
+                position: 'top-left',
+              })
+            })
         },
       }
 
@@ -592,6 +615,7 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'jellyBoost') shop.cost = 100
         if (shop.id === 'prestigeMultiplier') shop.cost = 500
         if (shop.id === 'antHousingUpgrade') shop.cost = 50
+        if (shop.id === 'evolve') shop.cost = 10000
       })
     },
 

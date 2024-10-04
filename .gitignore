@@ -4,5 +4,5 @@ node_modules
 dist
 .vscode
 *.local
-.en
+.env
 .env.localhost

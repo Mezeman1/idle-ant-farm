@@ -524,7 +524,6 @@ async function handleVisibilityChange() {
     // Save game state when the tab goes into the background (or app is swiped away on mobile)
     console.log('Tab is hidden (backgrounded), saving game state...')
     await gameStore.saveGameState()
-    adventureStore.stopBattle()
   } else {
     enableSaveInterval.value = true
     // Reload the game state when tab becomes visible again (optional, if needed)
