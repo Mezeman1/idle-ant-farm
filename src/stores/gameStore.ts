@@ -686,12 +686,12 @@ export const useGameStore = defineStore('gameStore', {
                                 isDebug,
                                 isEvolution,
                               }): Promise<void> {
-      return new Promise((resolve) => {
+      return new Promise(async (resolve) => {
         const resourcesStore = useResourcesStore()
         resourcesStore.resetResourcesState(isDebug || isEvolution)
 
         const evolveStore = useEvolveStore()
-        evolveStore.applyEvolution()
+        await evolveStore.applyEvolution()
 
         // Set the last saved time
         this.lastSavedTime = Date.now()
@@ -731,7 +731,6 @@ export const useGameStore = defineStore('gameStore', {
 
         const adventureStore = useAdventureStore()
         adventureStore.resetAdventureState()
-
 
         const inventoryStore = useInventoryStore()
         inventoryStore.appliedPassiveEffects = []

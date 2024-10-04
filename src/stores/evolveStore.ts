@@ -608,14 +608,17 @@ export const useEvolveStore = defineStore({
 
       this.applyEvolution()
     },
-    applyEvolution() {
-      console.log('Applying evolution', this.currentEvolution)
-      const resourceStore = useResourcesStore()
-      const currentEvolution = this.currentEvolutionData
+    async applyEvolution() {
+      return new Promise<void>((resolve) => {
+        const resourceStore = useResourcesStore()
+        const currentEvolution = this.currentEvolutionData
 
-      this.applyProductionRates(currentEvolution.productionRates, resourceStore)
-      this.applyResourceCosts(currentEvolution.resourceCosts, resourceStore)
-      this.applyInitialCaps(currentEvolution.initialCaps, resourceStore)
+        this.applyProductionRates(currentEvolution.productionRates, resourceStore)
+        this.applyResourceCosts(currentEvolution.resourceCosts, resourceStore)
+        this.applyInitialCaps(currentEvolution.initialCaps, resourceStore)
+
+        resolve()
+      })
     },
 
     applyProductionRates(productionRates, resourceStore) {
