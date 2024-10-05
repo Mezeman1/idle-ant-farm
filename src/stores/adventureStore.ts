@@ -47,6 +47,11 @@ export const useAdventureStore = defineStore('adventureStore', {
     bugDefense: 0,
     bugRegen: 2,
 
+    bugAttackModifier: 1.0, // Multiplicative modifier for bug attack
+    bugDefenseModifier: 1.0, // Multiplicative modifier for bug defense
+    bugMaxHealthModifier: 1.0, // Multiplicative modifier for bug max health
+    bugRegenModifier: 1.0, // Multiplicative modifier for bug regen
+
     currentArea: 'Safe Zone',
     enemyWaves: adventureEnemyWaves,
     currentEnemy: null as Enemy | null,
@@ -237,7 +242,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.handleKillCount()
 
       // Handle loot
-       this.handleEnemyDrop()
+      this.handleEnemyDrop()
 
       // Spawn a new enemy
       setTimeout(() => {
@@ -331,11 +336,11 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       this.currentEnemy = enemy
 
-      this.bugHealth = enemy.health
-      this.bugMaxHealth = enemy.health
-      this.bugAttack = enemy.attack
-      this.bugDefense = enemy.defense
-      this.bugRegen = enemy.regen
+      this.bugHealth = enemy.health * this.bugMaxHealthModifier
+      this.bugMaxHealth = enemy.health * this.bugMaxHealthModifier
+      this.bugAttack = enemy.attack * this.bugAttackModifier
+      this.bugDefense = enemy.defense * this.bugDefenseModifier
+      this.bugRegen = enemy.regen * this.bugRegenModifier
 
       this.enemySpawned = true
     },

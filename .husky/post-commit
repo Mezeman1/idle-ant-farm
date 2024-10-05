@@ -1,0 +1,15 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Read the commit message
+COMMIT_MSG_FILE=$(git log -1 --pretty=%B)
+
+if echo "$COMMIT_MSG_FILE" | grep -q "feat:"; then
+  npx standard-version --release-as minor
+elif echo "$COMMIT_MSG_FILE" | grep -q "fix:"; then
+  npx standard-version --release-as patch
+elif echo "$COMMIT_MSG_FILE" | grep -q "BREAKING CHANGE:"; then
+  npx standard-version --release-as major
+else
+  echo "Commit message does not indicate a version bump. Skipping version bump."
+fi

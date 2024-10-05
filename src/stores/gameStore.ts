@@ -527,9 +527,9 @@ export const useGameStore = defineStore('gameStore', {
         lastSavedTime: Date.now(),
         userId,
 
-        attackPerAnt: this.attackPerAnt,
-        healthPerAnt: this.healthPerAnt,
-        defensePerAnt: this.defensePerAnt,
+        attackPerAnt: evolveStore.currentEvolutionData.statsPerAnt.attackPerAnt ?? this.attackPerAnt,
+        healthPerAnt: evolveStore.currentEvolutionData.statsPerAnt.healthPerAnt ?? this.healthPerAnt,
+        defensePerAnt: evolveStore.currentEvolutionData.statsPerAnt.defensePerAnt ?? this.defensePerAnt,
 
         ...prestigeStore.getPrestigeState(),
         ...adventureStore.getAdventureState(),
@@ -704,10 +704,6 @@ export const useGameStore = defineStore('gameStore', {
           prestigeStore.prestigePoints = 0
           prestigeStore.timesPrestiged = 0
           prestigeStore.purchasedUpgrades = []
-
-          this.healthPerAnt = 10
-          this.attackPerAnt = 2
-          this.defensePerAnt = 1
 
           prestigeStore.resetPrestigeShopCosts()
 

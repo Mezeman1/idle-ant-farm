@@ -3,6 +3,9 @@ import {defineStore} from 'pinia'
 import {useGameStore} from '@/stores/gameStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useToast} from 'vue-toast-notification'
+import {useAdventureStore} from '@/stores/adventureStore'
+
+type AntNames = 'Start' | 'Leaf cutters' | 'Fire Ants' | 'Harvester Ants' | 'Army Ants' | 'Weaver Ants' | 'Desert Ants' | 'Bullet Ants' | 'Carpenter Ants'
 
 interface ProductionRates {
   larvaeProductionRate: number;
@@ -33,11 +36,13 @@ interface InitialCaps {
 
 interface Evolution {
   id: number;
-  name: string;
+  name: AntNames;
   description: string;
   productionRates: ProductionRates;
   resourceCosts?: ResourceCosts;
   initialCaps?: InitialCaps;
+  statsPerAnt?: Record<string, number>;
+  bugModifiers?: Record<string, number>;
   resources: Record<string, any>;
 }
 
@@ -91,6 +96,19 @@ export const useEvolveStore = defineStore({
           id: 1,
           name: 'Leaf cutters',
           description: 'The first evolution',
+
+          statsPerAnt: {
+            attackPerAnt: 4, // Attack value per ant
+            healthPerAnt: 8, // Health value per ant
+            defensePerAnt: 1, // Defense value per ant
+          },
+
+          bugModifiers: {
+            bugAttackModifier: 1.5,
+            bugDefenseModifier: 1.5,
+            bugMaxHealthModifier: 1.5,
+            bugRegenModifier: 1.5,
+          },
 
           productionRates: {
             larvaeProductionRate: 2, // Larvae produced per queen per minute
@@ -152,6 +170,19 @@ export const useEvolveStore = defineStore({
           name: 'Fire Ants',
           description: 'This evolution brings aggressive ants that excel in combat.',
 
+          statsPerAnt: {
+            attackPerAnt: 5, // Attack value per ant
+            healthPerAnt: 10, // Health value per ant
+            defensePerAnt: 1, // Defense value per ant
+          },
+
+          bugModifiers: {
+            bugAttackModifier: 2.25,
+            bugDefenseModifier: 2.25,
+            bugMaxHealthModifier: 2.25,
+            bugRegenModifier: 2.25,
+          },
+
           productionRates: {
             larvaeProductionRate: 2.5, // Larvae produced per queen per minute
             collectionRatePerAnt: 130, // Seeds collected per ant per minute
@@ -211,6 +242,19 @@ export const useEvolveStore = defineStore({
           id: 3,
           name: 'Harvester Ants',
           description: 'This evolution introduces ants specialized in gathering food efficiently.',
+
+          statsPerAnt: {
+            attackPerAnt: 1, // Attack value per ant
+            healthPerAnt: 5, // Health value per ant
+            defensePerAnt: 1, // Defense value per ant
+          },
+
+          bugModifiers: {
+            bugAttackModifier: 3.38,
+            bugDefenseModifier: 3.38,
+            bugMaxHealthModifier: 3.38,
+            bugRegenModifier: 3.38,
+          },
 
           productionRates: {
             larvaeProductionRate: 3, // Larvae produced per queen per minute
@@ -272,6 +316,19 @@ export const useEvolveStore = defineStore({
           name: 'Army Ants',
           description: 'This evolution introduces nomadic ants that are ruthless in combat and expansion.',
 
+          statsPerAnt: {
+            attackPerAnt: 10, // Attack value per ant
+            healthPerAnt: 10, // Health value per ant
+            defensePerAnt: 4, // Defense value per ant
+          },
+
+          bugModifiers: {
+            bugAttackModifier: 5.06,
+            bugDefenseModifier: 5.06,
+            bugMaxHealthModifier: 5.06,
+            bugRegenModifier: 5.06,
+          },
+
           productionRates: {
             larvaeProductionRate: 3.5, // Larvae produced per queen per minute
             collectionRatePerAnt: 60, // Seeds collected per ant per minute
@@ -331,6 +388,19 @@ export const useEvolveStore = defineStore({
           id: 5,
           name: 'Weaver Ants',
           description: 'Ants that weave leaves together to form nests and are highly territorial.',
+
+          statsPerAnt: {
+            attackPerAnt: 2, // Attack value per ant
+            healthPerAnt: 5, // Health value per ant
+            defensePerAnt: 2, // Defense value per ant
+          },
+
+          bugModifiers: {
+            bugAttackModifier: 7.59,
+            bugDefenseModifier: 7.59,
+            bugMaxHealthModifier: 7.59,
+            bugRegenModifier: 7.59,
+          },
 
           productionRates: {
             larvaeProductionRate: 4, // Larvae produced per queen per minute
@@ -392,6 +462,19 @@ export const useEvolveStore = defineStore({
           name: 'Desert Ants',
           description: 'Ants that thrive in hot, dry climates and are adapted to efficient foraging.',
 
+          statsPerAnt: {
+            attackPerAnt: 4, // Attack value per ant
+            healthPerAnt: 5, // Health value per ant
+            defensePerAnt: 5, // Defense value per ant
+          },
+
+          bugModifiers: {
+            bugAttackModifier: 11.39,
+            bugDefenseModifier: 11.39,
+            bugMaxHealthModifier: 11.39,
+            bugRegenModifier: 11.39,
+          },
+
           productionRates: {
             larvaeProductionRate: 3.5, // Larvae produced per queen per minute
             collectionRatePerAnt: 140, // Seeds collected per ant per minute
@@ -452,6 +535,19 @@ export const useEvolveStore = defineStore({
           name: 'Bullet Ants',
           description: 'Aggressive ants with a sting powerful enough to fend off enemies.',
 
+          statsPerAnt: {
+            attackPerAnt: 15, // Attack value per ant
+            healthPerAnt: 10, // Health value per ant
+            defensePerAnt: 10, // Defense value per ant
+          },
+
+          bugModifiers: {
+            bugAttackModifier: 17.08,
+            bugDefenseModifier: 17.08,
+            bugMaxHealthModifier: 17.08,
+            bugRegenModifier: 17.08,
+          },
+
           productionRates: {
             larvaeProductionRate: 3, // Larvae produced per queen per minute
             collectionRatePerAnt: 150, // Seeds collected per ant per minute
@@ -511,6 +607,19 @@ export const useEvolveStore = defineStore({
           id: 8,
           name: 'Carpenter Ants',
           description: 'Ants that build intricate nests by carving wood, making them excellent gatherers.',
+
+          statsPerAnt: {
+            attackPerAnt: 2, // Attack value per ant
+            healthPerAnt: 5, // Health value per ant
+            defensePerAnt: 2, // Defense value per ant
+          },
+
+          bugModifiers: {
+            bugAttackModifier: 25.61,
+            bugDefenseModifier: 25.61,
+            bugMaxHealthModifier: 25.61,
+            bugRegenModifier: 25.61,
+          },
 
           productionRates: {
             larvaeProductionRate: 4.5, // Larvae produced per queen per minute
@@ -613,14 +722,38 @@ export const useEvolveStore = defineStore({
     async applyEvolution() {
       return new Promise<void>((resolve) => {
         const resourceStore = useResourcesStore()
+        const gameStore = useGameStore()
+        const adventureStore = useAdventureStore()
         const currentEvolution = this.currentEvolutionData
 
         this.applyProductionRates(currentEvolution.productionRates, resourceStore)
         this.applyResourceCosts(currentEvolution.resourceCosts, resourceStore)
         this.applyInitialCaps(currentEvolution.initialCaps, resourceStore)
+        this.applyArmyAntsStats(currentEvolution.statsPerAnt, gameStore)
+        this.applyBugModifiers(currentEvolution.bugModifiers, adventureStore)
 
         resolve()
       })
+    },
+    applyBugModifiers(bugModifiers, adventureStore) {
+      if (!bugModifiers) {
+        return
+      }
+
+      adventureStore.bugAttackModifier = bugModifiers.bugAttackModifier
+      adventureStore.bugDefenseModifier = bugModifiers.bugDefenseModifier
+      adventureStore.bugMaxHealthModifier = bugModifiers.bugMaxHealthModifier
+      adventureStore.bugRegenModifier = bugModifiers.bugRegenModifier
+    },
+
+    applyArmyAntsStats(statsPerAnt, gameStore) {
+      if (!statsPerAnt) {
+        return
+      }
+
+      gameStore.attackPerAnt = statsPerAnt.attackPerAnt
+      gameStore.healthPerAnt = statsPerAnt.healthPerAnt
+      gameStore.defensePerAnt = statsPerAnt.defensePerAnt
     },
 
     applyProductionRates(productionRates, resourceStore) {
