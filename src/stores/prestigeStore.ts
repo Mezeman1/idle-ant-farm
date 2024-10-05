@@ -257,7 +257,19 @@ export const usePrestigeStore = defineStore('prestige', {
       const ants = resourcesStore.resources.ants - this.antsFromPrestigeShop
 
       // Calculate prestige points using log1.01 scaling for ants
-      return this.calculatePrestigePointsFor(ants, this.baseAntThreshold) * this.prestigeMultiplierNumber
+      return this.calculatePrestigePointsFor(ants, this.baseAntThreshold) * this.prestigeMultiplierNumber * this.prestigeEvolveMultiplier()
+    },
+
+    prestigeEvolveMultiplier() {
+      const evolveStore = useEvolveStore();
+      const current = evolveStore.currentEvolution;
+
+      // Modified logarithmic growth with a multiplier factor
+      const growthFactor = 3;
+      const multiplier = (Math.log(current + 1) / Math.log(5) + 1) * growthFactor;
+
+      // Ensure the result is never less than 1
+      return Math.max(multiplier, 1);
     },
 
     calculatePrestigePointsFor(currentResources: number, baseThreshold: number) {
@@ -269,7 +281,7 @@ export const usePrestigeStore = defineStore('prestige', {
       const prestigePointUpper = (this.timesPrestiged * 0.2) + 1 // Scale points based on times prestiged
 
       // Calculate prestige points using log1.01 for faster scaling
-      const points = Math.floor(Math.log2(currentResources/baseThreshold) * 12) * prestigePointUpper
+      const points = Math.floor(Math.log2(currentResources / baseThreshold) * 12) * prestigePointUpper
 
       // Ensure points don’t drop below 0
       return points > 0 ? points : 0
@@ -404,7 +416,7 @@ export const usePrestigeStore = defineStore('prestige', {
           resourcesStore.storage.maxQueens += 1 // Increase queen storage
         },
         eliteAntsStoreUpgrade: () => {
-          resourcesStore.storage.maxEliteAnts +=1 // Increase elite ant storage
+          resourcesStore.storage.maxEliteAnts += 1 // Increase elite ant storage
         },
         productionBoost: () => {
           const prestigeScalingFactor = Math.log(this.amountOfUpgrade(upgradeId) + 1) / Math.log(5) + 1
@@ -584,9 +596,17 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'jellyBoost') shop.cost = savedState.jellyBoostCost ?? 100
         if (shop.id === 'prestigeMultiplier') shop.cost = savedState.prestigeMultiplierCost ?? 500
         if (shop.id === 'antHousingUpgrade') shop.cost = savedState.antHousingUpgradeCost ?? 50
+        if (shop.id === 'evolve') shop.cost = this.getEvolveCost()
       })
 
       this.applyPrestigeUpgrades()
+    },
+
+    getEvolveCost() {
+      const evolveStore = useEvolveStore()
+      const current = evolveStore.currentEvolution
+
+      return Math.pow(10, current + 1) * 10000
     },
 
     resetPrestigeShopCosts() {
@@ -612,7 +632,7 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'jellyBoost') shop.cost = 100
         if (shop.id === 'prestigeMultiplier') shop.cost = 500
         if (shop.id === 'antHousingUpgrade') shop.cost = 50
-        if (shop.id === 'evolve') shop.cost = 10000
+        if (shop.id === 'evolve') shop.cost = this.getEvolveCost()
       })
     },
 
