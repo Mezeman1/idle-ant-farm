@@ -2,6 +2,73 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.12](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.12) (2024-10-06)
+
+
+### Bug Fixes
+
+* husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.11](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.11) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.10](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.10) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.9](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.9) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.8](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.8) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.7](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.7) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.6](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.6) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.5](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.5) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.4](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.4) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.3](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.3) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
+### [0.5.2](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.5.2) (2024-10-06)
+
+### Bug Fixes
+
+- husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
 ### [0.5.1](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.0...v0.5.1) (2024-10-06)
 
 ## [0.5.0](https://github.com/Mezeman1/idle-ant-farm/compare/v0.4.2...v0.5.0) (2024-10-06)
