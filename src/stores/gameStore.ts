@@ -527,9 +527,9 @@ export const useGameStore = defineStore('gameStore', {
         lastSavedTime: Date.now(),
         userId,
 
-        attackPerAnt: evolveStore.currentEvolutionData.statsPerAnt.attackPerAnt ?? this.attackPerAnt,
-        healthPerAnt: evolveStore.currentEvolutionData.statsPerAnt.healthPerAnt ?? this.healthPerAnt,
-        defensePerAnt: evolveStore.currentEvolutionData.statsPerAnt.defensePerAnt ?? this.defensePerAnt,
+        attackPerAnt: evolveStore.currentEvolutionData?.statsPerAnt?.attackPerAnt ?? this.attackPerAnt,
+        healthPerAnt: evolveStore.currentEvolutionData?.statsPerAnt?.healthPerAnt ?? this.healthPerAnt,
+        defensePerAnt: evolveStore.currentEvolutionData?.statsPerAnt?.defensePerAnt ?? this.defensePerAnt,
 
         ...prestigeStore.getPrestigeState(),
         ...adventureStore.getAdventureState(),

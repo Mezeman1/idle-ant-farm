@@ -218,7 +218,7 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'evolve',
         name: 'Evolve',
-        description: 'Evolve to the next stage (made cheap for testing purposes)',
+        description: 'Evolve to the next stage, this resets the game but gives you a new ant type',
         cost: 10000,
         category: 'expansion',
         applyOnPrestige: true,
@@ -290,7 +290,6 @@ export const usePrestigeStore = defineStore('prestige', {
     // Function to handle prestige/reset
     async prestige() {
       const gameStore = useGameStore()
-      const inventoryStore = useInventoryStore()
       try {
         const userId = await gameStore.getUserId()
         if (!userId) {
