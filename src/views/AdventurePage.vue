@@ -254,7 +254,7 @@ const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
 const {width} = useWindowSize()
 const poisonChance = computed(() => adventureStore.poisonChance * 100)
-const bugPoisonChance = computed(() => (adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance * 100) ?? 0)
+const bugPoisonChance = computed(() => (adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance ?? 0) * 100)
 // Set a breakpoint for large screens
 const isLargeScreen = computed(() => width.value >= 1024)
 
