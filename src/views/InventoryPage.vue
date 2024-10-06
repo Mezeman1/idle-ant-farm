@@ -75,7 +75,7 @@ import {computed, onMounted, ref, watch} from 'vue'
 import InventoryItem from '../components/InventoryItem.vue'
 import {useElementSize} from '@vueuse/core'
 import {useInventoryStore} from '../stores/inventoryStore'
-import {useToast} from 'vue-toast-notification'
+import {toast} from 'vue3-toastify'
 import {v4 as uuidv4} from 'uuid'
 
 const gridContainer = ref<HTMLElement>(null) // Reference to the scrollable grid container
@@ -160,14 +160,12 @@ watch([amountOfColumns], () => {
 })
 
 const useItem = (itemId: string, amount = 1) => {
-  const $toast = useToast()
-
   if (useInventoryStore().useItem(itemId, amount)) {
-    $toast.success('Item used successfully', {
+    toast.success('Item used successfully', {
       position: 'top-left',
     })
   } else {
-    $toast.error('Failed to use item', {
+    toast.error('Failed to use item', {
       position: 'top-left',
     })
   }

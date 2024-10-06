@@ -1,11 +1,9 @@
 import {defineStore} from 'pinia'
 import {useGameStore} from './gameStore'
-import {useInventoryStore} from './inventoryStore'
-import {useToast} from 'vue-toast-notification'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {useEvolveStore} from '@/stores/evolveStore'
-
+import {toast} from 'vue3-toastify'
 
 interface PrestigeShopItem {
   id: string
@@ -312,13 +310,6 @@ export const usePrestigeStore = defineStore('prestige', {
         this.prestigePoints += earnedPrestigePoints
         this.timesPrestiged += 1
 
-        if (this.timesPrestiged === 5) {
-          const $toast = useToast()
-          $toast.info('You have unlocked the Elite Ants upgrade in the prestige shop!', {
-            position: 'top-left',
-          })
-        }
-
         // Reset the game state for prestige without deleting the Firestore doc
         await gameStore.resetLocalGameState({isDebug: false})
 
@@ -513,9 +504,8 @@ export const usePrestigeStore = defineStore('prestige', {
         evolve: () => {
           evolveStore.evolve()
             .then(() => {
-              const toast = useToast()
               toast.info('You have evolved to the next stage!', {
-                position: 'top-left',
+                position: toast.POSITION.TOP_CENTER,
               })
             })
         },

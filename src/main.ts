@@ -18,7 +18,8 @@ import VueSimpleContextMenu from 'vue-simple-context-menu'
 import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'
 import {firebaseApp, initFirebase} from './firebase'
 import {ReCaptchaV3Provider} from 'firebase/app-check'
-
+import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 const app = createApp(App)
 
 const router = createRouter({
@@ -48,6 +49,14 @@ app.use(ToastPlugin, {
   position: 'top',
 })
 
+app.use(
+  Vue3Toastify,
+  {
+    autoClose: 1000,
+    limit: 5,
+    position: 'top-right',
+  } as ToastContainerOptions,
+)
 
 app.use(
   VueTippy,

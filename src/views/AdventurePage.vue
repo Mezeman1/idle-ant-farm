@@ -130,17 +130,14 @@ import {onClickOutside, useWindowSize, watchDebounced} from '@vueuse/core'
 import ArmyImage from '../assets/army.webp'
 import Inventory from '@/views/InventoryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
-import {useToast} from 'vue-toast-notification'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import WaveSelector from '@/components/WaveSelector.vue'
-
+import {toast} from 'vue3-toastify'
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
 const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
-const $toast = useToast()
-
 const {width} = useWindowSize()
 
 // Set a breakpoint for large screens
@@ -202,7 +199,7 @@ watchDebounced(() => resourcesStore.resources.ants, () => {
     if (adventureStore.currentArea === 'Safe Zone') {
       adventureStore.currentArea = 'Wasteland'
 
-      $toast.info('Starting battle automatically', {
+      toast.info('Starting battle automatically', {
         position: 'top-left',
       })
     }

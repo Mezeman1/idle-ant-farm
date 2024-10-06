@@ -2,7 +2,7 @@
 import {defineStore} from 'pinia'
 import {useGameStore} from '@/stores/gameStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
-import {useToast} from 'vue-toast-notification'
+import {toast} from 'vue3-toastify'
 import {useAdventureStore} from '@/stores/adventureStore'
 
 type AntNames = 'Start' | 'Leaf cutters' | 'Fire Ants' | 'Harvester Ants' | 'Army Ants' | 'Weaver Ants' | 'Desert Ants' | 'Bullet Ants' | 'Carpenter Ants'
@@ -685,8 +685,6 @@ export const useEvolveStore = defineStore({
   },
   actions: {
     async evolve() {
-      const toast = useToast()
-
       if (this.currentEvolution + 1 >= this.evolutions.length) {
         toast.info('You have reached the end of the evolutions.', {
           position: 'top',

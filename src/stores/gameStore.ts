@@ -5,7 +5,7 @@ import firebase from 'firebase/compat'
 import {getAuth, signInAnonymously} from 'firebase/auth'
 import {db} from '../firebase'
 import {addDoc, collection, deleteDoc, doc, getDoc, setDoc} from 'firebase/firestore'
-import {useToast} from 'vue-toast-notification'
+import {toast} from 'vue3-toastify'
 import {usePrestigeStore} from './prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 import {useEquipmentStore} from '@/stores/equipmentStore'
@@ -479,15 +479,13 @@ export const useGameStore = defineStore('gameStore', {
 
         console.log('Game state saved to Firestore')
 
-        const $toast = useToast()
-        $toast.success('Game saved successfully', {
+        toast.success('Game saved successfully', {
           position: 'top-left',
         })
         this.lastSavedTime = Date.now()
       } catch (error: FirestoreError | any) {
         console.error('Error saving game state to Firebase:', error)
-        const $toast = useToast()
-        $toast.error('Failed to save game state', {
+        toast.error('Failed to save game state', {
           position: 'top-left',
         })
 
@@ -663,15 +661,12 @@ export const useGameStore = defineStore('gameStore', {
       const auth = firebase.auth()
       auth.currentUser?.delete().then(async () => {
         console.log('User deleted')
-        const $toast = useToast()
-        $toast.success('User deleted successfully', {
+        toast.success('User deleted successfully', {
           position: 'top-left',
         })
         await this.logout(true)
       }).catch((error) => {
-        console.error('Error deleting user:', error)
-        const $toast = useToast()
-        $toast.error('Failed to delete user: ' + error.message, {
+        toast.error('Failed to delete user: ' + error.message, {
           position: 'top-left',
         })
       })

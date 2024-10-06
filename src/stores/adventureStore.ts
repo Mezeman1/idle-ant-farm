@@ -1,12 +1,11 @@
 import {defineStore} from 'pinia'
 import {useGameStore} from './gameStore'
-import {useToast} from 'vue-toast-notification'
 import {useInventoryStore} from './inventoryStore'
 import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {itemRegistry} from '@/types/itemRegistry'
 import {useEvolveStore} from '@/stores/evolveStore'
-
+import { toast } from 'vue3-toastify';
 interface KillCounts {
   [key: string]: number
 }
@@ -151,8 +150,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     handlePlayerDefeat() {
       if (!this.isSimulatingOffline) {
-        const $toast = useToast()
-        $toast.error('You were defeated by the bug!', {
+        toast.error('You were defeated by the bug!', {
           position: 'top-left',
         })
       }
@@ -221,9 +219,8 @@ export const useAdventureStore = defineStore('adventureStore', {
               const item = useInventoryStore().getItemById(itemId)
               if (item) {
                 if (!this.isSimulatingOffline) {
-                  const $toast = useToast()
-                  $toast.success(`Loot: +${amount} ${drop.name}`, {
-                    position: 'top-left',
+                  toast.success(`Loot: +${amount} ${drop.name}`, {
+                    position: toast.POSITION.TOP_RIGHT,
                   })
                 }
                 // Await the item drop handling
@@ -563,9 +560,8 @@ export const useAdventureStore = defineStore('adventureStore', {
               if (item) {
                 // Only show toast notifications if not simulating offline progress
                 if (!this.isSimulatingOffline) {
-                  const $toast = useToast()
-                  $toast.success(`Loot: +${amount} ${drop.name}`, {
-                    position: 'top-left',
+                  toast.success(`Loot: +${amount} ${drop.name}`, {
+                    position: 'top-right',
                   })
                 }
                 this.handleItemDrop(item, amount)

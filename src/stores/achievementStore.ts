@@ -3,7 +3,7 @@ import {defineStore} from 'pinia'
 import {useGameStore} from '@/stores/gameStore'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {usePrestigeStore} from '@/stores/prestigeStore'
-import {useToast} from 'vue-toast-notification'
+import {toast} from 'vue3-toastify'
 import {useResourcesStore} from '@/stores/resourcesStore'
 
 interface Achievement {
@@ -710,9 +710,8 @@ export const useAchievementStore = defineStore({
       this.achievements.forEach((achievement) => {
         if (!achievement.isUnlocked && achievement.unlockCondition()) {
           achievement.isUnlocked = true
-          const $toast = useToast()
-          $toast.info(`Achievement Unlocked: ${achievement.name}`, {
-            duration: 5000,
+          toast.info(`Achievement Unlocked: ${achievement.name}`, {
+            duration: 3000,
             position: 'top-right',
           })
         }

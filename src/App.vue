@@ -4,12 +4,11 @@
 
 <script lang="ts" setup>
 import {onMounted, ref} from 'vue'
-import {useToast} from 'vue-toast-notification'
+import {toast} from 'vue3-toastify'
 
 
 onMounted(() => {
   if (document.fullscreenElement === null && isMobile) {
-    const toast = useToast()
     toast.info('You are not in fullscreen mode. You need to be fullscreen to see the entire UI.', {
       position: 'top',
     })

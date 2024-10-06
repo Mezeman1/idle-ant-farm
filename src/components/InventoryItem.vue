@@ -46,7 +46,6 @@
 import {useGameStore} from '../stores/gameStore'
 import {useInventoryStore} from '../stores/inventoryStore'
 import {computed} from 'vue'
-import {useToast} from 'vue-toast-notification'
 
 const props = defineProps<{
   item: {

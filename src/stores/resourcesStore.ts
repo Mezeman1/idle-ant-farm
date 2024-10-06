@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import {useGameStore} from '@/stores/gameStore'
-import {useToast} from 'vue-toast-notification'
+import {toast} from 'vue3-toastify'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 
@@ -494,8 +494,7 @@ export const useResourcesStore = defineStore('resources', {
         const random = Math.random()
         if (random < royalJellyChance) {
           this.resources.royalJelly += 1
-          const $toast = useToast()
-          $toast.info('Royal jelly collected!', {
+          toast.info('Royal jelly collected!', {
             position: 'top-left',
           })
         }
