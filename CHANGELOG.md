@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.7.0) (2024-10-06)
+
+
+### Bug Fixes
+
+* husky and eslint ([03bf70d](https://github.com/Mezeman1/idle-ant-farm/commit/03bf70d9825a57a6c12663900ae87ecc3d734f30))
+
 ### [0.6.5](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.6.5) (2024-10-06)
 
 

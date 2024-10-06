@@ -307,23 +307,6 @@ const nextWave = () => {
   }
 }
 
-watchThrottled(() => resourcesStore.resources.ants, () => {
-  if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
-
-  if (prestigeStore.upgradePurchased('autoAdventure') && resourcesStore.resources.ants >= 10) {
-    if (adventureStore.currentArea === 'Safe Zone') {
-      adventureStore.currentArea = 'Wasteland'
-
-      toast.info('Starting battle automatically', {
-        position: 'top-left',
-      })
-    }
-  }
-}, {
-  wait: 1000,
-})
-
-
 const dropdownOpen = ref(false)
 
 const target = ref(null)

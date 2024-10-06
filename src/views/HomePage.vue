@@ -344,7 +344,7 @@ import Inventory from './InventoryPage.vue'
 import firebase from 'firebase/compat'
 import Settings from './SettingsPage.vue'
 import {useAdventureStore} from '../stores/adventureStore'
-import {useThrottleFn} from '@vueuse/core'
+import {useThrottleFn, watchThrottled} from '@vueuse/core'
 import Tunnels from '@/views/TunnelsPage.vue'
 import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
@@ -355,11 +355,13 @@ import {useSettingsStore} from '@/stores/settingsStore'
 import BestiaryPage from '@/views/BestiaryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import PassivePage from '@/views/PassivePage.vue'
+import {toast} from 'vue3-toastify'
 
 const deferredPrompt = ref(null)
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
 const resourcesStore = useResourcesStore()
+const prestigeStore= usePrestigeStore()
 const isMinimized = ref(false) // Minimized state
 const settingsStore = useSettingsStore()
 const activeTab = ref('resources')
@@ -575,6 +577,18 @@ function handleBeforeUnload() {
 watch(() => resourcesStore.resources.ants, useThrottleFn(() => {
   gameStore.setupAdventureStats()
   resourcesStore.setAntsWithMax()
+
+  if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
+
+  if (prestigeStore.upgradePurchased('autoAdventure') && resourcesStore.resources.ants >= 10) {
+    if (adventureStore.currentArea === 'Safe Zone') {
+      adventureStore.currentArea = 'Wasteland'
+
+      toast.info('Starting battle automatically', {
+        position: 'top-left',
+      })
+    }
+  }
 }, 1000), {
   immediate: true,
 })
