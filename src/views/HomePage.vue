@@ -78,18 +78,18 @@
         class="bg-white rounded shadow-lg flex flex-col sm:flex-row space-y-2 bg-opacity-50 h-[calc(100vh-65px)]"
       >
         <div class="flex flex-col flex-1 overflow-y-auto p-2">
-          <AntResources v-show="activeTab === 'resources'"/>
-          <PrestigeShop v-show="activeTab === 'prestige'"/>
-          <Adventure v-show="activeTab === 'adventure'"/>
-          <EquipmentPage v-show="activeTab === 'equipment'"/>
+          <AntResources v-show="activeTab === 'resources'" />
+          <PrestigeShop v-show="activeTab === 'prestige'" />
+          <Adventure v-show="activeTab === 'adventure'" />
+          <EquipmentPage v-show="activeTab === 'equipment'" />
           <PassivePage
             v-if="activeTab === 'passives'"
           />
-          <Tunnels v-show="activeTab === 'tunnels'"/>
-          <AchievementPage v-if="activeTab === 'achievements'"/>
-          <BestiaryPage v-if="activeTab === 'bestiary'"/>
-          <Debugger v-show="activeTab === 'debugger'"/>
-          <Settings v-show="activeTab === 'settings'"/>
+          <Tunnels v-show="activeTab === 'tunnels'" />
+          <AchievementPage v-if="activeTab === 'achievements'" />
+          <BestiaryPage v-if="activeTab === 'bestiary'" />
+          <Debugger v-show="activeTab === 'debugger'" />
+          <Settings v-show="activeTab === 'settings'" />
         </div>
 
         <nav class="bg-gray-800 text-white">
@@ -174,8 +174,8 @@
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
-                    <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v1l-8 5-8-5V5z"/>
-                    <path d="M2 8l8 5 8-5v5a2 2 0 01-2 2H4a2 2 0 01-2-2V8z"/>
+                    <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v1l-8 5-8-5V5z" />
+                    <path d="M2 8l8 5 8-5v5a2 2 0 01-2 2H4a2 2 0 01-2-2V8z" />
                   </svg>
                 </div>
               </div>
@@ -349,7 +349,7 @@ import {useResourcesStore} from '@/stores/resourcesStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 import BestiaryPage from '@/views/BestiaryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
-import PassivePage from "@/views/PassivePage.vue";
+import PassivePage from '@/views/PassivePage.vue'
 
 const deferredPrompt = ref(null)
 const gameStore = useGameStore()

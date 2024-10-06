@@ -242,7 +242,7 @@
 </template>
 
 <script setup lang="ts">
-import Modal from '../components/Modal.vue'
+import Modal from '../components/ModalComponent.vue'
 import { ref } from 'vue'
 import { useGameStore } from '../stores/gameStore'
 import { useSettingsStore } from '@/stores/settingsStore'

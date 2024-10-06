@@ -15,32 +15,44 @@
           :src="item.image || defaultImage"
           :alt="item.name"
           class="w-20 h-20 mb-4 object-contain rounded-lg"
-        />
-        <h2 class="font-semibold text-lg text-gray-700">{{ item.name }}</h2>
+        >
+        <h2 class="font-semibold text-lg text-gray-700">
+          {{ item.name }}
+        </h2>
         <p class="text-gray-600 mb-2">
           {{ item.description }}
         </p>
-        <p v-if="isCollected(item)" class="text-sm text-green-600 font-medium">Collected</p>
-        <p v-else class="text-sm text-gray-500">Not Collected</p>
+        <p
+          v-if="isCollected(item)"
+          class="text-sm text-green-600 font-medium"
+        >
+          Collected
+        </p>
+        <p
+          v-else
+          class="text-sm text-gray-500"
+        >
+          Not Collected
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Item, passiveItems } from '@/types/itemRegistry';
-import { useInventoryStore } from '@/stores/inventoryStore';
-import defaultImage from '@/assets/items/default-item.webp';
+import { computed } from 'vue'
+import { Item, passiveItems } from '@/types/itemRegistry'
+import { useInventoryStore } from '@/stores/inventoryStore'
+import defaultImage from '@/assets/items/default-item.webp'
 
-const inventoryStore = useInventoryStore();
+const inventoryStore = useInventoryStore()
 
 // All passive items in the game
-const passiveComputed = computed(() => passiveItems);
+const passiveComputed = computed(() => passiveItems)
 
 // Check if an item has been collected
 const isCollected = (item: Item) => {
-  return inventoryStore.hasItem(item.id);
-};
+  return inventoryStore.hasItem(item.id)
+}
 
 </script>

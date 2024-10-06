@@ -5,7 +5,7 @@ import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {itemRegistry} from '@/types/itemRegistry'
 import {useEvolveStore} from '@/stores/evolveStore'
-import { toast } from 'vue3-toastify';
+import { toast } from 'vue3-toastify'
 interface KillCounts {
   [key: string]: number
 }

@@ -259,19 +259,19 @@ export const usePrestigeStore = defineStore('prestige', {
     },
 
     prestigeEvolveMultiplier() {
-      const evolveStore = useEvolveStore();
-      const current = evolveStore.currentEvolution;
+      const evolveStore = useEvolveStore()
+      const current = evolveStore.currentEvolution
 
       if (current === 0) {
-        return 1;
+        return 1
       }
 
       // Modified logarithmic growth with a multiplier factor
-      const growthFactor = 3;
-      const multiplier = (Math.log(current + 1) / Math.log(5) + 1) * growthFactor;
+      const growthFactor = 3
+      const multiplier = (Math.log(current + 1) / Math.log(5) + 1) * growthFactor
 
       // Ensure the result is never less than 1
-      return Math.max(multiplier, 1);
+      return Math.max(multiplier, 1)
     },
 
     calculatePrestigePointsFor(currentResources: number, baseThreshold: number) {

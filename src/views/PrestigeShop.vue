@@ -134,7 +134,7 @@
 import {ref} from 'vue'
 
 import {useGameStore} from '../stores/gameStore'
-import Modal from '../components/Modal.vue'
+import Modal from '../components/ModalComponent.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 
