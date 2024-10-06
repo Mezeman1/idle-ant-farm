@@ -13,7 +13,7 @@
     />
 
     <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
-      <div class="flex items-center justify-between bg-gray-800 p-2 text-white">
+      <div class="flex items-center justify-between bg-gray-800 p-2 text-white max-h-[65px] overflow-hidden">
         <!-- Left Side Buttons -->
         <div class="flex items-center space-x-2">
           <!-- Minimize/Maximize Button -->
@@ -44,9 +44,14 @@
           </div>
 
           <div
-            class="flex items-center bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded"
+            class="flex flex-col p-1 rounded text-3xs"
           >
-            Version: {{ version }}
+            <span>
+              Version: {{ version }}
+            </span>
+            <span>
+              Last time saved: {{ new Date(gameStore.lastSavedTime).toLocaleString() }}
+            </span>
           </div>
         </div>
 
