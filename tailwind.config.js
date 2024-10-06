@@ -4,10 +4,11 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 module.exports = {
   content: ['./index.html', './src/**/*.vue', './src/**/*.ts'],
   theme: {
+    fontFamily: {
+      psp: ['Press Start 2P', ...defaultTheme.fontFamily.mono],
+      sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+    },
     extend: {
-      fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-      },
       minWidth: {
         'half-screen': '50vw',
       },

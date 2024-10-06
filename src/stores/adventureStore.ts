@@ -5,7 +5,8 @@ import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {itemRegistry} from '@/types/itemRegistry'
 import {useEvolveStore} from '@/stores/evolveStore'
-import { toast } from 'vue3-toastify'
+import {toast} from 'vue3-toastify'
+
 interface KillCounts {
   [key: string]: number
 }
@@ -17,6 +18,15 @@ interface ActiveBuff {
   effect: () => void
   onRemove: () => void
   active?: boolean
+}
+
+interface StatusEffect {
+  id: string
+  name: string
+  type: 'poison' | 'burn' | 'freeze' | 'regen'
+  duration: number
+  damagePerSecond?: number
+  healingPerSecond?: number
 }
 
 type BattleStatus = 'idle' | 'fighting' | 'cooldown'
@@ -35,16 +45,24 @@ export const useAdventureStore = defineStore('adventureStore', {
     armyDefense: 5,
     armyRegen: 5,
 
+    armyActiveEffects: [] as Array<StatusEffect>,
+
     armyAttackModifier: 1.0, // Multiplicative modifier for army attack
     armyDefenseModifier: 1.0, // Multiplicative modifier for army defense
     armyMaxHealthModifier: 1.0, // Multiplicative modifier for army max health
     armyRegenModifier: 1.0, // Multiplicative modifier for army regen
+
+    poisonChance: 0.0,
+    poisonDamage: 10,
+    poisonDuration: 2,
 
     bugHealth: 0,
     bugMaxHealth: 0,
     bugAttack: 0,
     bugDefense: 0,
     bugRegen: 2,
+
+    bugActiveEffects: [] as Array<StatusEffect>,
 
     bugAttackModifier: 1.0, // Multiplicative modifier for bug attack
     bugDefenseModifier: 1.0, // Multiplicative modifier for bug defense
@@ -74,6 +92,9 @@ export const useAdventureStore = defineStore('adventureStore', {
     toggleCooldownTimeout: 0,
     spawnEnemyTimeout: 0,
     fightingTimeout: 0,
+
+    accumulatedTimeForChanceEffects: 0,
+    chanceEffectInterval: 1000,
   }),
   actions: {
     // Start the battle loop
@@ -113,11 +134,20 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       this.activeBuffs = this.activeBuffs.filter((buff) => buff.duration > 0)
     },
+
     processCombat(deltaTime) {
+      this.applyStatusEffects(deltaTime, this.armyActiveEffects, 'army')
+
       if (this.battleStatus === 'fighting' && this.currentEnemy) {
         // Calculate damage based on DPS and the time passed since the last frame (deltaTime)
         this.applyArmyDamage(deltaTime)
         this.applyBugDamage(deltaTime)
+
+        this.accumulatedTimeForChanceEffects += deltaTime * 1000 // Convert deltaTime to milliseconds
+        if (this.accumulatedTimeForChanceEffects >= this.chanceEffectInterval) {
+          this.applyChanceEffects()
+          this.accumulatedTimeForChanceEffects = 0 // Reset the accumulator after applying effects
+        }
 
         // Check for defeat conditions
         if (this.armyHealth <= 0) {
@@ -132,6 +162,27 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.applyRegeneration(deltaTime) // Regenerate health during the real-time loop
     },
 
+    applyChanceEffects() {
+      this.applyStatusEffectWithChance(
+        'bug',
+        'poison',
+        this.poisonChance,
+        this.poisonDuration,
+        this.poisonDamage,
+      )
+
+      this.currentEnemy.effectChances?.forEach((effect) => {
+        this.applyStatusEffectWithChance(
+          'bug',
+          effect.effect,
+          effect.chance,
+          effect.duration,
+          effect.damage,
+          effect.healing,
+        )
+      })
+    },
+
     calculateDamage(attackerAttack, defenderDefense) {
       const variation = 0.9 + Math.random() * 0.2
       const baseDamage = attackerAttack - defenderDefense
@@ -141,6 +192,85 @@ export const useAdventureStore = defineStore('adventureStore', {
     applyArmyDamage(deltaTime) {
       const damage = this.calculateDamage(this.armyAttack, this.bugDefense) * deltaTime
       this.bugHealth = Math.max(this.bugHealth - damage, 0)
+
+      this.applyStatusEffects(deltaTime, this.bugActiveEffects, 'bug')
+    },
+
+    applyStatusEffects(deltaTime: number, effects: StatusEffect[], target: 'army' | 'bug') {
+      effects.forEach((effect) => {
+        // Handle damage over time (e.g., poison)
+        if (effect.damagePerSecond) {
+          const damage = effect.damagePerSecond * deltaTime
+          if (target === 'bug') {
+            this.bugHealth = Math.max(this.bugHealth - damage, 0)
+          } else if (target === 'army') {
+            this.armyHealth = Math.max(this.armyHealth - damage, 0)
+          }
+        }
+
+        // Handle healing over time (e.g., regeneration)
+        if (effect.healingPerSecond) {
+          const healing = effect.healingPerSecond * deltaTime
+          if (target === 'bug') {
+            this.bugHealth = Math.min(this.bugHealth + healing, this.bugMaxHealth)
+          } else if (target === 'army') {
+            this.armyHealth = Math.min(this.armyHealth + healing, this.armyMaxHealth)
+          }
+        }
+
+        // Decrease effect duration
+        effect.duration -= deltaTime
+
+        // Remove expired effects
+        if (effect.duration <= 0) {
+          if (target === 'bug') {
+            this.bugActiveEffects = this.bugActiveEffects.filter((e) => e.id !== effect.id)
+          } else if (target === 'army') {
+            this.armyActiveEffects = this.armyActiveEffects.filter((e) => e.id !== effect.id)
+          }
+        }
+      })
+    },
+
+    applyStatusEffectWithChance(
+      target: 'army' | 'bug',
+      effectId: StatusEffect['id'],
+      chance: number,
+      duration: number,
+      damagePerSecond?: number,
+      healingPerSecond?: number,
+    ) {
+      if (this.effectIsActive(effectId, target)) return
+
+      if (Math.random() <= chance) {
+        // Create the new status effect
+        const newEffect: StatusEffect = {
+          id: `${effectId}`,
+          name: effectId.charAt(0).toUpperCase() + effectId.slice(1), // Capitalize first letter
+          type: effectId,
+          duration,
+          damagePerSecond,
+          healingPerSecond,
+        }
+
+        this.applyStatusEffect(newEffect, target)
+      }
+    },
+
+    effectIsActive(effectId: StatusEffect['id'], target: 'army' | 'bug') {
+      return (target === 'bug')
+        ? this.bugActiveEffects.some((activeEffect) => activeEffect.id === effectId)
+        : this.armyActiveEffects.some((activeEffect) => activeEffect.id === effectId)
+    },
+
+    applyStatusEffect(effect: StatusEffect, target: 'army' | 'bug') {
+      if (this.effectIsActive(effect.id, target)) return
+
+      if (target === 'bug') {
+        this.bugActiveEffects.push(effect)
+      } else if (target === 'army') {
+        this.armyActiveEffects.push(effect)
+      }
     },
 
     applyBugDamage(deltaTime) {
@@ -236,6 +366,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     handleEnemyDefeat() {
       this.enemySpawned = false
       this.battleStatus = 'cooldown' // Set the battle status to 'cooldown
+      this.bugActiveEffects = [] // Clear active effects on the bug
 
       // Update kill counts
       this.handleKillCount()
@@ -435,6 +566,11 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.armyAttack = 10
       this.armyDefense = 5
       this.armyRegen = 5
+
+      this.poisonChance = 0.0
+      this.poisonDamage = 10
+      this.poisonDuration = 2
+
       this.lastSavedTime = Date.now()
       this.currentArea = 'Safe Zone'
       this.enemySpawned = false

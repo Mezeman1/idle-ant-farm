@@ -20,6 +20,13 @@ export interface Enemy {
     unlockText?: string
   }[]
   isBoss?: boolean
+  effectChances?: {
+    effect: string
+    chance: number
+    damage?: number
+    healing?: number
+    duration?: number
+  }[]
 }
 
 export interface AdventureEnemyWave {

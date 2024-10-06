@@ -89,6 +89,34 @@ export const usePrestigeStore = defineStore('prestige', {
         category: 'combat',
       },
       {
+        id: 'poisonChance',
+        name: 'Poison Chance',
+        description: 'Increase the chance of poisoning enemies by 1%',
+        cost: 100,
+        applyOnPrestige: true,
+        applyOnLoad: true,
+        category: 'combat',
+        maxPurchases: 100,
+      },
+      {
+        id: 'poisonDamage',
+        name: 'Poison Damage',
+        description: 'Increase the damage of poison by 1%',
+        cost: 100,
+        applyOnPrestige: true,
+        applyOnLoad: true,
+        category: 'combat',
+      },
+      {
+        id: 'poisonDuration',
+        name: 'Poison Duration',
+        description: 'Increase the duration of poison by 1s',
+        cost: 300,
+        applyOnPrestige: true,
+        applyOnLoad: true,
+        category: 'combat',
+      },
+      {
         id: 'startWithAnts',
         name: 'Start with Ants',
         description: 'Start the game with ants!',
@@ -295,14 +323,12 @@ export const usePrestigeStore = defineStore('prestige', {
       try {
         const userId = await gameStore.getUserId()
         if (!userId) {
-          console.error('User ID not found')
           return
         }
 
         // Calculate the earned prestige points
         const earnedPrestigePoints = this.calculatePrestigePoints()
         if (earnedPrestigePoints === 0) {
-          console.log('Not enough resources to earn prestige points.')
           return
         }
 
@@ -316,7 +342,9 @@ export const usePrestigeStore = defineStore('prestige', {
         // Save the updated state to Firestore
         await gameStore.saveGameState({
           force: true,
-        })
+        }).then(() => {
+            gameStore.loadGameState()
+          })
         console.log(`Prestige successful! You earned ${earnedPrestigePoints} prestige points.`)
       } catch (error) {
         console.error('Error during prestige:', error)
@@ -337,6 +365,13 @@ export const usePrestigeStore = defineStore('prestige', {
           break
         case 'antHousingUpgrade':
           defaultCostMultiplier = 2
+          break
+        case 'poisonChance':
+        case 'poisonDamage':
+          defaultCostMultiplier = 1.1
+          break
+        case 'poisonDuration':
+          defaultCostMultiplier = 1.5
           break
       }
       return defaultCostMultiplier
@@ -466,6 +501,15 @@ export const usePrestigeStore = defineStore('prestige', {
           adventureStore.armyDefenseModifier *= 1 + (0.1 / prestigeScalingFactor)
           adventureStore.setupAdventureStats()
         },
+        poisonChance: () => {
+          adventureStore.poisonChance += 0.01
+        },
+        poisonDamage: () => {
+          adventureStore.poisonDamage *= 1.01
+        },
+        poisonDuration: () => {
+          adventureStore.poisonDuration += 1
+        },
         autoAnts: () => {
           // this.autoAntCreation = true
         },
@@ -548,6 +592,9 @@ export const usePrestigeStore = defineStore('prestige', {
         jellyBoostCost: this.prestigeShop.find(u => u.id === 'jellyBoost')?.cost ?? 100,
         prestigeMultiplierCost: this.prestigeShop.find(u => u.id === 'prestigeMultiplier')?.cost ?? 500,
         antHousingUpgradeCost: this.prestigeShop.find(u => u.id === 'antHousingUpgrade')?.cost ?? 50,
+        poisonChanceCost: this.prestigeShop.find(u => u.id === 'poisonChance')?.cost ?? 100,
+        poisonDamageCost: this.prestigeShop.find(u => u.id === 'poisonDamage')?.cost ?? 100,
+        poisonDurationCost: this.prestigeShop.find(u => u.id === 'poisonDuration')?.cost ?? 300,
 
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,
@@ -592,6 +639,9 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'prestigeMultiplier') shop.cost = savedState.prestigeMultiplierCost ?? 500
         if (shop.id === 'antHousingUpgrade') shop.cost = savedState.antHousingUpgradeCost ?? 50
         if (shop.id === 'evolve') shop.cost = this.getEvolveCost()
+        if (shop.id === 'poisonChance') shop.cost = savedState.poisonChanceCost ?? 100
+        if (shop.id === 'poisonDamage') shop.cost = savedState.poisonDamageCost ?? 100
+        if (shop.id === 'poisonDuration') shop.cost = savedState.poisonDurationCost ?? 300
       })
 
       this.applyPrestigeUpgrades()
@@ -628,6 +678,9 @@ export const usePrestigeStore = defineStore('prestige', {
         if (shop.id === 'prestigeMultiplier') shop.cost = 500
         if (shop.id === 'antHousingUpgrade') shop.cost = 50
         if (shop.id === 'evolve') shop.cost = this.getEvolveCost()
+        if (shop.id === 'poisonChance') shop.cost = 100
+        if (shop.id === 'poisonDamage') shop.cost = 100
+        if (shop.id === 'poisonDuration') shop.cost = 300
       })
     },
 
