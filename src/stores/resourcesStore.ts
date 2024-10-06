@@ -184,6 +184,8 @@ export const useResourcesStore = defineStore('resources', {
         this.resources.ants += 1
         this.resources.larvae -= this.resourceCosts.larvaCostPerAnt
         this.resources.seeds -= this.resourceCosts.seedCostPerAnt
+
+        this.setAntsWithMax()
         return true
       }
 
@@ -209,9 +211,14 @@ export const useResourcesStore = defineStore('resources', {
       // If there is space and enough larvae and seeds to create ants
       if (antsToCreate > 0) {
         this.resources.ants += antsToCreate
+        this.setAntsWithMax()
         this.resources.larvae -= antsToCreate * this.resourceCosts.larvaCostPerAnt
         this.resources.seeds -= antsToCreate * this.resourceCosts.seedCostPerAnt
       }
+    },
+
+    setAntsWithMax() {
+      this.resources.ants = Math.min(this.resources.ants, this.maxAnts)
     },
 
     createAntHousing() {

@@ -78,19 +78,19 @@
         class="bg-white rounded shadow-lg flex flex-col sm:flex-row space-y-2 bg-opacity-50 h-[calc(100vh-65px)]"
       >
         <div class="flex flex-col flex-1 overflow-y-auto p-2">
-          <AntResources v-show="activeTab === 'resources'" />
-          <PrestigeShop v-show="activeTab === 'prestige'" />
-          <Adventure v-show="activeTab === 'adventure'" />
-          <EquipmentPage v-show="activeTab === 'equipment'" />
+          <AntResources v-show="activeTab === 'resources'"/>
+          <PrestigeShop v-show="activeTab === 'prestige'"/>
+          <Adventure v-show="activeTab === 'adventure'"/>
+          <EquipmentPage v-show="activeTab === 'equipment'"/>
           <Inventory
             v-if="activeTab === 'passives'"
             only-passive
           />
-          <Tunnels v-show="activeTab === 'tunnels'" />
-          <AchievementPage v-if="activeTab === 'achievements'" />
-          <BestiaryPage v-if="activeTab === 'bestiary'" />
-          <Debugger v-show="activeTab === 'debugger'" />
-          <Settings v-show="activeTab === 'settings'" />
+          <Tunnels v-show="activeTab === 'tunnels'"/>
+          <AchievementPage v-if="activeTab === 'achievements'"/>
+          <BestiaryPage v-if="activeTab === 'bestiary'"/>
+          <Debugger v-show="activeTab === 'debugger'"/>
+          <Settings v-show="activeTab === 'settings'"/>
         </div>
 
         <nav class="bg-gray-800 text-white">
@@ -175,8 +175,8 @@
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
-                    <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v1l-8 5-8-5V5z" />
-                    <path d="M2 8l8 5 8-5v5a2 2 0 01-2 2H4a2 2 0 01-2-2V8z" />
+                    <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v1l-8 5-8-5V5z"/>
+                    <path d="M2 8l8 5 8-5v5a2 2 0 01-2 2H4a2 2 0 01-2-2V8z"/>
                   </svg>
                 </div>
               </div>
@@ -340,7 +340,7 @@ import Inventory from './InventoryPage.vue'
 import firebase from 'firebase/compat'
 import Settings from './SettingsPage.vue'
 import {useAdventureStore} from '../stores/adventureStore'
-import {useDebounceFn, useThrottleFn} from '@vueuse/core'
+import {useThrottleFn} from '@vueuse/core'
 import Tunnels from '@/views/TunnelsPage.vue'
 import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
@@ -553,7 +553,10 @@ function handleBeforeUnload() {
 
 watch(() => resourcesStore.resources.ants, useThrottleFn(() => {
   gameStore.setupAdventureStats()
-}, 300), {immediate: true})
+  resourcesStore.setAntsWithMax()
+}, 300), {
+  immediate: true,
+})
 
 const version = import.meta.env.PACKAGE_VERSION
 </script>
