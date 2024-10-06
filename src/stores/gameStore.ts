@@ -457,10 +457,8 @@ export const useGameStore = defineStore('gameStore', {
       }
       return gameState
     },
-    async saveGameState({
-      force = false,
-                        }) {
-      if (this.lastSavedTime && Date.now() - this.lastSavedTime < 10000 && !force) {
+    async saveGameState(params = {force: false}) {
+      if (this.lastSavedTime && Date.now() - this.lastSavedTime < 10000 && !params.force) {
         toast.info('Game saved recently, please wait a moment', {
           position: 'top-left',
         })
