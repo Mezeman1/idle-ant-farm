@@ -25,6 +25,7 @@
 import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useWindowSize} from '@vueuse/core'
 import {useEvolveStore} from '@/stores/evolveStore'
+import { useThrottleFn } from '@vueuse/core'
 
 
 const props = withDefaults(defineProps<{
@@ -102,7 +103,6 @@ let totalFrameTime = 0
 let animationFrameId: number
 const boundaryMargin = 20
 const evolveStore = useEvolveStore()
-
 watch(
   () => evolveStore.currentEvolution,
   () => {
@@ -404,7 +404,7 @@ const drawAll = () => {
 // Watch for changes in antCount
 watch(
   () => props.antCount,
-  (newCount) => {
+  useThrottleFn((newCount) => {
     newCount = Math.round(newCount)
 
     const currentAntCount = ants.value.length
@@ -416,13 +416,13 @@ watch(
     } else if (antsToRemove > 0) {
       removeAnts(antsToRemove)
     }
-  },
+  }, 1000), // Throttle to 1000ms
 )
 
 // Watch for changes in queenCount
 watch(
   () => props.queenCount,
-  (newCount) => {
+  useThrottleFn((newCount) => {
     newCount = Math.round(newCount)
 
     const currentQueenCount = queens.value.length
@@ -434,12 +434,13 @@ watch(
     } else if (queensToRemove > 0) {
       removeQueens(queensToRemove)
     }
-  },
+  }, 1000), // Throttle to 1000ms
 )
 
+// Watch for changes in eliteCount
 watch(
   () => props.eliteCount,
-  (newCount) => {
+  useThrottleFn((newCount) => {
     if (newCount === undefined) return
 
     newCount = Math.round(newCount)
@@ -453,13 +454,13 @@ watch(
     } else if (eliteAntsToRemove > 0) {
       removeEliteAnts(eliteAntsToRemove)
     }
-  },
+  }, 1000), // Throttle to 1000ms
 )
 
 // Watch for changes in larvaeCount
 watch(
   () => props.larvaeCount,
-  (newCount) => {
+  useThrottleFn((newCount) => {
     newCount = Math.round(newCount)
 
     const currentLarvaeCount = larvae.value.length
@@ -471,7 +472,7 @@ watch(
     } else if (larvaeToRemove > 0) {
       removeLarvae(larvaeToRemove)
     }
-  },
+  }, 1000), // Throttle to 1000ms
 )
 
 

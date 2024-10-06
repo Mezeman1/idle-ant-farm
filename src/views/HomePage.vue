@@ -509,6 +509,12 @@ onBeforeUnmount(async () => {
   // Cleanup event listeners and intervals
   window.removeEventListener('beforeunload', handleBeforeUnload)
   document.removeEventListener('visibilitychange', handleVisibilityChange)
+  window.removeEventListener('pagehide', handlePageHide)
+  window.removeEventListener('freeze', handleFreeze)
+
+  // Remove beforeinstallprompt and appinstalled event listeners
+  window.removeEventListener('beforeinstallprompt', deferredPrompt.value)
+  window.removeEventListener('appinstalled', deferredPrompt.value)
 
   // Clear intervals
   if (saveInterval) {
@@ -554,12 +560,12 @@ function handleBeforeUnload() {
 watch(() => resourcesStore.resources.ants, useThrottleFn(() => {
   gameStore.setupAdventureStats()
   resourcesStore.setAntsWithMax()
-}, 300), {
+}, 1000), {
   immediate: true,
 })
-
 const version = import.meta.env.PACKAGE_VERSION
 </script>
+
 
 
 <style lang="scss">
