@@ -239,7 +239,7 @@
 import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
 import {computed, onMounted, ref, watch} from 'vue'
-import {onClickOutside, useWindowSize, watchDebounced} from '@vueuse/core'
+import {onClickOutside, useWindowSize, watchDebounced, watchThrottled} from '@vueuse/core'
 import ArmyImage from '../assets/army.webp'
 import Inventory from '@/views/InventoryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
@@ -307,10 +307,10 @@ const nextWave = () => {
   }
 }
 
-watchDebounced(() => resourcesStore.resources.ants, () => {
+watchThrottled(() => resourcesStore.resources.ants, () => {
   if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
 
-  if (prestigeStore.upgradePurchased('autoAdventure') && adventureStore.battleStatus === 'idle' && resourcesStore.resources.ants >= 10) {
+  if (prestigeStore.upgradePurchased('autoAdventure') && resourcesStore.resources.ants >= 10) {
     if (adventureStore.currentArea === 'Safe Zone') {
       adventureStore.currentArea = 'Wasteland'
 
@@ -320,7 +320,7 @@ watchDebounced(() => resourcesStore.resources.ants, () => {
     }
   }
 }, {
-  debounce: 1000,
+  wait: 1000,
 })
 
 
