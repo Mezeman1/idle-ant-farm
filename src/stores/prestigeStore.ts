@@ -345,7 +345,6 @@ export const usePrestigeStore = defineStore('prestige', {
         }).then(() => {
             gameStore.loadGameState()
           })
-        console.log(`Prestige successful! You earned ${earnedPrestigePoints} prestige points.`)
       } catch (error) {
         console.error('Error during prestige:', error)
       }
@@ -381,7 +380,6 @@ export const usePrestigeStore = defineStore('prestige', {
 
       const amountOfUpgrade = this.amountOfUpgrade(upgradeId)
       if (upgrade && upgrade.maxPurchases && amountOfUpgrade >= upgrade.maxPurchases) {
-        console.log('Max purchases reached for upgrade:', upgradeId)
         return false
       }
 
@@ -394,8 +392,6 @@ export const usePrestigeStore = defineStore('prestige', {
         this.purchasedUpgrades.push(upgradeId)
         this.applyPrestigeUpgrade(upgradeId)
         return true
-      } else {
-        console.log('Not enough prestige points or invalid upgrade.')
       }
 
       return false
@@ -412,7 +408,6 @@ export const usePrestigeStore = defineStore('prestige', {
       while (this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost
         if (upgrade.maxPurchases && this.amountOfUpgrade(upgradeId) >= upgrade.maxPurchases) {
-          console.log('Max purchases reached for upgrade:', upgradeId)
           break
         }
 

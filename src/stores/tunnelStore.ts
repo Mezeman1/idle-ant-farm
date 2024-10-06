@@ -168,8 +168,6 @@ export const useTunnelStore = defineStore('tunnelStore', {
       gameStore.collectSeedsManually(this.resourcesFound.seeds)
       gameStore.addQueen(this.resourcesFound.queens)
       gameStore.resources.mineralShards += this.resourcesFound.mineralShards
-
-      console.log('Tunnel exploration stopped. Resources added.')
     },
 
     // Handle random events (resources, traps, loot)
@@ -226,8 +224,6 @@ export const useTunnelStore = defineStore('tunnelStore', {
       const antsLost = Math.floor(this.initialAntsInTunnel * percentageLost)
       this.antsInTunnel = Math.max(0, this.antsInTunnel - antsLost)
       this.trapsEncountered += 1
-
-      console.log(`Encountered a trap! Lost ${antsLost} ants.`)
     },
 
     // Function to calculate the chance of encountering a trap based on depth

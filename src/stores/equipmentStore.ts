@@ -44,7 +44,6 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     },
     levelUpEquippedItem(item: Item) {
       if (item.level >= item.maxLevel) {
-        console.log(`${item.name} is already at max level.`)
         return // Early return
       }
       // Remove old effect
