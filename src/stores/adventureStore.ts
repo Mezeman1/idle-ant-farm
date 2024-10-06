@@ -73,6 +73,8 @@ export const useAdventureStore = defineStore('adventureStore', {
     toggleCooldown: false,
 
     toggleCooldownTimeout: 0,
+    spawnEnemyTimeout: 0,
+    fightingTimeout: 0,
   }),
   actions: {
     // Start the battle loop
@@ -244,11 +246,19 @@ export const useAdventureStore = defineStore('adventureStore', {
       // Handle loot
       this.handleEnemyDrop()
 
-      // Spawn a new enemy
-      setTimeout(() => {
+      if (this.spawnEnemyTimeout) {
+        clearTimeout(this.spawnEnemyTimeout)
+      }
+      if (this.fightStatusTimeout) {
+        clearTimeout(this.fightStatusTimeout)
+      }
+
+      // Spawn a new enemy after a delay
+      this.spawnEnemyTimeout = setTimeout(() => {
         this.spawnRandomEnemy()
 
-        setTimeout(() => {
+        // Set battle status back to 'fighting' after a second delay
+        this.fightStatusTimeout = setTimeout(() => {
           if (this.battleStatus === 'cooldown') {
             this.battleStatus = 'fighting' // Set the battle status back to 'fighting'
           }

@@ -264,6 +264,10 @@ export const usePrestigeStore = defineStore('prestige', {
       const evolveStore = useEvolveStore();
       const current = evolveStore.currentEvolution;
 
+      if (current === 0) {
+        return 1;
+      }
+
       // Modified logarithmic growth with a multiplier factor
       const growthFactor = 3;
       const multiplier = (Math.log(current + 1) / Math.log(5) + 1) * growthFactor;
