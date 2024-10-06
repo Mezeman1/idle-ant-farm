@@ -82,9 +82,8 @@
           <PrestigeShop v-show="activeTab === 'prestige'"/>
           <Adventure v-show="activeTab === 'adventure'"/>
           <EquipmentPage v-show="activeTab === 'equipment'"/>
-          <Inventory
+          <PassivePage
             v-if="activeTab === 'passives'"
-            only-passive
           />
           <Tunnels v-show="activeTab === 'tunnels'"/>
           <AchievementPage v-if="activeTab === 'achievements'"/>
@@ -350,6 +349,7 @@ import {useResourcesStore} from '@/stores/resourcesStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 import BestiaryPage from '@/views/BestiaryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
+import PassivePage from "@/views/PassivePage.vue";
 
 const deferredPrompt = ref(null)
 const gameStore = useGameStore()

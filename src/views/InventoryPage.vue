@@ -84,7 +84,6 @@ const inventoryStore = useInventoryStore() // Use the inventory store to get the
 const totalSlots = computed(() => inventoryStore.maxInventory) // Total slots in the grid
 
 // Determine the number of columns based on screen size (responsive)
-// Determine the number of columns based on screen size (responsive)
 const amountOfColumns = computed(() => {
   if (width.value > 1200) {
     return 10 // Large screens (desktops and larger)

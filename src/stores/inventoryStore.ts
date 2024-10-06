@@ -10,7 +10,11 @@ export const useInventoryStore = defineStore('inventoryStore', {
     maxInventory: 20,
     appliedPassiveEffects: [] as Array<string>,
   }),
-
+  getters: {
+    passiveItemsInInventory() {
+      return this.inventory.filter(item => item.type === 'passive')
+    },
+  },
   actions: {
     // inventoryStore.ts
     hasItem(itemId: string): boolean {
