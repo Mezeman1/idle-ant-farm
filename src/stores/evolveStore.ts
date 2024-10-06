@@ -713,7 +713,9 @@ export const useEvolveStore = defineStore({
         duration: 5000,
       })
 
-      gameStore.saveGameState().then(() => {
+      gameStore.saveGameState({
+        force: true,
+      }).then(() => {
         gameStore.loadGameState()
       })
     },

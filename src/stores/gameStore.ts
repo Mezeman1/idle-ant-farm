@@ -457,11 +457,18 @@ export const useGameStore = defineStore('gameStore', {
       }
       return gameState
     },
-    async saveGameState() {
-      console.log('Game state is being saved...')
+    async saveGameState({
+      force = false,
+                        }) {
+      if (this.lastSavedTime && Date.now() - this.lastSavedTime < 10000 && !force) {
+        toast.info('Game saved recently, please wait a moment', {
+          position: 'top-left',
+        })
+        return
+      }
+
       const userId = await this.getUserId()
       if (!userId) {
-        console.error('User ID not found')
         return
       }
 
@@ -469,26 +476,18 @@ export const useGameStore = defineStore('gameStore', {
         const gameState = this.getGameState(userId)
         const cleanedGameState = this.cleanGameState(gameState, userId)
         const compressedGameState = LZString.compressToUTF16(JSON.stringify(cleanedGameState))
-
-        console.log('Game state compressed:', compressedGameState.length, 'bytes')
-
         await setDoc(doc(db, 'games', userId), {
           data: compressedGameState,
           version: 1,
         })
-
-        console.log('Game state saved to Firestore')
-
         toast.success('Game saved successfully', {
           position: 'top-left',
         })
         this.lastSavedTime = Date.now()
       } catch (error: FirestoreError | any) {
-        console.error('Error saving game state to Firebase:', error)
         toast.error('Failed to save game state', {
           position: 'top-left',
         })
-
         await this.logInvalidData(userId, 'gameState', error?.message)
       }
     },
