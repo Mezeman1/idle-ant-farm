@@ -314,7 +314,9 @@ export const usePrestigeStore = defineStore('prestige', {
         await gameStore.resetLocalGameState({isDebug: false})
 
         // Save the updated state to Firestore
-        await gameStore.saveGameState()
+        await gameStore.saveGameState({
+          force: true,
+        })
         console.log(`Prestige successful! You earned ${earnedPrestigePoints} prestige points.`)
       } catch (error) {
         console.error('Error during prestige:', error)

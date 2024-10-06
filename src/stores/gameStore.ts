@@ -413,7 +413,9 @@ export const useGameStore = defineStore('gameStore', {
     async logout(withoutSaving = false) {
       // We don't need to save for anonymous users
       if (firebase.auth().currentUser?.isAnonymous === false && !withoutSaving) {
-        await this.saveGameState()
+        await this.saveGameState({
+          force: true,
+        })
       }
 
       firebase.auth().signOut().then(() => {
@@ -572,12 +574,16 @@ export const useGameStore = defineStore('gameStore', {
         await adventureStore.calculateOfflineProgress()
         adventureStore.startBattle()
         this.loaded = true
-        console.log('Game state loaded successfully', this.lastSavedTime)
+        toast.success('Game loaded successfully', {
+          position: 'top-left',
+        })
       } catch (error) {
         console.error('Error loading game state from Firestore:', error)
       }
 
-      this.saveGameState()
+      this.saveGameState({
+        force: true,
+      })
     },
 
     async loadStateFromFirebase(savedState) {
@@ -641,7 +647,9 @@ export const useGameStore = defineStore('gameStore', {
         await this.resetOtherStores(debug)
 
         // Save the reset state
-        await this.saveGameState()
+        await this.saveGameState({
+          force: true,
+        })
         console.log('Game reset and cleared from Firestore')
       } catch (error) {
         console.error('Error resetting game state:', error)

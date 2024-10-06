@@ -78,18 +78,18 @@
         class="bg-white rounded shadow-lg flex flex-col sm:flex-row space-y-2 bg-opacity-50 h-[calc(100vh-65px)]"
       >
         <div class="flex flex-col flex-1 overflow-y-auto p-2">
-          <AntResources v-show="activeTab === 'resources'" />
-          <PrestigeShop v-show="activeTab === 'prestige'" />
-          <Adventure v-show="activeTab === 'adventure'" />
-          <EquipmentPage v-show="activeTab === 'equipment'" />
+          <AntResources v-if="activeTab === 'resources'" />
+          <PrestigeShop v-if="activeTab === 'prestige'" />
+          <Adventure v-if="activeTab === 'adventure'" />
+          <EquipmentPage v-if="activeTab === 'equipment'" />
           <PassivePage
             v-if="activeTab === 'passives'"
           />
-          <Tunnels v-show="activeTab === 'tunnels'" />
+          <Tunnels v-if="activeTab === 'tunnels'" />
           <AchievementPage v-if="activeTab === 'achievements'" />
           <BestiaryPage v-if="activeTab === 'bestiary'" />
-          <Debugger v-show="activeTab === 'debugger'" />
-          <Settings v-show="activeTab === 'settings'" />
+          <Debugger v-if="activeTab === 'debugger'" />
+          <Settings v-if="activeTab === 'settings'" />
         </div>
 
         <nav class="bg-gray-800 text-white">
@@ -503,7 +503,9 @@ onBeforeUnmount(async () => {
   if (!loggedInUser.value) return
 
   // Save game state and stop game loop before leaving
-  await gameStore.saveGameState()
+  await gameStore.saveGameState({
+    force: true,
+  })
   gameStore.stopGameLoop()
 
   // Cleanup event listeners and intervals
@@ -532,7 +534,9 @@ onBeforeUnmount(async () => {
 async function handleVisibilityChange() {
   if (document.hidden) {
     enableSaveInterval.value = false
-    await gameStore.saveGameState()
+    await gameStore.saveGameState({
+      force: true,
+    })
   } else {
     enableSaveInterval.value = true
     await gameStore.loadGameState()
@@ -542,19 +546,25 @@ async function handleVisibilityChange() {
 
 function handlePageHide(event: PageTransitionEvent) {
   enableSaveInterval.value = false
-  gameStore.saveGameState()
+  gameStore.saveGameState({
+    force: true,
+  })
 }
 
 function handleFreeze() {
   enableSaveInterval.value = false
-  gameStore.saveGameState()
+  gameStore.saveGameState({
+    force: true,
+  })
 }
 
 // Function to handle saving the game state before unloading the window (works on desktop only)
 function handleBeforeUnload() {
   enableSaveInterval.value = false
   // Save game state
-  gameStore.saveGameState()
+  gameStore.saveGameState({
+    force: true,
+  })
 }
 
 watch(() => resourcesStore.resources.ants, useThrottleFn(() => {
