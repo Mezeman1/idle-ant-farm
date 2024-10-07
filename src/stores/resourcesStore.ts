@@ -93,7 +93,7 @@ export const useResourcesStore = defineStore('resources', {
     larvaePerSecond: (state) => (state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier) / 60,
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => {
-      const eliteMultiplier = state.resources.eliteAnts > 0 ? (state.resources.eliteAnts * state.multiplierPerEliteAnt) : 1
+      const eliteMultiplier = (state.resources.eliteAnts > 0 ? (state.resources.eliteAnts * state.multiplierPerEliteAnt) : 1) * state.productionRates.collectionRateModifier
       const seedsFromAnts = (state.productionRates.collectionRatePerAnt * state.resources.ants * eliteMultiplier) / 60 * state.productionRates.collectionRateModifier
       if (state.resources.workers > 0) {
         const seedsFromWorkers = (state.productionRates.collectionRatePerWorker * state.resources.workers * eliteMultiplier) / 60
@@ -392,7 +392,7 @@ export const useResourcesStore = defineStore('resources', {
       }
     },
     upgradeSeedStorageEffect(amount = 1) {
-      const diminishingFactor = 1 / (1 + amount / 50)
+      const diminishingFactor = 1 / (1 + amount / 150)
       const multiplier = Math.max(this.storageUpgradeFactor * diminishingFactor, 1.01)
       const nextUpgrade = Math.floor(this.storage.maxSeeds * multiplier)
 
@@ -402,7 +402,7 @@ export const useResourcesStore = defineStore('resources', {
       )
     },
     upgradeLarvaeStorageEffect(amount = 1) {
-      const diminishingFactor = 1 / (1 + amount / 50)
+      const diminishingFactor = 1 / (1 + amount / 65)
       const multiplier = Math.max(this.storageUpgradeFactor * diminishingFactor, 1.01)
       const nextUpgrade = Math.floor(this.storage.maxLarvae * multiplier)
 

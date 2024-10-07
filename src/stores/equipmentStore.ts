@@ -15,6 +15,20 @@ interface EquipmentState {
     accessories: (Item | null)[]; // Plural form, matching the state structure
   };
   activeSetBonus: SetName | null;
+
+  loadOuts: LoadOut[];
+  maxLoadOuts: number;
+}
+
+interface LoadOut {
+  name: string;
+  equippedItems: {
+    head: Item | null;
+    body: Item | null;
+    legs: Item | null;
+    weapon: Item | null;
+    accessories: (Item | null)[];
+  };
 }
 
 
@@ -30,8 +44,65 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       accessories: [null, null] as (Item | null)[],
     },
     activeSetBonus: null,
+
+    loadOuts: [],
+    maxLoadOuts: 3,
   }),
   actions: {
+    loadLoadOut(loadOut: LoadOut) {
+      const inventoryStore = useInventoryStore()
+      // Loop over each key in the equippedItems object from the loadOut
+      Object.keys(loadOut.equippedItems).forEach((key) => {
+        // If the key is 'accessories', iterate through the array of accessories
+        if (key === 'accessories') {
+          loadOut.equippedItems.accessories.forEach((accessory, index) => {
+            if (!accessory) {
+              return
+            }
+
+            if (inventoryStore.hasItem(accessory.id)) {
+              // If the player has the accessory in their inventory, equip it
+              this.equipItem(inventoryStore.getItemById(accessory.id), 'accessory', index)
+            }
+          })
+
+          return
+        }
+
+        if (!loadOut.equippedItems[key]) {
+          return
+        }
+
+        // If the player has the item in their inventory, equip it
+        if (inventoryStore.hasItem(loadOut.equippedItems[key].id)) {
+          this.equipItem(inventoryStore.getItemById(loadOut.equippedItems[key].id), key as SlotType)
+        }
+      })
+    },
+    saveLoadOut(name: string) {
+      if (this.loadOuts.length >= this.maxLoadOuts) {
+        return
+      }
+
+      const loadOut = {
+        name,
+        equippedItems: {
+          head: this.equippedItems.head,
+          body: this.equippedItems.body,
+          legs: this.equippedItems.legs,
+          weapon: this.equippedItems.weapon,
+          accessories: this.equippedItems.accessories,
+        },
+      }
+
+      this.loadOuts.push(loadOut)
+    },
+    deleteLoadOut(name: string) {
+      const index = this.loadOuts.findIndex((loadOut) => loadOut.name === name)
+      if (index !== -1) {
+        this.loadOuts.splice(index, 1)
+      }
+    },
     findEquippedItemById(itemId: string): Item | null {
       const equippedItems = [
         this.equippedItems.head,
@@ -49,7 +120,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       // Remove old effect
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
-      const context = { gameStore, adventureStore }
+      const context = {gameStore, adventureStore}
       if (item.onRemove) {
         item.onRemove(context, item)
       }
@@ -66,7 +137,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const inventoryStore = useInventoryStore()
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
-      const context = { gameStore, adventureStore }
+      const context = {gameStore, adventureStore}
 
       // Remove the item from the inventory
       await inventoryStore.removeItemFromInventory(item.id)
@@ -107,7 +178,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const inventoryStore = useInventoryStore()
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
-      const context = { gameStore, adventureStore }
+      const context = {gameStore, adventureStore}
       let item: Item | null = null
 
       // Unequip the item
@@ -251,6 +322,8 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       return {
         equippedItems: equipmentItemsOnlyId,
         activeSetBonus: this.activeSetBonus,
+        loadOuts: this.loadOuts,
+        maxLoadOuts: this.maxLoadOuts,
       }
     },
 
@@ -258,9 +331,11 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const inventoryStore = useInventoryStore()
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
-      const context = { gameStore, adventureStore }
+      const context = {gameStore, adventureStore}
 
       this.activeSetBonus = null
+      this.loadOuts = state.loadOuts ?? []
+      this.maxLoadOuts = state.maxLoadOuts ?? this.maxLoadOuts
 
       if (!state.equippedItems) {
         return
@@ -320,7 +395,12 @@ export const useEquipmentStore = defineStore('equipmentStore', {
         weapon: null,
         accessories: [null, null],
       }
+
       this.activeSetBonus = null
+
+      this.loadOuts = []
+
+      this.maxLoadOuts = 3
 
       // Recalculate set bonuses
       this.checkForSetBonus()

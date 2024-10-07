@@ -18,8 +18,19 @@ export const useSettingsStore = defineStore('settings', {
       autoQueenCreationAnts: 0,
       autoCreateHousing: 0,
     },
+    notifications: {
+      loot: true,
+      achievements: true,
+      save: true,
+      load: true,
+    },
     notation: 'scientific',
   }),
+  getters: {
+    getNotificationSetting(): (key: string) => boolean {
+      return (key) => this.notifications[key]
+    },
+  },
   actions: {
     getSettingsState() {
       return {
@@ -47,6 +58,13 @@ export const useSettingsStore = defineStore('settings', {
           autoQueenCreationSeeds: this.autoThresholds.autoQueenCreationSeeds ?? 0,
           autoQueenCreationAnts: this.autoThresholds.autoQueenCreationAnts ?? 0,
           autoCreateHousing: this.autoThresholds.autoCreateHousing ?? 0,
+      }
+
+      this.notifications = {
+        loot: this.notifications.loot ?? true,
+        achievements: this.notifications.achievements ?? true,
+        save: this.notifications.save ?? true,
+        load: this.notifications.load ?? true,
       }
     },
   },

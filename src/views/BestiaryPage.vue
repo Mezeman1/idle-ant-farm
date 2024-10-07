@@ -160,22 +160,23 @@
 
 <script lang="ts" setup>
 import {computed, ref} from 'vue'
-import {adventureEnemyWaves, Enemy} from '@/types/AdventureEnemyWaves'
+import {useAdventureStore} from '@/stores/adventureStore'
 
 const searchQuery = ref('')
 const selectedEnemy = ref<Enemy | null>(null)
+const adventureStore = useAdventureStore()
 
 // Flatten enemies and add area (wave name)
-const allEnemies = adventureEnemyWaves.flatMap((wave) =>
+const allEnemies = computed(() => adventureStore.enemyWaves.flatMap((wave) =>
   wave.enemies.map((enemy) => ({
     ...enemy,
     area: wave.name,
   })),
-)
+))
 
 const filteredEnemies = computed(() => {
   const query = searchQuery.value.toLowerCase()
-  return allEnemies.filter(
+  return allEnemies.value.filter(
     (enemy) =>
       enemy.name.toLowerCase().includes(query) ||
       enemy.area.toLowerCase().includes(query),

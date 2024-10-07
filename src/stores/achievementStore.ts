@@ -5,6 +5,7 @@ import {useAdventureStore} from '@/stores/adventureStore'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {toast} from 'vue3-toastify'
 import {useResourcesStore} from '@/stores/resourcesStore'
+import {useSettingsStore} from '@/stores/settingsStore'
 
 interface Achievement {
   id: string;
@@ -707,13 +708,16 @@ export const useAchievementStore = defineStore({
   }),
   actions: {
     checkAchievements() {
+      const settingsStore = useSettingsStore()
       this.achievements.forEach((achievement) => {
         if (!achievement.isUnlocked && achievement.unlockCondition()) {
           achievement.isUnlocked = true
-          toast.info(`Achievement Unlocked: ${achievement.name}`, {
-            duration: 3000,
-            position: 'top-right',
-          })
+          if (settingsStore.getNotificationSetting('achievements')) {
+            toast.info(`Achievement Unlocked: ${achievement.name}`, {
+              duration: 3000,
+              position: 'top-right',
+            })
+          }
         }
       })
     },

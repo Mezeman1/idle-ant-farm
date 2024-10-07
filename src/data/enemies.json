@@ -1,0 +1,1251 @@
+[
+  {
+    "name": "Safe Zone",
+    "enemies": [],
+    "unlockedWhen": "alwaysAvailable",
+    "unlockText": "Always available."
+  },
+  {
+    "name": "Wasteland",
+    "enemies": [
+      {
+        "name": "Grasshopper",
+        "health": 90,
+        "attack": 18,
+        "defense": 8,
+        "regen": 3,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.8,
+            "amountBetween": [
+              100,
+              500
+            ]
+          },
+          {
+            "name": "Grasshopper Leg",
+            "chance": 0.2,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Grasshopper Wing",
+            "chance": 0.1,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Worker Helm",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Worker Helm II",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          }
+        ]
+      },
+      {
+        "name": "Beetle",
+        "health": 110,
+        "attack": 20,
+        "defense": 10,
+        "regen": 4,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.75,
+            "amountBetween": [
+              100,
+              500
+            ]
+          },
+          {
+            "name": "Ant Strength Potion",
+            "chance": 0.15,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Beetle Shell",
+            "chance": 0.1,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Worker Body",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Worker Pickaxe",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Worker Pickaxe II",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          },
+          {
+            "name": "Worker Body II",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          }
+        ]
+      },
+      {
+        "name": "Wasp",
+        "health": 130,
+        "attack": 22,
+        "defense": 12,
+        "regen": 5,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.75,
+            "amountBetween": [
+              100,
+              500
+            ]
+          },
+          {
+            "name": "Queen Crown",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Queen Crown II",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          },
+          {
+            "name": "Wasp Stinger",
+            "chance": 0.075,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Worker Legs",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Worker Gloves",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Worker Legs II",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          },
+          {
+            "name": "Worker Gloves II",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          }
+        ]
+      },
+      {
+        "name": "Termite",
+        "health": 95,
+        "attack": 17,
+        "defense": 7,
+        "regen": 3,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.75,
+            "amountBetween": [
+              100,
+              500
+            ]
+          },
+          {
+            "name": "Termite Mandible",
+            "chance": 0.2,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Worker Shield",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Worker Shield II",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          }
+        ]
+      }
+    ],
+    "unlockedWhen": {
+      "condition": "antsOrQueensCondition",
+      "antsRequired": 10,
+      "queensRequired": 2
+    },
+    "unlockText": "Unlocked when you have 10 ants or 2 queens."
+  },
+  {
+    "name": "Forest",
+    "enemies": [
+      {
+        "name": "Spider",
+        "health": 1500,
+        "attack": 300,
+        "defense": 150,
+        "regen": 6,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.7,
+            "amountBetween": [
+              300,
+              750
+            ]
+          },
+          {
+            "name": "Spider Silk",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Soldier Helm",
+            "chance": 0.04,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Soldier Helm II",
+            "chance": 0.04,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          }
+        ]
+      },
+      {
+        "name": "Centipede",
+        "health": 1600,
+        "attack": 340,
+        "defense": 160,
+        "regen": 7,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.7,
+            "amountBetween": [
+              300,
+              750
+            ]
+          },
+          {
+            "name": "Centipede Leg",
+            "chance": 0.2,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Soldier Body",
+            "chance": 0.04,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Soldier Body II",
+            "chance": 0.04,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          }
+        ]
+      },
+      {
+        "name": "Moth",
+        "health": 1400,
+        "attack": 310,
+        "defense": 140,
+        "regen": 5,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              400,
+              800
+            ]
+          },
+          {
+            "name": "Moth Dust",
+            "chance": 0.1,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Soldier Legs",
+            "chance": 0.04,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Soldier Legs II",
+            "chance": 0.04,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          }
+        ]
+      },
+      {
+        "name": "Butterfly",
+        "health": 1700,
+        "attack": 360,
+        "defense": 170,
+        "regen": 8,
+        "dropOptions": [
+          {
+            "name": "Butterfly Wing",
+            "chance": 0.01,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Butterfly Dust",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              400,
+              1000
+            ]
+          },
+          {
+            "name": "Soldier Shield",
+            "chance": 0.03,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Soldier Shield II",
+            "chance": 0.03,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          }
+        ]
+      },
+      {
+        "name": "Queen Wasp",
+        "health": 2400,
+        "attack": 400,
+        "defense": 200,
+        "regen": 10,
+        "isBoss": true,
+        "dropOptions": [
+          {
+            "name": "Queen Stinger",
+            "chance": 0.005,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Queen head",
+            "chance": 0.01,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          },
+          {
+            "name": "Wasp Stinger",
+            "chance": 0.08,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              500,
+              1500
+            ]
+          },
+          {
+            "name": "Soldier Sword",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Soldier Sword II",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ],
+            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
+            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
+          }
+        ]
+      }
+    ],
+    "unlockedWhen": {
+      "condition": "antsOrQueensCondition",
+      "antsRequired": 100,
+      "queensRequired": 5
+    },
+    "unlockText": "Unlocked when you have 100 ants or 2 queens."
+  },
+  {
+    "name": "Mountains",
+    "enemies": [
+      {
+        "name": "Mountain Ant",
+        "health": 12000,
+        "attack": 2400,
+        "defense": 1200,
+        "regen": 20,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.7,
+            "amountBetween": [
+              1000,
+              2500
+            ]
+          },
+          {
+            "name": "Mountain Ant Mandible",
+            "chance": 0.15,
+            "amountBetween": [
+              1,
+              3
+            ]
+          },
+          {
+            "name": "Royal Crown",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Rock Beetle",
+        "health": 13000,
+        "attack": 2600,
+        "defense": 1400,
+        "regen": 25,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.7,
+            "amountBetween": [
+              1200,
+              3000
+            ]
+          },
+          {
+            "name": "Rock Carapace",
+            "chance": 0.1,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Royal Robe",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Giant Mantis",
+        "health": 15000,
+        "attack": 2800,
+        "defense": 1600,
+        "regen": 30,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              1500,
+              3500
+            ]
+          },
+          {
+            "name": "Mantis Claw",
+            "chance": 0.08,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Royal Legs",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Stone Golem",
+        "health": 20000,
+        "attack": 3200,
+        "defense": 1800,
+        "regen": 50,
+        "isBoss": true,
+        "dropOptions": [
+          {
+            "name": "Stone Heart",
+            "chance": 0.005,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              2500,
+              5000
+            ]
+          },
+          {
+            "name": "Royal Scepter",
+            "chance": 0.01,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Royal Ring",
+            "chance": 0.005,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Mold Blob",
+        "health": 15000,
+        "attack": 2800,
+        "defense": 1600,
+        "regen": 30,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.75,
+            "amountBetween": [
+              1500,
+              3500
+            ]
+          }
+        ]
+      }
+    ],
+    "unlockedWhen": {
+      "condition": "antsOrQueensCondition",
+      "antsRequired": 500,
+      "queensRequired": 20
+    },
+    "unlockText": "Unlocked when you have 1000 ants or 20 queens."
+  },
+  {
+    "name": "Volcano",
+    "enemies": [
+      {
+        "name": "Lava Ant",
+        "health": 60000,
+        "attack": 12000,
+        "defense": 7000,
+        "regen": 15,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.6,
+            "amountBetween": [
+              3000,
+              7000
+            ]
+          },
+          {
+            "name": "Lava Ant Tooth",
+            "chance": 0.1,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Volcano Helm",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Magma Beetle",
+        "health": 70000,
+        "attack": 13000,
+        "defense": 7500,
+        "regen": 18,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.7,
+            "amountBetween": [
+              3500,
+              7500
+            ]
+          },
+          {
+            "name": "Magma Carapace",
+            "chance": 0.1,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Volcano Armor",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Fire Scorpion",
+        "health": 80000,
+        "attack": 14000,
+        "defense": 8000,
+        "regen": 20,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              4000,
+              8000
+            ]
+          },
+          {
+            "name": "Scorpion Tail",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Volcano Greaves",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Molten Dragon",
+        "health": 100000,
+        "attack": 16000,
+        "defense": 9000,
+        "regen": 25,
+        "isBoss": true,
+        "dropOptions": [
+          {
+            "name": "Dragon Scale",
+            "chance": 0.002,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              5000,
+              10000
+            ]
+          },
+          {
+            "name": "Volcano Scepter",
+            "chance": 0.01,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Volcano Ring",
+            "chance": 0.005,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      }
+    ],
+    "unlockedWhen": {
+      "condition": "antsOrQueensCondition",
+      "antsRequired": 2500,
+      "queensRequired": 50
+    },
+    "unlockText": "Unlocked when you have 2500 ants or 50 queens."
+  },
+  {
+    "name": "Underworld",
+    "enemies": [
+      {
+        "name": "Hellfire Ant",
+        "health": 120000,
+        "attack": 30000,
+        "defense": 16000,
+        "regen": 25,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              10000,
+              15000
+            ]
+          },
+          {
+            "name": "Hellfire Ant Fang",
+            "chance": 0.04,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Underworld Helm",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Demonic Beetle",
+        "health": 130000,
+        "attack": 32000,
+        "defense": 18000,
+        "regen": 30,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.6,
+            "amountBetween": [
+              12000,
+              18000
+            ]
+          },
+          {
+            "name": "Demonic Carapace",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Underworld Chestplate",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Infernal Scorpion",
+        "health": 150000,
+        "attack": 35000,
+        "defense": 20000,
+        "regen": 40,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.4,
+            "amountBetween": [
+              15000,
+              20000
+            ]
+          },
+          {
+            "name": "Infernal Tail",
+            "chance": 0.03,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Underworld Greaves",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Underworld Lord",
+        "health": 180000,
+        "attack": 40000,
+        "defense": 24000,
+        "regen": 50,
+        "isBoss": true,
+        "dropOptions": [
+          {
+            "name": "Underworld Crown",
+            "chance": 0.001,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              20000,
+              30000
+            ]
+          },
+          {
+            "name": "Underworld Blade",
+            "chance": 0.01,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Underworld Cloak",
+            "chance": 0.005,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      }
+    ],
+    "unlockedWhen": {
+      "condition": "antsOrQueensCondition",
+      "antsRequired": 7500,
+      "queensRequired": 150
+    },
+    "unlockText": "Unlocked when you have 7.5 thousand ants or 150 queens."
+  },
+  {
+    "name": "Arctic Tundra",
+    "enemies": [
+      {
+        "name": "Ice Beetle",
+        "health": 240000,
+        "attack": 48000,
+        "defense": 24000,
+        "regen": 1500,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.6,
+            "amountBetween": [
+              25000,
+              35000
+            ]
+          },
+          {
+            "name": "Ice Beetle Shell",
+            "chance": 0.1,
+            "amountBetween": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Tundra Helm",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Frost Scorpion",
+        "health": 270000,
+        "attack": 50000,
+        "defense": 25000,
+        "regen": 1800,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.7,
+            "amountBetween": [
+              30000,
+              40000
+            ]
+          },
+          {
+            "name": "Frost Scorpion Tail",
+            "chance": 0.08,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Tundra Armor",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Glacier Mantis",
+        "health": 300000,
+        "attack": 55000,
+        "defense": 26500,
+        "regen": 2000,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              35000,
+              45000
+            ]
+          },
+          {
+            "name": "Glacier Mantis Claw",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Tundra Greaves",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Frost Wyrm",
+        "health": 350000,
+        "attack": 60000,
+        "defense": 28000,
+        "regen": 3000,
+        "isBoss": true,
+        "dropOptions": [
+          {
+            "name": "Frost Wyrm Scale",
+            "chance": 0.005,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              50000,
+              60000
+            ]
+          },
+          {
+            "name": "Tundra Blade",
+            "chance": 0.01,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Tundra Cloak",
+            "chance": 0.005,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      }
+    ],
+    "unlockedWhen": {
+      "condition": "antsOrQueensCondition",
+      "antsRequired": 25000,
+      "queensRequired": 500
+    },
+    "unlockText": "Unlocked when you have 25 thousand ants or 500 queens."
+  },
+  {
+    "name": "Abyssal Depths",
+    "enemies": [
+      {
+        "name": "Abyss Crab",
+        "health": 600000,
+        "attack": 120000,
+        "defense": 60000,
+        "regen": 40,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.6,
+            "amountBetween": [
+              70000,
+              90000
+            ]
+          },
+          {
+            "name": "Abyss Crab Claw",
+            "chance": 0.006,
+            "amountBetween": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Deep Sea Angler",
+        "health": 650000,
+        "attack": 140000,
+        "defense": 70000,
+        "regen": 50,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              80000,
+              100000
+            ]
+          },
+          {
+            "name": "Angler Teeth",
+            "chance": 0.05,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Kraken Tentacle",
+        "health": 700000,
+        "attack": 160000,
+        "defense": 80000,
+        "regen": 60,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.4,
+            "amountBetween": [
+              90000,
+              110000
+            ]
+          },
+          {
+            "name": "Kraken Ink",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Abyssal Leviathan",
+        "health": 800000,
+        "attack": 200000,
+        "defense": 100000,
+        "regen": 80,
+        "isBoss": true,
+        "dropOptions": [
+          {
+            "name": "Leviathan Scale",
+            "chance": 0.001,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Seeds",
+            "chance": 0.5,
+            "amountBetween": [
+              100000,
+              150000
+            ]
+          }
+        ]
+      }
+    ],
+    "unlockedWhen": {
+      "condition": "antsOrQueensCondition",
+      "antsRequired": 50000,
+      "queensRequired": 1000
+    },
+    "unlockText": "Unlocked when you have 50 thousand ants or 1 thousand queens."
+  }
+]

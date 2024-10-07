@@ -15,6 +15,7 @@ import {useResourcesStore} from '@/stores/resourcesStore'
 import {useTunnelStore} from '@/stores/tunnelStore'
 import {useEvolveStore} from '@/stores/evolveStore'
 import FirestoreError = firebase.firestore.FirestoreError;
+import {useDebounceFn} from '@vueuse/core'
 
 
 export const useGameStore = defineStore('gameStore', {
@@ -25,6 +26,8 @@ export const useGameStore = defineStore('gameStore', {
     passwordConfirm: '',
     error: null,
     privacyAgreement: false,
+
+    currentUser: null,
 
     loaded: false,
     loggedIn: false,
@@ -48,6 +51,9 @@ export const useGameStore = defineStore('gameStore', {
     isGameLoopRunning: false,
     progress: 0, // Track progress for offline calculation
     simulatingOfflineProgress: false,
+
+    lastToastShownTime: 0, // Track last toast show time
+    toastCooldown: 5000,   // Cooldown in ms for toast notifications
   }),
   actions: {
     // Import game data from a string (decrypt and load into state)
@@ -305,6 +311,7 @@ export const useGameStore = defineStore('gameStore', {
       const auth = firebase.auth()
       const user = auth.currentUser
       if (user) {
+        this.currentUser = user
         this.loggedIn = true
         return user.uid
       } else {
@@ -385,6 +392,31 @@ export const useGameStore = defineStore('gameStore', {
         console.error('Error signing in:', errorCode, errorMessage)
       })
     },
+    linkAnonymousAccountToGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      firebase.auth().useDeviceLanguage()
+      firebase.auth().currentUser?.linkWithPopup(provider)
+        .then(async (result) => {
+        await this.setConsent(await this.getUserId())
+
+        this.loggedIn = true
+
+        await this.loadGameState()
+          toast.success('Account linked successfully', {
+            position: 'top-right',
+            duration: 5000,
+          })
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code
+        const errorMessage = error.message
+        console.error('Error linking anonymous account to Google:', errorCode, errorMessage)
+        toast.error('Failed to link account: ' + errorMessage, {
+          position: 'top-right',
+          duration: 5000,
+        })
+      })
+    },
     loginAsGuest() {
       signInAnonymously(getAuth()).then(async (result) => {
         // The signed-in user info.
@@ -421,6 +453,7 @@ export const useGameStore = defineStore('gameStore', {
       firebase.auth().signOut().then(() => {
         console.log('Logged out successfully')
         this.loggedIn = false
+        this.currentUser = null
         this.stopGameLoop()
         this.resetLocalGameState({
           isDebug: true,
@@ -459,11 +492,19 @@ export const useGameStore = defineStore('gameStore', {
       }
       return gameState
     },
-    async saveGameState(params = {force: false}) {
-      if (this.lastSavedTime && Date.now() - this.lastSavedTime < 10000 && !params.force) {
-        toast.info('Game saved recently, please wait a moment', {
+    showSaveToast() {
+      const now = Date.now()
+
+      // Ensure the toast isn't shown again if cooldown hasn't passed
+      if (now - this.lastToastShownTime > this.toastCooldown) {
+        toast.success('Game saved successfully', {
           position: 'top-left',
         })
+        this.lastToastShownTime = now // Update the last toast time
+      }
+    },
+    async saveGameState(params = {force: false}) {
+      if (this.lastSavedTime && Date.now() - this.lastSavedTime < 10000 && !params.force) {
         return
       }
 
@@ -480,9 +521,11 @@ export const useGameStore = defineStore('gameStore', {
           data: compressedGameState,
           version: 1,
         })
-        toast.success('Game saved successfully', {
-          position: 'top-left',
-        })
+
+        if (useSettingsStore().getNotificationSetting('save')) {
+          this.showSaveToast()
+        }
+
         this.lastSavedTime = Date.now()
       } catch (error: FirestoreError | any) {
         toast.error('Failed to save game state', {
@@ -574,9 +617,11 @@ export const useGameStore = defineStore('gameStore', {
         await adventureStore.calculateOfflineProgress()
         adventureStore.startBattle()
         this.loaded = true
-        toast.success('Game loaded successfully', {
-          position: 'top-left',
-        })
+        if (useSettingsStore().getNotificationSetting('load')) {
+          toast.success('Game loaded successfully', {
+            position: 'top-left',
+          })
+        }
       } catch (error) {
         console.error('Error loading game state from Firestore:', error)
       }

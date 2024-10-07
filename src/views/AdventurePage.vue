@@ -13,7 +13,7 @@
 
         <!-- Optional display for locked wave details -->
         <div
-          v-if="!getAreaByIndex(selectedWaveIndex + 1)?.unlockedWhen(resourcesStore)"
+          v-if="!getAreaByIndex(selectedWaveIndex + 1)?.unlockedWhen()"
           class="text-xs text-gray-700"
         >
           Next Area: {{ getAreaByIndex(selectedWaveIndex + 1)?.unlockText }} 🔒
@@ -87,7 +87,7 @@
           >
             <!-- Top Half: Background Image -->
             <div
-              class="h-1/4 md:h-1/2 bg-cover bg-center rounded-t-lg"
+              class="h-[100px] md:h-[200px] bg-cover bg-center rounded-t-lg"
               :style="{ backgroundImage: `url(${adventureStore.currentEnemy?.image ?? 'https://via.placeholder.com/150'})` }"
             >
               <!-- The image here is used as a background -->
@@ -239,13 +239,12 @@
 import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
 import {computed, onMounted, ref, watch} from 'vue'
-import {onClickOutside, useWindowSize, watchDebounced, watchThrottled} from '@vueuse/core'
+import {onClickOutside, useWindowSize} from '@vueuse/core'
 import ArmyImage from '../assets/army.webp'
 import Inventory from '@/views/InventoryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import WaveSelector from '@/components/WaveSelector.vue'
-import {toast} from 'vue3-toastify'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
@@ -273,8 +272,7 @@ onMounted(() => {
 
 const updateCurrentAreaByIndex = (index) => {
   if (index < 0 || index >= adventureStore.enemyWaves.length) return
-
-  if (getAreaByIndex(index)?.unlockedWhen(useResourcesStore())) {
+  if (getAreaByIndex(index)?.unlockedWhen()) {
     adventureStore.currentArea = getAreaByIndex(index)?.name ?? 'Safe Zone'
   }
 }
@@ -291,7 +289,7 @@ const selectedWave = computed(() => {
 })
 
 const canGoPrevious = computed(() => selectedWaveIndex.value > 0)
-const canGoNext = computed(() => selectedWaveIndex.value + 1 < adventureStore.enemyWaves.length - 1 && getAreaByIndex(selectedWaveIndex.value + 1)?.unlockedWhen(useResourcesStore()))
+const canGoNext = computed(() => selectedWaveIndex.value + 1 < adventureStore.enemyWaves.length && getAreaByIndex(selectedWaveIndex.value + 1)?.unlockedWhen())
 
 const previousWave = () => {
   if (canGoPrevious.value) {

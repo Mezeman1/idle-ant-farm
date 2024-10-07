@@ -24,6 +24,10 @@
       <!-- Armor Effects Section -->
       <div class="flex-1">
         <ArmorEffectsComponent />
+
+        <div class="mt-4">
+          <LoadoutSwapper />
+        </div>
       </div>
     </div>
 
@@ -57,6 +61,10 @@
         >
           <ArmorEffectsComponent />
         </div>
+      </div>
+
+      <div class="mt-4">
+        <LoadoutSwapper />
       </div>
     </div>
 
@@ -97,6 +105,7 @@ import ArmorEffectsComponent from '../components/ArmorEffectsComponent.vue'
 import { useWindowSize } from '@vueuse/core'
 import { useEquipmentStore } from '../stores/equipmentStore'
 import { useInventoryStore } from '../stores/inventoryStore'
+import LoadoutSwapper from '@/components/LoadoutSwapper.vue'
 
 // Use stores
 const equipmentStore = useEquipmentStore()
@@ -330,7 +339,3 @@ const handleUnequip = (slotType: string, index: number | null) => {
   closeContextMenu()
 }
 </script>
-
-<style scoped>
-/* Add any necessary styles here */
-</style>

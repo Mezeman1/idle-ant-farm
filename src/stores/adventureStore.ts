@@ -6,6 +6,7 @@ import {useResourcesStore} from '@/stores/resourcesStore'
 import {itemRegistry} from '@/types/itemRegistry'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {toast} from 'vue3-toastify'
+import {useSettingsStore} from '@/stores/settingsStore'
 
 interface KillCounts {
   [key: string]: number
@@ -70,7 +71,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     bugRegenModifier: 1.0, // Multiplicative modifier for bug regen
 
     currentArea: 'Safe Zone',
-    enemyWaves: adventureEnemyWaves,
+    enemyWaves: [],
     currentEnemy: null as Enemy | null,
 
     enemySpawned: false,
@@ -325,12 +326,11 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
     async handleEnemyDrop() {
       const evolveStore = useEvolveStore()
+      const settingsStore = useSettingsStore()
       if (this.currentEnemy?.dropOptions) {
         for (const drop of this.currentEnemy.dropOptions) {
           // Some drops have unlockedWhen function to check if they should drop
-          if (drop.unlockedWhen && !drop.unlockedWhen({
-            evolveStore,
-          })) {
+          if (drop.unlockedWhen && !drop.unlockedWhen()) {
             continue
           }
 
@@ -348,7 +348,7 @@ export const useAdventureStore = defineStore('adventureStore', {
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
               const item = useInventoryStore().getItemById(itemId)
               if (item) {
-                if (!this.isSimulatingOffline) {
+                if (!this.isSimulatingOffline && settingsStore.getNotificationSetting('loot')) {
                   toast.success(`Loot: +${amount} ${drop.name}`, {
                     position: toast.POSITION.TOP_RIGHT,
                   })
@@ -529,14 +529,57 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.battleStatus = adventureState.battleStatus ?? 'idle'
       this.lastSavedTime = adventureState.lastSavedTime ?? Date.now()
 
+      await this.setEnemyUnlockConditions()
       await this.loadEnemyImages()
 
       // Mark as loaded once the state is fully set
       this.loaded = true
     },
 
+    async setEnemyUnlockConditions() {
+      return new Promise((resolve) => {
+        this.enemyWaves = adventureEnemyWaves.map((wave) => {
+          return {
+            name: wave.name,
+            enemies: wave.enemies.map((enemy: any) => ({
+              ...enemy,
+              dropOptions: enemy.dropOptions.map((drop: any) => {
+                drop.unlockedWhen = this.getUnlockFunction(drop.unlockedWhenContext)
+                return drop // Otherwise, return the drop as is
+              }),
+            })),
+            unlockText: wave.unlockText,
+            unlockedWhen: this.getUnlockFunction(wave.unlockedWhenContext),
+          }
+        })
+
+        resolve()
+      })
+    },
+
+    getUnlockFunction(unlockCondition: any) {
+      const resourcesStore = useResourcesStore()
+      const evolveStore = useEvolveStore()
+
+      let condition = unlockCondition?.condition
+      if (!condition) {
+        condition = unlockCondition
+      }
+
+      switch (condition) {
+        case 'alwaysAvailable':
+          return () => true
+        case 'antsOrQueensCondition':
+          return () => resourcesStore.resources.ants >= unlockCondition.antsRequired || resourcesStore.resources.queens >= unlockCondition.queensRequired
+        case 'evolutionAtLeastLeafcutter':
+          return () => evolveStore.currentEvolution >= unlockCondition.evolutionStageRequired
+        default:
+          return () => true // Fallback for undefined conditions
+      }
+    },
+
     async loadEnemyImages() {
-      for (const wave of adventureEnemyWaves) {
+      for (const wave of this.enemyWaves) {
         for (const enemy of wave.enemies) {
           try {
             const image = await import(`../assets/enemies/${enemy.name.toLowerCase().replaceAll(' ', '-')}.webp`)
@@ -695,7 +738,7 @@ export const useAdventureStore = defineStore('adventureStore', {
               const item = useInventoryStore().getItemById(itemId)
               if (item) {
                 // Only show toast notifications if not simulating offline progress
-                if (!this.isSimulatingOffline) {
+                if (!this.isSimulatingOffline && useSettingsStore().getNotificationSetting('loot')) {
                   toast.success(`Loot: +${amount} ${drop.name}`, {
                     position: 'top-right',
                   })

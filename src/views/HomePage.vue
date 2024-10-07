@@ -57,6 +57,7 @@
 
         <!-- Right Side Button -->
         <button
+          v-if="gameStore.currentUser && gameStore.currentUser.isAnonymous === false"
           class="flex items-center bg-red-600 hover:bg-red-500 px-3 py-2 rounded"
           @click="gameStore.logout()"
         >
@@ -77,6 +78,13 @@
           </svg>
           Log out
         </button>
+        <button
+          v-else
+          class="flex items-center bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded"
+          @click="gameStore.linkAnonymousAccountToGoogle()"
+        >
+          Link anonynous account to google
+        </button>
       </div>
       <div
         v-show="!isMinimized"
@@ -84,7 +92,7 @@
       >
         <div class="flex flex-col flex-1 overflow-y-auto p-2">
           <AntResources v-if="activeTab === 'resources'" />
-          <PrestigeShop v-if="activeTab === 'prestige'" />
+          <PrestigeShop v-show="activeTab === 'prestige'" />
           <Adventure v-if="activeTab === 'adventure'" />
           <EquipmentPage v-if="activeTab === 'equipment'" />
           <PassivePage
@@ -340,11 +348,10 @@ import AntSimulation from '../components/AntSimulation.vue'
 import AntResources from './AntResources.vue'
 import Adventure from './AdventurePage.vue'
 import Debugger from './DebuggerPage.vue'
-import Inventory from './InventoryPage.vue'
 import firebase from 'firebase/compat'
 import Settings from './SettingsPage.vue'
 import {useAdventureStore} from '../stores/adventureStore'
-import {useThrottleFn, watchThrottled} from '@vueuse/core'
+import {useThrottleFn} from '@vueuse/core'
 import Tunnels from '@/views/TunnelsPage.vue'
 import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
@@ -361,7 +368,7 @@ const deferredPrompt = ref(null)
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
 const resourcesStore = useResourcesStore()
-const prestigeStore= usePrestigeStore()
+const prestigeStore = usePrestigeStore()
 const isMinimized = ref(false) // Minimized state
 const settingsStore = useSettingsStore()
 const activeTab = ref('resources')
@@ -424,7 +431,8 @@ const tabs = computed(() => [
     name: 'debugger',
     label: 'Debugger',
     icon: 'fa-solid fa-bug',
-  }] : []),
+  },
+  ] : []),
 ])
 
 const registerActive = ref(false)
@@ -504,9 +512,16 @@ onMounted(() => {
   deferredPrompt.value?.prompt()
 })
 
-onBeforeUnmount(async () => {
+const stopInterval = () => {
   enableSaveInterval.value = false
 
+  if (saveInterval) {
+    clearInterval(saveInterval)
+    saveInterval = null
+  }
+}
+onBeforeUnmount(async () => {
+  stopInterval()
   if (!loggedInUser.value) return
 
   // Save game state and stop game loop before leaving
@@ -537,29 +552,36 @@ onBeforeUnmount(async () => {
   }
 })
 
+function startSaveInterval() {
+  enableSaveInterval.value = true
+  if (!saveInterval) {
+    saveIntervalFunction()
+  }
+}
+
 // Function to handle visibility change (works on mobile)
 async function handleVisibilityChange() {
   if (document.hidden) {
-    enableSaveInterval.value = false
+    stopInterval()
     await gameStore.saveGameState({
       force: true,
     })
   } else {
-    enableSaveInterval.value = true
+    startSaveInterval()
     await gameStore.loadGameState()
     gameStore.startGameLoop()
   }
 }
 
 function handlePageHide(event: PageTransitionEvent) {
-  enableSaveInterval.value = false
+  stopInterval()
   gameStore.saveGameState({
     force: true,
   })
 }
 
 function handleFreeze() {
-  enableSaveInterval.value = false
+  stopInterval()
   gameStore.saveGameState({
     force: true,
   })
@@ -567,7 +589,7 @@ function handleFreeze() {
 
 // Function to handle saving the game state before unloading the window (works on desktop only)
 function handleBeforeUnload() {
-  enableSaveInterval.value = false
+  stopInterval()
   // Save game state
   gameStore.saveGameState({
     force: true,
@@ -594,7 +616,6 @@ watch(() => resourcesStore.resources.ants, useThrottleFn(() => {
 })
 const version = import.meta.env.PACKAGE_VERSION
 </script>
-
 
 
 <style lang="scss">

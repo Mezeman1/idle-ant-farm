@@ -244,7 +244,7 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'evolve',
         name: 'Evolve',
-        description: 'Evolve to the next stage, this resets the game but gives you a new ant type',
+        description: 'Evolve to the next stage, this resets the game but gives you a new ant type, equipment and inventory is kept',
         cost: 10000,
         category: 'expansion',
         applyOnPrestige: true,
@@ -295,7 +295,7 @@ export const usePrestigeStore = defineStore('prestige', {
       }
 
       // Modified logarithmic growth with a multiplier factor
-      const growthFactor = 3
+      const growthFactor = 1.5
       const multiplier = (Math.log(current + 1) / Math.log(5) + 1) * growthFactor
 
       // Ensure the result is never less than 1
