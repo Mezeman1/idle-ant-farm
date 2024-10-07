@@ -231,7 +231,7 @@ export const useResourcesStore = defineStore('resources', {
       this.resources.antHousing += 1
     },
     createMaxAntHousing(fromPrestige = false) {
-      if (fromPrestige && this.resources.seeds < this.storage.maxSeeds * useSettingsStore().autoThresholds.autoCreateHousing / 100) {
+      if (fromPrestige && this.resources.ants < this.storage.maxAnts * useSettingsStore().autoThresholds.autoCreateHousing / 100) {
         return
       }
 

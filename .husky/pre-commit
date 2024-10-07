@@ -17,7 +17,7 @@ if echo "$COMMIT_MSG_FILE" | grep -q "feat:"; then
   npx standard-version --release-as minor
   git add .  # Ensure changes are staged
   git commit --amend --no-edit  # Amend the current commit without changing the message
-elif echo "$COMMIT_MSG_FILE" | grep -Eq "fix:|chore:"; then  # Now checks for both fix and chore
+elif echo "$COMMIT_MSG_FILE" | grep -q "fix:"; then  # Now checks for both fix and chore
   export SKIP_VERSION_BUMP=true
   npx standard-version --release-as patch
   git add .
