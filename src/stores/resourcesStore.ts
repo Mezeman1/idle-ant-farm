@@ -392,7 +392,7 @@ export const useResourcesStore = defineStore('resources', {
       }
     },
     upgradeSeedStorageEffect(amount = 1) {
-      const diminishingFactor = 1 / (1 + amount / 150)
+      const diminishingFactor = 1 / (1 + amount / 250)
       const multiplier = Math.max(this.storageUpgradeFactor * diminishingFactor, 1.01)
       const nextUpgrade = Math.floor(this.storage.maxSeeds * multiplier)
 

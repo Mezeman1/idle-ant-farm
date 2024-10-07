@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <div class="flex-1 mt-4 overflow-y-auto">
+    <div class="flex-1 mt-4 overflow-y-auto min-h-[250px]">
       <!-- Inventory Section -->
       <InventorySectionComponent
         @start-drag="startDrag"

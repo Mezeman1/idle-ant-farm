@@ -159,7 +159,7 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'productionBoost',
         name: 'Production Boost',
-        description: 'Increase production speed by 20% (decreases with each purchase)',
+        description: 'Increase production speed by 10% (decreases with each purchase)',
         cost: 10,
         category: 'production',
       },
@@ -448,12 +448,12 @@ export const usePrestigeStore = defineStore('prestige', {
           const prestigeScalingFactor = Math.log(this.amountOfUpgrade(upgradeId) + 1) / Math.log(5) + 1
 
           if (this.amountOfUpgrade(upgradeId) === 1) {
-            resourcesStore.productionRates.collectionRateModifier *= 1.2
+            resourcesStore.productionRates.collectionRateModifier *= 1.1
 
             return
           }
 
-          resourcesStore.productionRates.collectionRateModifier *= 1 + (0.2 / prestigeScalingFactor)
+          resourcesStore.productionRates.collectionRateModifier *= 1 + (0.1 / prestigeScalingFactor)
         },
         queenEfficiency: () => {
           const prestigeScalingFactor = Math.log(this.amountOfUpgrade(upgradeId) + 1) / Math.log(3) + 1
