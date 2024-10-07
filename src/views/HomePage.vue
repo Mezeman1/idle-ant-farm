@@ -11,6 +11,10 @@
       :larvae-count="resourcesStore.resources.larvae"
       :elite-count="resourcesStore.resources.eliteAnts"
     />
+    <div
+      v-else
+      class="bg-blue-600 h-screen w-screen flex items-center justify-center"
+    />
 
     <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
       <div class="flex items-center justify-between bg-gray-800 p-2 text-white max-h-[65px] overflow-hidden">

@@ -493,6 +493,10 @@ export const useGameStore = defineStore('gameStore', {
       return gameState
     },
     showSaveToast() {
+      if (this.simulatingOfflineProgress) {
+        return
+      }
+
       const now = Date.now()
 
       // Ensure the toast isn't shown again if cooldown hasn't passed
@@ -640,10 +644,6 @@ export const useGameStore = defineStore('gameStore', {
       evolveStore.loadEvolveState(savedState)
 
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
-
-      this.attackPerAnt = savedState.attackPerAnt ?? this.attackPerAnt
-      this.healthPerAnt = savedState.healthPerAnt ?? this.healthPerAnt
-      this.defensePerAnt = savedState.defensePerAnt ?? this.defensePerAnt
 
       const prestigeStore = usePrestigeStore()
       prestigeStore.resetPrestigeState()

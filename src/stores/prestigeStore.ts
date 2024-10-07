@@ -282,6 +282,7 @@ export const usePrestigeStore = defineStore('prestige', {
       // Get current ants from the game store
       const ants = resourcesStore.resources.ants - this.antsFromPrestigeShop
 
+
       // Calculate prestige points using log1.01 scaling for ants
       return this.calculatePrestigePointsFor(ants, this.baseAntThreshold) * this.prestigeMultiplierNumber * this.prestigeEvolveMultiplier()
     },
@@ -608,9 +609,14 @@ export const usePrestigeStore = defineStore('prestige', {
     },
 
     loadPrestigeState(savedState) {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier = 1
+      adventureStore.armyDefenseModifier = 1
+
       this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
       this.timesPrestiged = savedState.timesPrestiged ?? this.timesPrestiged
       this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
+      this.prestigeMultiplierNumber = 1
 
       this.autoLarvaeCreation = savedState.autoLarvaeCreation ?? this.autoLarvaeCreation
       this.autoAntCreation = savedState.autoAntCreation ?? this.autoAntCreation
