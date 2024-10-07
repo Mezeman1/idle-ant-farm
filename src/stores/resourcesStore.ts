@@ -346,11 +346,7 @@ export const useResourcesStore = defineStore('resources', {
 
       this.resources.seeds += seedsToAdd
     },
-    upgradeSeedStorage(fromPrestige = false) {
-      if (fromPrestige && this.resources.seeds < useSettingsStore().autoThresholds.autoSeedStorageUpgrade / 100 * this.storage.maxSeeds) {
-        return
-      }
-
+    upgradeSeedStorage() {
       if (this.resources.seeds >= this.upgradeCosts.seedStorageUpgradeCost) {
         this.resources.seeds -= this.upgradeCosts.seedStorageUpgradeCost
 
@@ -365,7 +361,11 @@ export const useResourcesStore = defineStore('resources', {
         )
       }
     },
-    upgradeMaxSeedStorage() {
+    upgradeMaxSeedStorage(fromPrestige = false) {
+      if (fromPrestige && this.resources.seeds < useSettingsStore().autoThresholds.autoSeedStorageUpgrade / 100 * this.storage.maxSeeds) {
+        return
+      }
+
       let affordableUpgrades = 0
       let totalCost = 0
       let nextUpgradeCost = this.upgradeCosts.seedStorageUpgradeCost
@@ -417,11 +417,7 @@ export const useResourcesStore = defineStore('resources', {
       )
     },
     // Function to upgrade larvae storage
-    upgradeLarvaeStorage(fromPrestige = false) {
-      if (fromPrestige && this.resources.larvae < useSettingsStore().autoThresholds.autoLarvaeStorageUpgrade / 100 * this.storage.maxLarvae) {
-        return
-      }
-
+    upgradeLarvaeStorage() {
       if (this.resources.seeds >= this.upgradeCosts.larvaeStorageUpgradeCost) {
         this.resources.seeds -= this.upgradeCosts.larvaeStorageUpgradeCost
 
@@ -434,7 +430,11 @@ export const useResourcesStore = defineStore('resources', {
         this.upgrades.maxLarvaeStorage += 1
       }
     },
-    upgradeMaxLarvaeStorage() {
+    upgradeMaxLarvaeStorage(fromPrestige = false) {
+      if (fromPrestige && this.resources.larvae < useSettingsStore().autoThresholds.autoLarvaeStorageUpgrade / 100 * this.storage.maxLarvae) {
+        return
+      }
+
       let affordableUpgrades = 0
       let totalCost = 0
       let nextUpgradeCost = this.upgradeCosts.larvaeStorageUpgradeCost
@@ -517,8 +517,8 @@ export const useResourcesStore = defineStore('resources', {
       const prestigeStore = usePrestigeStore()
 
       const autoActions = [
-        {enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeSeedStorage},
-        {enabled: prestigeStore.autoLarvaeStorageUpgrade, action: this.upgradeLarvaeStorage},
+        {enabled: prestigeStore.autoSeedStorageUpgrade, action: this.upgradeMaxSeedStorage},
+        {enabled: prestigeStore.autoLarvaeStorageUpgrade, action: this.upgradeMaxLarvaeStorage},
         {enabled: prestigeStore.autoEliteAntsCreation, action: this.createEliteMaxAnts},
         {enabled: prestigeStore.autoAntCreation, action: this.createMaxAnts},
         {enabled: prestigeStore.autoQueenCreation, action: this.buyMaxQueens},
