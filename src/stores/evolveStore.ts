@@ -43,6 +43,7 @@ interface Evolution {
   initialCaps?: InitialCaps;
   statsPerAnt?: Record<string, number>;
   bugModifiers?: Record<string, number>;
+  adventureStore?: Record<string, number>;
   resources: Record<string, any>;
 }
 
@@ -731,12 +732,17 @@ export const useEvolveStore = defineStore({
         this.applyInitialCaps(currentEvolution.initialCaps, resourceStore)
         this.applyArmyAntsStats(currentEvolution.statsPerAnt, gameStore)
         this.applyBugModifiers(currentEvolution.bugModifiers, adventureStore)
+        this.applyArmyModifiers(currentEvolution.armyModifiers, adventureStore)
 
         resolve()
       })
     },
     applyBugModifiers(bugModifiers, adventureStore) {
       if (!bugModifiers) {
+        adventureStore.bugAttackModifier = 1
+        adventureStore.bugDefenseModifier = 1
+        adventureStore.bugMaxHealthModifier = 1
+        adventureStore.bugRegenModifier = 1
         return
       }
 
@@ -744,6 +750,21 @@ export const useEvolveStore = defineStore({
       adventureStore.bugDefenseModifier = bugModifiers.bugDefenseModifier
       adventureStore.bugMaxHealthModifier = bugModifiers.bugMaxHealthModifier
       adventureStore.bugRegenModifier = bugModifiers.bugRegenModifier
+    },
+
+    applyArmyModifiers(armyModifiers, adventureStore) {
+      if (!armyModifiers) {
+        adventureStore.armyAttackModifier = 1
+        adventureStore.armyDefenseModifier = 1
+        adventureStore.armyMaxHealthModifier = 1
+        adventureStore.armyRegenModifier = 1
+        return
+      }
+
+      adventureStore.armyAttackModifier = armyModifiers.armyAttackModifier
+      adventureStore.armyDefenseModifier = armyModifiers.armyDefenseModifier
+      adventureStore.armyMaxHealthModifier = armyModifiers.armyMaxHealthModifier
+      adventureStore.armyRegenModifier = armyModifiers.armyRegenModifier
     },
 
     applyArmyAntsStats(statsPerAnt, gameStore) {

@@ -20,7 +20,7 @@
           Prestige Point Calculation
         </h2>
         <ul class="space-y-2 text-xs text-center">
-          <li><strong>Ants:</strong> Calculated using Log2(ants / 16) * 10</li>
+          Calculated based on amount of ants, times prestiged and time since last prestige.
         </ul>
       </div>
 

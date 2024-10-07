@@ -257,17 +257,14 @@ const bugPoisonChance = computed(() => (adventureStore.currentEnemy?.effectChanc
 // Set a breakpoint for large screens
 const isLargeScreen = computed(() => width.value >= 1024)
 
-watch(() => adventureStore.currentArea, () => {
-  selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)
-  adventureStore.battleStatus = 'fighting'
-  adventureStore.spawnRandomEnemy()
-  adventureStore.stopAllBattles()
-  adventureStore.startBattle()
-})
 
 onMounted(() => {
   selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)
   updateCurrentAreaByIndex(selectedWaveIndex.value)
+})
+
+watch(() => adventureStore.currentArea, () => {
+  selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)
 })
 
 const updateCurrentAreaByIndex = (index) => {

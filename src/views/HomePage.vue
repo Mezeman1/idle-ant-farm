@@ -619,6 +619,13 @@ watch(() => resourcesStore.resources.ants, useThrottleFn(() => {
   immediate: true,
 })
 const version = import.meta.env.PACKAGE_VERSION
+
+watch(() => adventureStore.currentArea, () => {
+  adventureStore.battleStatus = 'fighting'
+  adventureStore.spawnRandomEnemy()
+  adventureStore.stopAllBattles()
+  adventureStore.startBattle()
+})
 </script>
 
 

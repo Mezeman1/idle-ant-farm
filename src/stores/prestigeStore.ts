@@ -21,6 +21,7 @@ export const usePrestigeStore = defineStore('prestige', {
   state: () => ({
     prestigePoints: 0, // New prestige currency
     timesPrestiged: 0, // Number of times prestiged
+    lastPrestige: 0, // Timestamp of the last prestige
     purchasedUpgrades: [] as Array<string>, // List of purchased prestige upgrades
     appliedUpgrades: [] as Array<string>, // List of applied prestige upgrades
     prestigeShop: [
@@ -267,7 +268,7 @@ export const usePrestigeStore = defineStore('prestige', {
 
     antsFromPrestigeShop: 0, // Ants from the prestige shop
 
-    baseAntThreshold: 16,
+    baseAntThreshold: 50,
 
     prestigeMultiplierNumber: 1.0,
   }),
@@ -282,8 +283,6 @@ export const usePrestigeStore = defineStore('prestige', {
       // Get current ants from the game store
       const ants = resourcesStore.resources.ants - this.antsFromPrestigeShop
 
-
-      // Calculate prestige points using log1.01 scaling for ants
       return this.calculatePrestigePointsFor(ants, this.baseAntThreshold) * this.prestigeMultiplierNumber * this.prestigeEvolveMultiplier()
     },
 
@@ -309,10 +308,21 @@ export const usePrestigeStore = defineStore('prestige', {
         return 0 // No prestige points if resources are below the threshold
       }
 
-      const prestigePointUpper = (this.timesPrestiged * 0.2) + 1 // Scale points based on times prestiged
+      const now = Date.now()
+      const timeElapsed = (now - this.lastPrestige) / (1000 * 60) // Time since last prestige in minutes
 
-      // Calculate prestige points using log1.01 for faster scaling
-      const points = Math.floor(Math.log2(currentResources / baseThreshold) * 12) * prestigePointUpper
+      // Scale points based on times prestiged
+      const prestigePointUpper = (this.timesPrestiged * 0.01) + 1
+
+      // Adjust the resource factor for more linear scaling with minor diminishing returns
+      const resourceFactor = (currentResources - baseThreshold) / (baseThreshold * 0.5 + currentResources * 0.01) // Minor slowdown by adding small factor
+
+      // Time multiplier: grows as a percentage increase based on timeElapsed
+      // Let's assume every 30 minutes gives you a 1% bonus (this can be adjusted)
+      const timeMultiplier = Math.pow(1.01, timeElapsed / 60) // 1% bonus every 60 minutes
+
+      // Calculate prestige points with time multiplier
+      const points = Math.floor(resourceFactor * 5 * prestigePointUpper * timeMultiplier)
 
       // Ensure points don’t drop below 0
       return points > 0 ? points : 0
@@ -336,6 +346,7 @@ export const usePrestigeStore = defineStore('prestige', {
         // Add earned prestige points
         this.prestigePoints += earnedPrestigePoints
         this.timesPrestiged += 1
+        this.lastPrestige = Date.now()
 
         // Reset the game state for prestige without deleting the Firestore doc
         await gameStore.resetLocalGameState({isDebug: false})
@@ -577,6 +588,7 @@ export const usePrestigeStore = defineStore('prestige', {
         prestigePoints: this.prestigePoints,
         timesPrestiged: this.timesPrestiged,
         purchasedUpgrades: this.purchasedUpgrades,
+        lastPrestige: this.lastPrestige,
 
         storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 5,
         eliteAntsStoreUpgradeCost: this.prestigeShop.find(u => u.id === 'eliteAntsStoreUpgrade')?.cost ?? 100,
@@ -612,6 +624,10 @@ export const usePrestigeStore = defineStore('prestige', {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttackModifier = 1
       adventureStore.armyDefenseModifier = 1
+
+      if (this.lastPrestige === 0) {
+        this.lastPrestige = savedState.lastPrestige ?? Date.now()
+      }
 
       this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
       this.timesPrestiged = savedState.timesPrestiged ?? this.timesPrestiged
