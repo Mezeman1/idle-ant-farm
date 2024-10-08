@@ -264,6 +264,9 @@ export const useInventoryStore = defineStore('inventoryStore', {
     },
 
     getItemById(itemId: string): Item | null {
+      // itemId could also be name, so let's convery it to lowercase and replace spaces with dashes
+      itemId = itemId.toLowerCase().replace(/ /g, '-')
+
       return itemRegistry.find(item => item.id === itemId) ?? null
     },
 

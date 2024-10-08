@@ -59,7 +59,7 @@ export const useEvolveStore = defineStore({
           description: 'The start of the game',
 
           productionRates: {
-            larvaeProductionRate: 1, // Larvae produced per queen per minute
+            larvaeProductionRate: 2.5, // Larvae produced per queen per minute
             collectionRatePerAnt: 60, // Seeds collected per ant per minute
             collectionRatePerWorker: 6000, // Seeds collected per worker per minute
             collectionRateModifier: 1.0, // Multiplicative modifier for seed collection rate
@@ -112,7 +112,7 @@ export const useEvolveStore = defineStore({
           },
 
           productionRates: {
-            larvaeProductionRate: 2, // Larvae produced per queen per minute
+            larvaeProductionRate: 3, // Larvae produced per queen per minute
             collectionRatePerAnt: 120, // Seeds collected per ant per minute
             collectionRatePerWorker: 12000, // Seeds collected per worker per minute
             collectionRateModifier: 1.0,
@@ -185,7 +185,7 @@ export const useEvolveStore = defineStore({
           },
 
           productionRates: {
-            larvaeProductionRate: 2.5, // Larvae produced per queen per minute
+            larvaeProductionRate: 3.5, // Larvae produced per queen per minute
             collectionRatePerAnt: 130, // Seeds collected per ant per minute
             collectionRatePerWorker: 13000, // Seeds collected per worker per minute
             collectionRateModifier: 1.1, // Slight increase in seed collection

@@ -96,6 +96,17 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     accumulatedTimeForChanceEffects: 0,
     chanceEffectInterval: 1000,
+
+    spawnTime: 2000,
+    spawnTimeModifier: 1.0,
+
+    enemySpawnCooldownTime: 0, // Total cooldown time before the next enemy spawns
+    initialSpawnCooldownTime: 0, // Initial cooldown time before the first enemy spawns
+    remainingCooldownTime: 0,   // Time remaining in the cooldown phase
+    enemySpawnActive: false,    // Indicates if the spawn cooldown is active
+    fightStatusChangeTime: 1000, // Time until battle status changes to 'fighting' after cooldown
+    remainingFightStatusTime: 1000, // Remaining time before switching to 'fighting'
+
   }),
   actions: {
     // Start the battle loop
@@ -140,12 +151,10 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.applyStatusEffects(deltaTime, this.armyActiveEffects, 'army')
 
       if (this.battleStatus === 'fighting' && this.currentEnemy) {
-        // Calculate damage based on DPS and the time passed since the last frame (deltaTime)
-        this.applyArmyDamage(deltaTime)
-        this.applyBugDamage(deltaTime)
-
         this.accumulatedTimeForChanceEffects += deltaTime * 1000 // Convert deltaTime to milliseconds
         if (this.accumulatedTimeForChanceEffects >= this.chanceEffectInterval) {
+          this.applyArmyDamage(this.accumulatedTimeForChanceEffects / 1000)
+          this.applyBugDamage(this.accumulatedTimeForChanceEffects / 1000)
           this.applyChanceEffects()
           this.accumulatedTimeForChanceEffects = 0 // Reset the accumulator after applying effects
         }
@@ -157,6 +166,27 @@ export const useAdventureStore = defineStore('adventureStore', {
 
         if (this.bugHealth <= 0) {
           this.handleEnemyDefeat()
+        }
+      }
+
+      if (this.enemySpawnActive && this.battleStatus === 'cooldown') {
+        this.enemySpawnCooldownTime -= deltaTime * 1000 // Reduce cooldown time
+
+        if (this.enemySpawnCooldownTime <= 0) {
+          this.spawnRandomEnemy() // Spawn a new enemy
+          this.enemySpawnCooldownTime = 0 // Ensure it doesn't go negative
+          this.remainingFightStatusTime = this.fightStatusChangeTime // Start the fighting prep phase
+          this.battleStatus = 'preparing' // Set status to preparing for battle after cooldown
+        }
+      }
+
+      if (this.battleStatus === 'preparing') {
+        this.remainingFightStatusTime -= deltaTime * 1000 // Reduce fighting preparation time
+
+        if (this.remainingFightStatusTime <= 0) {
+          this.remainingFightStatusTime = 0 // Ensure it doesn't go negative
+          this.battleStatus = 'fighting' // Set battle status to 'fighting'
+          this.enemySpawnActive = false // Cooldown and preparation are over
         }
       }
 
@@ -325,7 +355,6 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.enemyKillCount += 1
     },
     async handleEnemyDrop() {
-      const evolveStore = useEvolveStore()
       const settingsStore = useSettingsStore()
       if (this.currentEnemy?.dropOptions) {
         for (const drop of this.currentEnemy.dropOptions) {
@@ -364,36 +393,28 @@ export const useAdventureStore = defineStore('adventureStore', {
       }
     },
     handleEnemyDefeat() {
+      if (this.battleStatus === 'cooldown') {
+        return // Prevent multiple regen loops
+      }
+
       this.enemySpawned = false
-      this.battleStatus = 'cooldown' // Set the battle status to 'cooldown
+      this.battleStatus = 'cooldown' // Set the battle status to 'cooldown'
       this.bugActiveEffects = [] // Clear active effects on the bug
 
-      // Update kill counts
+      // Update kill counts and handle loot
       this.handleKillCount()
-
-      // Handle loot
       this.handleEnemyDrop()
 
-      if (this.spawnEnemyTimeout) {
-        clearTimeout(this.spawnEnemyTimeout)
-      }
-      if (this.fightStatusTimeout) {
-        clearTimeout(this.fightStatusTimeout)
-      }
+      // Set the initial spawn time and fight status change timers
+      this.enemySpawnCooldownTime = this.spawnTime * this.spawnTimeModifier
+      this.initialSpawnCooldownTime = this.enemySpawnCooldownTime
+      this.remainingCooldownTime = this.enemySpawnCooldownTime
+      this.remainingFightStatusTime = this.fightStatusChangeTime
 
-      // Spawn a new enemy after a delay
-      this.spawnEnemyTimeout = setTimeout(() => {
-        this.spawnRandomEnemy()
+      // Indicate that the enemy spawn timer is active
+      this.enemySpawnActive = true
 
-        // Set battle status back to 'fighting' after a second delay
-        this.fightStatusTimeout = setTimeout(() => {
-          if (this.battleStatus === 'cooldown') {
-            this.battleStatus = 'fighting' // Set the battle status back to 'fighting'
-          }
-        }, 1000)
-      }, 2000)
-
-      // Continue applying regeneration during the cooldown phase
+      // Continue applying regeneration during cooldown phase
       this.regenDuringCooldown()
     },
 
@@ -514,6 +535,10 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.killCounts = adventureState.killCounts ?? this.killCounts
       this.currentArea = adventureState.currentArea ?? this.currentArea
       this.enemyKillCount = adventureState.enemyKillCount ?? this.enemyKillCount
+
+      this.poisonChance = 0.0
+      this.poisonDamage = 10
+      this.poisonDuration = 2
 
       const inventoryStore = useInventoryStore()
       this.activeBuffs = adventureState.activeBuffs?.map((buff) => {

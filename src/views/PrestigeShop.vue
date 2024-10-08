@@ -20,22 +20,30 @@
           Prestige Point Calculation
         </h2>
         <ul class="space-y-2 text-xs text-center">
-          Calculated based on amount of ants, times prestiged and time since last prestige.
+          <li>
+            Calculated based on amount of ants and time since last prestige.
+          </li>
+          <li>
+            Time since last prestige: {{ timeSinceLastPrestige }}
+          </li>
         </ul>
       </div>
 
-      <div class="flex items-center justify-between w-full">
-        <p>
+      <div class="flex flex-col items-center justify-between w-full">
+        <p class="text-center">
           Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }} <br>Prestige Times:
           {{ formatNumber(prestigeStore.timesPrestiged) }}
         </p>
         <button
-          :disabled="prestigeStore.calculatePrestigePoints() < 1"
+          :disabled="prestigeStore.calculatePrestigePoints() < 1 || waitTime > 0"
           class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
           @click="confirmPrestige()"
         >
           Prestige for {{ formatNumber(prestigeStore.calculatePrestigePoints()) }} Points
         </button>
+        <p v-if="waitTime > 0">
+          You can prestige in {{ waitTime }} seconds
+        </p>
       </div>
 
       <div class="flex w-full justify-end gap-2">
@@ -131,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
+import {onMounted, onUnmounted, ref} from 'vue'
 
 import {useGameStore} from '../stores/gameStore'
 import Modal from '../components/ModalComponent.vue'
@@ -141,6 +149,7 @@ import {useSettingsStore} from '@/stores/settingsStore'
 const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()
 const formatNumber = (num: number) => gameStore.formatNumber(num, 0)
+
 
 const categories = [
   {
@@ -164,6 +173,27 @@ const categories = [
     upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'expansion'),
   },
 ]
+
+let intervalId = null
+const timeSinceLastPrestige = ref(0)
+const waitTime = ref(0)
+
+onMounted(() => {
+  // Set up an interval to update the time since last prestige every second
+  intervalId = setInterval(() => {
+    timeSinceLastPrestige.value = prestigeStore.timeSinceLastPrestigeFormatted()
+    waitTime.value = formatNumber((60000 - (Date.now() - prestigeStore.lastPrestige) ) / 1000, 0)
+  }, 1000)
+})
+
+onUnmounted(() => {
+  // Clear the interval when the component is destroyed to prevent memory leaks
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
+})
+
+
 
 // Function to check if an upgrade is unlocked
 const isUpgradeUnlocked = (upgrade) => {

@@ -47,7 +47,7 @@ export const useResourcesStore = defineStore('resources', {
     },
 
     productionRates: {
-      larvaeProductionRate: 1, // Larvae produced per queen per minute
+      larvaeProductionRate: 2.5, // Larvae produced per queen per minute
       collectionRatePerAnt: 60, // Seeds collected per ant per minute
 
       collectionRatePerWorker: 6000, // Seeds collected per worker per minute
@@ -85,6 +85,9 @@ export const useResourcesStore = defineStore('resources', {
     storageUpgradeFactor: 1.4, // How much each upgrade increases storage by (20%)
     upgradeCostFactor: 1.5, // How much each upgrade increases the cost by (30%)
     multiplierPerEliteAnt: 1.5,
+
+    manualCollection: 10,
+    manualCollectionMultiplier: 1,
   }),
   getters: {
     // Calculate larvae production per minute based on queens
@@ -337,7 +340,7 @@ export const useResourcesStore = defineStore('resources', {
     },
     // Collect seeds manually, but respect the seed cap
     collectSeedsManually(amount = 1) {
-      const manualSeedCollectionRate = 10 // Number of seeds collected per click
+      const manualSeedCollectionRate = this.manualCollection * this.manualCollectionMultiplier // Number of seeds collected per click
       const seedsToAdd = Math.min(manualSeedCollectionRate, this.storage.maxSeeds - this.resources.seeds)
       if (amount > 0 && this.resources.seeds + seedsToAdd <= this.storage.maxSeeds) {
         this.resources.seeds += amount

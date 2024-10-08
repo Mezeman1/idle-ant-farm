@@ -128,19 +128,34 @@
               :key="index"
               class="flex justify-between items-center bg-gray-50 p-2 rounded"
             >
-              <div class="text-gray-700">
-                {{ drop.name }}
+              <div v-if="drop.unlockedWhen()">
+                <div class="text-gray-700 flex flex-col">
+                  {{ drop.name }} {{ inventoryStore.getItemById(drop.name) || drop.name === 'Seeds' ? '' : '| (Not Implemented)' }}
+                  <span class="text-2xs">
+                    {{ inventoryStore.getItemById(drop.name)?.type }}
+                  </span>
+                </div>
+                <div class="text-sm text-gray-600 flex flex-col">
+                  <span>
+                    Chance: {{ (drop.chance * 100).toFixed(1) }}%
+                  </span>
+                  <span>
+                    Amount between: {{ drop.amountBetween[0] }} - {{ drop.amountBetween[1] }}
+                  </span>
+                  <span v-if="drop.unlockText">
+                    {{ drop.unlockText }}
+                  </span>
+                </div>
               </div>
-              <div class="text-sm text-gray-600 flex flex-col">
-                <span>
-                  Chance: {{ (drop.chance * 100).toFixed(1) }}%
-                </span>
-                <span>
-                  Amount between: {{ drop.amountBetween[0] }} - {{ drop.amountBetween[1] }}
-                </span>
-                <span v-if="drop.unlockText">
-                  {{ drop.unlockText }}
-                </span>
+              <div
+                v-else
+                v-tooltip="drop.unlockText"
+              >
+                <div
+                  class="text-gray-400"
+                >
+                  Locked
+                </div>
               </div>
             </li>
           </ul>
@@ -161,10 +176,13 @@
 <script lang="ts" setup>
 import {computed, ref} from 'vue'
 import {useAdventureStore} from '@/stores/adventureStore'
+import {Enemy} from '@/types/AdventureEnemyWaves'
+import {useInventoryStore} from '@/stores/inventoryStore'
 
 const searchQuery = ref('')
 const selectedEnemy = ref<Enemy | null>(null)
 const adventureStore = useAdventureStore()
+const inventoryStore = useInventoryStore()
 
 // Flatten enemies and add area (wave name)
 const allEnemies = computed(() => adventureStore.enemyWaves.flatMap((wave) =>

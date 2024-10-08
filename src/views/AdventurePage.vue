@@ -83,18 +83,30 @@
           <!-- Enemy Bug Side -->
           <div
             v-if="adventureStore.currentEnemy"
-            class="bg-white rounded-lg shadow flex flex-col"
+            class="bg-white rounded-lg shadow flex flex-col relative"
           >
             <!-- Top Half: Background Image -->
             <div
-              class="h-[100px] md:h-[200px] bg-cover bg-center rounded-t-lg"
+              class="h-[100px] md:h-[200px] bg-cover bg-center rounded-t-lg relative"
               :style="{ backgroundImage: `url(${adventureStore.currentEnemy?.image ?? 'https://via.placeholder.com/150'})` }"
             >
               <!-- The image here is used as a background -->
+              <div
+                v-if="adventureStore.currentEnemy && adventureStore.enemySpawnCooldownTime > 0"
+                class="absolute bottom-0 w-full h-[5px] bg-gray-300 rounded"
+              >
+                <!-- Green progress bar (dynamic width) -->
+                <div
+                  class="bg-blue-500 h-full rounded"
+                  :style="{ width: cooldownProgress + '%' }"
+                />
+              </div>
             </div>
 
             <!-- Bottom Half: Info and Progress Bar -->
             <div class="h-full bg-white bg-opacity-80 p-2 rounded-b-lg text-center text-2xs md:text-sm flex-1">
+              <!-- Gray background (full width) -->
+
               <p class="font-bold">
                 {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }}
                 {{ adventureStore.currentEnemy?.isBoss ? '👑' : '' }}
@@ -252,8 +264,8 @@ const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
 const {width} = useWindowSize()
-const poisonChance = computed(() => adventureStore.poisonChance * 100)
-const bugPoisonChance = computed(() => (adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance ?? 0) * 100)
+const poisonChance = computed(() => formatNumber(adventureStore.poisonChance * 100), 0)
+const bugPoisonChance = computed(() => formatNumber((adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance ?? 0) * 100), 0 )
 // Set a breakpoint for large screens
 const isLargeScreen = computed(() => width.value >= 1024)
 
@@ -308,6 +320,13 @@ const target = ref(null)
 
 onClickOutside(target, event => {
   dropdownOpen.value = false
+})
+
+const cooldownProgress = computed(() => {
+  const totalCooldown = adventureStore.initialSpawnCooldownTime // Total cooldown time
+  const remainingCooldown = adventureStore.enemySpawnCooldownTime // Remaining cooldown time
+
+  return Math.max(0, (remainingCooldown / totalCooldown) * 100) // Calculate progress percentage
 })
 </script>
 

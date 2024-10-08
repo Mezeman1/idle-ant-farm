@@ -10,6 +10,7 @@ interface PrestigeShopItem {
   name: string
   description: string
   cost: number
+  initialCost: number
   oneTimePurchase?: boolean
   applyOnPrestige?: boolean
   category?: 'auto' | 'production' | 'storage' | 'combat' | 'expansion',
@@ -26,10 +27,20 @@ export const usePrestigeStore = defineStore('prestige', {
     appliedUpgrades: [] as Array<string>, // List of applied prestige upgrades
     prestigeShop: [
       {
+        id: 'manualCollectionSpeed',
+        name: 'Manual Collection Speed',
+        description: 'Increase the speed of manual collection by 5%',
+        cost: 20,
+        initialCost: 20,
+        applyOnPrestige: true,
+        category: 'production',
+      },
+      {
         id: 'autoAnts',
         name: 'Auto Ant Creation',
         description: 'Automatically create ants based on larvae and seeds',
         cost: 20,
+        initialCost: 20,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -39,6 +50,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Auto Queen Creation',
         description: 'Automatically create queens based on ants and seeds',
         cost: 20,
+        initialCost: 20,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -48,6 +60,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Auto Seed Storage Upgrade',
         description: 'Automatically upgrade seed storage',
         cost: 10,
+        initialCost: 10,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -57,6 +70,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Auto Larvae Storage Upgrade',
         description: 'Automatically upgrade larvae storage',
         cost: 10,
+        initialCost: 10,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -66,6 +80,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Auto Elite Ants Creation',
         description: 'Automatically create elite ants based on ants and seeds',
         cost: 100,
+        initialCost: 100,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -78,6 +93,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Stronger Ants',
         description: 'Increase ants army strength by 10% (decreases with each purchase)',
         cost: 50,
+        initialCost: 50,
         applyOnPrestige: true,
         category: 'combat',
       },
@@ -86,6 +102,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Stronger Ants Defense',
         description: 'Increase ants army defense by 10% (decreases with each purchase)',
         cost: 50,
+        initialCost: 50,
         applyOnPrestige: true,
         category: 'combat',
       },
@@ -94,6 +111,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Poison Chance',
         description: 'Increase the chance of poisoning enemies by 1%',
         cost: 100,
+        initialCost: 100,
         applyOnPrestige: true,
         applyOnLoad: true,
         category: 'combat',
@@ -104,6 +122,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Poison Damage',
         description: 'Increase the damage of poison by 1%',
         cost: 100,
+        initialCost: 100,
         applyOnPrestige: true,
         applyOnLoad: true,
         category: 'combat',
@@ -113,6 +132,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Poison Duration',
         description: 'Increase the duration of poison by 1s',
         cost: 300,
+        initialCost: 300,
         applyOnPrestige: true,
         applyOnLoad: true,
         category: 'combat',
@@ -122,6 +142,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Start with Ants',
         description: 'Start the game with ants!',
         cost: 20,
+        initialCost: 20,
         applyOnPrestige: true,
         category: 'expansion',
       },
@@ -130,6 +151,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Elite Ants',
         description: 'Unlock elite ants',
         cost: 500,
+        initialCost: 500,
         applyOnPrestige: true,
         oneTimePurchase: true,
         category: 'expansion',
@@ -141,7 +163,8 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'storageUpgrade',
         name: 'Storage Upgrade',
         description: 'Increase the storage for seeds, larvae, ants, and queens',
-        cost: 5,
+        cost: 20,
+        initialCost: 20,
         category: 'storage',
         applyOnPrestige: true,
       },
@@ -150,6 +173,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Elite Ants Store Upgrade',
         description: 'Increase the amount of elite ants you can store by 1',
         cost: 100,
+        initialCost: 100,
         applyOnPrestige: true,
         category: 'storage',
         unlockedWhen: () => {
@@ -160,15 +184,17 @@ export const usePrestigeStore = defineStore('prestige', {
       {
         id: 'productionBoost',
         name: 'Production Boost',
-        description: 'Increase production speed by 10% (decreases with each purchase)',
-        cost: 10,
+        description: 'Increase production speed by 1%',
+        cost: 5,
+        initialCost: 5,
         category: 'production',
       },
       {
         id: 'queenEfficiency',
         name: 'Queen Efficiency',
-        description: 'Queens produce 50% more larvae (decreases with each purchase)',
-        cost: 15,
+        description: 'Queens produce 5% more larvae (decreases with each purchase)',
+        cost: 5,
+        initialCost: 5,
         category: 'production',
       },
       {
@@ -176,6 +202,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Royal Jelly',
         description: 'Queens will have a chance to produce royal jelly',
         cost: 1000,
+        initialCost: 1000,
         category: 'expansion',
         applyOnPrestige: true,
         oneTimePurchase: true,
@@ -188,6 +215,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Tunnels',
         description: 'Unlock the tunnel system for exploration',
         cost: 500,
+        initialCost: 500,
         category: 'expansion',
         applyOnPrestige: true,
         oneTimePurchase: true,
@@ -196,7 +224,8 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'autoCreateHousing',
         name: 'Auto Create Housing',
         description: 'Automatically create housing for ants',
-        cost: 20,
+        cost: 50,
+        initialCost: 50,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -205,7 +234,8 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'autoAdventure',
         name: 'Auto Adventure Mode',
         description: 'Automatically send ants on adventures when available',
-        cost: 50,
+        cost: 10,
+        initialCost: 10,
         oneTimePurchase: true,
         applyOnPrestige: true,
         category: 'auto',
@@ -215,6 +245,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Royal Jelly Boost',
         description: 'Increase the chance of queens producing royal jelly by 1%',
         cost: 100,
+        initialCost: 100,
         category: 'production',
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('royalJelly')
@@ -225,6 +256,7 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Prestige Multiplier',
         description: 'Increase the benefits gained from prestiging by 10%',
         cost: 500,
+        initialCost: 500,
         category: 'expansion',
         applyOnPrestige: true,
         unlockedWhen: () => {
@@ -236,8 +268,10 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Ant Housing Upgrade',
         description: 'Increase the capacity of ant housing by 1',
         cost: 250,
+        initialCost: 250,
         category: 'storage',
         applyOnPrestige: true,
+        maxPurchases: 4,
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('autoCreateHousing')
         },
@@ -247,12 +281,26 @@ export const usePrestigeStore = defineStore('prestige', {
         name: 'Evolve',
         description: 'Evolve to the next stage, this resets the game but gives you a new ant type, equipment and inventory is kept',
         cost: 10000,
+        initialCost: 10000,
         category: 'expansion',
         applyOnPrestige: true,
         oneTimePurchase: true,
         unlockedWhen: () => {
           return true
         },
+      },
+      {
+        id: 'adventureEnemySpawnModifier',
+        name: 'Enemy Spawn Modifier',
+        description: 'Decrease the time between enemy spawns by 1%',
+        cost: 100,
+        maxPurchases: 90,
+        initialCost: 100,
+        category: 'combat',
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('autoAdventure')
+        },
+        applyOnPrestige: true,
       },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 
@@ -268,15 +316,45 @@ export const usePrestigeStore = defineStore('prestige', {
 
     antsFromPrestigeShop: 0, // Ants from the prestige shop
 
-    baseAntThreshold: 50,
+    baseAntThreshold: 15,
 
     prestigeMultiplierNumber: 1.0,
   }),
   getters: {
     upgradePurchased: (state) => (upgradeId: string) => state.purchasedUpgrades.includes(upgradeId),
     amountOfUpgrade: (state) => (upgradeId: string) => state.appliedUpgrades.filter(id => id === upgradeId).length,
+    timeSinceLastPrestige: (state) => {
+      return Date.now() - state.lastPrestige
+    },
+    canPrestige: (state) => {
+      return state.calculatePrestigePoints() > 0 && state.timeSinceLastPrestige > 60000
+    },
+    prestigeShopCost: (state) => (upgradeId: string) => {
+      const amountOfUpgrade = state.amountOfUpgrade(upgradeId)
+
+      const upgrade = state.prestigeShop.find(u => u.id === upgradeId)
+
+      if (!upgrade) {
+        return 0
+      }
+
+      let cost = upgrade.initialCost
+      for (let i = 0; i < amountOfUpgrade; i++) {
+        cost *= state.getCostMultiplier(upgrade)
+      }
+
+      return Math.floor(cost)
+    },
   },
   actions: {
+    timeSinceLastPrestigeFormatted(){
+      const timeSinceLastPrestige = Date.now() - this.lastPrestige
+      const days = Math.floor(timeSinceLastPrestige / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((timeSinceLastPrestige % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((timeSinceLastPrestige % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((timeSinceLastPrestige % (1000 * 60)) / 1000)
+      return `${days}d ${hours}h ${minutes}m ${seconds}s`
+    },
     calculatePrestigePoints() {
       const resourcesStore = useResourcesStore()
 
@@ -308,21 +386,24 @@ export const usePrestigeStore = defineStore('prestige', {
         return 0 // No prestige points if resources are below the threshold
       }
 
+      const resourcesStore = useResourcesStore()
       const now = Date.now()
-      const timeElapsed = (now - this.lastPrestige) / (1000 * 60) // Time since last prestige in minutes
+      const timeElapsed = this.lastPrestige ? (now - this.lastPrestige) / (1000 * 60) : 0
+      let resourceFactor = 1
 
-      // Scale points based on times prestiged
-      const prestigePointUpper = (this.timesPrestiged * 0.01) + 1
-
-      // Adjust the resource factor for more linear scaling with minor diminishing returns
-      const resourceFactor = (currentResources - baseThreshold) / (baseThreshold * 0.5 + currentResources * 0.01) // Minor slowdown by adding small factor
+      if (resourcesStore.maxAnts < 10000) {
+        resourceFactor = Math.floor(currentResources / baseThreshold)
+      } else {
+        // Adjust the resource factor for more linear scaling with minor diminishing returns
+        resourceFactor = Math.floor((currentResources / baseThreshold) + Math.pow(currentResources / baseThreshold, 1.1))
+      }
 
       // Time multiplier: grows as a percentage increase based on timeElapsed
       // Let's assume every 30 minutes gives you a 1% bonus (this can be adjusted)
-      const timeMultiplier = Math.pow(1.01, timeElapsed / 60) // 1% bonus every 60 minutes
+      const timeMultiplier = Math.pow(1.025, timeElapsed / 15) // 1% bonus every 60 minutes
 
       // Calculate prestige points with time multiplier
-      const points = Math.floor(resourceFactor * 5 * prestigePointUpper * timeMultiplier)
+      const points = Math.floor(resourceFactor * 5  * timeMultiplier)
 
       // Ensure points don’t drop below 0
       return points > 0 ? points : 0
@@ -365,24 +446,23 @@ export const usePrestigeStore = defineStore('prestige', {
       let defaultCostMultiplier = 1.2
 
       switch (upgrade.id) {
-        case 'eliteAntsStoreUpgrade':
-          defaultCostMultiplier = 3
-          break
-        case 'startWithAnts':
-          defaultCostMultiplier = 1.3
-          break
-        case 'prestigeMultiplier':
-          defaultCostMultiplier = 2
-          break
-        case 'antHousingUpgrade':
-          defaultCostMultiplier = 2
-          break
         case 'poisonChance':
         case 'poisonDamage':
           defaultCostMultiplier = 1.1
           break
+        case 'startWithAnts':
+          defaultCostMultiplier = 1.3
+          break
         case 'poisonDuration':
+        case 'adventureEnemySpawnModifier':
           defaultCostMultiplier = 1.5
+          break
+        case 'prestigeMultiplier':
+        case 'antHousingUpgrade':
+          defaultCostMultiplier = 2
+          break
+        case 'eliteAntsStoreUpgrade':
+          defaultCostMultiplier = 3
           break
       }
       return defaultCostMultiplier
@@ -397,12 +477,9 @@ export const usePrestigeStore = defineStore('prestige', {
 
       if (upgrade && this.prestigePoints >= upgrade.cost) {
         this.prestigePoints -= upgrade.cost
-
-        upgrade.cost *= this.getCostMultiplier(upgrade)
-        upgrade.cost = Math.floor(upgrade.cost) // Round down to the nearest integer
-
         this.purchasedUpgrades.push(upgradeId)
         this.applyPrestigeUpgrade(upgradeId)
+        upgrade.cost = this.prestigeShopCost(upgradeId)
         return true
       }
 
@@ -430,8 +507,6 @@ export const usePrestigeStore = defineStore('prestige', {
         upgrade.cost *= this.getCostMultiplier(upgrade)
         upgrade.cost = Math.floor(upgrade.cost) // Round down to the nearest integer
       }
-
-      console.log(`Purchased max upgrades for: ${upgrade.name}`)
       return true
     },
     // Apply a purchased upgrade
@@ -447,6 +522,9 @@ export const usePrestigeStore = defineStore('prestige', {
 
       // Object map for handling upgrade logic
       const upgrades = {
+        manualCollectionSpeed: () => {
+          resourcesStore.manualCollectionMultiplier *= 1.05
+        },
         storageUpgrade: () => {
           resourcesStore.storage.maxSeeds += resourcesStore.initialCaps.maxSeeds // Increase seed storage
           resourcesStore.storage.maxLarvae += resourcesStore.initialCaps.maxLarvae // Increase larvae storage
@@ -457,26 +535,18 @@ export const usePrestigeStore = defineStore('prestige', {
           resourcesStore.storage.maxEliteAnts += 1 // Increase elite ant storage
         },
         productionBoost: () => {
-          const prestigeScalingFactor = Math.log(this.amountOfUpgrade(upgradeId) + 1) / Math.log(5) + 1
-
-          if (this.amountOfUpgrade(upgradeId) === 1) {
-            resourcesStore.productionRates.collectionRateModifier *= 1.1
-
-            return
-          }
-
-          resourcesStore.productionRates.collectionRateModifier *= 1 + (0.1 / prestigeScalingFactor)
+            resourcesStore.productionRates.collectionRateModifier *= 1.01
         },
         queenEfficiency: () => {
           const prestigeScalingFactor = Math.log(this.amountOfUpgrade(upgradeId) + 1) / Math.log(3) + 1
 
           if (this.amountOfUpgrade(upgradeId) === 1) {
-            resourcesStore.productionRates.larvaeProductionModifier *= 1.5
+            resourcesStore.productionRates.larvaeProductionModifier *= 1.05
 
             return
           }
 
-          resourcesStore.productionRates.larvaeProductionModifier *= 1 + (0.5 / prestigeScalingFactor)
+          resourcesStore.productionRates.larvaeProductionModifier *= 1 + (0.05 / prestigeScalingFactor)
         },
         autoLarvae: () => {
           // this.autoLarvaeCreation = true
@@ -562,6 +632,9 @@ export const usePrestigeStore = defineStore('prestige', {
               })
             })
         },
+        adventureEnemySpawnModifier: () => {
+          adventureStore.spawnTimeModifier -= 0.01
+        },
       }
 
       // Execute the appropriate upgrade or log an error if the upgrade ID is invalid
@@ -590,20 +663,6 @@ export const usePrestigeStore = defineStore('prestige', {
         purchasedUpgrades: this.purchasedUpgrades,
         lastPrestige: this.lastPrestige,
 
-        storagePrestigeCost: this.prestigeShop.find(u => u.id === 'storageUpgrade')?.cost ?? 5,
-        eliteAntsStoreUpgradeCost: this.prestigeShop.find(u => u.id === 'eliteAntsStoreUpgrade')?.cost ?? 100,
-        productionPrestigeCost: this.prestigeShop.find(u => u.id === 'productionBoost')?.cost ?? 10,
-        queenPrestigeCost: this.prestigeShop.find(u => u.id === 'queenEfficiency')?.cost ?? 15,
-        betterAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'betterAnts')?.cost ?? 50,
-        betterAntsDefensePrestigeCost: this.prestigeShop.find(u => u.id === 'betterAntsDefense')?.cost ?? 50,
-        startWithAntsPrestigeCost: this.prestigeShop.find(u => u.id === 'startWithAnts')?.cost ?? 15,
-        jellyBoostCost: this.prestigeShop.find(u => u.id === 'jellyBoost')?.cost ?? 100,
-        prestigeMultiplierCost: this.prestigeShop.find(u => u.id === 'prestigeMultiplier')?.cost ?? 500,
-        antHousingUpgradeCost: this.prestigeShop.find(u => u.id === 'antHousingUpgrade')?.cost ?? 50,
-        poisonChanceCost: this.prestigeShop.find(u => u.id === 'poisonChance')?.cost ?? 100,
-        poisonDamageCost: this.prestigeShop.find(u => u.id === 'poisonDamage')?.cost ?? 100,
-        poisonDurationCost: this.prestigeShop.find(u => u.id === 'poisonDuration')?.cost ?? 300,
-
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,
         autoEliteAntsCreation: this.autoEliteAntsCreation,
@@ -625,10 +684,7 @@ export const usePrestigeStore = defineStore('prestige', {
       adventureStore.armyAttackModifier = 1
       adventureStore.armyDefenseModifier = 1
 
-      if (this.lastPrestige === 0) {
-        this.lastPrestige = savedState.lastPrestige ?? Date.now()
-      }
-
+      this.lastPrestige = savedState.lastPrestige ?? Date.now()
       this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
       this.timesPrestiged = savedState.timesPrestiged ?? this.timesPrestiged
       this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
@@ -644,60 +700,22 @@ export const usePrestigeStore = defineStore('prestige', {
       this.autoEliteAntsCreation = savedState.autoEliteAntsCreation ?? this.autoEliteAntsCreation
 
       // Load prestige shop costs
-      this.prestigeShop.forEach(shop => {
-        if (shop.id === 'storageUpgrade') shop.cost = savedState.storagePrestigeCost ?? 5
-        if (shop.id === 'eliteAntsStoreUpgrade') shop.cost = savedState.eliteAntsStoreUpgradeCost ?? 100
-        if (shop.id === 'productionBoost') shop.cost = savedState.productionPrestigeCost ?? 10
-        if (shop.id === 'queenEfficiency') shop.cost = savedState.queenPrestigeCost ?? 15
-        if (shop.id === 'betterAnts') shop.cost = savedState.betterAntsPrestigeCost ?? 50
-        if (shop.id === 'betterAntsDefense') shop.cost = savedState.betterAntsDefensePrestigeCost ?? 50
-        if (shop.id === 'startWithAnts') shop.cost = savedState.startWithAntsPrestigeCost ?? 15
-        if (shop.id === 'jellyBoost') shop.cost = savedState.jellyBoostCost ?? 100
-        if (shop.id === 'prestigeMultiplier') shop.cost = savedState.prestigeMultiplierCost ?? 500
-        if (shop.id === 'antHousingUpgrade') shop.cost = savedState.antHousingUpgradeCost ?? 50
-        if (shop.id === 'evolve') shop.cost = this.getEvolveCost()
-        if (shop.id === 'poisonChance') shop.cost = savedState.poisonChanceCost ?? 100
-        if (shop.id === 'poisonDamage') shop.cost = savedState.poisonDamageCost ?? 100
-        if (shop.id === 'poisonDuration') shop.cost = savedState.poisonDurationCost ?? 300
-      })
-
       this.applyPrestigeUpgrades()
+      this.resetPrestigeShopCosts()
     },
 
     getEvolveCost() {
       const evolveStore = useEvolveStore()
       const current = evolveStore.currentEvolution
+      const shop = this.prestigeShop.find(u => u.id === 'evolve')
 
-      return Math.pow(10, current + 1) * 10000
+      return Math.pow(10, current + 1) * this.prestigeShopCost(shop.id)
     },
 
     resetPrestigeShopCosts() {
       this.prestigeShop.forEach(shop => {
-        if (shop.id === 'storageUpgrade') shop.cost = 5
-        if (shop.id === 'eliteAntsStoreUpgrade') shop.cost = 100
-        if (shop.id === 'productionBoost') shop.cost = 10
-        if (shop.id === 'queenEfficiency') shop.cost = 15
-        if (shop.id === 'autoLarvae') shop.cost = 10
-        if (shop.id === 'betterAnts') shop.cost = 50
-        if (shop.id === 'betterAntsDefense') shop.cost = 50
-        if (shop.id === 'autoAnts') shop.cost = 20
-        if (shop.id === 'autoQueens') shop.cost = 20
-        if (shop.id === 'startWithAnts') shop.cost = 15
-        if (shop.id === 'eliteAnts') shop.cost = 500
-        if (shop.id === 'autoSeedStorageUpgrade') shop.cost = 10
-        if (shop.id === 'autoLarvaeStorageUpgrade') shop.cost = 10
-        if (shop.id === 'autoEliteAntsCreation') shop.cost = 100
-        if (shop.id === 'royalJelly') shop.cost = 1000
-        if (shop.id === 'tunnels') shop.cost = 500
-        if (shop.id === 'autoCreateHousing') shop.cost = 20
-        if (shop.id === 'autoAdventure') shop.cost = 50
-        if (shop.id === 'jellyBoost') shop.cost = 100
-        if (shop.id === 'prestigeMultiplier') shop.cost = 500
-        if (shop.id === 'antHousingUpgrade') shop.cost = 50
         if (shop.id === 'evolve') shop.cost = this.getEvolveCost()
-        if (shop.id === 'poisonChance') shop.cost = 100
-        if (shop.id === 'poisonDamage') shop.cost = 100
-        if (shop.id === 'poisonDuration') shop.cost = 300
+        else shop.cost = this.prestigeShopCost(shop.id)
       })
     },
 

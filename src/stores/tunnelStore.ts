@@ -178,7 +178,7 @@ export const useTunnelStore = defineStore('tunnelStore', {
       const depthMultiplier = Math.log2(this.tunnelDepth + 2) * 1.2 // Logarithmic scaling
 
       // Scale rewards based on the number of ants sent
-      const antMultiplier = Math.pow(this.initialAntsInTunnel, 0.7) // Ant-based scaling
+      const antMultiplier = Math.pow(this.initialAntsInTunnel, 0.01) // Ant-based scaling
 
       // Define possible events with corresponding chance ranges
       const events = [

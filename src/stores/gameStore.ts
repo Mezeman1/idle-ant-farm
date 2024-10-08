@@ -645,15 +645,15 @@ export const useGameStore = defineStore('gameStore', {
 
       this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
 
+      const adventureStore = useAdventureStore()
+      await adventureStore.loadAdventureState(savedState)
+
       const prestigeStore = usePrestigeStore()
       prestigeStore.resetPrestigeState()
       prestigeStore.loadPrestigeState(savedState)
 
       this.eliteAntsUnlocked = prestigeStore.upgradePurchased('eliteAnts')
       this.royalJellyUnlocked = prestigeStore.upgradePurchased('royalJelly')
-
-      const adventureStore = useAdventureStore()
-      await adventureStore.loadAdventureState(savedState)
 
       const inventoryStore = useInventoryStore()
       inventoryStore.appliedPassiveEffects = []

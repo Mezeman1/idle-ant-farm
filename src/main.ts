@@ -75,3 +75,9 @@ app.use(
 app.component('VueSimpleContextMenu', VueSimpleContextMenu)
 app.use(router)
 app.mount('#app')
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload(true)
+  })
+}

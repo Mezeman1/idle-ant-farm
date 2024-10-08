@@ -164,12 +164,12 @@ export const consumableItems: Item[] = [
     description: 'Increases army regen by 1% for 5 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyRegen *= 1.01
+      adventureStore.armyRegenModifier *= 1.01
       return true
     },
     onRemove: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyRegen /= 1.01
+      adventureStore.armyRegenModifier /= 1.01
     },
     duration: 60 * 5,
     rarity: 'common',
@@ -411,12 +411,12 @@ export const consumableItems: Item[] = [
     description: 'Increases army regen by 100% for 2 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyRegen *= 2
+      adventureStore.armyRegenModifier *= 2
       return true
     },
     onRemove: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyRegen /= 2
+      adventureStore.armyRegenModifier /= 2
     },
     duration: 60 * 2,
     rarity: 'legendary',
@@ -516,7 +516,7 @@ export const passiveItems: Item[] = [
     applyOnPrestige: true,
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyRegen *= 2
+      adventureStore.armyRegenModifier *= 2
       return true
     },
     rarity: 'rare',
@@ -572,7 +572,7 @@ export const passiveItems: Item[] = [
     applyOnLoad: true,
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyRegen *= 2
+      adventureStore.armyRegenModifier *= 2
       return true
     },
     rarity: 'rare',
@@ -627,7 +627,7 @@ export const passiveItems: Item[] = [
     applyOnLoad: true,
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyRegen *= 1.50
+      adventureStore.armyRegenModifier *= 1.50
       return true
     },
     rarity: 'rare',
@@ -1369,7 +1369,7 @@ export const equipmentSets: Item[] = [
     },
   },
   {
-    id: 'volcano-chest',
+    id: 'volcano-chestplate',
     name: 'Volcano Chestplate',
     type: 'equipment',
     description: 'A molten chestplate that increases defense by 0.75% per level.',
@@ -1503,7 +1503,6 @@ export const equipmentSets: Item[] = [
     },
   },
   // Underworld Set
-  // Underworld Set
   {
     id: 'underworld-helm',
     name: 'Underworld Helm',
@@ -1527,7 +1526,7 @@ export const equipmentSets: Item[] = [
     },
   },
   {
-    id: 'underworld-chest',
+    id: 'underworld-chestplate',
     name: 'Underworld Chestplate',
     type: 'equipment',
     description: 'Chestplate from the underworld, increases max health by 1.2% per level.',
