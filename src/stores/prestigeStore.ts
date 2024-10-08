@@ -683,6 +683,8 @@ export const usePrestigeStore = defineStore('prestige', {
       const adventureStore = useAdventureStore()
       adventureStore.armyAttackModifier = 1
       adventureStore.armyDefenseModifier = 1
+      adventureStore.spawnTime = 2000
+      adventureStore.spawnTimeModifier = 1
 
       this.lastPrestige = savedState.lastPrestige ?? Date.now()
       this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
