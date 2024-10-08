@@ -204,7 +204,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       this.currentEnemy.effectChances?.forEach((effect) => {
         this.applyStatusEffectWithChance(
-          'bug',
+          'army',
           effect.effect,
           effect.chance,
           effect.duration,
@@ -413,9 +413,6 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       // Indicate that the enemy spawn timer is active
       this.enemySpawnActive = true
-
-      // Continue applying regeneration during cooldown phase
-      this.regenDuringCooldown()
     },
 
     // Add regeneration during cooldown phase
@@ -597,7 +594,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         case 'antsOrQueensCondition':
           return () => resourcesStore.resources.ants >= unlockCondition.antsRequired || resourcesStore.resources.queens >= unlockCondition.queensRequired
         case 'evolutionAtLeastLeafcutter':
-          return () => evolveStore.currentEvolution >= unlockCondition.evolutionStageRequired
+          return () => evolveStore.currentEvolution >= 1
         default:
           return () => true // Fallback for undefined conditions
       }

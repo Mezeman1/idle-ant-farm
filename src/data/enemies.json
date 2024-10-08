@@ -205,6 +205,14 @@
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
+        ],
+        "effectChances": [
+          {
+            "effect": "poison",
+            "chance": 0.25,
+            "damage": 10,
+            "duration": 8
+          }
         ]
       },
       {
