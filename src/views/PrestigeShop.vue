@@ -176,7 +176,7 @@ const categories = [
 
 let intervalId = null
 const timeSinceLastPrestige = ref(0)
-const waitTime = ref(0)
+const waitTime = ref(1)
 
 onMounted(() => {
   // Set up an interval to update the time since last prestige every second
