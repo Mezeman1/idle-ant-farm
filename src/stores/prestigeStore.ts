@@ -259,6 +259,7 @@ export const usePrestigeStore = defineStore('prestige', {
         initialCost: 500,
         category: 'expansion',
         applyOnPrestige: true,
+        maxPurchases: 5,
         unlockedWhen: () => {
           return usePrestigeStore().timesPrestiged >= 5
         },
