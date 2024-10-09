@@ -43,10 +43,12 @@ export const useGameStore = defineStore('gameStore', {
     attackPerAnt: 2, // Attack value per ant
     healthPerAnt: 10, // Health value per ant
     defensePerAnt: 1, // Defense value per ant
+    regenPerAnt: 0.1, // Regen value per ant
 
     attackPerSoldier: 20, // Attack value per soldier
     healthPerSoldier: 100, // Health value per soldier
     defensePerSoldier: 10, // Defense value per soldier
+    regenPerSoldier: 1, // Regen value per soldier
 
     gameLoopInterval: null as number | null,
     isGameLoopRunning: false,
@@ -577,6 +579,7 @@ export const useGameStore = defineStore('gameStore', {
         attackPerAnt: evolveStore.currentEvolutionData?.statsPerAnt?.attackPerAnt ?? this.attackPerAnt,
         healthPerAnt: evolveStore.currentEvolutionData?.statsPerAnt?.healthPerAnt ?? this.healthPerAnt,
         defensePerAnt: evolveStore.currentEvolutionData?.statsPerAnt?.defensePerAnt ?? this.defensePerAnt,
+        regenPerAnt: evolveStore.currentEvolutionData?.statsPerAnt?.regenPerAnt ?? this.regenPerAnt,
 
         ...prestigeStore.getPrestigeState(),
         ...adventureStore.getAdventureState(),
@@ -623,6 +626,7 @@ export const useGameStore = defineStore('gameStore', {
         const adventureStore = useAdventureStore()
         await adventureStore.calculateOfflineProgress()
         adventureStore.startBattle()
+        useBossStore().generateBosses()
         this.loaded = true
         if (useSettingsStore().getNotificationSetting('load')) {
           toast.success('Game loaded successfully', {
@@ -802,6 +806,7 @@ export const useGameStore = defineStore('gameStore', {
       this.healthPerAnt = 10
       this.attackPerAnt = 2
       this.defensePerAnt = 1
+      this.regenPerAnt = 0.1
       this.eliteAntsUnlocked = false
       this.royalJellyUnlocked = false
 

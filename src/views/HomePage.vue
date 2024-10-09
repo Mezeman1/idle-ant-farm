@@ -61,7 +61,7 @@
 
         <!-- Right Side Button -->
         <button
-          v-if="gameStore.currentUser && gameStore.currentUser.isAnonymous === false"
+          v-if="gameStore.currentUser"
           class="flex items-center bg-red-600 hover:bg-red-500 px-3 py-2 rounded"
           @click="gameStore.logout()"
         >
@@ -83,7 +83,7 @@
           Log out
         </button>
         <button
-          v-else
+          v-if="gameStore.currentUser.isAnonymous"
           class="flex items-center bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded"
           @click="gameStore.linkAnonymousAccountToGoogle()"
         >

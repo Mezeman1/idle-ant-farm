@@ -54,6 +54,11 @@ export const useAdventureStore = defineStore('adventureStore', {
     armyMaxHealthModifier: 1.0, // Multiplicative modifier for army max health
     armyRegenModifier: 1.0, // Multiplicative modifier for army regen
 
+    armyBossAttackModifier: 1.0, // Multiplicative modifier for army attack against bosses
+    armyBossDefenseModifier: 1.0, // Multiplicative modifier for army defense against bosses
+    armyBossMaxHealthModifier: 1.0, // Multiplicative modifier for army max health against bosses
+    armyBossRegenModifier: 1.0, // Multiplicative modifier for army regen against bosses
+
     poisonChance: 0.0,
     poisonDamage: 10,
     poisonDuration: 2,
@@ -803,12 +808,18 @@ export const useAdventureStore = defineStore('adventureStore', {
         gameStore.healthPerAnt *
         resourcesStore.resourceCosts.antCostPerQueen +
         resourcesStore.resources.soldiers * gameStore.healthPerSoldier
+      const baseRegen =
+        resourcesStore.resources.ants * gameStore.regenPerAnt +
+        (resourcesStore.resources.queens - 1) *
+        gameStore.regenPerAnt *
+        resourcesStore.resourceCosts.antCostPerQueen +
+        resourcesStore.resources.soldiers * gameStore.regenPerSoldier
 
       // Apply modifiers
       this.armyAttack = baseAttack * this.armyAttackModifier
       this.armyDefense = baseDefense * this.armyDefenseModifier
       this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier
-      this.armyRegen = 5 * this.armyRegenModifier
+      this.armyRegen = baseRegen * this.armyRegenModifier
 
       // Ensure current health does not exceed max health
       if (this.armyHealth > this.armyMaxHealth) {
@@ -816,14 +827,15 @@ export const useAdventureStore = defineStore('adventureStore', {
       }
 
       bossStore.setArmyStats({
-        damage: this.armyAttack,
-        defense: this.armyDefense,
-        maxHealth: this.armyMaxHealth,
-        regen: this.armyRegen,
+        damage: baseAttack,
+        defense: baseDefense,
+        maxHealth: baseHealth,
+        regen: baseRegen,
 
-        damageMultiplier: this.armyAttackModifier,
-        defenseMultiplier: this.armyDefenseModifier,
-        healthMultiplier: this.armyMaxHealthModifier,
+        damageMultiplier: this.armyBossAttackModifier,
+        defenseMultiplier: this.armyBossDefenseModifier,
+        healthMultiplier: this.armyBossMaxHealthModifier,
+        regenMultiplier: this.armyBossRegenModifier,
       })
 
       this.activeBuffs = this.activeBuffs?.map((buff) => {
