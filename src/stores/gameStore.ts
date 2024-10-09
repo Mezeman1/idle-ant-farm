@@ -884,7 +884,7 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     formatNumber(num: number, toFixed = 2): string {
-      if (num > Number.MAX_SAFE_INTEGER) return 'Infinity'
+      if (num > Number.MAX_VALUE) return 'Infinity'
 
       if (toFixed === 0) num = Math.floor(num)
 

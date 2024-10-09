@@ -4,7 +4,7 @@ import {toast} from 'vue3-toastify'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 
-const MAX_SAFE_VALUE = Number.MAX_SAFE_INTEGER
+const MAX_SAFE_VALUE = Number.MAX_VALUE
 type AntTypes = 'workers' | 'soldiers' | 'royalQueens'
 export const useResourcesStore = defineStore('resources', {
   state: () => ({

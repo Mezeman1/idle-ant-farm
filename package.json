@@ -1,6 +1,6 @@
 {
   "name": "idle-ant-farm",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "scripts": {
     "dev": "vite --mode localhost",
     "build": "rm -rf dist && vite build",
@@ -17,6 +17,7 @@
     "@tailwindcss/typography": "^0.5.2",
     "@vitejs/plugin-vue": "^3.2.0",
     "@vueuse/core": "^11.0.3",
+    "bignumber.js": "^9.1.2",
     "cytoscape": "^3.30.2",
     "draggable-resizable-vue3": "^1.0.94-beta",
     "firebase": "^10.13.1",
