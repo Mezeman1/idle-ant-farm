@@ -16,6 +16,7 @@ import {useTunnelStore} from '@/stores/tunnelStore'
 import {useEvolveStore} from '@/stores/evolveStore'
 import FirestoreError = firebase.firestore.FirestoreError;
 import {useDebounceFn} from '@vueuse/core'
+import {useBossStore} from '@/stores/bossStore'
 
 
 export const useGameStore = defineStore('gameStore', {
@@ -253,6 +254,7 @@ export const useGameStore = defineStore('gameStore', {
       const autoCreationInterval = 1 // Only allow auto-creation every second
       const resourcesStore = useResourcesStore()
       const adventureStore = useAdventureStore()
+      const bossStore = useBossStore()
       const tunnelStore = useTunnelStore()
       const gameLoop = (currentTime) => {
         const deltaTime = (currentTime - lastFrameTime) / 1000 * this.deltaMultiplier // Delta time in seconds
@@ -276,6 +278,7 @@ export const useGameStore = defineStore('gameStore', {
 
           adventureStore.applyBuffs(updateInterval) // Apply active buffs
           adventureStore.processCombat(updateInterval) // Process combat
+          bossStore.processCombat(updateInterval) // Process combat
 
           // Reset the time accumulator, subtracting the update interval to handle any leftover time
           timeAccumulator -= updateInterval

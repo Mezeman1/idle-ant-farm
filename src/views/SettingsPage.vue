@@ -84,6 +84,15 @@
                 class="ml-auto form-checkbox"
               >
             </div>
+
+            <div class="flex items-center">
+              <label>Royal Jelly notifications</label>
+              <input
+                v-model="settingsStore.notifications.royalJelly"
+                type="checkbox"
+                class="ml-auto form-checkbox"
+              >
+            </div>
           </div>
         </details>
 

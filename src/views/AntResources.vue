@@ -504,7 +504,7 @@
             </span>
             <div class="flex gap-1">
               <button
-                :disabled="resourcesStore.resources.workers < 1"
+                :disabled="resourcesStore.resources.soldiers < 1"
                 class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.downgradeAntFrom('soldiers')"
               >
@@ -522,33 +522,32 @@
           <p class="text-2xs">
             Each soldier ant is 10x more effective at fighting bugs.
           </p>
-          <p>
-            More types of ants will be available in the future.
-          </p>
-          <div
-            v-if="false"
-            class="flex items-center justify-between"
-          >
+
+
+          <div class="flex items-center justify-between">
             <span>
-              Soldiers: {{ formatNumber(resourcesStore.resources.soldiers ?? 0, 0) }}
+              Royal queens: {{ formatNumber(resourcesStore.resources.royalQueens ?? 0, 0) }}/{{ formatNumber(resourcesStore.maxRoyalQueens, 0) }}
             </span>
             <div class="flex gap-1">
               <button
-                :disabled="resourcesStore.resources.soldiers < 1"
+                :disabled="resourcesStore.resources.royalQueens < 1"
                 class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="resourcesStore.downgradeAntFrom('soldiers')"
+                @click="resourcesStore.downgradeAntFrom('royalQueens')"
               >
                 -
               </button>
               <button
                 :disabled="resourcesStore.resources.royalJellyAnts < 1"
                 class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-                @click="resourcesStore.upgradeAntTo('workers')"
+                @click="resourcesStore.upgradeAntTo('royalQueens')"
               >
                 +
               </button>
             </div>
           </div>
+          <p class="text-2xs">
+            Each royal queen produces {{ resourcesStore.royalQueenMultiplier }}x the resources of a normal queen.
+          </p>
         </div>
       </div>
       <div

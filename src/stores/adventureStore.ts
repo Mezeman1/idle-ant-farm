@@ -7,6 +7,7 @@ import {itemRegistry} from '@/types/itemRegistry'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {toast} from 'vue3-toastify'
 import {useSettingsStore} from '@/stores/settingsStore'
+import {useBossStore} from '@/stores/bossStore'
 
 interface KillCounts {
   [key: string]: number
@@ -371,7 +372,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
             if (drop.name === 'Seeds') {
               // Add seeds to gameStore
-              useResourcesStore().resources.seeds += amount
+              useResourcesStore().resources.seeds += amount * useResourcesStore().productionRates.collectionRateModifier
             } else {
               // Handle item drops
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
@@ -781,6 +782,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       const gameStore = useGameStore()
       const resourcesStore = useResourcesStore()
       const inventoryStore = useInventoryStore()
+      const bossStore = useBossStore()
       if (resourcesStore.resources.ants === 0 && resourcesStore.resources.queens <= 1) return
 
       const baseAttack =
@@ -812,6 +814,17 @@ export const useAdventureStore = defineStore('adventureStore', {
       if (this.armyHealth > this.armyMaxHealth) {
         this.armyHealth = this.armyMaxHealth
       }
+
+      bossStore.setArmyStats({
+        damage: this.armyAttack,
+        defense: this.armyDefense,
+        maxHealth: this.armyMaxHealth,
+        regen: this.armyRegen,
+
+        damageMultiplier: this.armyAttackModifier,
+        defenseMultiplier: this.armyDefenseModifier,
+        healthMultiplier: this.armyMaxHealthModifier,
+      })
 
       this.activeBuffs = this.activeBuffs?.map((buff) => {
         return {

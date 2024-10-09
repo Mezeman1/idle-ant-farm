@@ -106,6 +106,7 @@
           <AchievementPage v-if="activeTab === 'achievements'" />
           <BestiaryPage v-if="activeTab === 'bestiary'" />
           <Debugger v-if="activeTab === 'debugger'" />
+          <BossPage v-if="activeTab === 'bosses'" />
           <Settings v-if="activeTab === 'settings'" />
         </div>
 
@@ -367,6 +368,7 @@ import BestiaryPage from '@/views/BestiaryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import PassivePage from '@/views/PassivePage.vue'
 import {toast} from 'vue3-toastify'
+import BossPage from '@/views/BossPage.vue'
 
 const deferredPrompt = ref(null)
 const gameStore = useGameStore()
@@ -436,6 +438,11 @@ const tabs = computed(() => [
     label: 'Debugger',
     icon: 'fa-solid fa-bug',
   },
+    {
+      name: 'bosses',
+      label: 'Bosses',
+      icon: 'fa-solid fa-bug',
+    },
   ] : []),
 ])
 
@@ -602,7 +609,6 @@ function handleBeforeUnload() {
 
 watch(() => resourcesStore.resources.ants, useThrottleFn(() => {
   gameStore.setupAdventureStats()
-  resourcesStore.setAntsWithMax()
 
   if (gameStore.simulatingOfflineProgress || adventureStore.isSimulatingOffline) return
 

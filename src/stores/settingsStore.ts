@@ -23,6 +23,7 @@ export const useSettingsStore = defineStore('settings', {
       achievements: true,
       save: true,
       load: true,
+      royalJelly: true,
     },
     notation: 'scientific',
   }),

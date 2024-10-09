@@ -5,6 +5,7 @@ import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 
 const MAX_SAFE_VALUE = Number.MAX_SAFE_INTEGER
+type AntTypes = 'workers' | 'soldiers' | 'royalQueens'
 export const useResourcesStore = defineStore('resources', {
   state: () => ({
     resources: {
@@ -21,6 +22,7 @@ export const useResourcesStore = defineStore('resources', {
       royalJellyAnts: 0,
       workers: 0,
       soldiers: 0,
+      royalQueens: 0,
     },
 
     antsPerHousing: 1,
@@ -88,12 +90,33 @@ export const useResourcesStore = defineStore('resources', {
 
     manualCollection: 10,
     manualCollectionMultiplier: 1,
+
+    royalQueenMultiplier: 1000,
   }),
   getters: {
     // Calculate larvae production per minute based on queens
-    larvaePerMinute: (state) => state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier,
+    larvaePerMinute: (state) => {
+      const larvaePerQueen = state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier
+
+      if (state.resources.royalQueens > 0) {
+        const larvaePerRoyalQueen = state.royalQueenMultiplier * state.resources.royalQueens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier
+        return larvaePerQueen + larvaePerRoyalQueen
+      }
+
+      return larvaePerQueen
+    },
     // Calculate larvae production per second for real-time updates
-    larvaePerSecond: (state) => (state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier) / 60,
+    larvaePerSecond: (state) => {
+      const larvaeFromQueens = (state.productionRates.larvaeProductionRate * state.resources.queens * state.productionRates.larvaeProductionModifier) / 60
+
+      if (state.resources.royalQueens > 0) {
+        const larvaeFromRoyalQueens = (state.productionRates.larvaeProductionRate * state.royalQueenMultiplier * state.resources.royalQueens * state.productionRates.larvaeProductionModifier ) / 60
+
+        return larvaeFromQueens + larvaeFromRoyalQueens
+      }
+
+      return larvaeFromQueens
+    },
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => {
       const eliteMultiplier = (state.resources.eliteAnts > 0 ? (state.resources.eliteAnts * state.multiplierPerEliteAnt) : 1) * state.productionRates.collectionRateModifier
@@ -113,10 +136,13 @@ export const useResourcesStore = defineStore('resources', {
       return state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing
     },
     maxWorkers: (state) => {
-      return state.storage.maxAnts * 0.01
+      return Math.floor(state.storage.maxAnts * 0.01)
     },
     maxSoldiers: (state) => {
-      return state.storage.maxAnts * 0.01
+      return Math.floor(state.storage.maxAnts * 0.01)
+    },
+    maxRoyalQueens: (state) => {
+      return Math.floor(state.storage.maxQueens * 0.25)
     },
     seedCostPerAntHousing: (state) => {
       if (state.resources.antHousing === 0) {
@@ -136,7 +162,7 @@ export const useResourcesStore = defineStore('resources', {
         this.resources.royalJellyAnts += 1
       }
     },
-    upgradeAntTo(antType: 'workers' | 'soldiers') {
+    upgradeAntTo(antType: AntTypes) {
       if (this.resources.royalJellyAnts > 0) {
         if (antType === 'workers' && this.resources.workers >= this.maxWorkers) {
           return
@@ -146,11 +172,15 @@ export const useResourcesStore = defineStore('resources', {
           return
         }
 
+        if (antType === 'royalQueens' && this.resources.royalQueens >= this.maxRoyalQueens) {
+          return
+        }
+
         this.resources.royalJellyAnts -= 1
         this.resources[antType] += 1
       }
     },
-    downgradeAntFrom(antType: 'workers' | 'soldiers') {
+    downgradeAntFrom(antType: AntTypes) {
       if (this.resources[antType] > 0) {
         this.resources[antType] -= 1
         this.resources.royalJellyAnts += 1
@@ -187,8 +217,6 @@ export const useResourcesStore = defineStore('resources', {
         this.resources.ants += 1
         this.resources.larvae -= this.resourceCosts.larvaCostPerAnt
         this.resources.seeds -= this.resourceCosts.seedCostPerAnt
-
-        this.setAntsWithMax()
         return true
       }
 
@@ -214,14 +242,9 @@ export const useResourcesStore = defineStore('resources', {
       // If there is space and enough larvae and seeds to create ants
       if (antsToCreate > 0) {
         this.resources.ants += antsToCreate
-        this.setAntsWithMax()
         this.resources.larvae -= antsToCreate * this.resourceCosts.larvaCostPerAnt
         this.resources.seeds -= antsToCreate * this.resourceCosts.seedCostPerAnt
       }
-    },
-
-    setAntsWithMax() {
-      this.resources.ants = Math.min(this.resources.ants, this.maxAnts)
     },
 
     createAntHousing() {
@@ -509,9 +532,11 @@ export const useResourcesStore = defineStore('resources', {
         const random = Math.random()
         if (random < royalJellyChance) {
           this.resources.royalJelly += 1
-          toast.info('Royal jelly collected!', {
-            position: 'top-left',
-          })
+          if (useSettingsStore().getNotificationSetting('royalJelly')) {
+            toast.info('Royal jelly collected!', {
+              position: 'top-left',
+            })
+          }
         }
       }
     },
@@ -600,6 +625,7 @@ export const useResourcesStore = defineStore('resources', {
         royalJellyAnts: isDebug ? 0 : this.resources.royalJellyAnts,
         workers: isDebug ? 0 : this.resources.workers,
         soldiers: isDebug ? 0 : this.resources.soldiers,
+        royalQueens: isDebug ? 0 : this.resources.royalQueens,
       }
 
       // Reset production rates

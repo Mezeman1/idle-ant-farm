@@ -336,7 +336,6 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       this.activeSetBonus = null
       this.loadOuts = state.loadOuts ?? []
       this.maxLoadOuts = state.maxLoadOuts ?? this.maxLoadOuts
-
       if (!state.equippedItems) {
         return
       }

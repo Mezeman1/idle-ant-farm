@@ -85,6 +85,7 @@ const saveLoadOut = () => {
 
 // Function to load a loadout
 const loadLoadOut = (loadOut) => {
+  console.log('Loading loadout', loadOut)
   equipmentStore.loadLoadOut(loadOut)
 }
 

@@ -210,9 +210,6 @@ const handleDropIntoInventory = async (event: DragEvent) => {
     // Remove the item from the equipment slot using the store method
     await equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
 
-    // Add item back to inventory
-    await inventoryStore.addItemToInventory({ id: item.id, amount: 1 })
-
     draggedItem.value = null
     dragOrigin.value = null
   }
