@@ -511,7 +511,7 @@ export const passiveItems: Item[] = [
     id: 'angler-teeth',
     name: 'Angler Teeth',
     type: 'passive',
-    description: 'Increases regenration by 100%.',
+    description: 'Increases regeneration by 100%.',
     applyOnLoad: true,
     applyOnPrestige: true,
     effect: () => {
