@@ -623,11 +623,13 @@ export const useGameStore = defineStore('gameStore', {
         // Recalculate based on upgrades, apply offline progress
         await this.calculateOfflineProgress()
         this.setupAdventureStats()
+
+        this.loaded = true
+
         const adventureStore = useAdventureStore()
         await adventureStore.calculateOfflineProgress()
         adventureStore.startBattle()
         useBossStore().generateBosses()
-        this.loaded = true
         if (useSettingsStore().getNotificationSetting('load')) {
           toast.success('Game loaded successfully', {
             position: 'top-left',
