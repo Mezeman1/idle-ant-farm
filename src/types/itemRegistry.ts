@@ -589,6 +589,7 @@ export const passiveItems: Item[] = [
       resourcesStore.productionRates.collectionRateModifier *= 2
       return true
     },
+    rarity: 'rare',
   },
   {
     id: 'spider-silk',

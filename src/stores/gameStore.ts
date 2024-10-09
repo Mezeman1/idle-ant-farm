@@ -729,7 +729,6 @@ export const useGameStore = defineStore('gameStore', {
     async clearGameStateFromFirestore(userId) {
       const docRef = doc(db, 'games', userId)
       await deleteDoc(docRef)
-      console.log('Game state cleared from Firestore')
     },
 
     async resetLocalGameState({

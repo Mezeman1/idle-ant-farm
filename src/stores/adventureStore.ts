@@ -134,7 +134,7 @@ export const useAdventureStore = defineStore('adventureStore', {
           buff.duration -= deltaTime
         }
 
-        if (buff.duration > 0 && !buff.active && buff.effect) {
+        if (buff.duration > 0 && !buff.active) {
           buff.effect()
           buff.active = true
         }
@@ -145,7 +145,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         }
       })
 
-      this.activeBuffs = this.activeBuffs.filter((buff) => buff.duration > 0)
+      this.activeBuffs = this.activeBuffs.filter((buff) => buff.duration <= 0)
     },
 
     processCombat(deltaTime) {
