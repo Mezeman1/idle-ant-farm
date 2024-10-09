@@ -164,12 +164,12 @@ export const consumableItems: Item[] = [
     description: 'Increases army regen by 1% for 5 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyRegenModifier *= 1.01
+      adventureStore.armyRegenModifier += 0.01
       return true
     },
     onRemove: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyRegenModifier /= 1.01
+      adventureStore.armyRegenModifier -= 0.01
     },
     duration: 60 * 5,
     rarity: 'common',
@@ -181,12 +181,12 @@ export const consumableItems: Item[] = [
     description: 'Increases army attack by 10% for 5 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyAttackModifier *= 1.10
+      adventureStore.armyAttackModifier += 0.10
       return true
     },
     onRemove: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyAttackModifier /= 1.10
+      adventureStore.armyAttackModifier -= 0.10
     },
     duration: 60 * 5,
     rarity: 'uncommon',
@@ -198,12 +198,12 @@ export const consumableItems: Item[] = [
     description: 'Increase army defense by 10% for 5 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyDefenseModifier *= 1.10
+      adventureStore.armyDefenseModifier += 0.10
       return true
     },
     onRemove: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyD /= 1.10
+      adventureStore.armyD -= 0.10
     },
     duration: 60 * 5,
     rarity: 'uncommon',
@@ -263,13 +263,13 @@ export const consumableItems: Item[] = [
     description: 'Increases army attack by attack by 20% for 5 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyarmyAttackModifier *= 1.20
+      adventureStore.armyarmyAttackModifier += 0.20
 
       return true
     },
     onRemove: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyarmyAttackModifier /= 1.20
+      adventureStore.armyarmyAttackModifier -= 0.20
     },
     duration: 60 * 5,
     rarity: 'rare',
@@ -281,12 +281,12 @@ export const consumableItems: Item[] = [
     description: 'Increases army defense by 20% for 5 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyDefenseModifier *= 1.20
+      adventureStore.armyDefenseModifier += 0.20
       return true
     },
     onRemove: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyDefenseModifier /= 1.20
+      adventureStore.armyDefenseModifier -= 0.20
     },
     duration: 60 * 5,
     rarity: 'rare',
@@ -298,14 +298,14 @@ export const consumableItems: Item[] = [
     description: 'Increases army attack and defense by 20% for 5 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyarmyAttackModifier *= 1.20
-      adventureStore.armyDefenseModifier *= 1.20
+      adventureStore.armyarmyAttackModifier += 0.20
+      adventureStore.armyDefenseModifier += 0.20
       return true
     },
     onRemove: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyarmyAttackModifier /= 1.20
-      adventureStore.armyDefenseModifier /= 1.20
+      adventureStore.armyarmyAttackModifier -= 0.20
+      adventureStore.armyDefenseModifier -= 0.20
     },
     duration: 60 * 5,
     rarity: 'rare',
@@ -317,12 +317,12 @@ export const consumableItems: Item[] = [
     description: 'Increases army defense by 50% for 5 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyDefenseModifier *= 1.50
+      adventureStore.armyDefenseModifier += 0.50
       return true
     },
     onRemove: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyDefenseModifier /= 1.50
+      adventureStore.armyDefenseModifier -= 0.50
     },
     duration: 60 * 5,
     rarity: 'rare',
