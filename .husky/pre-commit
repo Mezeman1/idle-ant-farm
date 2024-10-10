@@ -1,32 +1,32 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# Check if we are in a version bump process to avoid infinite loop
-if [ "$SKIP_VERSION_BUMP" = "true" ]; then
-  exit 0
-fi
-
-# Run lint-staged
-npx lint-staged
-
-# Read the commit message from the commit file
-COMMIT_MSG_FILE=$(cat .git/COMMIT_EDITMSG)
-
-if echo "$COMMIT_MSG_FILE" | grep -q "feat:"; then
-  export SKIP_VERSION_BUMP=true
-  npx standard-version --release-as minor
-  git add .  # Ensure changes are staged
-  git commit --amend --no-edit  # Amend the current commit without changing the message
-elif echo "$COMMIT_MSG_FILE" | grep -q "fix:"; then  # Now checks for both fix and chore
-  export SKIP_VERSION_BUMP=true
-  npx standard-version --release-as patch
-  git add .
-  git commit --amend --no-edit
-elif echo "$COMMIT_MSG_FILE" | grep -q "BREAKING CHANGE:"; then
-  export SKIP_VERSION_BUMP=true
-  npx standard-version --release-as major
-  git add .
-  git commit --amend --no-edit
-else
-  echo "Commit message does not indicate a version bump. Skipping version bump."
-fi
+##!/bin/sh
+#. "$(dirname "$0")/_/husky.sh"
+#
+## Check if we are in a version bump process to avoid infinite loop
+#if [ "$SKIP_VERSION_BUMP" = "true" ]; then
+#  exit 0
+#fi
+#
+## Run lint-staged
+#npx lint-staged
+#
+## Read the commit message from the commit file
+#COMMIT_MSG_FILE=$(cat .git/COMMIT_EDITMSG)
+#
+#if echo "$COMMIT_MSG_FILE" | grep -q "feat:"; then
+#  export SKIP_VERSION_BUMP=true
+#  npx standard-version --release-as minor
+#  git add .  # Ensure changes are staged
+#  git commit --amend --no-edit  # Amend the current commit without changing the message
+#elif echo "$COMMIT_MSG_FILE" | grep -q "fix:"; then  # Now checks for both fix and chore
+#  export SKIP_VERSION_BUMP=true
+#  npx standard-version --release-as patch
+#  git add .
+#  git commit --amend --no-edit
+#elif echo "$COMMIT_MSG_FILE" | grep -q "BREAKING CHANGE:"; then
+#  export SKIP_VERSION_BUMP=true
+#  npx standard-version --release-as major
+#  git add .
+#  git commit --amend --no-edit
+#else
+#  echo "Commit message does not indicate a version bump. Skipping version bump."
+#fi
