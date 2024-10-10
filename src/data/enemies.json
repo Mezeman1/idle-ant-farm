@@ -682,11 +682,10 @@
       }
     ],
     "unlockedWhen": {
-      "condition": "antsOrQueensCondition",
-      "antsRequired": 500,
-      "queensRequired": 20
+      "condition": "prestigeBought",
+      "upgradeId": "mountains"
     },
-    "unlockText": "Unlocked when you have 1000 ants or 20 queens."
+    "unlockText": "Unlocked when you buy the Mountains upgrade from the prestige shop."
   },
   {
     "name": "Volcano",
@@ -834,11 +833,10 @@
       }
     ],
     "unlockedWhen": {
-      "condition": "antsOrQueensCondition",
-      "antsRequired": 2500,
-      "queensRequired": 50
+      "condition": "prestigeBought",
+      "upgradeId": "volcano"
     },
-    "unlockText": "Unlocked when you have 2500 ants or 50 queens."
+    "unlockText": "Unlocked when you buy the Volcano upgrade from the prestige shop."
   },
   {
     "name": "Underworld",
@@ -986,9 +984,8 @@
       }
     ],
     "unlockedWhen": {
-      "condition": "antsOrQueensCondition",
-      "antsRequired": 7500,
-      "queensRequired": 150
+      "condition": "prestigeBought",
+      "upgradeId": "underworld"
     },
     "unlockText": "Unlocked when you have 7.5 thousand ants or 150 queens."
   },
@@ -1138,9 +1135,8 @@
       }
     ],
     "unlockedWhen": {
-      "condition": "antsOrQueensCondition",
-      "antsRequired": 25000,
-      "queensRequired": 500
+      "condition": "prestigeBought",
+        "upgradeId": "arcticTundra"
     },
     "unlockText": "Unlocked when you have 25 thousand ants or 500 queens."
   },
@@ -1250,9 +1246,8 @@
       }
     ],
     "unlockedWhen": {
-      "condition": "antsOrQueensCondition",
-      "antsRequired": 50000,
-      "queensRequired": 1000
+      "condition": "prestigeBought",
+        "upgradeId": "abyssalDepths"
     },
     "unlockText": "Unlocked when you have 50 thousand ants or 1 thousand queens."
   }

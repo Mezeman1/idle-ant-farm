@@ -62,7 +62,9 @@ export const useBossStore = defineStore({
       this.bosses = Array.from({length: 50}, (_, i) => this.generateBoss(i))
     },
     generateBoss(level: number): Boss {
-      const multiplier = Math.pow(7.5, level) // exponential scaling
+      level += 1
+
+      const multiplier = Math.pow(10, level) // exponential scaling
       const baseBossStats = {
         health: 100,
         damage: 10,

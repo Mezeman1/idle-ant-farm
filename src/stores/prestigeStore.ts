@@ -13,7 +13,7 @@ interface PrestigeShopItem {
   initialCost: number
   oneTimePurchase?: boolean
   applyOnPrestige?: boolean
-  category?: 'auto' | 'production' | 'storage' | 'combat' | 'expansion',
+  category?: 'auto' | 'production' | 'storage' | 'combat' | 'expansion' | 'bosses' | 'adventure'
   unlockedWhen?: () => boolean // Function to determine if the upgrade is unlocked
   maxPurchases?: number // Maximum number of times the upgrade can be purchased
 }
@@ -303,6 +303,68 @@ export const usePrestigeStore = defineStore('prestige', {
         },
         applyOnPrestige: true,
       },
+      {
+        id: 'mountains',
+        name: 'Mountains',
+        description: 'Unlock the mountain area for exploration',
+        cost: 500,
+        initialCost: 500,
+        category: 'adventure',
+        applyOnPrestige: true,
+        oneTimePurchase: true,
+      },
+      {
+        id: 'volcano',
+        name: 'Volcano',
+        description: 'Unlock the volcano area for exploration',
+        cost: 1000,
+        initialCost: 1000,
+        category: 'adventure',
+        applyOnPrestige: true,
+        oneTimePurchase: true,
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('mountains')
+        },
+      },
+      {
+        id: 'underworld',
+        name: 'Underworld',
+        description: 'Unlock the underworld area for exploration',
+        cost: 5000,
+        initialCost: 5000,
+        category: 'adventure',
+        applyOnPrestige: true,
+        oneTimePurchase: true,
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('volcano')
+        },
+      },
+      {
+        id: 'arcticTundra',
+        name: 'Arctic Tundra',
+        description: 'Unlock the arctic tundra area for exploration',
+        cost: 10000,
+        initialCost: 10000,
+        category: 'adventure',
+        applyOnPrestige: true,
+        oneTimePurchase: true,
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('underworld')
+        },
+      },
+      {
+        id: 'abyssalDepths',
+        name: 'Abyssal Depths',
+        description: 'Unlock the abyssal depths area for exploration',
+        cost: 20000,
+        initialCost: 20000,
+        category: 'adventure',
+        applyOnPrestige: true,
+        oneTimePurchase: true,
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('arcticTundra')
+        },
+      },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 
     // Prestige-related variables
@@ -524,7 +586,7 @@ export const usePrestigeStore = defineStore('prestige', {
       // Object map for handling upgrade logic
       const upgrades = {
         manualCollectionSpeed: () => {
-          resourcesStore.manualCollectionMultiplier *= 1.05
+          resourcesStore.manualCollectionMultiplier += 0.05
         },
         storageUpgrade: () => {
           resourcesStore.storage.maxSeeds += resourcesStore.initialCaps.maxSeeds // Increase seed storage
@@ -536,18 +598,10 @@ export const usePrestigeStore = defineStore('prestige', {
           resourcesStore.storage.maxEliteAnts += 1 // Increase elite ant storage
         },
         productionBoost: () => {
-            resourcesStore.productionRates.collectionRateModifier *= 1.01
+            resourcesStore.productionRates.collectionRateModifier += 0.01
         },
         queenEfficiency: () => {
-          const prestigeScalingFactor = Math.log(this.amountOfUpgrade(upgradeId) + 1) / Math.log(3) + 1
-
-          if (this.amountOfUpgrade(upgradeId) === 1) {
-            resourcesStore.productionRates.larvaeProductionModifier *= 1.05
-
-            return
-          }
-
-          resourcesStore.productionRates.larvaeProductionModifier *= 1 + (0.05 / prestigeScalingFactor)
+            resourcesStore.productionRates.larvaeProductionModifier += 0.05
         },
         autoLarvae: () => {
           // this.autoLarvaeCreation = true
@@ -558,25 +612,25 @@ export const usePrestigeStore = defineStore('prestige', {
         betterAnts: () => {
           const prestigeScalingFactor = Math.log2(this.amountOfUpgrade(upgradeId) + 1) + 1
           if (this.amountOfUpgrade(upgradeId) === 1) {
-            adventureStore.armyAttackModifier *= 1.1
+            adventureStore.armyAttackModifier += 0.1
             adventureStore.setupAdventureStats()
 
             return
           }
 
-          adventureStore.armyAttackModifier *= 1 + (0.1 / prestigeScalingFactor)
+          adventureStore.armyAttackModifier +=  (0.1 / prestigeScalingFactor)
           adventureStore.setupAdventureStats()
         },
         betterAntsDefense: () => {
           const prestigeScalingFactor = Math.log2(this.amountOfUpgrade(upgradeId) + 1) + 1
           if (this.amountOfUpgrade(upgradeId) === 1) {
-            adventureStore.armyDefenseModifier *= 1.1
+            adventureStore.armyDefenseModifier += 0.1
             adventureStore.setupAdventureStats()
 
             return
           }
 
-          adventureStore.armyDefenseModifier *= 1 + (0.1 / prestigeScalingFactor)
+          adventureStore.armyDefenseModifier += (0.1 / prestigeScalingFactor)
           adventureStore.setupAdventureStats()
         },
         poisonChance: () => {

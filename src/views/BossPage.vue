@@ -1,118 +1,126 @@
 <template>
-  <div class="relative w-full h-screen flex flex-col gap-3 rounded-lg p-6 bg-white">
-    <!-- Boss Section -->
-    <section
-      v-if="currentBoss"
-      class="text-center mb-10"
-    >
-      <h2 class="text-3xl font-bold mb-4">
-        {{ currentBoss.name }}
-      </h2>
-
-      <!-- Boss Health Bar -->
-      <div class="w-full max-w-3xl h-8 bg-gray-700 rounded-lg mx-auto relative">
-        <div
-          class="h-full bg-red-500 rounded-lg"
-          :style="{ width: bossHealthPercentage + '%' }"
-        />
-      </div>
-
-      <div class="mt-2 text-lg">
-        <p>{{ formatNumber(currentBoss.health) }} / {{ formatNumber(currentBoss.maxHealth) }} HP</p>
-        <div class="grid grid-cols-3 gap-4 mt-4">
-          <div>
-            <div class="text-gray-600">
-              Attack
-            </div>
-            <div class="text-lg font-semibold text-gray-800">
-              {{ formatNumber(currentBoss.damage) }}
-            </div>
+  <div class="flex-grow overflow-y-auto p-4">
+    <div class="grid sm:grid-cols-2 grid-cols-1 gap-4">
+      <!-- Boss Stats Section -->
+      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
+        <div>
+          <p class="font-bold text-lg">
+            {{ currentBoss.name }}
+          </p>
+          <p class="text-sm">
+            HP: {{ formatNumber(currentBoss.health) }} / {{ formatNumber(currentBoss.maxHealth) }}
+          </p>
+        </div>
+        <div class="flex flex-col space-y-2">
+          <div class="bg-gray-300 rounded-full h-6 w-full">
+            <div
+              :class="{
+                'bg-green-500': bossHealthPercentage > 50,
+                'bg-yellow-500': bossHealthPercentage <= 50 && bossHealthPercentage > 20,
+                'bg-red-500': bossHealthPercentage <= 20
+              }"
+              class="h-full rounded-full"
+              :style="{ width: bossHealthPercentage + '%' }"
+            />
           </div>
-          <div>
-            <div class="text-gray-600">
-              Defense
+          <div class="flex flex-col space-y-2">
+            <div>
+              <p class="text-gray-600">
+                Attack
+              </p>
+              <p class="font-semibold">
+                {{ formatNumber(currentBoss.damage) }}
+              </p>
             </div>
-            <div class="text-lg font-semibold text-gray-800">
-              {{ formatNumber(currentBoss.defense) }}
+            <div>
+              <p class="text-gray-600">
+                Defense
+              </p>
+              <p class="font-semibold">
+                {{ formatNumber(currentBoss.defense) }}
+              </p>
             </div>
-          </div>
-          <div>
-            <div class="text-gray-600">
-              Regen
-            </div>
-            <div class="text-lg font-semibold text-gray-800">
-              {{ formatNumber(currentBoss.regen) }}
+            <div>
+              <p class="text-gray-600">
+                Regen
+              </p>
+              <p class="font-semibold">
+                {{ formatNumber(currentBoss.regen) }}
+              </p>
             </div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- Army Section -->
-    <section
-      v-if="armyStats"
-      class="text-center mb-10"
-    >
-      <h2 class="text-3xl font-bold mb-4">
-        Army
-      </h2>
-
-      <!-- Army Health Bar -->
-      <div class="w-full max-w-3xl h-8 bg-gray-700 rounded-lg mx-auto relative">
-        <div
-          class="h-full bg-green-500 rounded-lg"
-          :style="{ width: armyHealthPercentage + '%' }"
-        />
-      </div>
-
-      <div class="mt-2 text-lg">
-        <p>{{ formatNumber(armyStats.health) }} / {{ formatNumber(armyStats.maxHealth) }} HP</p>
-        <div class="grid grid-cols-3 gap-4">
-          <div>
-            <div class="text-gray-600">
-              Attack
-            </div>
-            <div class="text-lg font-semibold text-gray-800">
-              {{ formatNumber(armyStats.damage) }}
-            </div>
+      <!-- Army Stats Section -->
+      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
+        <div>
+          <p class="font-bold text-lg">
+            Army
+          </p>
+          <p class="text-sm">
+            HP: {{ formatNumber(armyStats.health) }} / {{ formatNumber(armyStats.maxHealth) }}
+          </p>
+        </div>
+        <div class="flex flex-col space-y-2">
+          <div class="bg-gray-300 rounded-full h-6 w-full">
+            <div
+              :class="{
+                'bg-green-500': armyHealthPercentage > 50,
+                'bg-yellow-500': armyHealthPercentage <= 50 && armyHealthPercentage > 20,
+                'bg-red-500': armyHealthPercentage <= 20
+              }"
+              class="h-full rounded-full"
+              :style="{ width: armyHealthPercentage + '%' }"
+            />
           </div>
-          <div>
-            <div class="text-gray-600">
-              Defense
+          <div class="flex flex-col space-y-2">
+            <div>
+              <p class="text-gray-600">
+                Attack
+              </p>
+              <p class="font-semibold">
+                {{ formatNumber(armyStats.damage) }}
+              </p>
             </div>
-            <div class="text-lg font-semibold text-gray-800">
-              {{ formatNumber(armyStats.defense) }}
+            <div>
+              <p class="text-gray-600">
+                Defense
+              </p>
+              <p class="font-semibold">
+                {{ formatNumber(armyStats.defense) }}
+              </p>
             </div>
-          </div>
-          <div>
-            <div class="text-gray-600">
-              Regen
-            </div>
-            <div class="text-lg font-semibold text-gray-800">
-              {{ formatNumber(armyStats.regen) }}
+            <div>
+              <p class="text-gray-600">
+                Regen
+              </p>
+              <p class="font-semibold">
+                {{ formatNumber(armyStats.regen) }}
+              </p>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
     <!-- Action Buttons -->
-    <section class="flex justify-center">
+    <div class="flex flex-col space-y-4 p-4">
       <button
         v-if="bossStore.battleState === 'idle'"
-        class="bg-blue-500 text-white rounded-lg px-4 py-2"
+        class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded shadow-md w-full"
         @click="bossStore.setBattleState('fighting')"
       >
         Attack
       </button>
       <button
         v-else
-        class="bg-red-500 text-white rounded-lg px-4 py-2"
+        class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded shadow-md w-full"
         @click="bossStore.setBattleState('idle')"
       >
         Stop
       </button>
-    </section>
+    </div>
   </div>
 </template>
 
@@ -139,5 +147,5 @@ const armyHealthPercentage = computed(() => {
 </script>
 
 <style scoped>
-/* Add any additional custom styles here if you need to customize further */
+/* Custom styles for consistency */
 </style>

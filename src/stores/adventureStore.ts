@@ -8,6 +8,7 @@ import {useEvolveStore} from '@/stores/evolveStore'
 import {toast} from 'vue3-toastify'
 import {useSettingsStore} from '@/stores/settingsStore'
 import {useBossStore} from '@/stores/bossStore'
+import {usePrestigeStore} from '@/stores/prestigeStore'
 
 interface KillCounts {
   [key: string]: number
@@ -385,7 +386,7 @@ export const useAdventureStore = defineStore('adventureStore', {
               if (item) {
                 if (!this.isSimulatingOffline && settingsStore.getNotificationSetting('loot')) {
                   toast.success(`Loot: +${amount} ${drop.name}`, {
-                    position: toast.POSITION.TOP_RIGHT,
+                    position: toast.POSITION.TOP_LEFT,
                   })
                 }
                 // Await the item drop handling
@@ -588,6 +589,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     getUnlockFunction(unlockCondition: any) {
       const resourcesStore = useResourcesStore()
       const evolveStore = useEvolveStore()
+      const prestigeStore = usePrestigeStore()
 
       let condition = unlockCondition?.condition
       if (!condition) {
@@ -601,6 +603,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           return () => resourcesStore.resources.ants >= unlockCondition.antsRequired || resourcesStore.resources.queens >= unlockCondition.queensRequired
         case 'evolutionAtLeastLeafcutter':
           return () => evolveStore.currentEvolution >= 1
+        case 'prestigeBought':
+          return () => prestigeStore.upgradePurchased(unlockCondition.upgradeId)
         default:
           return () => true // Fallback for undefined conditions
       }
@@ -652,7 +656,17 @@ export const useAdventureStore = defineStore('adventureStore', {
     // Offline progress calculation
     async calculateOfflineProgress() {
       this.loaded = false // Mark as not loaded
-      if (!this.currentArea || this.currentArea === '') return Promise.resolve() // No area to calculate progress for
+
+      // Turning off offline progress simulation for now
+      this.loaded = true
+      this.isSimulatingOffline = false
+      return Promise.resolve()
+
+      if (!this.currentArea || this.currentArea === '') {
+        this.loaded = true
+        this.isSimulatingOffline = false
+        return Promise.resolve()
+      }
 
       try {
         return await new Promise((resolve, reject) => {
@@ -768,7 +782,7 @@ export const useAdventureStore = defineStore('adventureStore', {
                 // Only show toast notifications if not simulating offline progress
                 if (!this.isSimulatingOffline && useSettingsStore().getNotificationSetting('loot')) {
                   toast.success(`Loot: +${amount} ${drop.name}`, {
-                    position: 'top-right',
+                    position: 'top-left',
                   })
                 }
                 this.handleItemDrop(item, amount)

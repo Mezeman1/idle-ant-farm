@@ -88,10 +88,9 @@
               :key="upgrade.id"
             >
               <div
-                v-if="isUpgradeUnlocked(upgrade)"
                 class="flex flex-col bg-white p-2 rounded shadow mx-1"
               >
-                <p>{{ upgrade.name }} {{ getUpgradeCount(upgrade) }}</p>
+                <p>{{ upgrade.name }} {{ getUpgradeCount(upgrade) }} {{ !isUpgradeUnlocked(upgrade) ? '(Locked)' : '' }}</p>
                 <p class="text-xs text-gray-500">
                   {{ upgrade.description }}
                 </p>
@@ -106,7 +105,7 @@
                   class="flex justify-between items-center"
                 >
                   <button
-                    :disabled="prestigeStore.prestigePoints < upgrade.cost"
+                    :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
                     class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
                     @click="prestigeStore.buyUpgrade(upgrade.id)"
                   >
@@ -114,21 +113,13 @@
                   </button>
                   <button
                     v-if="!upgrade.oneTimePurchase"
-                    :disabled="prestigeStore.prestigePoints < upgrade.cost"
+                    :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
                     class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
                     @click="prestigeStore.buyMaxUpgrade(upgrade.id)"
                   >
                     Buy max
                   </button>
                 </div>
-              </div>
-              <div
-                v-else
-                class="flex items-center justify-center bg-white p-2 rounded shadow h-12 mx-1"
-              >
-                <p class="text-gray-500 text-xs">
-                  Locked
-                </p>
               </div>
             </li>
           </ul>
@@ -167,6 +158,10 @@ const categories = [
   {
     name: 'Combat Upgrades',
     upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'combat'),
+  },
+  {
+    name: 'Adventure Upgrades',
+    upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'adventure'),
   },
   {
     name: 'Expansion Upgrades',
