@@ -226,6 +226,44 @@
             </div>
           </div>
         </div>
+
+        <div class="grid grid-cols-3 gap-4 m-2">
+          <!-- Attack Button -->
+          <button
+            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
+            :class="{
+              'bg-blue-700 border-2 border-blue-900': battleStyle === 'attack',
+              'bg-blue-500 hover:bg-blue-600': battleStyle !== 'attack'
+            }"
+            @click="setBattleStyle('Attack')"
+          >
+            Attack
+          </button>
+
+          <!-- Defense Button -->
+          <button
+            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
+            :class="{
+              'bg-green-700 border-2 border-green-900': battleStyle === 'defense',
+              'bg-green-500 hover:bg-green-600': battleStyle !== 'defense'
+            }"
+            @click="setBattleStyle('Defense')"
+          >
+            Block
+          </button>
+
+          <!-- Hitpoints (Endure) Button -->
+          <button
+            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
+            :class="{
+              'bg-red-700 border-2 border-red-900': battleStyle === 'hitpoints',
+              'bg-red-500 hover:bg-red-600': battleStyle !== 'hitpoints'
+            }"
+            @click="setBattleStyle('Hitpoints')"
+          >
+            Endure
+          </button>
+        </div>
       </div>
 
       <!-- Right Column: Inventory (on large screens) -->
@@ -257,6 +295,7 @@ import Inventory from '@/views/InventoryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import WaveSelector from '@/components/WaveSelector.vue'
+import {Skill} from '@/stores/trainingStore'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
@@ -268,7 +307,7 @@ const poisonChance = computed(() => formatNumber(adventureStore.poisonChance * 1
 const bugPoisonChance = computed(() => formatNumber((adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance ?? 0) * 100), 0 )
 // Set a breakpoint for large screens
 const isLargeScreen = computed(() => width.value >= 1024)
-
+const battleStyle = computed(() => adventureStore.battleStyle)
 
 onMounted(() => {
   selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)
@@ -328,6 +367,17 @@ const cooldownProgress = computed(() => {
 
   return Math.max(0, (remainingCooldown / totalCooldown) * 100) // Calculate progress percentage
 })
+
+function setBattleStyle(style: 'Attack' | 'Defense' | 'Hitpoints') {
+  if (style === 'Attack') {
+    adventureStore.battleStyle = Skill.Attack
+  } else if (style === 'Defense') {
+    adventureStore.battleStyle = Skill.Defense
+  } else if (style === 'Hitpoints') {
+    adventureStore.battleStyle = Skill.Hitpoints
+  }
+}
+
 </script>
 
 <style scoped>

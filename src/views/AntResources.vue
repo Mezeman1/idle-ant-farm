@@ -16,7 +16,7 @@
           <!-- Left Column: Seed Count and Upgrade -->
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.seeds) }}/{{ formatNumber(resourcesStore.storage.maxSeeds) }}
+              Count: {{ formatNumber(resourcesStore.resources.seeds) }}/{{ formatNumber(resourcesStore.maxSeeds) }}
               ({{ formatNumber(resourcesStore.resources.seeds / resourcesStore.storage.maxSeeds * 100, 1) }}%)
             </p>
             <p class="text-xs">
@@ -29,7 +29,7 @@
               @upgradeMax="resourcesStore.upgradeMaxSeedStorage"
             />
             <p
-              v-if="resourcesStore.storage.maxSeeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
+              v-if="resourcesStore.maxSeeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
               class="text-xs"
             >
               If only there was a way to increase your {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }} storage...
@@ -100,7 +100,7 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.larvae) }}/{{ formatNumber(resourcesStore.storage.maxLarvae) }}
+              Count: {{ formatNumber(resourcesStore.resources.larvae) }}/{{ formatNumber(resourcesStore.maxLarvae) }}
               ({{ formatNumber(resourcesStore.resources.larvae / resourcesStore.storage.maxLarvae * 100, 1) }}%)
             </p>
             <p class="text-xs">
@@ -113,7 +113,7 @@
               @upgradeMax="resourcesStore.upgradeMaxLarvaeStorage"
             />
             <p
-              v-if="resourcesStore.storage.maxSeeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
+              v-if="resourcesStore.maxSeeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
               class="text-xs"
             >
               If only there was a way to increase your {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }} storage...
@@ -556,38 +556,6 @@
         </h2>
       </div>
 
-      <!-- Mineral Shards Section -->
-      <div
-        v-if="prestigeStore.upgradePurchased('tunnels')"
-        class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
-      >
-        <div>
-          <p class="font-bold text-lg">
-            Mineral shards
-          </p>
-          <p
-            class="text-2xs"
-          >
-            Used to upgrade the tunnels.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full">
-            <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.mineralShards ?? 0, 0) }}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
-      >
-        <h2>
-          LOCKED
-        </h2>
-      </div>
-
       <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
         <h2
           class="font-bold"
@@ -668,8 +636,8 @@ const stopCollectingSeeds = () => {
 const seedStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.seedStorageUpgradeCost)} ${evolveStore.currentEvolutionData.resources.seeds.lowerName}`)
 const larvaeStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.larvaeStorageUpgradeCost)} ${evolveStore.currentEvolutionData.resources.seeds.lowerName}`)
 
-const seedCollectingDisabled = computed(() => resourcesStore.resources.seeds >= resourcesStore.storage.maxSeeds)
-const createLarvaeDisabled = computed(() => resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerLarva || resourcesStore.resources.larvae >= resourcesStore.storage.maxLarvae)
+const seedCollectingDisabled = computed(() => resourcesStore.resources.seeds >= resourcesStore.maxSeeds)
+const createLarvaeDisabled = computed(() => resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerLarva || resourcesStore.resources.larvae >= resourcesStore.maxLarvae)
 const createAntDisabled = computed(() => resourcesStore.resources.larvae < resourcesStore.resourceCosts.larvaCostPerAnt || resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerAnt || resourcesStore.resources.ants >= resourcesStore.maxAnts)
 const createEliteAntDisabled = computed(() => resourcesStore.resources.larvae < resourcesStore.resourceCosts.larvaCostPerEliteAnt || resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerEliteAnt || resourcesStore.resources.eliteAnts >= resourcesStore.storage.maxEliteAnts)
 const createQueenDisabled = computed(() => resourcesStore.resources.ants < 50 || resourcesStore.resources.seeds < 500 || resourcesStore.resources.queens >= resourcesStore.storage.maxQueens)

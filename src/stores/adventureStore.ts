@@ -9,6 +9,7 @@ import {toast} from 'vue3-toastify'
 import {useSettingsStore} from '@/stores/settingsStore'
 import {useBossStore} from '@/stores/bossStore'
 import {usePrestigeStore} from '@/stores/prestigeStore'
+import {Skill, useTrainingStore} from '@/stores/trainingStore'
 
 interface KillCounts {
   [key: string]: number
@@ -41,6 +42,8 @@ export const useAdventureStore = defineStore('adventureStore', {
     progress: 0, // Track progress for offline calculation
     activeBuffs: [] as Array<ActiveBuff>,
     battleStatus: 'idle' as BattleStatus,
+
+    battleStyle: Skill.Attack as Skill.Defense | Skill.Attack | Skill.Hitpoints,
 
     armyHealth: 100,
     armyMaxHealth: 100,
@@ -411,6 +414,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       // Update kill counts and handle loot
       this.handleKillCount()
       this.handleEnemyDrop()
+      useTrainingStore().processCombat(this.battleStyle, this.getXpForEnemy(this.currentEnemy))
 
       // Set the initial spawn time and fight status change timers
       this.enemySpawnCooldownTime = this.spawnTime * this.spawnTimeModifier
@@ -420,6 +424,17 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       // Indicate that the enemy spawn timer is active
       this.enemySpawnActive = true
+    },
+
+    getXpForEnemy(enemy: Enemy): number {
+      // Calculate base XP based on enemy stats
+      const baseXp = (enemy.health * 0.05) + (enemy.attack * 0.1) + (enemy.defense * 0.07) + (enemy.regen * 0.8)
+
+      // If it's a boss, apply a multiplier (e.g., 1.2x)
+      const xp = enemy.isBoss ? baseXp * 1.2 : baseXp
+
+      // Return the XP, making sure it doesn't exceed the max XP cap
+      return Math.floor(Math.min(xp, 1000))
     },
 
     // Add regeneration during cooldown phase
@@ -516,6 +531,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         armyRegen: this.armyRegen,
         killCounts: this.killCounts,
         enemyKillCount: this.enemyKillCount,
+        battleStyle: this.battleStyle,
         currentArea: this.currentArea,
         activeBuffs: this.activeBuffs.map((buff) => ({
           id: buff.id,
@@ -539,6 +555,8 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.killCounts = adventureState.killCounts ?? this.killCounts
       this.currentArea = adventureState.currentArea ?? this.currentArea
       this.enemyKillCount = adventureState.enemyKillCount ?? this.enemyKillCount
+
+      this.battleStyle = adventureState.battleStyle ?? this.battleStyle
 
       this.poisonChance = 0.0
       this.poisonDamage = 10

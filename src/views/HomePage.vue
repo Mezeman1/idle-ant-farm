@@ -94,15 +94,15 @@
         v-show="!isMinimized"
         class="bg-white rounded shadow-lg flex flex-col sm:flex-row space-y-2 bg-opacity-50 h-[calc(100vh-65px)]"
       >
-        <div class="flex flex-col flex-1 overflow-y-auto p-2">
+        <div class="flex flex-col flex-1 overflow-y-auto">
           <AntResources v-if="activeTab === 'resources'" />
           <PrestigeShop v-show="activeTab === 'prestige'" />
+          <AntTraining v-if="activeTab === 'training'" />
           <Adventure v-if="activeTab === 'adventure'" />
           <EquipmentPage v-if="activeTab === 'equipment'" />
           <PassivePage
             v-if="activeTab === 'passives'"
           />
-          <Tunnels v-if="activeTab === 'tunnels'" />
           <AchievementPage v-if="activeTab === 'achievements'" />
           <BestiaryPage v-if="activeTab === 'bestiary'" />
           <Debugger v-if="activeTab === 'debugger'" />
@@ -357,7 +357,6 @@ import firebase from 'firebase/compat'
 import Settings from './SettingsPage.vue'
 import {useAdventureStore} from '../stores/adventureStore'
 import {useThrottleFn} from '@vueuse/core'
-import Tunnels from '@/views/TunnelsPage.vue'
 import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
 import EquipmentPage from '@/views/EquipmentPage.vue'
@@ -369,7 +368,7 @@ import {usePrestigeStore} from '@/stores/prestigeStore'
 import PassivePage from '@/views/PassivePage.vue'
 import {toast} from 'vue3-toastify'
 import BossPage from '@/views/BossPage.vue'
-
+import AntTraining from '@/views/AntTraining.vue'
 const deferredPrompt = ref(null)
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()
@@ -397,6 +396,11 @@ const tabs = computed(() => [
     icon: 'fa-solid fa-code-fork',
   },
   {
+    name: 'training',
+    label: 'Training',
+    icon: 'fa-solid fa-dumbbell',
+  },
+  {
     name: 'adventure',
     label: 'Adventure',
     icon: 'fa-solid fa-compass',
@@ -410,12 +414,6 @@ const tabs = computed(() => [
     name: 'achievements',
     label: 'Achievements',
     icon: 'fa-solid fa-trophy',
-  },
-  {
-    name: 'tunnels',
-    label: 'Tunnels',
-    icon: 'fa-solid fa-dungeon',
-    disabled: usePrestigeStore().upgradePurchased('tunnels') === false,
   },
   {
     name: 'passives',
