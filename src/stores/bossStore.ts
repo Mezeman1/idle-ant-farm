@@ -99,7 +99,10 @@ export const useBossStore = defineStore({
       if (boss.health <= 0) {
         this.setBattleState('idle')
         this.currentBoss++
-      } else if (army.health <= 0) {
+      }
+      
+      if (army.health <= 0) {
+        army.health = 0
         this.setBattleState('idle')
       }
     },

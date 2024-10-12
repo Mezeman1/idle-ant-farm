@@ -460,11 +460,11 @@
 
         <div class="flex flex-col gap-1">
           <button
-            :disabled="resourcesStore.resources.royalJelly < 1"
+            :disabled="resourcesStore.resources.royalJelly < resourcesStore.resourceCosts.royalJellyCostPerUpgrade"
             class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="resourcesStore.upgradeAnt"
           >
-            Upgrade Ant
+            Upgrade Ant ({{ formatNumber(resourcesStore.resourceCosts.royalJellyCostPerUpgrade) }} Royal Jelly)
           </button>
           <span>
             You currently have {{ formatNumber(resourcesStore.resources.royalJellyAnts ?? 0, 0) }} Royal Jelly Ants.
