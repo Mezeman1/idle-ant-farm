@@ -485,7 +485,7 @@
                 -
               </button>
               <button
-                :disabled="resourcesStore.resources.royalJellyAnts < 1"
+                :disabled="resourcesStore.resources.royalJellyAnts < 1 || (resourcesStore.resources.workers ?? 0) >= resourcesStore.maxWorkers"
                 class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.upgradeAntTo('workers')"
               >
@@ -511,7 +511,7 @@
                 -
               </button>
               <button
-                :disabled="resourcesStore.resources.royalJellyAnts < 1"
+                :disabled="resourcesStore.resources.royalJellyAnts < 1 || (resourcesStore.resources.soldiers ?? 0) >= resourcesStore.maxSoldiers"
                 class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.upgradeAntTo('soldiers')"
               >
@@ -519,10 +519,10 @@
               </button>
             </div>
           </div>
+
           <p class="text-2xs">
             Each soldier ant is 10x more effective at fighting bugs.
           </p>
-
 
           <div class="flex items-center justify-between">
             <span>
@@ -537,7 +537,7 @@
                 -
               </button>
               <button
-                :disabled="resourcesStore.resources.royalJellyAnts < 1"
+                :disabled="resourcesStore.resources.royalJellyAnts < 1 || (resourcesStore.resources.royalQueens ?? 0) >= resourcesStore.maxRoyalQueens"
                 class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.upgradeAntTo('royalQueens')"
               >

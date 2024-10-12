@@ -29,7 +29,7 @@
         </ul>
       </div>
 
-      <div class="flex flex-col items-center justify-between w-full">
+      <div class="flex flex-col items-center justify-between space-y-2 w-full">
         <p class="text-center">
           Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }} <br>Prestige Times:
           {{ formatNumber(prestigeStore.timesPrestiged) }}
