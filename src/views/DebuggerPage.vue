@@ -151,9 +151,9 @@ const prestigeStore = usePrestigeStore()
 const inventoryStore = useInventoryStore()
 
 const maxAllResources = () => {
-  resourcesStore.resources.seeds = resourcesStore.storage.maxSeeds
+  resourcesStore.resources.seeds = resourcesStore.maxSeeds
   resourcesStore.resources.larvae = resourcesStore.storage.maxLarvae
-  resourcesStore.resources.ants = resourcesStore.storage.maxAnts
+  resourcesStore.resources.ants = resourcesStore.maxAnts
   resourcesStore.resources.queens = resourcesStore.storage.maxQueens
   if (gameStore.eliteAntsUnlocked) {
     resourcesStore.resources.eliteAnts = resourcesStore.storage.maxEliteAnts

@@ -14,46 +14,32 @@
         "attack": 18,
         "defense": 8,
         "regen": 3,
+        "xp": 35,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.8,
-            "amountBetween": [
-              100,
-              500
-            ]
+            "amountBetween": [100, 500]
           },
           {
             "name": "Grasshopper Leg",
             "chance": 0.2,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Grasshopper Wing",
             "chance": 0.1,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Worker Helm",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Worker Helm II",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
@@ -65,64 +51,44 @@
         "attack": 20,
         "defense": 10,
         "regen": 4,
+        "xp": 45,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.75,
-            "amountBetween": [
-              100,
-              500
-            ]
+            "amountBetween": [100, 500]
           },
           {
             "name": "Ant Strength Potion",
             "chance": 0.15,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Beetle Shell",
             "chance": 0.1,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Worker Body",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Worker Pickaxe",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Worker Pickaxe II",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           },
           {
             "name": "Worker Body II",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
@@ -134,74 +100,51 @@
         "attack": 22,
         "defense": 12,
         "regen": 5,
+        "xp": 55,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.75,
-            "amountBetween": [
-              100,
-              500
-            ]
+            "amountBetween": [100, 500]
           },
           {
             "name": "Queen Crown",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Queen Crown II",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           },
           {
             "name": "Wasp Stinger",
             "chance": 0.075,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Worker Legs",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Worker Gloves",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Worker Legs II",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           },
           {
             "name": "Worker Gloves II",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
@@ -221,38 +164,27 @@
         "attack": 17,
         "defense": 7,
         "regen": 3,
+        "xp": 32,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.75,
-            "amountBetween": [
-              100,
-              500
-            ]
+            "amountBetween": [100, 500]
           },
           {
             "name": "Termite Mandible",
             "chance": 0.2,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Worker Shield",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Worker Shield II",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
@@ -275,38 +207,27 @@
         "attack": 300,
         "defense": 150,
         "regen": 6,
+        "xp": 100,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.7,
-            "amountBetween": [
-              300,
-              750
-            ]
+            "amountBetween": [300, 750]
           },
           {
             "name": "Spider Silk",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Soldier Helm",
             "chance": 0.04,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Soldier Helm II",
             "chance": 0.04,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
@@ -318,38 +239,27 @@
         "attack": 340,
         "defense": 160,
         "regen": 7,
+        "xp": 100,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.7,
-            "amountBetween": [
-              300,
-              750
-            ]
+            "amountBetween": [300, 750]
           },
           {
             "name": "Centipede Leg",
             "chance": 0.2,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Soldier Body",
             "chance": 0.04,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Soldier Body II",
             "chance": 0.04,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
@@ -361,38 +271,27 @@
         "attack": 310,
         "defense": 140,
         "regen": 5,
+        "xp": 95,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.5,
-            "amountBetween": [
-              400,
-              800
-            ]
+            "amountBetween": [400, 800]
           },
           {
             "name": "Moth Dust",
             "chance": 0.1,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Soldier Legs",
             "chance": 0.04,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Soldier Legs II",
             "chance": 0.04,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
@@ -404,46 +303,32 @@
         "attack": 360,
         "defense": 170,
         "regen": 8,
+        "xp": 100,
         "dropOptions": [
           {
             "name": "Butterfly Wing",
             "chance": 0.01,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Butterfly Dust",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Seeds",
             "chance": 0.5,
-            "amountBetween": [
-              400,
-              1000
-            ]
+            "amountBetween": [400, 1000]
           },
           {
             "name": "Soldier Shield",
             "chance": 0.03,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Soldier Shield II",
             "chance": 0.03,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
@@ -456,56 +341,39 @@
         "defense": 200,
         "regen": 10,
         "isBoss": true,
+        "xp": 100,
         "dropOptions": [
           {
             "name": "Queen Stinger",
             "chance": 0.005,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Queen Head",
             "chance": 0.01,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           },
           {
             "name": "Wasp Stinger",
             "chance": 0.08,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Seeds",
             "chance": 0.5,
-            "amountBetween": [
-              500,
-              1500
-            ]
+            "amountBetween": [500, 1500]
           },
           {
             "name": "Soldier Sword",
             "chance": 0.02,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Soldier Sword II",
             "chance": 0.02,
-            "amountBetween": [
-              1,
-              1
-            ],
+            "amountBetween": [1, 1],
             "unlockedWhenContext": "evolutionAtLeastLeafcutter",
             "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
@@ -519,6 +387,7 @@
     },
     "unlockText": "Unlocked when you have 100 ants or 2 queens."
   },
+
   {
     "name": "Mountains",
     "enemies": [
@@ -528,30 +397,22 @@
         "attack": 2400,
         "defense": 1200,
         "regen": 20,
+        "xp": 180,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.7,
-            "amountBetween": [
-              1000,
-              2500
-            ]
+            "amountBetween": [1000, 2500]
           },
           {
             "name": "Mountain Ant Mandible",
             "chance": 0.15,
-            "amountBetween": [
-              1,
-              3
-            ]
+            "amountBetween": [1, 3]
           },
           {
             "name": "Royal Crown",
             "chance": 0.02,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           }
         ]
       },
@@ -561,30 +422,22 @@
         "attack": 2600,
         "defense": 1400,
         "regen": 25,
+        "xp": 190,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.7,
-            "amountBetween": [
-              1200,
-              3000
-            ]
+            "amountBetween": [1200, 3000]
           },
           {
             "name": "Rock Carapace",
             "chance": 0.1,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Royal Robe",
             "chance": 0.02,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           }
         ]
       },
@@ -594,30 +447,22 @@
         "attack": 2800,
         "defense": 1600,
         "regen": 30,
+        "xp": 200,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.5,
-            "amountBetween": [
-              1500,
-              3500
-            ]
+            "amountBetween": [1500, 3500]
           },
           {
             "name": "Mantis Claw",
             "chance": 0.08,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Royal Legs",
             "chance": 0.02,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           }
         ]
       },
@@ -628,38 +473,27 @@
         "defense": 1800,
         "regen": 50,
         "isBoss": true,
+        "xp": 200,
         "dropOptions": [
           {
             "name": "Stone Heart",
             "chance": 0.005,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Seeds",
             "chance": 0.5,
-            "amountBetween": [
-              2500,
-              5000
-            ]
+            "amountBetween": [2500, 5000]
           },
           {
             "name": "Royal Scepter",
             "chance": 0.01,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Royal Ring",
             "chance": 0.005,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           }
         ]
       },
@@ -669,14 +503,12 @@
         "attack": 2800,
         "defense": 1600,
         "regen": 30,
+        "xp": 200,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.75,
-            "amountBetween": [
-              1500,
-              3500
-            ]
+            "amountBetween": [1500, 3500]
           }
         ]
       }
@@ -687,6 +519,7 @@
     },
     "unlockText": "Unlocked when you buy the Mountains upgrade from the prestige shop."
   },
+
   {
     "name": "Volcano",
     "enemies": [
@@ -696,30 +529,22 @@
         "attack": 12000,
         "defense": 7000,
         "regen": 15,
+        "xp": 270,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.6,
-            "amountBetween": [
-              3000,
-              7000
-            ]
+            "amountBetween": [3000, 7000]
           },
           {
             "name": "Lava Ant Tooth",
             "chance": 0.1,
-            "amountBetween": [
-              1,
-              2
-            ]
+            "amountBetween": [1, 2]
           },
           {
             "name": "Volcano Helm",
             "chance": 0.02,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           }
         ]
       },
@@ -729,30 +554,22 @@
         "attack": 13000,
         "defense": 7500,
         "regen": 18,
+        "xp": 285,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.7,
-            "amountBetween": [
-              3500,
-              7500
-            ]
+            "amountBetween": [3500, 7500]
           },
           {
             "name": "Magma Carapace",
             "chance": 0.1,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Volcano Chestplate",
             "chance": 0.02,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           }
         ]
       },
@@ -762,30 +579,22 @@
         "attack": 14000,
         "defense": 8000,
         "regen": 20,
+        "xp": 300,
         "dropOptions": [
           {
             "name": "Seeds",
             "chance": 0.5,
-            "amountBetween": [
-              4000,
-              8000
-            ]
+            "amountBetween": [4000, 8000]
           },
           {
             "name": "Scorpion Tail",
             "chance": 0.05,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Volcano Boots",
             "chance": 0.02,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           }
         ]
       },
@@ -796,38 +605,27 @@
         "defense": 9000,
         "regen": 25,
         "isBoss": true,
+        "xp": 300,
         "dropOptions": [
           {
             "name": "Dragon Scale",
             "chance": 0.002,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Seeds",
             "chance": 0.5,
-            "amountBetween": [
-              5000,
-              10000
-            ]
+            "amountBetween": [5000, 10000]
           },
           {
             "name": "Volcano Scepter",
             "chance": 0.01,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           },
           {
             "name": "Volcano Ring",
             "chance": 0.005,
-            "amountBetween": [
-              1,
-              1
-            ]
+            "amountBetween": [1, 1]
           }
         ]
       }
@@ -838,6 +636,7 @@
     },
     "unlockText": "Unlocked when you buy the Volcano upgrade from the prestige shop."
   },
+
   {
     "name": "Underworld",
     "enemies": [
