@@ -14,9 +14,9 @@ import LZString from 'lz-string'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useTunnelStore} from '@/stores/tunnelStore'
 import {useEvolveStore} from '@/stores/evolveStore'
-import FirestoreError = firebase.firestore.FirestoreError;
-import {useDebounceFn} from '@vueuse/core'
 import {useBossStore} from '@/stores/bossStore'
+import {useStatStore} from '@/stores/statStore'
+import FirestoreError = firebase.firestore.FirestoreError;
 
 
 export const useGameStore = defineStore('gameStore', {
@@ -402,16 +402,16 @@ export const useGameStore = defineStore('gameStore', {
       firebase.auth().useDeviceLanguage()
       firebase.auth().currentUser?.linkWithPopup(provider)
         .then(async (result) => {
-        await this.setConsent(await this.getUserId())
+          await this.setConsent(await this.getUserId())
 
-        this.loggedIn = true
+          this.loggedIn = true
 
-        await this.loadGameState()
+          await this.loadGameState()
           toast.success('Account linked successfully', {
             position: 'top-right',
             duration: 5000,
           })
-      }).catch((error) => {
+        }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code
         const errorMessage = error.message

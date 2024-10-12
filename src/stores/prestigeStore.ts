@@ -15,6 +15,7 @@ interface PrestigeShopItem {
   applyOnPrestige?: boolean
   category?: 'auto' | 'production' | 'storage' | 'combat' | 'expansion' | 'bosses' | 'adventure'
   unlockedWhen?: () => boolean // Function to determine if the upgrade is unlocked
+  unlockedWhenDescription?: string // Description of the unlock condition
   maxPurchases?: number // Maximum number of times the upgrade can be purchased
 }
 
@@ -87,6 +88,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('eliteAnts')
         },
+        unlockedWhenDescription: 'Unlock the Elite Ants upgrade',
       },
       {
         id: 'betterAnts',
@@ -158,6 +160,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().timesPrestiged >= 5
         },
+        unlockedWhenDescription: 'Prestige 5 times',
       },
       {
         id: 'storageUpgrade',
@@ -180,6 +183,7 @@ export const usePrestigeStore = defineStore('prestige', {
           return usePrestigeStore().upgradePurchased('eliteAnts')
         },
         maxPurchases: 3,
+        unlockedWhenDescription: 'Unlock the Elite Ants upgrade',
       },
       {
         id: 'productionBoost',
@@ -209,6 +213,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().timesPrestiged >= 5
         },
+        unlockedWhenDescription: 'Prestige 5 times',
       },
       {
         id: 'tunnels',
@@ -250,6 +255,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('royalJelly')
         },
+        unlockedWhenDescription: 'Unlock the Royal Jelly upgrade',
       },
       {
         id: 'prestigeMultiplier',
@@ -263,6 +269,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().timesPrestiged >= 5
         },
+        unlockedWhenDescription: 'Prestige 5 times',
       },
       {
         id: 'antHousingUpgrade',
@@ -276,6 +283,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('autoCreateHousing')
         },
+        unlockedWhenDescription: 'Unlock the Auto Create Housing upgrade',
       },
       {
         id: 'evolve',
@@ -325,6 +333,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('mountains')
         },
+        unlockedWhenDescription: 'Unlock the Mountains upgrade',
       },
       {
         id: 'underworld',
@@ -338,6 +347,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('volcano')
         },
+        unlockedWhenDescription: 'Unlock the Volcano upgrade',
       },
       {
         id: 'arcticTundra',
@@ -351,6 +361,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('underworld')
         },
+        unlockedWhenDescription: 'Unlock the Underworld upgrade',
       },
       {
         id: 'abyssalDepths',
@@ -364,6 +375,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return usePrestigeStore().upgradePurchased('arcticTundra')
         },
+        unlockedWhenDescription: 'Unlock the Arctic Tundra upgrade',
       },
     ] as PrestigeShopItem[], // List of items in the prestige shop
 

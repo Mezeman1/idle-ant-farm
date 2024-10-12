@@ -118,7 +118,7 @@
               v-if="resourcesStore.storage.maxSeeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
               class="text-xs"
             >
-              If only there was a way to increase your seed storage...
+              If only there was a way to increase your {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }} storage...
             </p>
           </div>
 

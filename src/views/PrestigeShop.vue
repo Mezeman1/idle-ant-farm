@@ -91,6 +91,12 @@
                 class="flex flex-col bg-white p-2 rounded shadow mx-1"
               >
                 <p>{{ upgrade.name }} {{ getUpgradeCount(upgrade) }} {{ !isUpgradeUnlocked(upgrade) ? '(Locked)' : '' }}</p>
+                <p
+                  v-if="!isUpgradeUnlocked(upgrade)"
+                  class="text-xs text-gray-500"
+                >
+                  Unlocked by: {{ upgrade.unlockedWhenDescription }}
+                </p>
                 <p class="text-xs text-gray-500">
                   {{ upgrade.description }}
                 </p>
