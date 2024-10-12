@@ -24,6 +24,7 @@ export interface Enemy {
   defense: number;
   regen: number;
   dropOptions: DropOption[];
+  xp?: number;
   effectChances?: {
     effect: string
     chance: number

@@ -12,11 +12,11 @@ import {useEquipmentStore} from '@/stores/equipmentStore'
 import {useAchievementStore} from '@/stores/achievementStore'
 import LZString from 'lz-string'
 import {useResourcesStore} from '@/stores/resourcesStore'
-import {useTunnelStore} from '@/stores/tunnelStore'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {useBossStore} from '@/stores/bossStore'
 import {useStatStore} from '@/stores/statStore'
 import FirestoreError = firebase.firestore.FirestoreError;
+import {useTrainingStore} from '@/stores/trainingStore'
 
 
 export const useGameStore = defineStore('gameStore', {
@@ -166,6 +166,7 @@ export const useGameStore = defineStore('gameStore', {
       return new Promise((resolve, reject) => {
         try {
           const resourceStore = useResourcesStore()
+          const trainingStore = useTrainingStore()
           const currentTime = Date.now()
           let timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
 
@@ -202,6 +203,7 @@ export const useGameStore = defineStore('gameStore', {
 
             const deltaTime = Math.min(chunkDuration, remainingTime) * this.deltaMultiplier // Simulate in larger chunks or remaining time
             resourceStore.updateResources(deltaTime)
+            trainingStore.processTraining(deltaTime)
 
             // Accumulate the offline time for auto actions
             offlineTimeAccumulator += deltaTime
@@ -257,7 +259,7 @@ export const useGameStore = defineStore('gameStore', {
       const resourcesStore = useResourcesStore()
       const adventureStore = useAdventureStore()
       const bossStore = useBossStore()
-      const tunnelStore = useTunnelStore()
+      const trainingStore = useTrainingStore()
       const gameLoop = (currentTime) => {
         const deltaTime = (currentTime - lastFrameTime) / 1000 * this.deltaMultiplier // Delta time in seconds
         let updateInterval = 1 / 60 // Target update rate (60 FPS)
@@ -276,11 +278,10 @@ export const useGameStore = defineStore('gameStore', {
             lastAutoCreationTime = currentTime // Reset the auto-creation throttle timer
           }
 
-          tunnelStore.handleTunnel(currentTime)
-
           adventureStore.applyBuffs(updateInterval) // Apply active buffs
           adventureStore.processCombat(updateInterval) // Process combat
           bossStore.processCombat(updateInterval) // Process combat
+          trainingStore.processTraining(updateInterval) // Process training
 
           // Reset the time accumulator, subtracting the update interval to handle any leftover time
           timeAccumulator -= updateInterval
@@ -570,6 +571,8 @@ export const useGameStore = defineStore('gameStore', {
       const achievementStore = useAchievementStore()
       const resourcesStore = useResourcesStore()
       const evolveStore = useEvolveStore()
+      const bossStore = useBossStore()
+      const trainingStore = useTrainingStore()
 
       return {
         ...resourcesStore.getResourcesState(),
@@ -587,8 +590,9 @@ export const useGameStore = defineStore('gameStore', {
         ...settingsStore.getSettingsState(),
         ...equipmentStore.getEquipmentState(),
         ...achievementStore.getAchievementState(),
-        ...useTunnelStore().getTunnelState(),
         ...evolveStore.getEvolveState(),
+        ...bossStore.getBossState(),
+        ...trainingStore.getTrainingStateToSave(),
       }
     },
 
@@ -657,6 +661,9 @@ export const useGameStore = defineStore('gameStore', {
       const adventureStore = useAdventureStore()
       await adventureStore.loadAdventureState(savedState)
 
+      const trainingStore = useTrainingStore()
+      trainingStore.loadTrainingState(savedState)
+
       const prestigeStore = usePrestigeStore()
       prestigeStore.resetPrestigeState()
       prestigeStore.loadPrestigeState(savedState)
@@ -677,8 +684,8 @@ export const useGameStore = defineStore('gameStore', {
       const achievementStore = useAchievementStore()
       achievementStore.loadAchievementState(savedState)
 
-      const tunnelStore = useTunnelStore()
-      tunnelStore.loadTunnelState(savedState)
+      const bossStore = useBossStore()
+      bossStore.loadBossState(savedState)
 
       resourcesStore.applyUpgrades()
     },
@@ -837,9 +844,6 @@ export const useGameStore = defineStore('gameStore', {
         // Reset inventory store
         const inventoryStore = useInventoryStore()
         await inventoryStore.resetInventoryState()
-
-        const tunnelStore = useTunnelStore()
-        tunnelStore.resetTunnel()
       }
       // Reset adventure store
       const adventureStore = useAdventureStore()
