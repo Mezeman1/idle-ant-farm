@@ -70,6 +70,13 @@ export const useTunnelStore = defineStore('tunnelStore', {
       return (upgradeId: string) => {
         const upgrade = state.tunnelUpgrades.find(up => up.id === upgradeId)
         if (!upgrade) return false
+        
+        return (upgrade.maxPurchases && this.amountOfUpgrades(upgradeId) >= upgrade.maxPurchases)
+      }
+    },
+    amountOfUpgrades(state) {
+      return (upgradeId: string) => {
+        return state.activeUpgrades.filter(up => up === upgradeId).length
       }
     },
   },
@@ -81,7 +88,7 @@ export const useTunnelStore = defineStore('tunnelStore', {
 
       const resourcesStore = useResourcesStore()
 
-      if (upgrade.maxPurchases && this.amountOfUpgrades(upgradeId) >= upgrade.maxPurchases) {
+      if (this.isUpgradeMaxed(upgradeId)) {
         console.log('Maximum purchases reached for this upgrade.')
         return // Prevent purchasing more than max allowed
       }
@@ -92,10 +99,6 @@ export const useTunnelStore = defineStore('tunnelStore', {
         upgrade.cost *= upgrade.costMultiplier // Increase cost after each purchase
         this.activeUpgrades.push(upgrade.id) // Store the upgrade as active
       }
-    },
-
-    amountOfUpgrades(upgradeId: string) {
-      return this.activeUpgrades.filter(up => up === upgradeId).length
     },
 
     // Start the tunnel exploration

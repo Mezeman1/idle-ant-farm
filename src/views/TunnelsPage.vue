@@ -143,7 +143,10 @@
             </p>
           </div>
           <div class="mt-4">
-            <p class="text-sm text-blue-400">
+            <p
+              v-if="!isUpgradeMaxed(upgrade.id)"
+              class="text-sm text-blue-400"
+            >
               Cost: {{ formatNumber(upgrade.cost) }} Mineral Shards
             </p>
             <button
@@ -154,12 +157,12 @@
             >
               Buy Upgrade
             </button>
-            <span
+            <div
               v-else
-              class="text-red-500 text-sm font-semibold"
+              class="text-red-500 text-sm font-semibold my-4"
             >
-              Maxed Out
-            </span>
+              Maximum upgrade level reached
+            </div>
           </div>
         </div>
       </div>
