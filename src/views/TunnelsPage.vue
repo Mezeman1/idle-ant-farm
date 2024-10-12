@@ -11,7 +11,7 @@
     </div>
 
     <!-- Ants sent and progress section -->
-    <div class="flex flex-col items-center justify-between space-y-4 md:space-y-0 md:space-x-8">
+    <div class="flex flex-col items-center justify-between space-y-4">
       <div class="flex items-center space-x-4">
         <p class="text-base font-semibold text-yellow-400">
           Ants in Tunnels: <strong>{{ formatNumber(antsInTunnel, 0) }}</strong>
