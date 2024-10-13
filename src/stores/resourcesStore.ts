@@ -137,10 +137,10 @@ export const useResourcesStore = defineStore('resources', {
     },
     maxAnts: (state) => {
       if (state.resources.antHousing === 0) {
-        return state.storage.maxAnts
+        return state.storage.maxAnts * state.storageModifiers.ant
       }
 
-      return state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing
+      return state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant
     },
     maxSeeds: (state) => {
       return state.storage.maxSeeds * state.storageModifiers.seed
@@ -502,8 +502,6 @@ export const useResourcesStore = defineStore('resources', {
         this.upgradeCosts.larvaeStorageUpgradeCost = nextUpgradeCost
 
         this.upgrades.maxLarvaeStorage += affordableUpgrades
-
-        console.log(`Upgraded larvae storage ${affordableUpgrades} times.`)
       }
     },
     updateResources(deltaTime: number) {

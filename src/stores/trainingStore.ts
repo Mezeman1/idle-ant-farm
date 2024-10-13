@@ -42,6 +42,7 @@ export enum ResourceType {
 export enum CraftingRecipeType {
   SeedStorage = 'Seed Storage',
   LarvaeStorage = 'Larvae Storage',
+  AntStorage = 'Ant Storage',
 }
 
 export interface TrainingState {
@@ -307,6 +308,8 @@ export const useTrainingStore = defineStore({
     resourcesCollected: {
       [ResourceType.Dirt]: 0,
       [ResourceType.Clay]: 0,
+      [ResourceType.Sand]: 0,
+      [ResourceType.Leaf]: 0,
     },
 
     activeCraftingRecipe: '',
@@ -338,10 +341,28 @@ export const useTrainingStore = defineStore({
         initialTimePerAction: 5,
         timePerAction: 5,
       },
+      {
+        name: CraftingRecipeType.AntStorage,
+        description: 'Increase the storage capacity for ants by 0.1%',
+        cost: {
+          [ResourceType.Dirt]: 5,
+          [ResourceType.Sand]: 5,
+        },
+        storageIncrease: {
+          ant: 0.001,
+        },
+
+        xpPerAction: 25,
+        levelRequired: 1,
+        initialTimePerAction: 5,
+        timePerAction: 5,
+      },
     ],
 
     craftedItems: {
       [CraftingRecipeType.SeedStorage]: 0,
+      [CraftingRecipeType.LarvaeStorage]: 0,
+      [CraftingRecipeType.AntStorage]: 0,
     },
 
 
@@ -483,6 +504,7 @@ export const useTrainingStore = defineStore({
       const currentResources = this.resourcesCollected
 
       for (const [resource, amount] of Object.entries(recipe.cost)) {
+        if (!currentResources[resource]) return false
         if (currentResources[resource] < amount) return false
       }
 
@@ -722,8 +744,6 @@ export const useTrainingStore = defineStore({
           }
         }
       }
-
-      console.log(foragingModifiers)
     },
   },
 })
