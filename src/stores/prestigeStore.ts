@@ -153,15 +153,11 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'eliteAnts',
         name: 'Elite Ants',
         description: 'Unlock elite ants',
-        cost: 500,
-        initialCost: 500,
+        cost: 2500,
+        initialCost: 2500,
         applyOnPrestige: true,
         oneTimePurchase: true,
         category: 'expansion',
-        unlockedWhen: () => {
-          return usePrestigeStore().timesPrestiged >= 5
-        },
-        unlockedWhenDescription: 'Prestige 5 times',
       },
       {
         id: 'storageUpgrade',
@@ -206,22 +202,8 @@ export const usePrestigeStore = defineStore('prestige', {
         id: 'royalJelly',
         name: 'Royal Jelly',
         description: 'Queens will have a chance to produce royal jelly',
-        cost: 1000,
-        initialCost: 1000,
-        category: 'expansion',
-        applyOnPrestige: true,
-        oneTimePurchase: true,
-        unlockedWhen: () => {
-          return usePrestigeStore().timesPrestiged >= 5
-        },
-        unlockedWhenDescription: 'Prestige 5 times',
-      },
-      {
-        id: 'tunnels',
-        name: 'Tunnels',
-        description: 'Unlock the tunnel system for exploration',
-        cost: 500,
-        initialCost: 500,
+        cost: 2500,
+        initialCost: 2500,
         category: 'expansion',
         applyOnPrestige: true,
         oneTimePurchase: true,
@@ -267,10 +249,6 @@ export const usePrestigeStore = defineStore('prestige', {
         category: 'expansion',
         applyOnPrestige: true,
         maxPurchases: 5,
-        unlockedWhen: () => {
-          return usePrestigeStore().timesPrestiged >= 5
-        },
-        unlockedWhenDescription: 'Prestige 5 times',
       },
       {
         id: 'antHousingUpgrade',

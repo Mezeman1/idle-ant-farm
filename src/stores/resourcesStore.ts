@@ -16,7 +16,6 @@ export const useResourcesStore = defineStore('resources', {
       seeds: 10,
       queens: 1,
       royalJelly: 0,
-      mineralShards: 0, // New resource for tunnel upgrades
 
       // Evolved resources, bought using royal jelly
       royalJellyAnts: 0,
@@ -33,6 +32,14 @@ export const useResourcesStore = defineStore('resources', {
       maxAnts: 500, // Initial ant storage capacity
       maxQueens: 10, // Initial queen storage capacity
       maxEliteAnts: 1,
+    },
+
+    storageModifiers: {
+      seed: 1,
+      larvae: 1,
+      ant: 1,
+      queen: 1,
+      eliteAnt: 1,
     },
 
     upgrades: {
@@ -135,6 +142,12 @@ export const useResourcesStore = defineStore('resources', {
 
       return state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing
     },
+    maxSeeds: (state) => {
+      return state.storage.maxSeeds * state.storageModifiers.seed
+    },
+    maxLarvae: (state) => {
+      return state.storage.maxLarvae * state.storageModifiers.larvae
+    },
     maxWorkers: (state) => {
       return Math.floor(state.storage.maxAnts * 0.01)
     },
@@ -156,6 +169,9 @@ export const useResourcesStore = defineStore('resources', {
     },
   },
   actions: {
+    applyStorageModifiers(storageModifiers: any) {
+      this.storageModifiers = storageModifiers
+    },
     upgradeAnt() {
       if (useGameStore().royalJellyUnlocked && this.resources.royalJelly >= this.resourceCosts.royalJellyCostPerUpgrade) {
         this.resources.royalJelly -= this.resourceCosts.royalJellyCostPerUpgrade
@@ -188,7 +204,7 @@ export const useResourcesStore = defineStore('resources', {
     },
     // Function to create larvae using seeds, respecting the larvae cap
     createLarvae() {
-      if (this.resources.seeds >= this.resourceCosts.seedCostPerLarva && this.resources.larvae < Math.floor(this.storage.maxLarvae)) {
+      if (this.resources.seeds >= this.resourceCosts.seedCostPerLarva && this.resources.larvae < Math.floor(this.maxLarvae)) {
         this.resources.larvae += 1
         this.resources.seeds -= this.resourceCosts.seedCostPerLarva
         return true
@@ -198,7 +214,7 @@ export const useResourcesStore = defineStore('resources', {
     },
     // Create max larvae based on available seeds and larvae cap
     createMaxLarvae() {
-      const availableLarvaeSpace = Math.floor(this.storage.maxLarvae) - this.resources.larvae
+      const availableLarvaeSpace = Math.floor(this.maxLarvae) - this.resources.larvae
       const maxCreatableLarvae = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerLarva)
 
       // Calculate how many larvae can actually be created
@@ -225,9 +241,9 @@ export const useResourcesStore = defineStore('resources', {
     createMaxAnts(fromPrestige = false) {
       if (
         fromPrestige
-        && this.resources.larvae < useSettingsStore().autoThresholds.autoAntCreationLarvae / 100 * this.storage.maxLarvae
+        && this.resources.larvae < useSettingsStore().autoThresholds.autoAntCreationLarvae / 100 * this.maxLarvae
         || fromPrestige
-        && this.resources.seeds < useSettingsStore().autoThresholds.autoAntCreationSeeds / 100 * this.storage.maxSeeds
+        && this.resources.seeds < useSettingsStore().autoThresholds.autoAntCreationSeeds / 100 * this.maxSeeds
       ) {
         return
       }
@@ -301,9 +317,9 @@ export const useResourcesStore = defineStore('resources', {
     createEliteMaxAnts(fromPrestige = false) {
       if (
         fromPrestige
-        && this.resources.larvae < useSettingsStore().autoThresholds.autoEliteAntsCreationLarvae / 100 * this.storage.maxLarvae
+        && this.resources.larvae < useSettingsStore().autoThresholds.autoEliteAntsCreationLarvae / 100 * this.maxLarvae
         || fromPrestige
-        && this.resources.seeds < useSettingsStore().autoThresholds.autoEliteAntsCreationSeeds / 100 * this.storage.maxSeeds
+        && this.resources.seeds < useSettingsStore().autoThresholds.autoEliteAntsCreationSeeds / 100 * this.maxSeeds
       ) {
         return
       }
@@ -342,7 +358,7 @@ export const useResourcesStore = defineStore('resources', {
         fromPrestige
         && this.resources.ants < useSettingsStore().autoThresholds.autoQueenCreationAnts / 100 * this.storage.maxAnts
         || fromPrestige
-        && this.resources.seeds < useSettingsStore().autoThresholds.autoQueenCreationSeeds / 100 * this.storage.maxSeeds
+        && this.resources.seeds < useSettingsStore().autoThresholds.autoQueenCreationSeeds / 100 * this.maxSeeds
       ) {
         return
       }
@@ -364,8 +380,8 @@ export const useResourcesStore = defineStore('resources', {
     // Collect seeds manually, but respect the seed cap
     collectSeedsManually(amount = 1) {
       const manualSeedCollectionRate = this.manualCollection * this.manualCollectionMultiplier // Number of seeds collected per click
-      const seedsToAdd = Math.min(manualSeedCollectionRate, this.storage.maxSeeds - this.resources.seeds)
-      if (amount > 0 && this.resources.seeds + seedsToAdd <= this.storage.maxSeeds) {
+      const seedsToAdd = Math.min(manualSeedCollectionRate, this.maxSeeds - this.resources.seeds)
+      if (amount > 0 && this.resources.seeds + seedsToAdd <= this.maxSeeds) {
         this.resources.seeds += amount
         return
       }
@@ -388,7 +404,7 @@ export const useResourcesStore = defineStore('resources', {
       }
     },
     upgradeMaxSeedStorage(fromPrestige = false) {
-      if (fromPrestige && this.resources.seeds < useSettingsStore().autoThresholds.autoSeedStorageUpgrade / 100 * this.storage.maxSeeds) {
+      if (fromPrestige && this.resources.seeds < useSettingsStore().autoThresholds.autoSeedStorageUpgrade / 100 * this.maxSeeds) {
         return
       }
 
@@ -457,7 +473,7 @@ export const useResourcesStore = defineStore('resources', {
       }
     },
     upgradeMaxLarvaeStorage(fromPrestige = false) {
-      if (fromPrestige && this.resources.larvae < useSettingsStore().autoThresholds.autoLarvaeStorageUpgrade / 100 * this.storage.maxLarvae) {
+      if (fromPrestige && this.resources.larvae < useSettingsStore().autoThresholds.autoLarvaeStorageUpgrade / 100 * this.maxLarvae) {
         return
       }
 
@@ -502,7 +518,7 @@ export const useResourcesStore = defineStore('resources', {
         // Only add full larvae units when the accumulator reaches or exceeds 1
         const wholeLarvae = Math.floor(this.accumulators.larvaeAccumulator)
         if (wholeLarvae > 0) {
-          this.resources.larvae = Math.min(this.resources.larvae + wholeLarvae, this.storage.maxLarvae)
+          this.resources.larvae = Math.min(this.resources.larvae + wholeLarvae, this.maxLarvae)
           this.accumulators.larvaeAccumulator -= wholeLarvae // Subtract the whole units from the accumulator
 
           this.tryCollectJelly()
@@ -520,10 +536,20 @@ export const useResourcesStore = defineStore('resources', {
         // Only add full seed units when the accumulator reaches or exceeds 1
         const wholeSeeds = Math.floor(this.accumulators.seedAccumulator)
         if (wholeSeeds > 0) {
-          this.resources.seeds = Math.min(this.resources.seeds + wholeSeeds, this.storage.maxSeeds)
+          this.resources.seeds = Math.min(this.resources.seeds + wholeSeeds, this.maxSeeds)
           this.accumulators.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
         }
       }
+
+      this.setStorageToMax()
+    },
+
+    setStorageToMax() {
+      this.resources.seeds = Math.min(this.resources.seeds, this.maxSeeds)
+      this.resources.larvae = Math.min(this.resources.larvae, this.maxLarvae)
+      this.resources.ants = Math.min(this.resources.ants, this.maxAnts)
+      this.resources.queens = Math.min(this.resources.queens, this.storage.maxQueens)
+      this.resources.eliteAnts = Math.min(this.resources.eliteAnts, this.storage.maxEliteAnts)
     },
 
     tryCollectJelly() {
@@ -607,8 +633,8 @@ export const useResourcesStore = defineStore('resources', {
           this.upgradeLarvaeStorageEffect(i)
         }
 
-        this.resources.seeds = Math.min(this.resources.seeds, this.storage.maxSeeds)
-        this.resources.larvae = Math.min(this.resources.larvae, this.storage.maxLarvae)
+        this.resources.seeds = Math.min(this.resources.seeds, this.maxSeeds)
+        this.resources.larvae = Math.min(this.resources.larvae, this.maxLarvae)
     },
 
     resetResourcesState(isDebug = false) {
