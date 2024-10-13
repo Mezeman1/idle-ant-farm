@@ -31,6 +31,9 @@
           Time per Action: {{ resource.initialTimePerAction.toFixed(1) }}s - {{ resource.timeReduction.toFixed(1) }}s
         </p>
         <p class="text-gray-700">
+          Respawn time: {{ resource.initialRespawnTime.toFixed(1) }}s - {{ resource.respawnReduction.toFixed(1) }}s
+        </p>
+        <p class="text-gray-700">
           Collecting: {{ resource.collectionMultiplier.toFixed(1) }}x
         </p>
 
@@ -64,7 +67,7 @@
           <div class="relative mt-1 w-full h-6 bg-red-200 rounded-lg">
             <div
               class="absolute top-0 left-0 h-full bg-red-500 rounded-lg"
-              :style="{ width: `${(resource.respawnTime / resource.initialRespawnTime) * 100}%` }"
+              :style="{ width: `${(resource.respawnTime / (resource.initialRespawnTime - resource.respawnReduction)) * 100}%` }"
             />
             <p class="absolute inset-0 text-center text-sm text-gray-800 leading-7">
               {{ resource.respawnTime.toFixed(1) }}s remaining

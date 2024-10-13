@@ -184,6 +184,12 @@
               Count: {{ formatNumber(resourcesStore.resources.ants) }}/{{ formatNumber(resourcesStore.maxAnts) }}
               ({{ formatNumber(resourcesStore.resources.ants / resourcesStore.maxAnts * 100, 1) }}%)
             </p>
+            <p
+              v-if="resourcesStore.productionRates.antsGenerationRate > 0"
+              class="text-xs"
+            >
+              Rate: {{ formatNumber(resourcesStore.antsPerSecond) }}/s
+            </p>
           </div>
           <div class="w-full flex flex-wrap gap-2">
             <button

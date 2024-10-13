@@ -70,7 +70,7 @@ export const useTrainingStore = defineStore({
       {
         name: CraftingRecipeType.SeedStorage,
         description: 'Increase the storage capacity for seeds by 0.1%',
-        cost: { [ResourceType.Dirt]: 5 },
+        cost: {[ResourceType.Dirt]: 5},
         storageIncrease: {
           seed: 0.001,
         },
@@ -83,7 +83,7 @@ export const useTrainingStore = defineStore({
       {
         name: CraftingRecipeType.LarvaeStorage,
         description: 'Increase the storage capacity for ant larvae by 0.1%',
-        cost: { [ResourceType.Clay]: 5 },
+        cost: {[ResourceType.Clay]: 5},
         storageIncrease: {
           larvae: 0.001,
         },
@@ -109,6 +109,40 @@ export const useTrainingStore = defineStore({
         initialTimePerAction: 5,
         timePerAction: 5,
       },
+      {
+        name: CraftingRecipeType.AntHill,
+        description: 'Generates ants passively',
+        cost: {
+          [ResourceType.Leaf]: 5,
+          [ResourceType.Clay]: 20,
+          ants: 10,
+        },
+
+        xpPerAction: 50,
+        levelRequired: 15,
+        initialTimePerAction: 10,
+        timePerAction: 10,
+        effect: {
+          antGeneration: 1,
+        },
+      },
+      {
+        name: CraftingRecipeType.AdvancedSeedStorage,
+        description: 'Increase the storage capacity for seeds by 0.5%',
+        cost: {
+          [ResourceType.Twig]: 10,
+          [ResourceType.RockFragment]: 10,
+        },
+
+        storageIncrease: {
+          seed: 0.005,
+        },
+
+        xpPerAction: 50,
+        levelRequired: 25,
+        initialTimePerAction: 10,
+        timePerAction: 10,
+      },
     ],
 
     craftedItems: {
@@ -126,7 +160,7 @@ export const useTrainingStore = defineStore({
         levelRequired: 1,
         timePerAction: 5,
         resourceType: 'Seeds',
-        cost: { ants: 10 },
+        cost: {ants: 10},
         initialTimePerAction: 5,
         timePerAction: 5,
         productionIncrease: {
@@ -240,7 +274,17 @@ export const useTrainingStore = defineStore({
     },
 
     subtractResources(cost: Record<ResourceType, number>) {
+      const resourceStore = useResourcesStore()
+      const resourcesToCheckInStore = [
+        'ants',
+      ]
+
       for (const [resource, amount] of Object.entries(cost)) {
+        if (resourcesToCheckInStore.includes(resource)) {
+          resourceStore.resources[resource] -= amount
+          continue
+        }
+
         this.resourcesCollected[resource] -= amount
       }
     },
@@ -253,9 +297,19 @@ export const useTrainingStore = defineStore({
     },
 
     canCraft(recipe: CraftingRecipe): boolean {
+      const resourceStore = useResourcesStore()
+      const resourcesToCheckInStore = [
+        'ants',
+      ]
       const currentResources = this.resourcesCollected
 
       for (const [resource, amount] of Object.entries(recipe.cost)) {
+        if (resourcesToCheckInStore.includes(resource)) {
+          if (resourceStore.resources[resource] < amount) return false
+
+          continue
+        }
+
         if (!currentResources[resource]) return false
         if (currentResources[resource] < amount) return false
       }
@@ -336,8 +390,9 @@ export const useTrainingStore = defineStore({
 
       resourceMilestones.forEach(milestone => {
         if (resource.level >= milestone.level) {
-          resource.collectionMultiplier *=  (1 + milestone.collectionMultiplierBonus)
+          resource.collectionMultiplier *= (1 + milestone.collectionMultiplierBonus)
           resource.timeReduction += milestone.timeReductionBonus
+          resource.respawnReduction += milestone.respawnReductionBonus
         }
       })
     },
@@ -345,6 +400,7 @@ export const useTrainingStore = defineStore({
     resetMilstoneBonusses(resource: MiningResource) {
       resource.collectionMultiplier = 1
       resource.timeReduction = 0
+      resource.respawnReduction = 0
     },
 
     handleRespawn(resource: MiningResource, deltaTime: number) {
@@ -354,7 +410,7 @@ export const useTrainingStore = defineStore({
 
       // Resource has respawned, reset respawn time and make it available again
       resource.isDepleted = false
-      resource.respawnTime = resource.initialRespawnTime
+      resource.respawnTime = resource.initialRespawnTime - resource.respawnReduction
     },
 
     startMining(resource: MiningResource) {
@@ -393,7 +449,7 @@ export const useTrainingStore = defineStore({
 
     resetOreNode(resource: MiningResource) {
       resource.timePerAction = resource.initialTimePerAction - resource.timeReduction
-      resource.respawnTime = resource.initialRespawnTime
+      resource.respawnTime = resource.initialRespawnTime - resource.respawnReduction
       resource.isDepleted = false
     },
 
@@ -506,14 +562,17 @@ export const useTrainingStore = defineStore({
         const initialCollectionMultiplierBonus = 0.05
         const collectionMultiplierIncrement = 0.05
         const initialTimeReductionBonus = 0.1
+        const initialRespawnReductionBonus = 0.05
         const timeReductionIncrement = 0.05
         let timePerAction = resource.initialTimePerAction
+        let respawnPerAction = resource.initialRespawnTime
 
         const milestoneLevels = [5, 10, 20, 30, 50, 100, 150, 200, 250, 500, 750, 1000]
 
         milestoneLevels.forEach(level => {
           const collectionMultiplierBonus = initialCollectionMultiplierBonus + (Math.floor(level / 5) - 1) * collectionMultiplierIncrement
           let timeReductionBonus = initialTimeReductionBonus + (Math.floor(level / 5) - 1) * timeReductionIncrement
+          let respawnReductionBonus = initialRespawnReductionBonus + (Math.floor(level / 5) - 1) * timeReductionIncrement
 
           // Ensure that timePerAction never goes below 1 second
           if (timePerAction - timeReductionBonus < 1) {
@@ -523,15 +582,27 @@ export const useTrainingStore = defineStore({
             timePerAction -= timeReductionBonus // Continue reducing timePerAction
           }
 
+          if (respawnPerAction - respawnReductionBonus < 1) {
+            respawnReductionBonus = Math.max(0, respawnPerAction - 1)
+            respawnPerAction = 1 // Cap respawnPerAction at 1 second once reached
+          } else {
+            respawnPerAction -= respawnReductionBonus // Continue reducing respawnPer
+          }
+
           // Stop giving time bonuses after timePerAction reaches 1 second
           if (timePerAction <= 1) {
             timeReductionBonus = 0
+          }
+
+          if (respawnPerAction <= 1) {
+            respawnReductionBonus = 0
           }
 
           milestones.push({
             level,
             collectionMultiplierBonus: parseFloat(collectionMultiplierBonus.toFixed(3)), // Keep precision
             timeReductionBonus: parseFloat(timeReductionBonus.toFixed(3)),
+            respawnReductionBonus: parseFloat(respawnReductionBonus.toFixed(3)),
           })
         })
 
@@ -545,34 +616,65 @@ export const useTrainingStore = defineStore({
     },
     applyModifiers() {
       const resourcesStore = useResourcesStore() // Access the resources store
+      resourcesStore.productionRates.antsGenerationRate = 0
       const crafterItems = this.craftedItems
 
-      // Reset the storageModifiers to the default values
-      const storageModifiers = {
+      // Initialize the storageModifiers object
+      const storageModifiers = this.resetStorageModifiers()
+
+      // Loop through crafted items and apply modifiers
+      for (const [key, amountOfUpgrade] of Object.entries(crafterItems)) {
+        this.applyCraftingRecipeModifiers(key, amountOfUpgrade, storageModifiers)
+      }
+
+      // Apply the updated storage modifiers to the resourcesStore
+      resourcesStore.applyStorageModifiers(storageModifiers)
+    },
+
+    // Helper method to reset the storage modifiers to default values
+    resetStorageModifiers() {
+      return {
         seed: 1,
         larvae: 1,
         ant: 1,
         queen: 1,
         eliteAnt: 1,
       }
+    },
 
-      // Loop through each crafted item to calculate the modifier
-      for (const [key, amountOfUpgrade] of Object.entries(crafterItems)) {
-        // Find the corresponding crafting recipe
-        const craftingRecipe = this.craftingRecipes.find(recipe => recipe.name === key)
-        if (!craftingRecipe) continue
+    // Helper method to apply modifiers from crafting recipes
+    applyCraftingRecipeModifiers(key, amountOfUpgrade, storageModifiers) {
+      // Find the corresponding crafting recipe
+      const craftingRecipe = this.craftingRecipes.find(recipe => recipe.name === key)
+      if (!craftingRecipe) return
 
-        // Apply the modifier for each storage increase from the crafting recipe
-        for (const [resource, modifier] of Object.entries(craftingRecipe.storageIncrease)) {
-          if (storageModifiers[resource] !== undefined) {
-            // Calculate the modifier based on the amount of upgrades
-            storageModifiers[resource] += amountOfUpgrade * modifier
-          }
-        }
+      // Apply storage modifiers from the recipe
+      if (craftingRecipe.storageIncrease) {
+        this.applyStorageIncrease(craftingRecipe.storageIncrease, amountOfUpgrade, storageModifiers)
       }
 
-      // Apply the updated storage modifiers to the resourcesStore
-      resourcesStore.applyStorageModifiers(storageModifiers)
+      // Apply other modifiers like production, resource generation, etc.
+      if (craftingRecipe.effect) {
+        this.applyOtherEffects(craftingRecipe.effect, amountOfUpgrade)
+      }
+    },
+
+    // Apply storage increase modifiers
+    applyStorageIncrease(storageIncrease, amountOfUpgrade, storageModifiers) {
+      for (const [resource, modifier] of Object.entries(storageIncrease)) {
+        if (storageModifiers[resource] !== undefined) {
+          storageModifiers[resource] += amountOfUpgrade * modifier
+        }
+      }
+    },
+
+    // Handle other crafting effects such as resource generation or production boosts
+    applyOtherEffects(effect, amountOfUpgrade) {
+      const resourcesStore = useResourcesStore()
+
+      if (effect.antGeneration) {
+        resourcesStore.addAnts(effect.antGeneration * amountOfUpgrade)
+      }
     },
     applyForagingModifiers() {
       const resourcesStore = useResourcesStore()

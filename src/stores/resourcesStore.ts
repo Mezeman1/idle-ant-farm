@@ -56,6 +56,7 @@ export const useResourcesStore = defineStore('resources', {
     },
 
     productionRates: {
+      antsGenerationRate: 0,
       larvaeProductionRate: 2.5, // Larvae produced per queen per minute
       collectionRatePerAnt: 60, // Seeds collected per ant per minute
 
@@ -85,6 +86,7 @@ export const useResourcesStore = defineStore('resources', {
     accumulators: {
       larvaeAccumulator: 0, // To accumulate fractional larvae production
       seedAccumulator: 0, // To accumulate fractional seed production
+      antAccumulator: 0, // To accumulate fractional ant production
     },
 
     royalJellyCollectionChance: 0.001, // 0.1% chance to collect royal jelly when queen produces larvae
@@ -101,7 +103,9 @@ export const useResourcesStore = defineStore('resources', {
     royalQueenMultiplier: 1000,
   }),
   getters: {
-    // Calculate larvae production per minute based on queens
+    antsPerSecond: (state) => {
+      return state.productionRates.antsGenerationRate
+    },
     larvaePerMinute: (state) => {
       const larvaePerQueen = state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier
 
@@ -169,6 +173,9 @@ export const useResourcesStore = defineStore('resources', {
     },
   },
   actions: {
+    addAnts(amount: number) {
+      this.productionRates.antsGenerationRate += amount
+    },
     applyStorageModifiers(storageModifiers: any) {
       this.storageModifiers = storageModifiers
     },
@@ -537,6 +544,17 @@ export const useResourcesStore = defineStore('resources', {
           this.resources.seeds = Math.min(this.resources.seeds + wholeSeeds, this.maxSeeds)
           this.accumulators.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
         }
+      }
+
+      const antsPerSecond = this.antsPerSecond
+
+      const antsToAdd = antsPerSecond * deltaTime
+      this.accumulators.antAccumulator += antsToAdd
+
+      const wholeAnts = Math.floor(this.accumulators.antAccumulator)
+      if (wholeAnts > 0) {
+        this.resources.ants = Math.min(this.resources.ants + wholeAnts, this.maxAnts)
+        this.accumulators.antAccumulator -= wholeAnts
       }
     },
 

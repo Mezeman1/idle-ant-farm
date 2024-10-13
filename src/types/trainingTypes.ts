@@ -38,8 +38,15 @@ export enum ResourceType {
 
 export enum CraftingRecipeType {
   SeedStorage = 'Seed Storage',
+  AdvancedSeedStorage = 'Advanced Seed Storage',
+
   LarvaeStorage = 'Larvae Storage',
+  AdvancedLarvaeStorage = 'Advanced Larvae Storage',
+
   AntStorage = 'Ant Storage',
+  AdvancedAntStorage = 'Advanced Ant Storage',
+
+  AntHill = 'Ant Hill',
 }
 
 export interface TrainingState {
@@ -66,6 +73,7 @@ export interface MiningResource {
 
   collectionMultiplier: number; // Multiplier for collection
   timeReduction: number; // Reduction in time
+  respawnReduction: number; // Reduction in respawn time
   milestones?: Milestone[];
 }
 
@@ -73,6 +81,7 @@ export interface Milestone {
   level: number;
   collectionMultiplierBonus: number;  // Bonus multiplier for collection
   timeReductionBonus: number;         // Bonus reduction in time
+  respawnReductionBonus: number;      // Bonus reduction in respawn time
 }
 
 export interface ResourcesCollected {
