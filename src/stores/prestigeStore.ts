@@ -728,7 +728,7 @@ export const usePrestigeStore = defineStore('prestige', {
       adventureStore.spawnTime = 2000
       adventureStore.spawnTimeModifier = 1
 
-      this.lastPrestige = savedState.lastPrestige ? this.lastPrestige : Date.now()
+      this.lastPrestige = savedState.lastPrestige ? savedState.lastPrestige : Date.now()
       this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
       this.timesPrestiged = savedState.timesPrestiged ?? this.timesPrestiged
       this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
