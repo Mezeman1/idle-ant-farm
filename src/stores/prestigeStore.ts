@@ -4,6 +4,7 @@ import {useResourcesStore} from '@/stores/resourcesStore'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {toast} from 'vue3-toastify'
+import {formatTime} from '@/utils'
 
 interface PrestigeShopItem {
   id: string
@@ -402,11 +403,7 @@ export const usePrestigeStore = defineStore('prestige', {
   actions: {
     timeSinceLastPrestigeFormatted(){
       const timeSinceLastPrestige = Date.now() - this.lastPrestige
-      const days = Math.floor(timeSinceLastPrestige / (1000 * 60 * 60 * 24))
-      const hours = Math.floor((timeSinceLastPrestige % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      const minutes = Math.floor((timeSinceLastPrestige % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((timeSinceLastPrestige % (1000 * 60)) / 1000)
-      return `${days}d ${hours}h ${minutes}m ${seconds}s`
+      return formatTime(timeSinceLastPrestige)
     },
     calculatePrestigePoints() {
       const resourcesStore = useResourcesStore()
