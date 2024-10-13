@@ -45,11 +45,9 @@
           Time per Action: {{ formatNumber(recipe.initialTimePerAction, 1) }}s
         </p>
         <p
-          v-for="(amount, resource) in recipe.cost"
-          :key="resource"
           class="text-gray-700"
         >
-          Costs {{ formatNumber(amount, 0) }} {{ resource }}
+          Costs: {{ formattedCosts(recipe) }}
         </p>
 
         <div
@@ -107,6 +105,11 @@ const craftingLevel = computed(() => trainingStore.training.crafting.level)
 const craftingXp = computed(() => trainingStore.training.crafting.xp)
 const craftingXpToNextLevel = computed(() => trainingStore.training.crafting.xpToNextLevel)
 const craftingRecipes = computed(() => trainingStore.craftingRecipes)
+
+const formattedCosts = (recipe) => {
+  return Object.entries(recipe.cost).map(([resource, amount]) => `${formatNumber(amount, 0)} ${resource}`)
+    .join(', ')
+}
 
 // Start crafting action
 function startCrafting(recipeName: string) {

@@ -42,6 +42,7 @@ export enum ResourceType {
 export enum CraftingRecipeType {
   SeedStorage = 'Seed Storage',
   LarvaeStorage = 'Larvae Storage',
+  AntStorage = 'Ant Storage',
 }
 
 export interface TrainingState {
@@ -50,7 +51,7 @@ export interface TrainingState {
   xpToNextLevel: number;
 }
 
-export interface Resource {
+export interface MiningResource {
   name: ResourceType;
   xpPerAction: number;
   levelRequired: number;
@@ -61,6 +62,10 @@ export interface Resource {
   initialRespawnTime: number; // Variable to reset respawnTime
   respawnTime: number; // Time in seconds for the resource to respawn
   isDepleted: boolean; // Tracks if the resource is currently depleted
+
+  level: number;
+  xp: number;
+  xpToNextLevel: number;
 }
 
 export interface ResourcesCollected {
@@ -81,7 +86,7 @@ export interface TrainingStoreState {
     crafting: TrainingState;
   };
   activeResource: ResourceType;
-  miningResources: Resource[];
+  miningResources: MiningResource[];
   resourcesCollected: ResourcesCollected;
   activeCraftingRecipe: string;
   craftingRecipes: CraftingRecipe[];
@@ -141,6 +146,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 2,
         respawnTime: 2,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Clay,
@@ -151,6 +160,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 2,
         respawnTime: 2,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Sand,
@@ -161,6 +174,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 3,
         respawnTime: 3,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Leaf,
@@ -171,6 +188,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 3.5,
         respawnTime: 3.5,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Twig,
@@ -181,6 +202,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 4,
         respawnTime: 4,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.RockFragment,
@@ -191,6 +216,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 4.5,
         respawnTime: 4.5,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.RottenWood,
@@ -201,6 +230,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 5,
         respawnTime: 5,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Fungus,
@@ -211,6 +244,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 5.5,
         respawnTime: 5.5,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Pebble,
@@ -221,6 +258,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 6,
         respawnTime: 6,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Resin,
@@ -231,6 +272,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 6.5,
         respawnTime: 6.5,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Mushroom,
@@ -241,6 +286,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 7,
         respawnTime: 7,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Sap,
@@ -251,6 +300,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 7.5,
         respawnTime: 7.5,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.Root,
@@ -261,6 +314,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 8,
         respawnTime: 8,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.CarapaceFragment,
@@ -271,6 +328,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 8.5,
         respawnTime: 8.5,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.AntLarvae,
@@ -281,6 +342,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 9,
         respawnTime: 9,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.AntPheromones,
@@ -291,6 +356,10 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 9.5,
         respawnTime: 9.5,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
       {
         name: ResourceType.RoyalJelly,
@@ -301,12 +370,18 @@ export const useTrainingStore = defineStore({
         initialRespawnTime: 10,
         respawnTime: 10,
         isDepleted: false,
+
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
       },
-    ],
+    ] as MiningResource[],
 
     resourcesCollected: {
       [ResourceType.Dirt]: 0,
       [ResourceType.Clay]: 0,
+      [ResourceType.Sand]: 0,
+      [ResourceType.Leaf]: 0,
     },
 
     activeCraftingRecipe: '',
@@ -338,10 +413,28 @@ export const useTrainingStore = defineStore({
         initialTimePerAction: 5,
         timePerAction: 5,
       },
+      {
+        name: CraftingRecipeType.AntStorage,
+        description: 'Increase the storage capacity for ants by 0.1%',
+        cost: {
+          [ResourceType.Dirt]: 5,
+          [ResourceType.Sand]: 5,
+        },
+        storageIncrease: {
+          ant: 0.001,
+        },
+
+        xpPerAction: 25,
+        levelRequired: 1,
+        initialTimePerAction: 5,
+        timePerAction: 5,
+      },
     ],
 
     craftedItems: {
       [CraftingRecipeType.SeedStorage]: 0,
+      [CraftingRecipeType.LarvaeStorage]: 0,
+      [CraftingRecipeType.AntStorage]: 0,
     },
 
 
@@ -483,6 +576,7 @@ export const useTrainingStore = defineStore({
       const currentResources = this.resourcesCollected
 
       for (const [resource, amount] of Object.entries(recipe.cost)) {
+        if (!currentResources[resource]) return false
         if (currentResources[resource] < amount) return false
       }
 
@@ -525,15 +619,15 @@ export const useTrainingStore = defineStore({
       this.activeCraftingRecipe = recipe
     },
 
-    handleMining(resource: Resource, deltaTime: number) {
+    handleMining(resource: MiningResource, deltaTime: number) {
       resource.timePerAction -= deltaTime
 
       if (resource.timePerAction > 0) return
 
       // Resource is depleted, add XP and increment resources collected
       this.addXp(Skill.Mining, resource.xpPerAction)
+      this.addXpToMiningResource(resource, resource.xpPerAction)
       if (!this.resourcesCollected[resource.name]) this.resourcesCollected[resource.name] = 0
-
       this.resourcesCollected[resource.name]++
 
       // Mark the resource as depleted and reset timePerAction
@@ -541,7 +635,18 @@ export const useTrainingStore = defineStore({
       resource.timePerAction = resource.initialTimePerAction
     },
 
-    handleRespawn(resource: Resource, deltaTime: number) {
+    addXpToMiningResource(resource: MiningResource, xp: number) {
+      resource.xp += xp
+      if (resource.xp >= resource.xpToNextLevel) this.addLevelToMiningResource(resource)
+    },
+
+    addLevelToMiningResource(resource: MiningResource) {
+      resource.level++
+      resource.xp = 0
+      resource.xpToNextLevel = this.getXpToNextLevel(resource.level)
+    },
+
+    handleRespawn(resource: MiningResource, deltaTime: number) {
       resource.respawnTime -= deltaTime
 
       if (resource.respawnTime > 0) return
@@ -551,7 +656,7 @@ export const useTrainingStore = defineStore({
       resource.respawnTime = resource.initialRespawnTime
     },
 
-    startMining(resource: Resource) {
+    startMining(resource: MiningResource) {
       this.setActiveTraining(Skill.Mining)
 
       this.resetOreNode(resource)
@@ -585,7 +690,7 @@ export const useTrainingStore = defineStore({
       this.setActiveTraining(Skill.None)
     },
 
-    resetOreNode(resource: Resource) {
+    resetOreNode(resource: MiningResource) {
       resource.timePerAction = resource.initialTimePerAction
       resource.respawnTime = resource.initialRespawnTime
       resource.isDepleted = false
@@ -648,6 +753,13 @@ export const useTrainingStore = defineStore({
         resourcesCollected: this.resourcesCollected,
         craftedItems: this.craftedItems,
         foragedZones: this.foragedZones,
+
+        miningResourceLevels: this.miningResources.map(resource => ({
+          name: resource.name,
+          level: resource.level,
+          xp: resource.xp,
+          xpToNextLevel: resource.xpToNextLevel,
+        })),
       }
     },
     loadTrainingState(state) {
@@ -665,6 +777,16 @@ export const useTrainingStore = defineStore({
       this.craftedItems = state.craftedItems ?? this.craftedItems
       this.activeForagingZone = state.activeForagingZone ?? this.activeForagingZone
       this.foragedZones = state.foragedZones ?? this.foragedZones
+
+      this.miningResources = this.miningResources.map(resource => {
+        const savedResource = state.miningResourceLevels?.find(saved => saved.name === resource.name)
+        if (!savedResource) return resource
+
+        return {
+          ...resource,
+          ...savedResource,
+        }
+      })
 
       this.applyModifiers()
       this.applyForagingModifiers()
@@ -722,8 +844,6 @@ export const useTrainingStore = defineStore({
           }
         }
       }
-
-      console.log(foragingModifiers)
     },
   },
 })

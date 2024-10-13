@@ -117,7 +117,7 @@ export const useResourcesStore = defineStore('resources', {
       const larvaeFromQueens = (state.productionRates.larvaeProductionRate * state.resources.queens * state.productionRates.larvaeProductionModifier) / 60
 
       if (state.resources.royalQueens > 0) {
-        const larvaeFromRoyalQueens = (state.productionRates.larvaeProductionRate * state.royalQueenMultiplier * state.resources.royalQueens * state.productionRates.larvaeProductionModifier ) / 60
+        const larvaeFromRoyalQueens = (state.productionRates.larvaeProductionRate * state.royalQueenMultiplier * state.resources.royalQueens * state.productionRates.larvaeProductionModifier) / 60
 
         return larvaeFromQueens + larvaeFromRoyalQueens
       }
@@ -137,10 +137,10 @@ export const useResourcesStore = defineStore('resources', {
     },
     maxAnts: (state) => {
       if (state.resources.antHousing === 0) {
-        return state.storage.maxAnts
+        return state.storage.maxAnts * state.storageModifiers.ant
       }
 
-      return state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing
+      return state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant
     },
     maxSeeds: (state) => {
       return state.storage.maxSeeds * state.storageModifiers.seed
@@ -502,8 +502,6 @@ export const useResourcesStore = defineStore('resources', {
         this.upgradeCosts.larvaeStorageUpgradeCost = nextUpgradeCost
 
         this.upgrades.maxLarvaeStorage += affordableUpgrades
-
-        console.log(`Upgraded larvae storage ${affordableUpgrades} times.`)
       }
     },
     updateResources(deltaTime: number) {
@@ -540,8 +538,6 @@ export const useResourcesStore = defineStore('resources', {
           this.accumulators.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
         }
       }
-
-      this.setStorageToMax()
     },
 
     setStorageToMax() {
@@ -584,6 +580,8 @@ export const useResourcesStore = defineStore('resources', {
           autoAction.action(true)
         }
       })
+
+      this.setStorageToMax()
     },
 
     getResourcesState() {
@@ -625,16 +623,16 @@ export const useResourcesStore = defineStore('resources', {
     },
 
     applyUpgrades() {
-        for (let i = 0; i < this.upgrades.maxSeedStorage; i++) {
-          this.upgradeSeedStorageEffect(i)
-        }
+      for (let i = 0; i < this.upgrades.maxSeedStorage; i++) {
+        this.upgradeSeedStorageEffect(i)
+      }
 
-        for (let i = 0; i < this.upgrades.maxLarvaeStorage; i++) {
-          this.upgradeLarvaeStorageEffect(i)
-        }
+      for (let i = 0; i < this.upgrades.maxLarvaeStorage; i++) {
+        this.upgradeLarvaeStorageEffect(i)
+      }
 
-        this.resources.seeds = Math.min(this.resources.seeds, this.maxSeeds)
-        this.resources.larvae = Math.min(this.resources.larvae, this.maxLarvae)
+      this.resources.seeds = Math.min(this.resources.seeds, this.maxSeeds)
+      this.resources.larvae = Math.min(this.resources.larvae, this.maxLarvae)
     },
 
     resetResourcesState(isDebug = false) {

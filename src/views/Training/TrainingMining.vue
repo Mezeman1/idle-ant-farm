@@ -14,9 +14,14 @@
         :key="resource.name"
         class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200"
       >
-        <h2 class="text-xl font-semibold mb-2">
-          {{ resource.name }}
-        </h2>
+        <SkillDisplay
+          :with-styling="false"
+          :skill-name="resource.name"
+          :level="resource.level"
+          :xp="resource.xp"
+          :xp-to-next-level="resource.xpToNextLevel"
+        />
+
         <p class="text-gray-700">
           Level Required: {{ resource.levelRequired }}
         </p>
@@ -90,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import {Resource, useTrainingStore} from '@/stores/trainingStore'
+import {MiningResource, useTrainingStore} from '@/stores/trainingStore'
 import {computed} from 'vue'
 import SkillDisplay from '@/components/SkillDisplay.vue'
 
@@ -106,7 +111,7 @@ const miningResources = computed(() => trainingStore.miningResources)
 const training = computed(() => trainingStore.training)
 
 // Start mining action
-function startMining(resource: Resource) {
+function startMining(resource: MiningResource) {
   trainingStore.startMining(resource)
 }
 
@@ -116,7 +121,7 @@ function stopMining() {
 }
 
 // Helper to check if a resource is currently being mined
-function isMiningResource(resource: Resource) {
+function isMiningResource(resource: MiningResource) {
   return trainingStore.activeResource === resource.name && !resource.isDepleted
 }
 </script>

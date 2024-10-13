@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useTrainingStore, Resource } from '@/stores/trainingStore'
+import { useTrainingStore, MiningResource } from '@/stores/trainingStore'
 import TrainingResources from '@/views/Training/TrainingResources.vue'
 import TrainingMining from '@/views/Training/TrainingMining.vue'
 import TrainingCrafting from '@/views/Training/TrainingCrafting.vue'
