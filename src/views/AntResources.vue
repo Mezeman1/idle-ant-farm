@@ -17,7 +17,7 @@
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
               Count: {{ formatNumber(resourcesStore.resources.seeds) }}/{{ formatNumber(resourcesStore.maxSeeds) }}
-              ({{ formatNumber(resourcesStore.resources.seeds / resourcesStore.storage.maxSeeds * 100, 1) }}%)
+              ({{ formatNumber(resourcesStore.resources.seeds / resourcesStore.maxSeeds * 100, 1) }}%)
             </p>
             <p class="text-xs">
               Rate: {{ formatNumber(resourcesStore.seedsPerSecond) }}/s ({{ formatNumber(resourcesStore.productionRates.collectionRateModifier * 100, 2) }}% bonus)
@@ -101,7 +101,7 @@
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
               Count: {{ formatNumber(resourcesStore.resources.larvae) }}/{{ formatNumber(resourcesStore.maxLarvae) }}
-              ({{ formatNumber(resourcesStore.resources.larvae / resourcesStore.storage.maxLarvae * 100, 1) }}%)
+              ({{ formatNumber(resourcesStore.resources.larvae / resourcesStore.maxLarvae * 100, 1) }}%)
             </p>
             <p class="text-xs">
               Rate: {{ formatNumber(resourcesStore.larvaePerMinute) }}/m ({{ formatNumber(resourcesStore.productionRates.larvaeProductionModifier * 100, 2) }}% bonus)
@@ -181,8 +181,8 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.ants) }}/{{ formatNumber(resourcesStore.storage.maxAnts) }}
-              ({{ formatNumber(resourcesStore.resources.ants / resourcesStore.storage.maxAnts * 100, 1) }}%)
+              Count: {{ formatNumber(resourcesStore.resources.ants) }}/{{ formatNumber(resourcesStore.maxAnts) }}
+              ({{ formatNumber(resourcesStore.resources.ants / resourcesStore.maxAnts * 100, 1) }}%)
             </p>
           </div>
           <div class="w-full flex flex-wrap gap-2">
