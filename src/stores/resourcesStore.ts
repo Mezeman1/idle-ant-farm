@@ -117,7 +117,7 @@ export const useResourcesStore = defineStore('resources', {
       const larvaeFromQueens = (state.productionRates.larvaeProductionRate * state.resources.queens * state.productionRates.larvaeProductionModifier) / 60
 
       if (state.resources.royalQueens > 0) {
-        const larvaeFromRoyalQueens = (state.productionRates.larvaeProductionRate * state.royalQueenMultiplier * state.resources.royalQueens * state.productionRates.larvaeProductionModifier ) / 60
+        const larvaeFromRoyalQueens = (state.productionRates.larvaeProductionRate * state.royalQueenMultiplier * state.resources.royalQueens * state.productionRates.larvaeProductionModifier) / 60
 
         return larvaeFromQueens + larvaeFromRoyalQueens
       }
@@ -538,8 +538,6 @@ export const useResourcesStore = defineStore('resources', {
           this.accumulators.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
         }
       }
-
-      this.setStorageToMax()
     },
 
     setStorageToMax() {
@@ -582,6 +580,8 @@ export const useResourcesStore = defineStore('resources', {
           autoAction.action(true)
         }
       })
+
+      this.setStorageToMax()
     },
 
     getResourcesState() {
@@ -623,16 +623,16 @@ export const useResourcesStore = defineStore('resources', {
     },
 
     applyUpgrades() {
-        for (let i = 0; i < this.upgrades.maxSeedStorage; i++) {
-          this.upgradeSeedStorageEffect(i)
-        }
+      for (let i = 0; i < this.upgrades.maxSeedStorage; i++) {
+        this.upgradeSeedStorageEffect(i)
+      }
 
-        for (let i = 0; i < this.upgrades.maxLarvaeStorage; i++) {
-          this.upgradeLarvaeStorageEffect(i)
-        }
+      for (let i = 0; i < this.upgrades.maxLarvaeStorage; i++) {
+        this.upgradeLarvaeStorageEffect(i)
+      }
 
-        this.resources.seeds = Math.min(this.resources.seeds, this.maxSeeds)
-        this.resources.larvae = Math.min(this.resources.larvae, this.maxLarvae)
+      this.resources.seeds = Math.min(this.resources.seeds, this.maxSeeds)
+      this.resources.larvae = Math.min(this.resources.larvae, this.maxLarvae)
     },
 
     resetResourcesState(isDebug = false) {

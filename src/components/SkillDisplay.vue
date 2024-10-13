@@ -1,5 +1,9 @@
 <template>
-  <div class="bg-white shadow-lg rounded-lg mb-6 p-4">
+  <div
+    :class="{
+      'bg-white shadow-lg rounded-lg mb-6 p-4' : withStyling,
+    }"
+  >
     <h3 class="text-xl font-semibold">
       {{ skillName }}
     </h3>
@@ -26,12 +30,22 @@
 <script setup lang="ts">
 import {useGameStore} from '@/stores/gameStore'
 
-defineProps({
-  skillName: String,
-  level: Number,
-  xp: Number,
-  xpToNextLevel: Number,
+withDefaults(defineProps<{
+  skillName: string
+  level: number
+  xp: number
+  xpToNextLevel: number,
+
+  withStyling?: boolean
+}>(), {
+  skillName: 'Skill',
+  level: 1,
+  xp: 0,
+  xpToNextLevel: 100,
+
+  withStyling: true,
 })
+
 
 const gameStore = useGameStore()
 const formatNumber = gameStore.formatNumber

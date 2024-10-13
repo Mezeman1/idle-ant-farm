@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import {Resource, useTrainingStore} from '@/stores/trainingStore'
+import {MiningResource, useTrainingStore} from '@/stores/trainingStore'
 import {computed} from 'vue'
 import SkillDisplay from '@/components/SkillDisplay.vue'
 import {useGameStore} from '@/stores/gameStore'
