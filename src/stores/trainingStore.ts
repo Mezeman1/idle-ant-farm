@@ -297,6 +297,8 @@ export const useTrainingStore = defineStore({
     },
 
     canCraft(recipe: CraftingRecipe): boolean {
+      if (this.training.crafting.level < recipe.levelRequired) return false
+
       const resourceStore = useResourcesStore()
       const resourcesToCheckInStore = [
         'ants',
