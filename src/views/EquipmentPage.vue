@@ -106,6 +106,7 @@ import { useWindowSize } from '@vueuse/core'
 import { useEquipmentStore } from '../stores/equipmentStore'
 import { useInventoryStore } from '../stores/inventoryStore'
 import LoadoutSwapper from '@/components/LoadoutSwapper.vue'
+import { Item } from '@/types/itemRegistry'
 
 // Use stores
 const equipmentStore = useEquipmentStore()
@@ -140,8 +141,8 @@ const contextMenu = ref({
 })
 
 // Drag and drop state
-const draggedItem = ref<any>(null)
-const dragOrigin = ref<any>(null)
+const draggedItem = ref<Item>({})
+const dragOrigin = ref<any>({})
 
 // Logging function
 const log = (...args: any[]) => {
@@ -151,15 +152,15 @@ const log = (...args: any[]) => {
 }
 
 // Handle dragging from inventory to equipment slots
-const startDrag = (item: any, event: DragEvent) => {
+const startDrag = (item: Item, event: DragEvent) => {
   draggedItem.value = item
-  dragOrigin.value = 'inventory'
+  dragOrigin.value.slotType = 'inventory'
   event.dataTransfer.setData('application/json', JSON.stringify(item))
 }
 
 // Handle dragging from equipment slots to inventory or other slots
 const startDragFromSlot = (
-  item: any,
+  item: Item,
   slotType: string,
   index: number | null,
   event: DragEvent,
@@ -180,23 +181,25 @@ const handleDrop = async (slotType: string, index: number | null, event: DragEve
   const item = JSON.parse(itemData)
 
   if (item && item.slotType === slotType) {
-    // Equip the item using the store method
-    const success = await equipmentStore.equipItem(item, slotType, index)
+    // Remove item from inventory if it came from there    
+    if (dragOrigin.value.slotType === 'inventory') {
+      await inventoryStore.removeItemFromInventory(item.id, 1)
+    } else {
+      // Unequip the item the user dragged
+      await equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
 
-    if (success) {
-      // Remove item from inventory if it came from there
-      if (dragOrigin.value === 'inventory') {
-        await inventoryStore.removeItemFromInventory(item.id, 1)
-      } else {
-        // Unequip from previous slot
-        if (dragOrigin.value.slotType) {
-          await equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
-        }
+      // Swap accessories if one is moved to the other [occupied] slot
+      const replacedItem = slotType === 'accessory' ? equipmentStore.equippedItems.accessories[index!] : null
+      if (replacedItem && dragOrigin.value.index !== index) {
+        await equipmentStore.unequipItem('accessory', index!)
+        await equipmentStore.equipItem(replacedItem, dragOrigin.value.slotType, dragOrigin.value.index)
       }
     }
 
-    draggedItem.value = null
-    dragOrigin.value = null
+    await equipmentStore.equipItem(item, slotType, index)
+
+    draggedItem.value = {}
+    dragOrigin.value = {}
   }
 }
 
@@ -206,23 +209,23 @@ const handleDropIntoInventory = async (event: DragEvent) => {
   const itemData = event.dataTransfer.getData('application/json')
   const item = JSON.parse(itemData)
 
-  if (item && dragOrigin.value !== 'inventory') {
-    // Remove the item from the equipment slot using the store method
+  if (item && dragOrigin.value.slotType !== 'inventory') {
+    // Remove the item from the equipment slot
     await equipmentStore.unequipItem(dragOrigin.value.slotType, dragOrigin.value.index)
 
-    draggedItem.value = null
-    dragOrigin.value = null
+    draggedItem.value = {}
+    dragOrigin.value = {}
   }
 }
 
 // Handle drag end to reset state if drop was invalid
 const onDragEnd = () => {
-  draggedItem.value = null
-  dragOrigin.value = null
+  draggedItem.value = {}
+  dragOrigin.value = {}
 }
 
 // Handle double-click to equip from inventory
-const handleDoubleClickEquip = async (item: any) => {
+const handleDoubleClickEquip = async (item: Item) => {
   // Determine the correct equipment slot based on the item's slotType
   let slotType = item.slotType
   let index = null
@@ -250,7 +253,7 @@ const handleDoubleClickEquip = async (item: any) => {
 }
 
 // Handle double-click to unequip from equipment slot
-const handleDoubleClickUnequip = (item: any, slotType: string, index: number | null) => {
+const handleDoubleClickUnequip = (item: Item, slotType: string, index: number | null) => {
   // Unequip the item using the store method
   equipmentStore.unequipItem(slotType, index)
 
@@ -258,7 +261,7 @@ const handleDoubleClickUnequip = (item: any, slotType: string, index: number | n
 }
 
 // Show context menu
-const showContextMenu = (item: any, slotType: string, index: number | null, event: MouseEvent) => {
+const showContextMenu = (item: Item, slotType: string, index: number | null, event: MouseEvent) => {
   if (isDesktop.value) return
 
   event.preventDefault()
@@ -282,7 +285,7 @@ const closeContextMenu = () => {
 }
 
 // Handle equip action from context menu
-const handleEquip = async (item: any) => {
+const handleEquip = async (item: Item) => {
   // Determine the correct equipment slot based on the item's slotType
   let slotType = item.slotType
   let index = null

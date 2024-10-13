@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {Item} from './itemRegistry'
+import {Item} from '../types/itemRegistry'
 import {useInventoryStore} from '@/stores/inventoryStore'
 import {useGameStore} from '@/stores/gameStore'
 import {useAdventureStore} from '@/stores/adventureStore'
