@@ -672,6 +672,7 @@ export const useResourcesStore = defineStore('resources', {
 
       // Reset production rates
       this.productionRates = {
+        antsGenerationRate: 0,
         larvaeProductionRate: 1,
         collectionRatePerAnt: 60,
 
