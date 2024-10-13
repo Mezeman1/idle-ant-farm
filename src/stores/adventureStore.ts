@@ -9,7 +9,8 @@ import {toast} from 'vue3-toastify'
 import {useSettingsStore} from '@/stores/settingsStore'
 import {useBossStore} from '@/stores/bossStore'
 import {usePrestigeStore} from '@/stores/prestigeStore'
-import {Skill, useTrainingStore} from '@/stores/trainingStore'
+import {useTrainingStore} from '@/stores/trainingStore'
+import {Skill} from '@/types/trainingTypes'
 
 interface KillCounts {
   [key: string]: number

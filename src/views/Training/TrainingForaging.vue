@@ -76,10 +76,11 @@
 </template>
 
 <script setup lang="ts">
-import {MiningResource, useTrainingStore} from '@/stores/trainingStore'
+import {useTrainingStore} from '@/stores/trainingStore'
 import {computed} from 'vue'
 import SkillDisplay from '@/components/SkillDisplay.vue'
 import {useGameStore} from '@/stores/gameStore'
+import {MiningResource} from '@/types/trainingTypes'
 
 const trainingStore = useTrainingStore()
 const gameStore = useGameStore()

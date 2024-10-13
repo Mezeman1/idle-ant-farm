@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.11.2](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.11.2) (2024-10-13)
+
+
+### Bug Fixes
+
+* set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+* storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
+
 ### [0.11.1](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.11.1) (2024-10-13)
 
 

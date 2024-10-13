@@ -49,13 +49,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useTrainingStore, MiningResource } from '@/stores/trainingStore'
+import { useTrainingStore } from '@/stores/trainingStore'
 import TrainingResources from '@/views/Training/TrainingResources.vue'
 import TrainingMining from '@/views/Training/TrainingMining.vue'
 import TrainingCrafting from '@/views/Training/TrainingCrafting.vue'
 import {storeToRefs} from 'pinia'
 import TrainingCombat from '@/views/Training/TrainingCombat.vue'
 import TrainingForaging from '@/views/Training/TrainingForaging.vue'
+import {MiningResource} from '@/types/trainingTypes'
 
 // Get the training store
 const trainingStore = useTrainingStore()

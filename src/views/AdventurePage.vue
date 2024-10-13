@@ -295,7 +295,8 @@ import Inventory from '@/views/InventoryPage.vue'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import WaveSelector from '@/components/WaveSelector.vue'
-import {Skill} from '@/stores/trainingStore'
+
+import {Skill} from '@/types/trainingTypes'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()

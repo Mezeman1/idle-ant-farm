@@ -1,99 +1,18 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 import {useResourcesStore} from '@/stores/resourcesStore'
-
-export enum Skill {
-  None = 'none',
-  Mining = 'mining',
-  Foraging = 'foraging',
-  Crafting = 'crafting',
-  Attack = 'attack',
-  Defense = 'defense',
-  Hitpoints = 'hitpoints',
-}
-
-export enum ForagingArea {
-  None = 'None',
-  Grasslands = 'Grasslands',
-  Forest = 'Forest',
-  Wasteland = 'Wasteland',
-}
-
-export enum ResourceType {
-  None = 'None',
-  Dirt = 'Dirt',
-  Clay = 'Clay',
-  Sand = 'Sand',
-  Leaf = 'Leaf',
-  Twig = 'Twig',
-  RockFragment = 'Rock Fragment',
-  RottenWood = 'Rotten Wood',
-  Fungus = 'Fungus',
-  Pebble = 'Pebble',
-  Resin = 'Resin',
-  Mushroom = 'Mushroom',
-  Sap = 'Sap',
-  Root = 'Root',
-  CarapaceFragment = 'Carapace Fragment',
-  AntLarvae = 'Ant Larvae',
-  AntPheromones = 'Ant Pheromones',
-  RoyalJelly = 'Royal Jelly',
-}
-
-export enum CraftingRecipeType {
-  SeedStorage = 'Seed Storage',
-  LarvaeStorage = 'Larvae Storage',
-  AntStorage = 'Ant Storage',
-}
-
-export interface TrainingState {
-  level: number;
-  xp: number;
-  xpToNextLevel: number;
-}
-
-export interface MiningResource {
-  name: ResourceType;
-  xpPerAction: number;
-  levelRequired: number;
-
-  initialTimePerAction: number; // Variable to reset timePerAction
-  timePerAction: number; // Time in seconds to complete an action
-
-  initialRespawnTime: number; // Variable to reset respawnTime
-  respawnTime: number; // Time in seconds for the resource to respawn
-  isDepleted: boolean; // Tracks if the resource is currently depleted
-
-  level: number;
-  xp: number;
-  xpToNextLevel: number;
-}
-
-export interface ResourcesCollected {
-  [key: string]: number; // Dictionary for resources collected (e.g. Dirt, Clay)
-}
-
-export interface CraftingRecipe {
-  name: string;
-  cost: Record<ResourceType, number>; // Resource cost for crafting
-  storageIncrease: Record<string, number>; // Dynamic key-value for storage increases
-  xpReward: number;
-}
-
-export interface TrainingStoreState {
-  activeTraining: Skill;
-  training: {
-    mining: TrainingState;
-    crafting: TrainingState;
-  };
-  activeResource: ResourceType;
-  miningResources: MiningResource[];
-  resourcesCollected: ResourcesCollected;
-  activeCraftingRecipe: string;
-  craftingRecipes: CraftingRecipe[];
-}
-
-const BASE_XP = 90
-const XP_MULTIPLIER = 1.1
+import {
+  BASE_XP,
+  CraftingRecipe,
+  CraftingRecipeType,
+  ForagingArea,
+  MiningResource,
+  ResourceType,
+  Skill,
+  TrainingState,
+  TrainingStoreState,
+  XP_MULTIPLIER,
+} from '@/types/trainingTypes'
+import {miningResources} from '@/types/miningResources'
 
 export const useTrainingStore = defineStore({
   id: 'Training',
@@ -136,246 +55,7 @@ export const useTrainingStore = defineStore({
     },
 
     activeResource: ResourceType.None,
-    miningResources: [
-      {
-        name: ResourceType.Dirt,
-        xpPerAction: 15,
-        levelRequired: 1,
-        initialTimePerAction: 3,
-        timePerAction: 3,
-        initialRespawnTime: 2,
-        respawnTime: 2,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Clay,
-        xpPerAction: 20,
-        levelRequired: 5,
-        initialTimePerAction: 3.6,
-        timePerAction: 3.6,
-        initialRespawnTime: 2,
-        respawnTime: 2,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Sand,
-        xpPerAction: 35,
-        levelRequired: 10,
-        initialTimePerAction: 4.2,
-        timePerAction: 4.2,
-        initialRespawnTime: 3,
-        respawnTime: 3,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Leaf,
-        xpPerAction: 50,
-        levelRequired: 20,
-        initialTimePerAction: 4.8,
-        timePerAction: 4.8,
-        initialRespawnTime: 3.5,
-        respawnTime: 3.5,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Twig,
-        xpPerAction: 65,
-        levelRequired: 30,
-        initialTimePerAction: 5.4,
-        timePerAction: 5.4,
-        initialRespawnTime: 4,
-        respawnTime: 4,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.RockFragment,
-        xpPerAction: 80,
-        levelRequired: 40,
-        initialTimePerAction: 6,
-        timePerAction: 6,
-        initialRespawnTime: 4.5,
-        respawnTime: 4.5,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.RottenWood,
-        xpPerAction: 100,
-        levelRequired: 50,
-        initialTimePerAction: 7.2,
-        timePerAction: 7.2,
-        initialRespawnTime: 5,
-        respawnTime: 5,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Fungus,
-        xpPerAction: 120,
-        levelRequired: 60,
-        initialTimePerAction: 8.4,
-        timePerAction: 8.4,
-        initialRespawnTime: 5.5,
-        respawnTime: 5.5,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Pebble,
-        xpPerAction: 150,
-        levelRequired: 70,
-        initialTimePerAction: 9.6,
-        timePerAction: 9.6,
-        initialRespawnTime: 6,
-        respawnTime: 6,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Resin,
-        xpPerAction: 175,
-        levelRequired: 75,
-        initialTimePerAction: 10.8,
-        timePerAction: 10.8,
-        initialRespawnTime: 6.5,
-        respawnTime: 6.5,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Mushroom,
-        xpPerAction: 200,
-        levelRequired: 80,
-        initialTimePerAction: 12,
-        timePerAction: 12,
-        initialRespawnTime: 7,
-        respawnTime: 7,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Sap,
-        xpPerAction: 250,
-        levelRequired: 85,
-        initialTimePerAction: 13.2,
-        timePerAction: 13.2,
-        initialRespawnTime: 7.5,
-        respawnTime: 7.5,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.Root,
-        xpPerAction: 300,
-        levelRequired: 90,
-        initialTimePerAction: 14.4,
-        timePerAction: 14.4,
-        initialRespawnTime: 8,
-        respawnTime: 8,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.CarapaceFragment,
-        xpPerAction: 350,
-        levelRequired: 92,
-        initialTimePerAction: 15.6,
-        timePerAction: 15.6,
-        initialRespawnTime: 8.5,
-        respawnTime: 8.5,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.AntLarvae,
-        xpPerAction: 400,
-        levelRequired: 95,
-        initialTimePerAction: 16.8,
-        timePerAction: 16.8,
-        initialRespawnTime: 9,
-        respawnTime: 9,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.AntPheromones,
-        xpPerAction: 450,
-        levelRequired: 97,
-        initialTimePerAction: 18,
-        timePerAction: 18,
-        initialRespawnTime: 9.5,
-        respawnTime: 9.5,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-      {
-        name: ResourceType.RoyalJelly,
-        xpPerAction: 500,
-        levelRequired: 99,
-        initialTimePerAction: 19.2,
-        timePerAction: 19.2,
-        initialRespawnTime: 10,
-        respawnTime: 10,
-        isDepleted: false,
-
-        level: 1,
-        xp: 0,
-        xpToNextLevel: BASE_XP,
-      },
-    ] as MiningResource[],
+    miningResources: miningResources,
 
     resourcesCollected: {
       [ResourceType.Dirt]: 0,
@@ -626,13 +306,13 @@ export const useTrainingStore = defineStore({
 
       // Resource is depleted, add XP and increment resources collected
       this.addXp(Skill.Mining, resource.xpPerAction)
-      this.addXpToMiningResource(resource, resource.xpPerAction)
+      this.addXpToMiningResource(resource, resource.xpPerAction * 2)
       if (!this.resourcesCollected[resource.name]) this.resourcesCollected[resource.name] = 0
-      this.resourcesCollected[resource.name]++
+      this.resourcesCollected[resource.name] += resource.collectionMultiplier
 
       // Mark the resource as depleted and reset timePerAction
       resource.isDepleted = true
-      resource.timePerAction = resource.initialTimePerAction
+      resource.timePerAction = resource.initialTimePerAction - resource.timeReduction
     },
 
     addXpToMiningResource(resource: MiningResource, xp: number) {
@@ -644,6 +324,27 @@ export const useTrainingStore = defineStore({
       resource.level++
       resource.xp = 0
       resource.xpToNextLevel = this.getXpToNextLevel(resource.level)
+
+      this.checkAndApplyMileStoneBonusses(resource)
+    },
+
+    checkAndApplyMileStoneBonusses(resource: MiningResource) {
+      const resourceMilestones = resource.milestones ?? []
+      if (resourceMilestones.length === 0) return
+
+      this.resetMilstoneBonusses(resource)
+
+      resourceMilestones.forEach(milestone => {
+        if (resource.level >= milestone.level) {
+          resource.collectionMultiplier *=  (1 + milestone.collectionMultiplierBonus)
+          resource.timeReduction += milestone.timeReductionBonus
+        }
+      })
+    },
+
+    resetMilstoneBonusses(resource: MiningResource) {
+      resource.collectionMultiplier = 1
+      resource.timeReduction = 0
     },
 
     handleRespawn(resource: MiningResource, deltaTime: number) {
@@ -691,7 +392,7 @@ export const useTrainingStore = defineStore({
     },
 
     resetOreNode(resource: MiningResource) {
-      resource.timePerAction = resource.initialTimePerAction
+      resource.timePerAction = resource.initialTimePerAction - resource.timeReduction
       resource.respawnTime = resource.initialRespawnTime
       resource.isDepleted = false
     },
@@ -788,8 +489,59 @@ export const useTrainingStore = defineStore({
         }
       })
 
+      this.addMilestones()
       this.applyModifiers()
       this.applyForagingModifiers()
+      this.applyMiningMilstoneBonusses()
+      this.resetAllOreNodes()
+    },
+    resetAllOreNodes() {
+      this.miningResources.forEach(resource => {
+        this.resetOreNode(resource)
+      })
+    },
+    addMilestones() {
+      this.miningResources.forEach(resource => {
+        const milestones = []
+        const initialCollectionMultiplierBonus = 0.05
+        const collectionMultiplierIncrement = 0.05
+        const initialTimeReductionBonus = 0.1
+        const timeReductionIncrement = 0.05
+        let timePerAction = resource.initialTimePerAction
+
+        const milestoneLevels = [5, 10, 20, 30, 50, 100, 150, 200, 250, 500, 750, 1000]
+
+        milestoneLevels.forEach(level => {
+          const collectionMultiplierBonus = initialCollectionMultiplierBonus + (Math.floor(level / 5) - 1) * collectionMultiplierIncrement
+          let timeReductionBonus = initialTimeReductionBonus + (Math.floor(level / 5) - 1) * timeReductionIncrement
+
+          // Ensure that timePerAction never goes below 1 second
+          if (timePerAction - timeReductionBonus < 1) {
+            timeReductionBonus = Math.max(0, timePerAction - 1)
+            timePerAction = 1 // Cap timePerAction at 1 second once reached
+          } else {
+            timePerAction -= timeReductionBonus // Continue reducing timePerAction
+          }
+
+          // Stop giving time bonuses after timePerAction reaches 1 second
+          if (timePerAction <= 1) {
+            timeReductionBonus = 0
+          }
+
+          milestones.push({
+            level,
+            collectionMultiplierBonus: parseFloat(collectionMultiplierBonus.toFixed(3)), // Keep precision
+            timeReductionBonus: parseFloat(timeReductionBonus.toFixed(3)),
+          })
+        })
+
+        resource.milestones = milestones
+      })
+    },
+    applyMiningMilstoneBonusses() {
+      this.miningResources.forEach(resource => {
+        this.checkAndApplyMileStoneBonusses(resource)
+      })
     },
     applyModifiers() {
       const resourcesStore = useResourcesStore() // Access the resources store
