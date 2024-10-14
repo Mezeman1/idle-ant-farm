@@ -116,7 +116,7 @@
             <li
               v-for="milestone in resource.milestones"
               :key="milestone.level"
-              class="flex justify-between items-center text-gray-700 py-2"
+              class="flex justify-between items-center text-gray-700 py-2 border-b border-gray-200"
               :class="{'text-green-600 font-bold': resource.level >= milestone.level, 'text-gray-500': resource.level < milestone.level}"
             >
               <div class="flex-1">

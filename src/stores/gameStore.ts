@@ -186,8 +186,10 @@ export const useGameStore = defineStore('gameStore', {
 
           let remainingTime = timeElapsed
           const totalTime = timeElapsed // Store total offline time for progress calculation
-          const chunkDuration = 60 // Simulate in larger chunks (e.g., 60 seconds)
-          let offlineTimeAccumulator = 0 // Track offline time for auto-actions
+          const chunkDurationResources = 60 // Simulate resources in 60-second chunks
+          const chunkDurationTraining = 10 // Simulate training in 10-second chunks
+          let offlineTimeAccumulatorResources = 0 // Track offline time for auto-actions (resources)
+          let offlineTimeAccumulatorTraining = 0 // Track offline time for training
           const logInterval = 600 // Log progress every 10 minutes for less spam
 
           const simulateOffline = () => {
@@ -201,23 +203,28 @@ export const useGameStore = defineStore('gameStore', {
               return
             }
 
-            const deltaTime = Math.min(chunkDuration, remainingTime) * this.deltaMultiplier // Simulate in larger chunks or remaining time
-            resourceStore.updateResources(deltaTime)
-            trainingStore.processTraining(deltaTime)
+            // Simulate resource updates in 60-second chunks
+            const deltaTimeResources = Math.min(chunkDurationResources, remainingTime) * this.deltaMultiplier
+            resourceStore.updateResources(deltaTimeResources)
 
-            // Accumulate the offline time for auto actions
-            offlineTimeAccumulator += deltaTime
+            // Accumulate the offline time for auto actions (resources)
+            offlineTimeAccumulatorResources += deltaTimeResources
 
-            // Trigger auto-actions after accumulating sufficient time
-            if (offlineTimeAccumulator >= 1) {
+            // Trigger auto-actions for resources after accumulating sufficient time
+            if (offlineTimeAccumulatorResources >= 60) {
               resourceStore.handleAutoCreations()
-
-              // Reset accumulator after triggering auto actions
-              offlineTimeAccumulator = 0
+              offlineTimeAccumulatorResources = 0 // Reset accumulator after triggering auto actions
             }
 
+            // Simulate training in 10-second chunks
+            const deltaTimeTraining = Math.min(chunkDurationTraining, remainingTime) * this.deltaMultiplier
+            trainingStore.processTraining(deltaTimeTraining)
+
+            // Accumulate the offline time for training
+            offlineTimeAccumulatorTraining += deltaTimeTraining
+
             // Reduce remaining time and update progress
-            remainingTime -= deltaTime
+            remainingTime -= Math.min(chunkDurationResources, chunkDurationTraining) * this.deltaMultiplier
             this.progress = Math.min(100, ((totalTime - remainingTime) / totalTime) * 100) // Update progress
 
             // Log progress every `logInterval` seconds to avoid spamming
@@ -238,6 +245,7 @@ export const useGameStore = defineStore('gameStore', {
           reject(error)
         }
       }).finally(() => this.simulatingOfflineProgress = false)
+
     },
 
     // Start the game loop for real-time resource generation, respecting caps

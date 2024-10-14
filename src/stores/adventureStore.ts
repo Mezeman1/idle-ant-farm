@@ -10,7 +10,7 @@ import {useSettingsStore} from '@/stores/settingsStore'
 import {useBossStore} from '@/stores/bossStore'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useTrainingStore} from '@/stores/trainingStore'
-import {Skill} from '@/types/trainingTypes'
+import {ForagingArea, Skill} from '@/types/trainingTypes'
 
 interface KillCounts {
   [key: string]: number
@@ -83,6 +83,17 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     currentArea: 'Safe Zone',
     enemyWaves: [],
+    areaModifiers: {
+      [ForagingArea.Grasslands]: {
+        dropChanceModifier: 1.0,
+        dropAmountModifier: 1.0,
+        xpModifier: 1.0,
+        speedModifier: 1.0,
+        spawnTimeModifier: 1.0,
+        coolDownModifier: 1.0,
+      },
+    },
+
     currentEnemy: null as Enemy | null,
 
     enemySpawned: false,
@@ -120,6 +131,9 @@ export const useAdventureStore = defineStore('adventureStore', {
 
   }),
   actions: {
+    setAreaModifiers(modifiers, area) {
+      this.areaModifiers[area] = modifiers
+    },
     // Start the battle loop
     startBattle() {
       // Set flags immediately to prevent further calls
@@ -162,7 +176,8 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.applyStatusEffects(deltaTime, this.armyActiveEffects, 'army')
 
       if (this.battleStatus === 'fighting' && this.currentEnemy) {
-        this.accumulatedTimeForChanceEffects += deltaTime * 1000 // Convert deltaTime to milliseconds
+        const speedModifier = this.areaModifiers[this.currentArea]?.speedModifier ?? 1.0
+        this.accumulatedTimeForChanceEffects += deltaTime * 1000 * speedModifier // Convert deltaTime to milliseconds
         if (this.accumulatedTimeForChanceEffects >= this.chanceEffectInterval) {
           this.applyArmyDamage(this.accumulatedTimeForChanceEffects / 1000)
           this.applyBugDamage(this.accumulatedTimeForChanceEffects / 1000)
@@ -181,7 +196,8 @@ export const useAdventureStore = defineStore('adventureStore', {
       }
 
       if (this.enemySpawnActive && this.battleStatus === 'cooldown') {
-        this.enemySpawnCooldownTime -= deltaTime * 1000 // Reduce cooldown time
+        const spawnTimeModifier = this.areaModifiers[this.currentArea]?.spawnTimeModifier ?? 1.0
+        this.enemySpawnCooldownTime -= deltaTime * 1000 * spawnTimeModifier // Convert deltaTime to milliseconds
 
         if (this.enemySpawnCooldownTime <= 0) {
           this.spawnRandomEnemy() // Spawn a new enemy
@@ -192,7 +208,8 @@ export const useAdventureStore = defineStore('adventureStore', {
       }
 
       if (this.battleStatus === 'preparing') {
-        this.remainingFightStatusTime -= deltaTime * 1000 // Reduce fighting preparation time
+        const coolDownModifier = this.areaModifiers[this.currentArea]?.coolDownModifier ?? 1.0
+        this.remainingFightStatusTime -= deltaTime * 1000 * coolDownModifier // Convert deltaTime to milliseconds
 
         if (this.remainingFightStatusTime <= 0) {
           this.remainingFightStatusTime = 0 // Ensure it doesn't go negative
@@ -374,11 +391,14 @@ export const useAdventureStore = defineStore('adventureStore', {
             continue
           }
 
+          const dropChanceModifier = this.areaModifiers[this.currentArea]?.dropChanceModifier ?? 1.0
+          const dropAmountModifier = this.areaModifiers[this.currentArea]?.dropAmountModifier ?? 1.0
+
           // Check the drop chance
-          if (Math.random() < drop.chance) {
+          if (Math.random() < drop.chance * dropChanceModifier) {
             const amount =
               Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
-              drop.amountBetween[0]
+              drop.amountBetween[0] * dropAmountModifier
 
             if (drop.name === 'Seeds') {
               // Add seeds to gameStore
@@ -434,8 +454,10 @@ export const useAdventureStore = defineStore('adventureStore', {
       // If it's a boss, apply a multiplier (e.g., 1.2x)
       const xp = enemy.isBoss ? baseXp * 1.2 : baseXp
 
+      const xpModifier = this.areaModifiers[this.currentArea]?.xpModifier ?? 1.0
+
       // Return the XP, making sure it doesn't exceed the max XP cap
-      return Math.floor(Math.min(xp, 1000))
+      return Math.floor(xp * xpModifier)
     },
 
     // Add regeneration during cooldown phase
@@ -482,10 +504,11 @@ export const useAdventureStore = defineStore('adventureStore', {
     applyRegeneration(deltaTime = null) {
       // If deltaTime is passed, use it; otherwise assume it's 1 tick (for real-time)
       const regenMultiplier = deltaTime ? deltaTime : 1
+
       // Apply army regeneration per tick
       if (this.armyHealth < this.armyMaxHealth) {
         this.armyHealth = Math.min(
-          this.armyHealth + this.armyRegen * regenMultiplier,
+          this.armyHealth + this.armyRegen * regenMultiplier * (useTrainingStore().farmingModifiers.regenerationRate ?? 1),
           this.armyMaxHealth,
         )
       }
@@ -850,7 +873,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       // Apply modifiers
       this.armyAttack = baseAttack * this.armyAttackModifier
-      this.armyDefense = baseDefense * this.armyDefenseModifier
+      this.armyDefense = baseDefense * this.armyDefenseModifier  * useTrainingStore().farmingModifiers.defense
       this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier
       this.armyRegen = baseRegen * this.armyRegenModifier
 

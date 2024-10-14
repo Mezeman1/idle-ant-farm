@@ -7,12 +7,16 @@ import {
   ForagingArea,
   MiningResource,
   ResourceType,
+  Seed,
   Skill,
   TrainingState,
   TrainingStoreState,
   XP_MULTIPLIER,
 } from '@/types/trainingTypes'
 import {miningResources} from '@/types/miningResources'
+import {useAdventureStore} from '@/stores/adventureStore'
+import {foragingResources} from '@/types/foragingResources'
+import {SeedNames, seeds} from '@/types/farmingSeeds'
 
 export const useTrainingStore = defineStore({
   id: 'Training',
@@ -48,6 +52,11 @@ export const useTrainingStore = defineStore({
         xpToNextLevel: BASE_XP,
       },
       hitpoints: {
+        level: 1,
+        xp: 0,
+        xpToNextLevel: BASE_XP,
+      },
+      farming: {
         level: 1,
         xp: 0,
         xpToNextLevel: BASE_XP,
@@ -153,26 +162,32 @@ export const useTrainingStore = defineStore({
 
 
     activeForagingZone: ResourceType.None,
-    foragingResources: [
-      {
-        name: ForagingArea.Grasslands,
-        xpPerAction: 15,
-        levelRequired: 1,
-        timePerAction: 5,
-        resourceType: 'Seeds',
-        cost: {ants: 10},
-        initialTimePerAction: 5,
-        timePerAction: 5,
-        productionIncrease: {
-          seed: 0.001,
-        },
-      },
-    ],
+    foragingResources: foragingResources,
 
     foragedZones: {
       [ForagingArea.Grasslands]: 0,
     },
 
+    selectedSeed: null,
+    farmingPlots: Array(9).fill({seed: null, growthStage: 'Empty', growthProgress: 0}),
+    harvestedResources: {
+      [SeedNames.NutrientFungus]: 0,
+    },
+
+    farmingModifiers: {
+      growthRate: 1,
+      craftingRate: 1,
+      regenerationRate: 1,
+      spawnRate: 1,
+    },
+
+    eatenFungus: [
+
+    ] as {
+      name: SeedNames,
+      effect: object,
+      duration: number,
+    },
   }),
 
   getters: {
@@ -181,6 +196,12 @@ export const useTrainingStore = defineStore({
     },
     amountForagedZones: (state) => (zone: ForagingArea) => {
       return state.foragedZones[zone] ?? 0
+    },
+    getAvailableSeeds() {
+      return seeds
+    },
+    getSeedByName: (state) => (name: string) => {
+      return seeds.find(seed => seed.name === name)
     },
   },
 
@@ -191,10 +212,99 @@ export const useTrainingStore = defineStore({
     },
 
     processTraining(deltaTime: number) {
-      if (this.activeTraining === Skill.None) return
       if (this.activeTraining === Skill.Mining) this.processMining(deltaTime)
       if (this.activeTraining === Skill.Crafting) this.processCrafting(deltaTime)
       if (this.activeTraining === Skill.Foraging) this.processForaging(deltaTime)
+      this.processFarming(deltaTime)
+    },
+
+    processFarming(deltaTime: number) {
+      const growthDelta = deltaTime * this.farmingModifiers.growthRate
+
+      this.farmingPlots.forEach((plot, index) => {
+        if (plot.seed) {
+          plot.growthProgress += growthDelta
+
+          // If the growth progress exceeds the growth time, move to the next stage
+          if (plot.growthStage === 'Planted' && plot.growthProgress >= plot.seed.growthTime / 2) {
+            plot.growthStage = 'Growing'
+          } else if (plot.growthStage === 'Growing' && plot.growthProgress >= plot.seed.growthTime) {
+            plot.growthStage = 'Mature'
+          }
+        }
+      })
+
+      this.handleFungusDuration(deltaTime)
+    },
+    cancelEffect(fungus: Seed) {
+      this.eatenFungus = this.eatenFungus.filter(f => f.name !== fungus.name)
+      this.applyFungusEffects()
+    },
+    eatFungus(fungus: Seed) {
+      if (this.eatenFungus.find(f => f.name === fungus.name)) return
+
+      this.eatenFungus.push(
+        {
+          name: fungus.name,
+          effect: fungus.effect,
+          duration: fungus.duration,
+        },
+      )
+
+      this.applyFungusEffects()
+      this.harvestedResources[fungus.name]--
+
+      // clear harvested resources if the amount is 0
+      Object.keys(this.harvestedResources).forEach(key => {
+        if (this.harvestedResources[key] <= 0) delete this.harvestedResources[key]
+      })
+    },
+    handleFungusDuration(deltaTime: number) {
+      this.eatenFungus = this.eatenFungus.filter(fungus => {
+        fungus.duration -= deltaTime
+        return fungus.duration > 0
+      })
+
+      this.applyFungusEffects()
+    },
+    applyFungusEffects() {
+      this.resetFarmingModifiers()
+      this.eatenFungus.filter(fungus => fungus.duration > 0).forEach(fungus => {
+        Object.keys(fungus.effect).forEach(effect => {
+          this.farmingModifiers[effect] = fungus.effect[effect]
+        })
+      })
+    },
+    resetFarmingModifiers() {
+      this.farmingModifiers = {
+        growthRate: 1,
+        craftingRate: 1,
+        regenerationRate: 1,
+        spawnRate: 1,
+        defense: 1,
+      }
+    },
+
+    plantSeed(index: number, seed: Seed) {
+      if (!this.farmingPlots[index].seed) {
+        this.farmingPlots[index] = {
+          seed: seed,
+          growthStage: 'Planted',
+          growthProgress: 0,
+        }
+      }
+    },
+
+    harvestPlant(index: number) {
+      if (this.farmingPlots[index].growthStage === 'Mature') {
+        const seed = this.farmingPlots[index].seed
+        this.addXp(Skill.Farming, seed.xpPerAction)
+        if (!this.harvestedResources[seed.name]) this.harvestedResources[seed.name] = 0
+        this.harvestedResources[seed.name]++
+
+        // Reset the plot after harvesting
+        this.farmingPlots[index] = {seed: null, growthStage: 'Empty', growthProgress: 0}
+      }
     },
 
     processForaging(deltaTime: number) {
@@ -260,7 +370,7 @@ export const useTrainingStore = defineStore({
         return
       }
 
-      activeRecipe.timePerAction -= deltaTime
+      activeRecipe.timePerAction -= deltaTime * this.farmingModifiers.craftingRate
 
       if (activeRecipe.timePerAction > 0) return
 
@@ -497,6 +607,7 @@ export const useTrainingStore = defineStore({
       if (skill === Skill.Defense) return this.training.defense
       if (skill === Skill.Hitpoints) return this.training.hitpoints
       if (skill === Skill.Foraging) return this.training.foraging
+      if (skill === Skill.Farming) return this.training.farming
 
       return undefined
     },
@@ -512,6 +623,10 @@ export const useTrainingStore = defineStore({
         resourcesCollected: this.resourcesCollected,
         craftedItems: this.craftedItems,
         foragedZones: this.foragedZones,
+        selectedSeed: this.selectedSeed,
+        harvestedResources: this.harvestedResources,
+        farmingPlots: this.farmingPlots,
+        eatenFungus: this.eatenFungus,
 
         miningResourceLevels: this.miningResources.map(resource => ({
           name: resource.name,
@@ -536,6 +651,10 @@ export const useTrainingStore = defineStore({
       this.craftedItems = state.craftedItems ?? this.craftedItems
       this.activeForagingZone = state.activeForagingZone ?? this.activeForagingZone
       this.foragedZones = state.foragedZones ?? this.foragedZones
+      this.selectedSeed = state.selectedSeed ?? this.selectedSeed
+      this.harvestedResources = state.harvestedResources ?? this.harvestedResources
+      this.farmingPlots = state.farmingPlots ?? this.farmingPlots
+      this.eatenFungus = state.eatenFungus ?? this.eatenFungus
 
       this.miningResources = this.miningResources.map(resource => {
         const savedResource = state.miningResourceLevels?.find(saved => saved.name === resource.name)
@@ -679,27 +798,32 @@ export const useTrainingStore = defineStore({
       }
     },
     applyForagingModifiers() {
-      const resourcesStore = useResourcesStore()
+      const adventureStore = useAdventureStore()
+      const modifiers = {
+        dropChanceModifier: 1.0,
+        dropAmountModifier: 1.0,
+        xpModifier: 1.0,
+        speedModifier: 1.0,
+        spawnTimeModifier: 1.0,
+        coolDownModifier: 1.0,
+      }
+
       const foragedZones = this.foragedZones
+      Object.keys(foragedZones).forEach(zone => {
+        const amountForaged = foragedZones[zone]
+        const foragingResource = this.foragingResources.find(res => res.name === zone)
+        if (!foragingResource) return
 
-      const foragingModifiers = {
-        seed: 1,
-        larvae: 1,
-        ant: 1,
-        queen: 1,
-        eliteAnt: 1,
-      }
-
-      for (const [key, amountOfUpgrade] of Object.entries(foragedZones)) {
-        const foragingResource = this.foragingResources.find(resource => resource.name === key)
-        if (!foragingResource) continue
-
-        for (const [resource, modifier] of Object.entries(foragingResource.productionIncrease)) {
-          if (foragingModifiers[resource] !== undefined) {
-            foragingModifiers[resource] += amountOfUpgrade * modifier
+        foragingResource.milestones.forEach(milestone => {
+          if (amountForaged >= milestone.amountForaged) {
+            Object.keys(modifiers).forEach(modifier => {
+              modifiers[modifier] += milestone[modifier] ?? 0
+            })
           }
-        }
-      }
+        })
+
+        adventureStore.setAreaModifiers(modifiers, zone)
+      })
     },
   },
 })

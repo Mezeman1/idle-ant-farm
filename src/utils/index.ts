@@ -7,8 +7,12 @@ const formatTime = (milliseconds: number, hideZeros = false): string => {
   if (hideZeros) {
     return `${days > 0 ? `${days}d ` : ''}${hours > 0 ? `${hours}h ` : ''}${minutes > 0 ? `${minutes}m ` : ''}${seconds}s`
   }
-  
+
   return `${days}d ${hours}h ${minutes}m ${seconds}s`
 }
 
-export { formatTime }
+const toPercentage = (value: number, total: number): string => {
+  return ((value / total) * 100).toFixed(1) + '%'
+}
+
+export { formatTime, toPercentage }

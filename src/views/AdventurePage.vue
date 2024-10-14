@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col p-2">
     <div :class="isLargeScreen ? 'grid grid-cols-2 gap-4' : 'flex flex-col'">
       <!-- Left Column: Adventure Mode -->
       <div class="space-y-4 mb-4">
@@ -17,6 +17,39 @@
           class="text-xs text-gray-700"
         >
           Next Area: {{ getAreaByIndex(selectedWaveIndex + 1)?.unlockText }} 🔒
+        </div>
+
+        <!-- Area Modifiers Section -->
+        <div class="bg-white rounded-lg shadow flex flex-col p-6 my-2">
+          <h2 class="text-xl font-semibold mb-2">
+            Area Modifiers
+          </h2>
+          <div v-if="currentAreaModifiers">
+            <p v-if="currentAreaModifiers.dropChanceModifier">
+              Drop Chance Modifier: {{ toPercentage(currentAreaModifiers.dropChanceModifier, 1) }}
+            </p>
+            <p v-if="currentAreaModifiers.dropAmountModifier">
+              Drop Amount Modifier: {{ toPercentage(currentAreaModifiers.dropAmountModifier, 1) }}
+            </p>
+            <p v-if="currentAreaModifiers.xpModifier">
+              XP Modifier: {{ toPercentage(currentAreaModifiers.xpModifier, 1) }}
+            </p>
+            <p v-if="currentAreaModifiers.speedModifier">
+              Speed Modifier: {{ toPercentage(currentAreaModifiers.speedModifier, 1) }}
+            </p>
+            <p v-if="currentAreaModifiers.spawnTimeModifier">
+              Spawn Time Modifier: {{ toPercentage(currentAreaModifiers.spawnTimeModifier, 1) }}
+            </p>
+            <p v-if="currentAreaModifiers.coolDownModifier">
+              Cooldown Modifier: {{ toPercentage(currentAreaModifiers.coolDownModifier, 1) }}
+            </p>
+          </div>
+          <p
+            v-else
+            class="text-gray-500"
+          >
+            No modifiers for this area
+          </p>
         </div>
 
         <!-- Ant Army and Enemy Bug Display -->
@@ -49,7 +82,7 @@
               <div class="mt-2 space-y-1 text-3xs md:text-xs">
                 <p><span class="font-semibold">⚔️ Attack:</span> {{ formatNumber(adventureStore.armyAttack) }}</p>
                 <p><span class="font-semibold">🛡️ Defense:</span> {{ formatNumber(adventureStore.armyDefense) }}</p>
-                <p><span class="font-semibold">❤️ HP Regen:</span> {{ formatNumber(adventureStore.armyRegen) }}</p>
+                <p><span class="font-semibold">❤️ HP Regen:</span> {{ formatNumber(adventureStore.armyRegen * (trainingStore.farmingModifiers.regenerationRate ?? 1)) }}</p>
               </div>
 
               <!-- Active Effects for Army -->
@@ -166,6 +199,44 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-3 gap-4 m-2">
+          <!-- Attack Button -->
+          <button
+            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
+            :class="{
+              'bg-blue-700 border-2 border-blue-900': battleStyle === 'attack',
+              'bg-blue-500 hover:bg-blue-600': battleStyle !== 'attack'
+            }"
+            @click="setBattleStyle('Attack')"
+          >
+            Attack
+          </button>
+
+          <!-- Defense Button -->
+          <button
+            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
+            :class="{
+              'bg-green-700 border-2 border-green-900': battleStyle === 'defense',
+              'bg-green-500 hover:bg-green-600': battleStyle !== 'defense'
+            }"
+            @click="setBattleStyle('Defense')"
+          >
+            Block
+          </button>
+
+          <!-- Hitpoints (Endure) Button -->
+          <button
+            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
+            :class="{
+              'bg-red-700 border-2 border-red-900': battleStyle === 'hitpoints',
+              'bg-red-500 hover:bg-red-600': battleStyle !== 'hitpoints'
+            }"
+            @click="setBattleStyle('Hitpoints')"
+          >
+            Endure
+          </button>
+        </div>
+
         <div class="grid grid-cols-2 gap-2">
           <!-- Army effects chances         -->
           <div class="bg-white rounded-lg">
@@ -226,44 +297,6 @@
             </div>
           </div>
         </div>
-
-        <div class="grid grid-cols-3 gap-4 m-2">
-          <!-- Attack Button -->
-          <button
-            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
-            :class="{
-              'bg-blue-700 border-2 border-blue-900': battleStyle === 'attack',
-              'bg-blue-500 hover:bg-blue-600': battleStyle !== 'attack'
-            }"
-            @click="setBattleStyle('Attack')"
-          >
-            Attack
-          </button>
-
-          <!-- Defense Button -->
-          <button
-            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
-            :class="{
-              'bg-green-700 border-2 border-green-900': battleStyle === 'defense',
-              'bg-green-500 hover:bg-green-600': battleStyle !== 'defense'
-            }"
-            @click="setBattleStyle('Defense')"
-          >
-            Block
-          </button>
-
-          <!-- Hitpoints (Endure) Button -->
-          <button
-            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
-            :class="{
-              'bg-red-700 border-2 border-red-900': battleStyle === 'hitpoints',
-              'bg-red-500 hover:bg-red-600': battleStyle !== 'hitpoints'
-            }"
-            @click="setBattleStyle('Hitpoints')"
-          >
-            Endure
-          </button>
-        </div>
       </div>
 
       <!-- Right Column: Inventory (on large screens) -->
@@ -297,6 +330,8 @@ import {useResourcesStore} from '@/stores/resourcesStore'
 import WaveSelector from '@/components/WaveSelector.vue'
 
 import {Skill} from '@/types/trainingTypes'
+import {toPercentage} from '../utils'
+import {useTrainingStore} from '@/stores/trainingStore'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
@@ -309,6 +344,7 @@ const bugPoisonChance = computed(() => formatNumber((adventureStore.currentEnemy
 // Set a breakpoint for large screens
 const isLargeScreen = computed(() => width.value >= 1024)
 const battleStyle = computed(() => adventureStore.battleStyle)
+const trainingStore = useTrainingStore()
 
 onMounted(() => {
   selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)
@@ -378,6 +414,11 @@ function setBattleStyle(style: 'Attack' | 'Defense' | 'Hitpoints') {
     adventureStore.battleStyle = Skill.Hitpoints
   }
 }
+
+const currentAreaModifiers = computed(() => {
+  const areaName = adventureStore.currentArea
+  return adventureStore.areaModifiers[areaName] || null
+})
 
 </script>
 

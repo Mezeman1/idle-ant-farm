@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <SkillDisplay
@@ -8,9 +7,17 @@
       :xp-to-next-level="foragingXpToNextLevel"
     />
 
+    <div
+      class="bg-white rounded-lg shadow-md p-6 border border-gray-200 my-4"
+    >
+      <p>
+        Foraging is used to increase the adventure zones modifiers.
+      </p>
+    </div>
+
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-6">
       <div
-        v-for="resource in foragingResources"
+        v-for="(resource, index) in foragingResources"
         :key="resource.name"
         class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200"
       >
@@ -35,9 +42,8 @@
           Costs {{ formatNumber(amount, 0) }} {{ resourceCost }}
         </p>
 
-        <div
-          class="mt-4"
-        >
+        <!-- Foraging Progress Bar -->
+        <div class="mt-4">
           <p class="text-gray-500">
             Foraging Progress
           </p>
@@ -52,6 +58,54 @@
           </div>
         </div>
 
+        <!-- Milestones Toggle Button -->
+        <button
+          class="bg-gray-300 text-gray-800 mt-4 px-4 py-2 rounded-lg font-bold w-full hover:bg-gray-400"
+          @click="toggleMilestones(index)"
+        >
+          {{ showMilestones[index] ? 'Hide' : 'Show' }} Milestones
+        </button>
+
+        <!-- Milestones Section -->
+        <div
+          v-if="showMilestones[index]"
+          class="mt-4 border-t border-gray-200 pt-4"
+        >
+          <h4 class="text-lg font-semibold text-gray-800">
+            Milestones
+          </h4>
+          <ul class="mt-2 max-h-[200px] overflow-y-auto">
+            <li
+              v-for="milestone in resource.milestones"
+              :key="milestone.amountForaged"
+              class="flex justify-between items-center text-gray-700 py-2 border-b border-gray-200"
+              :class="{'text-green-600 font-bold': trainingStore.amountForagedZones(resource.name) >= milestone.amountForaged, 'text-gray-500': trainingStore.amountForagedZones(resource.name) < milestone.amountForaged}"
+            >
+              <ul class="flex-1">
+                <li>
+                  Amount foraged: {{ formatNumber(milestone.amountForaged, 0) }}
+                </li>
+                <li
+                  v-for="(value, key) in milestone"
+                  :key="key"
+                  class="flex justify-between items-center py-2"
+                >
+                  <span v-if="key !== 'amountForaged'">{{ key }}: <br> {{ toPercentage(value, 1) }}</span>
+                </li>
+              </ul>
+              <div class="flex-1 flex items-center justify-center">
+                <span
+                  v-if="trainingStore.amountForagedZones(resource.name) >= milestone.amountForaged"
+                  class="bg-green-100 text-green-600 px-2 py-1 rounded-lg text-sm"
+                >
+                  Unlocked
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Foraging Actions -->
         <div class="mt-6 flex justify-between">
           <button
             v-if="!isForagingZone(resource.name)"
@@ -77,10 +131,11 @@
 
 <script setup lang="ts">
 import {useTrainingStore} from '@/stores/trainingStore'
-import {computed} from 'vue'
+import {computed, ref} from 'vue'
 import SkillDisplay from '@/components/SkillDisplay.vue'
 import {useGameStore} from '@/stores/gameStore'
 import {MiningResource} from '@/types/trainingTypes'
+import {toPercentage} from '../../utils'
 
 const trainingStore = useTrainingStore()
 const gameStore = useGameStore()
@@ -92,6 +147,15 @@ const foragingXpToNextLevel = computed(() => trainingStore.training.foraging.xpT
 
 const foragingResources = computed(() => trainingStore.foragingResources)
 const training = trainingStore.training
+
+// Show milestones toggle
+const showMilestones = ref(foragingResources.value.map(() => false))
+
+// Toggle milestones display
+function toggleMilestones(index) {
+  showMilestones.value[index] = !showMilestones.value[index]
+}
+
 function startForaging(zone) {
   trainingStore.startForaging(zone)
 }

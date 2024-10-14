@@ -10,9 +10,19 @@ export enum Skill {
 
 export enum ForagingArea {
   None = 'None',
-  Grasslands = 'Grasslands',
-  Forest = 'Forest',
   Wasteland = 'Wasteland',
+  Forest = 'Forest',
+  Mountains = 'Mountains',
+}
+
+export interface Seed {
+  name: string;
+  description?: string;
+  levelRequired: number;
+  growthTime: number; // Time in seconds for the seed to mature
+  xpPerAction: number;
+  effect?: object; // Special effect for when the seed matures
+  duration: number; // Duration of the effect in seconds
 }
 
 export enum ResourceType {
@@ -74,14 +84,25 @@ export interface MiningResource {
   collectionMultiplier: number; // Multiplier for collection
   timeReduction: number; // Reduction in time
   respawnReduction: number; // Reduction in respawn time
-  milestones?: Milestone[];
+  milestones?: MiningMilestone[];
 }
 
-export interface Milestone {
+export interface MiningMilestone {
   level: number;
   collectionMultiplierBonus: number;  // Bonus multiplier for collection
   timeReductionBonus: number;         // Bonus reduction in time
   respawnReductionBonus: number;      // Bonus reduction in respawn time
+}
+
+export interface ForagingMilestone {
+  dropChanceModifier?: number;
+  dropAmountModifier?: number;
+  xpModifier?: number;
+  speedModifier?: number;
+  spawnTimeModifier?: number;
+  coolDownModifier?: number;
+
+  amountForaged: number;
 }
 
 export interface ResourcesCollected {

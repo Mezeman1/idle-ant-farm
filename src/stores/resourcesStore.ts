@@ -3,6 +3,7 @@ import {useGameStore} from '@/stores/gameStore'
 import {toast} from 'vue3-toastify'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
+import {useTrainingStore} from '@/stores/trainingStore'
 
 const MAX_SAFE_VALUE = Number.MAX_VALUE
 type AntTypes = 'workers' | 'soldiers' | 'royalQueens'
@@ -104,7 +105,8 @@ export const useResourcesStore = defineStore('resources', {
   }),
   getters: {
     antsPerSecond: (state) => {
-      return state.productionRates.antsGenerationRate
+      const farmingSpawnRate = useTrainingStore().farmingModifiers.spawnRate ?? 1
+      return state.productionRates.antsGenerationRate * farmingSpawnRate
     },
     larvaePerMinute: (state) => {
       const larvaePerQueen = state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier

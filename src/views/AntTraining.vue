@@ -8,14 +8,13 @@
         class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200 text-sm md:text-xl"
       >
         Please note, this is a work in progress and not all features are implemented yet.
-        <br>
-        For example, foraging, doesn't do anything yet, but you can still train it and get the progress later.
       </p>
 
       <TrainingMining v-if="activeTab === 'mining'" />
       <TrainingCrafting v-if="activeTab === 'crafting'" />
       <TrainingForaging v-if="activeTab === 'foraging'" />
       <TrainingCombat v-if="activeTab === 'combat'" />
+      <TrainingFarming v-if="activeTab === 'farming'" />
     </div>
 
     <!-- Tab Navigation -->
@@ -57,6 +56,7 @@ import {storeToRefs} from 'pinia'
 import TrainingCombat from '@/views/Training/TrainingCombat.vue'
 import TrainingForaging from '@/views/Training/TrainingForaging.vue'
 import {MiningResource} from '@/types/trainingTypes'
+import TrainingFarming from '@/views/Training/TrainingFarming.vue'
 
 // Get the training store
 const trainingStore = useTrainingStore()
@@ -67,6 +67,12 @@ const tabs = ref([
   { name: 'crafting', label: 'Crafting', icon: 'fas fa-hammer', disabled: false },
   { name: 'foraging', label: 'Foraging', icon: 'fas fa-leaf', disabled: false },
   { name: 'combat', label: 'Combat', icon: 'fas fa-swords', disabled: false },
+  {
+     name: 'farming',
+      label: 'Farming',
+      icon: 'fas fa-seedling',
+      disabled: false,
+  },
 ])
 
 const {
