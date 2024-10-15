@@ -26,7 +26,7 @@ export const seeds: Seed[] = [
     duration: 60 * 60,
   },
   {
-    name: SeedNames.EnergyFungus, levelRequired: 10, growthTime: 90 * 60, xpPerAction: 45,
+    name: SeedNames.EnergyFungus, levelRequired: 10, growthTime: 90 * 60, xpPerAction: 50,
     description: 'A fungus that provides energy to ants, increasing their crafting speed for 1 hour.',
     effect: {craftingRate: 2},
     duration: 60 * 60,
@@ -38,7 +38,7 @@ export const seeds: Seed[] = [
     duration: 120 * 60,
   },
   {
-    name: SeedNames.DefenseFungus, levelRequired: 20, growthTime: 180 * 60, xpPerAction: 65,
+    name: SeedNames.DefenseFungus, levelRequired: 20, growthTime: 180 * 60, xpPerAction: 165,
     description: 'A fungus that strengthens ants, increasing their defense for 1 hours',
     effect: {defense: 2},
     duration: 60 * 60,
