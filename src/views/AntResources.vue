@@ -16,16 +16,16 @@
           <!-- Left Column: Seed Count and Upgrade -->
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.seeds) }}/{{ formatNumber(resourcesStore.maxSeeds) }}
+              Count: {{ formatNumber(resourcesStore.resources.seeds, 0) }}/{{ formatNumber(resourcesStore.maxSeeds, 0) }}
               ({{ formatNumber(resourcesStore.resources.seeds / resourcesStore.maxSeeds * 100, 1) }}%)
             </p>
             <p class="text-xs">
-              Rate: {{ formatNumber(resourcesStore.seedsPerSecond) }}/s ({{ formatNumber(resourcesStore.productionRates.collectionRateModifier * 100, 2) }}% bonus)
+              Rate: {{ formatNumber(resourcesStore.seedsPerSecond) }}/s ({{ formatNumber(resourcesStore.productionRates.collectionRateModifier * 100) }}% bonus)
             </p>
             <StorageButtons
               :cost-string="seedStorageCostString"
               :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
-              @upgrade="resourcesStore.upgradeSeedStorage(false)"
+              @upgrade="resourcesStore.upgradeSeedStorage()"
               @upgradeMax="resourcesStore.upgradeMaxSeedStorage"
             />
             <p
@@ -100,16 +100,16 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.larvae) }}/{{ formatNumber(resourcesStore.maxLarvae) }}
+              Count: {{ formatNumber(resourcesStore.resources.larvae, 0) }}/{{ formatNumber(resourcesStore.maxLarvae, 0) }}
               ({{ formatNumber(resourcesStore.resources.larvae / resourcesStore.maxLarvae * 100, 1) }}%)
             </p>
             <p class="text-xs">
-              Rate: {{ formatNumber(resourcesStore.larvaePerMinute) }}/m ({{ formatNumber(resourcesStore.productionRates.larvaeProductionModifier * 100, 2) }}% bonus)
+              Rate: {{ formatNumber(resourcesStore.larvaePerMinute) }}/m ({{ formatNumber(resourcesStore.productionRates.larvaeProductionModifier * 100) }}% bonus)
             </p>
             <StorageButtons
               :cost-string="larvaeStorageCostString"
               :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
-              @upgrade="resourcesStore.upgradeLarvaeStorage(false)"
+              @upgrade="resourcesStore.upgradeLarvaeStorage()"
               @upgradeMax="resourcesStore.upgradeMaxLarvaeStorage"
             />
             <p
@@ -126,7 +126,7 @@
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="resourcesStore.createLarvae"
             >
-              Create Larvae ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerLarva) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }})
+              Create Larvae ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerLarva, 0) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }})
             </button>
             <button
               :disabled="createLarvaeDisabled"
@@ -181,7 +181,7 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.ants) }}/{{ formatNumber(resourcesStore.maxAnts) }}
+              Count: {{ formatNumber(resourcesStore.resources.ants, 0) }}/{{ formatNumber(resourcesStore.maxAnts, 0) }}
               ({{ formatNumber(resourcesStore.resources.ants / resourcesStore.maxAnts * 100, 1) }}%)
             </p>
             <p
@@ -197,7 +197,7 @@
               :disabled="resourcesStore.resources.seeds < resourcesStore.seedCostPerAntHousing"
               @click="resourcesStore.createAntHousing"
             >
-              Create housing ({{ formatNumber(resourcesStore.seedCostPerAntHousing) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }})
+              Create housing ({{ formatNumber(resourcesStore.seedCostPerAntHousing, 0) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }})
             </button>
             <button
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
@@ -213,8 +213,8 @@
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="resourcesStore.createAnts"
             >
-              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerAnt) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }}, {{
-                formatNumber(resourcesStore.resourceCosts.larvaCostPerAnt)
+              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerAnt, 0) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }}, {{
+                formatNumber(resourcesStore.resourceCosts.larvaCostPerAnt, 0)
               }} {{ evolveStore.currentEvolutionData.resources.larvae.lowerName }})
             </button>
             <button
@@ -312,8 +312,8 @@
               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="resourcesStore.createEliteAnts"
             >
-              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerEliteAnt) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }}, {{
-                formatNumber(resourcesStore.resourceCosts.larvaCostPerEliteAnt)
+              Create Ant <br>({{ formatNumber(resourcesStore.resourceCosts.seedCostPerEliteAnt, 0) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }}, {{
+                formatNumber(resourcesStore.resourceCosts.larvaCostPerEliteAnt, 0)
               }} {{ evolveStore.currentEvolutionData.resources.larvae.lowerName }})
             </button>
             <button
@@ -388,8 +388,8 @@
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
               @click="resourcesStore.buyQueen"
             >
-              Buy Queen 👑 ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerQueen) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }},
-              {{ formatNumber(resourcesStore.resourceCosts.antCostPerQueen) }} {{ evolveStore.currentEvolutionData.resources.ants.lowerName }})
+              Buy Queen 👑 ({{ formatNumber(resourcesStore.resourceCosts.seedCostPerQueen, 0) }} {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }},
+              {{ formatNumber(resourcesStore.resourceCosts.antCostPerQueen, 0) }} {{ evolveStore.currentEvolutionData.resources.ants.lowerName }})
             </button>
             <button
               :disabled="createQueenDisabled"
@@ -444,19 +444,18 @@
           <p class="text-2xs">
             Royal Jelly is a special resource used to upgrade ants.
             <br>
-            These ants are more efficient at collecting resources.
-            <br>
-            These ants do not reset on prestige.
+            These ants are more efficient at collecting resources and do not reset on prestige.
           </p>
           <p class="text-2xs">
-            Queens have a chance to produce Royal Jelly. <br>
+            Queens have a chance to produce Royal Jelly.
+            <br>
             Currently, you have a {{ formatNumber(resourcesStore.royalJellyChance, 4) }}% chance to produce Royal Jelly.
           </p>
         </div>
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full">
             <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.royalJelly ?? 0, 0) }}/∞
+              Count: {{ formatNumber(resourcesStore.resources.royalJelly ?? 0, 1) }}/∞
             </p>
           </div>
         </div>
@@ -467,7 +466,7 @@
             class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
             @click="resourcesStore.upgradeAnt"
           >
-            Upgrade Ant ({{ formatNumber(resourcesStore.resourceCosts.royalJellyCostPerUpgrade) }} Royal Jelly)
+            Upgrade Ant ({{ formatNumber(resourcesStore.resourceCosts.royalJellyCostPerUpgrade, 1) }} Royal Jelly)
           </button>
           <span>
             You currently have {{ formatNumber(resourcesStore.resources.royalJellyAnts ?? 0, 0) }} Royal Jelly Ants.
@@ -604,7 +603,6 @@
 
 <script setup lang="ts">
 import {useGameStore} from '../stores/gameStore'
-import PrestigeShop from './PrestigeShop.vue'
 import {usePrestigeStore} from '../stores/prestigeStore'
 import StorageButtons from '@/components/StorageButtons.vue'
 import {computed} from 'vue'
@@ -619,28 +617,28 @@ const evolveStore = useEvolveStore()
 // Format numbers using the store's function
 const formatNumber = gameStore.formatNumber
 
-let collectingInterval: number | undefined = undefined
+let collectingIntervalId: number | undefined = undefined
 const collectingIntervalTime = 25
 
 const startCollectingSeeds = () => {
   resourcesStore.collectSeedsManually() // Initial collection on click
 
   // Start an interval for collecting seeds every 100ms while holding down
-  collectingInterval = setInterval(() => {
+  collectingIntervalId = setInterval(() => {
     resourcesStore.collectSeedsManually()
   }, collectingIntervalTime)
 }
 
 const stopCollectingSeeds = () => {
   // Clear the interval when the mouse is released or leaves the button
-  if (collectingInterval) {
-    clearInterval(collectingInterval)
-    collectingInterval = undefined
+  if (collectingIntervalId) {
+    clearInterval(collectingIntervalId)
+    collectingIntervalId = undefined
   }
 }
 
-const seedStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.seedStorageUpgradeCost)} ${evolveStore.currentEvolutionData.resources.seeds.lowerName}`)
-const larvaeStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.larvaeStorageUpgradeCost)} ${evolveStore.currentEvolutionData.resources.seeds.lowerName}`)
+const seedStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.seedStorageUpgradeCost, 0)} ${evolveStore.currentEvolutionData.resources.seeds.lowerName}`)
+const larvaeStorageCostString = computed(() => `${formatNumber(resourcesStore.upgradeCosts.larvaeStorageUpgradeCost, 0)} ${evolveStore.currentEvolutionData.resources.seeds.lowerName}`)
 
 const seedCollectingDisabled = computed(() => resourcesStore.resources.seeds >= resourcesStore.maxSeeds)
 const createLarvaeDisabled = computed(() => resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerLarva || resourcesStore.resources.larvae >= resourcesStore.maxLarvae)

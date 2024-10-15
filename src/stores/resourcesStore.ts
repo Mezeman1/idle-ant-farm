@@ -143,16 +143,16 @@ export const useResourcesStore = defineStore('resources', {
     },
     maxAnts: (state) => {
       if (state.resources.antHousing === 0) {
-        return state.storage.maxAnts * state.storageModifiers.ant
+        return Math.floor(state.storage.maxAnts * state.storageModifiers.ant)
       }
 
-      return state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant
+      return Math.floor(state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant)
     },
     maxSeeds: (state) => {
-      return state.storage.maxSeeds * state.storageModifiers.seed
+      return Math.floor(state.storage.maxSeeds * state.storageModifiers.seed)
     },
     maxLarvae: (state) => {
-      return state.storage.maxLarvae * state.storageModifiers.larvae
+      return Math.floor(state.storage.maxLarvae * state.storageModifiers.larvae)
     },
     maxWorkers: (state) => {
       return Math.floor(state.storage.maxAnts * 0.01)
