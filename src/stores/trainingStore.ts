@@ -749,13 +749,13 @@ export const useTrainingStore = defineStore({
     applyModifiers() {
       const resourcesStore = useResourcesStore() // Access the resources store
       resourcesStore.productionRates.antsGenerationRate = 0
-      const crafterItems = this.craftedItems
+      const craftedItems = this.craftedItems
 
       // Initialize the storageModifiers object
       const storageModifiers = this.resetStorageModifiers()
 
       // Loop through crafted items and apply modifiers
-      for (const [key, amountOfUpgrade] of Object.entries(crafterItems)) {
+      for (const [key, amountOfUpgrade] of Object.entries(craftedItems)) {
         this.applyCraftingRecipeModifiers(key, amountOfUpgrade, storageModifiers)
       }
 
