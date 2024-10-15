@@ -26,22 +26,22 @@
           </h2>
           <div v-if="currentAreaModifiers">
             <p v-if="currentAreaModifiers.dropChanceModifier">
-              Drop Chance Modifier: {{ toPercentage(currentAreaModifiers.dropChanceModifier, 1) }}
+              Drop Chance Modifier: {{ toPercentage(currentAreaModifiers.dropChanceModifier, 1) }}%
             </p>
             <p v-if="currentAreaModifiers.dropAmountModifier">
-              Drop Amount Modifier: {{ toPercentage(currentAreaModifiers.dropAmountModifier, 1) }}
+              Drop Amount Modifier: {{ toPercentage(currentAreaModifiers.dropAmountModifier, 1) }}%
             </p>
             <p v-if="currentAreaModifiers.xpModifier">
-              XP Modifier: {{ toPercentage(currentAreaModifiers.xpModifier, 1) }}
+              XP Modifier: {{ toPercentage(currentAreaModifiers.xpModifier, 1) }}%
             </p>
             <p v-if="currentAreaModifiers.speedModifier">
-              Speed Modifier: {{ toPercentage(currentAreaModifiers.speedModifier, 1) }}
+              Speed Modifier: {{ toPercentage(currentAreaModifiers.speedModifier, 1) }}%
             </p>
             <p v-if="currentAreaModifiers.spawnTimeModifier">
-              Spawn Time Modifier: {{ toPercentage(currentAreaModifiers.spawnTimeModifier, 1) }}
+              Spawn Time Modifier: {{ toPercentage(currentAreaModifiers.spawnTimeModifier, 1) }}%
             </p>
             <p v-if="currentAreaModifiers.coolDownModifier">
-              Cooldown Modifier: {{ toPercentage(currentAreaModifiers.coolDownModifier, 1) }}
+              Cooldown Modifier: {{ toPercentage(currentAreaModifiers.coolDownModifier, 1) }}%
             </p>
           </div>
           <p

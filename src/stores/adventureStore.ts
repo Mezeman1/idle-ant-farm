@@ -888,10 +888,10 @@ export const useAdventureStore = defineStore('adventureStore', {
         maxHealth: baseHealth,
         regen: baseRegen,
 
-        damageMultiplier: this.armyBossAttackModifier,
-        defenseMultiplier: this.armyBossDefenseModifier,
-        healthMultiplier: this.armyBossMaxHealthModifier,
-        regenMultiplier: this.armyBossRegenModifier,
+        damageMultiplier: this.armyAttackModifier,
+        defenseMultiplier: this.armyDefenseModifier,
+        healthMultiplier: this.armyMaxHealthModifier,
+        regenMultiplier: this.armyRegenModifier,
       })
 
       this.activeBuffs = this.activeBuffs?.map((buff) => {

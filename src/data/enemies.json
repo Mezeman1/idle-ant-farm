@@ -387,7 +387,6 @@
     },
     "unlockText": "Unlocked when you have 100 ants or 2 queens."
   },
-
   {
     "name": "Mountains",
     "enemies": [
@@ -519,7 +518,6 @@
     },
     "unlockText": "Unlocked when you buy the Mountains upgrade from the prestige shop."
   },
-
   {
     "name": "Volcano",
     "enemies": [
@@ -636,7 +634,6 @@
     },
     "unlockText": "Unlocked when you buy the Volcano upgrade from the prestige shop."
   },
-
   {
     "name": "Underworld",
     "enemies": [

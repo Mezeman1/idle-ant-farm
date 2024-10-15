@@ -31,6 +31,13 @@ export const useBossStore = defineStore({
       regenMultiplier: 1,
     },
 
+    combatModifiers: {
+      damage: 1,
+      defense: 1,
+      regen: 1,
+      health: 1,
+    },
+
     battleState: 'idle',
   }),
   getters: {
@@ -85,13 +92,13 @@ export const useBossStore = defineStore({
     processCombat(deltaTime) {
       const boss = this.currentBossData
       const army = this.armyStats
-      army.health = Math.min(army.health + army.regen * army.regenMultiplier * deltaTime, army.maxHealth)
+      army.health = Math.min(army.health + army.regen * army.regenMultiplier * deltaTime, army.maxHealth * this.combatModifiers.health)
       boss.health = Math.min(boss.health + boss.regen * deltaTime, boss.maxHealth)
 
       if (this.battleState === 'idle') return
 
-      const bossDamage = Math.max(boss.damage - army.defense * army.defenseMultiplier, 0)
-      const armyDamage = Math.max(army.damage * army.damageMultiplier - boss.defense, 0)
+      const bossDamage = Math.max(boss.damage - army.defense * army.defenseMultiplier * this.combatModifiers.defense, 0)
+      const armyDamage = Math.max(army.damage * army.damageMultiplier * this.combatModifiers.damage - boss.defense, 0)
 
       boss.health -= armyDamage * deltaTime
       army.health -= bossDamage * deltaTime

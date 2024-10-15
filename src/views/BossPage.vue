@@ -59,7 +59,10 @@
             Army
           </p>
           <p class="text-sm">
-            HP: {{ formatNumber(armyStats.health) }} / {{ formatNumber(armyStats.maxHealth) }}
+            HP: {{ formatNumber(armyStats.health) }} / {{ formatNumber(armyStats.maxHealth * bossStore.combatModifiers.health) }}
+            <span class="text-xs text-gray-500">
+              ({{ toPercentage(bossStore.combatModifiers.health, 1) }}%)
+            </span>
           </p>
         </div>
         <div class="flex flex-col space-y-2">
@@ -80,7 +83,10 @@
                 Attack
               </p>
               <p class="font-semibold">
-                {{ formatNumber(armyStats.damage) }}
+                {{ formatNumber(armyStats.damage * armyStats.damageMultiplier * bossStore.combatModifiers.damage) }}
+                <span class="text-xs text-gray-500">
+                  ({{ toPercentage(armyStats.damageMultiplier * bossStore.combatModifiers.damage, 1) }}%)
+                </span>
               </p>
             </div>
             <div>
@@ -88,7 +94,10 @@
                 Defense
               </p>
               <p class="font-semibold">
-                {{ formatNumber(armyStats.defense) }}
+                {{ formatNumber(armyStats.defense * armyStats.defenseMultiplier * bossStore.combatModifiers.defense) }}
+                <span class="text-xs text-gray-500">
+                  ({{ toPercentage(armyStats.defenseMultiplier * bossStore.combatModifiers.defense, 1) }}%)
+                </span>
               </p>
             </div>
             <div>
@@ -96,7 +105,10 @@
                 Regen
               </p>
               <p class="font-semibold">
-                {{ formatNumber(armyStats.regen) }}
+                {{ formatNumber(armyStats.regen * armyStats.regenMultiplier * bossStore.combatModifiers.regen) }}
+                <span class="text-xs text-gray-500">
+                  ({{ toPercentage(armyStats.regenMultiplier * bossStore.combatModifiers.regen, 1) }}%)
+                </span>
               </p>
             </div>
           </div>
@@ -129,6 +141,7 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useBossStore } from '@/stores/bossStore'
 import { useGameStore } from '@/stores/gameStore'
+import { toPercentage } from '@/utils'
 
 const bossStore = useBossStore()
 const gameStore = useGameStore()
@@ -138,11 +151,11 @@ const currentBoss = computed(() => bossStore.currentBossData)
 const { armyStats } = storeToRefs(bossStore)
 
 const bossHealthPercentage = computed(() => {
-  return (currentBoss.value.health / currentBoss.value.maxHealth) * 100
+  return toPercentage(currentBoss.value.health, currentBoss.value.maxHealth)
 })
 
 const armyHealthPercentage = computed(() => {
-  return (armyStats.value.health / armyStats.value.maxHealth) * 100
+  return toPercentage(armyStats.value.health, armyStats.value.maxHealth * bossStore.combatModifiers.health)
 })
 </script>
 

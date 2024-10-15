@@ -411,6 +411,11 @@ const tabs = computed(() => [
     icon: 'fa-solid fa-shield',
   },
   {
+    name: 'bosses',
+    label: 'Bosses',
+    icon: 'fa-solid fa-skull',
+  },
+  {
     name: 'achievements',
     label: 'Achievements',
     icon: 'fa-solid fa-trophy',
@@ -436,11 +441,6 @@ const tabs = computed(() => [
     label: 'Debugger',
     icon: 'fa-solid fa-bug',
   },
-    {
-      name: 'bosses',
-      label: 'Bosses',
-      icon: 'fa-solid fa-bug',
-    },
   ] : []),
 ])
 

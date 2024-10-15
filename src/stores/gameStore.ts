@@ -765,6 +765,9 @@ export const useGameStore = defineStore('gameStore', {
           this.resetDebugState()
           const achievementStore = useAchievementStore()
           achievementStore.resetAchievements()
+
+          const trainingStore = useTrainingStore()
+          trainingStore.resetTrainingState()
         }
 
         if (isEvolution) {

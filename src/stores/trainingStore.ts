@@ -19,6 +19,8 @@ import {useSettingsStore} from '@/stores/settingsStore'
 import {foragingResources} from '@/types/foragingResources'
 import {SeedNames, seeds} from '@/types/farmingSeeds'
 import {toast} from 'vue3-toastify'
+import {useBossStore} from '@/stores/bossStore'
+import combatMilestones from '@/types/combatMilestones'
 
 export const useTrainingStore = defineStore({
   id: 'Training',
@@ -205,7 +207,9 @@ export const useTrainingStore = defineStore({
       duration: number,
     }[],
 
-    pastNotifications: {}
+    combatMilestones: combatMilestones,
+
+    pastNotifications: {},
   }),
 
   getters: {
@@ -669,6 +673,7 @@ export const useTrainingStore = defineStore({
 
       if (skill === Skill.Mining) this.checkMiningMilestones()
       if (skill === Skill.Foraging) this.checkForagingMilestones()
+      if (skill === Skill.Attack || skill === Skill.Defense || skill === Skill.Hitpoints) this.applyCombatMilestones()
     },
 
     checkForagingMilestones() {
@@ -781,10 +786,59 @@ export const useTrainingStore = defineStore({
         }
       })
 
-      this.addMilestones()
+      this.addMilestonesToMiningResources()
       this.applyModifiers()
       this.applyForagingModifiers()
       this.applyMiningMilestoneBonusses()
+      this.applyCombatMilestones()
+      this.checkMiningMilestones()
+      this.checkForagingMilestones()
+      this.resetAllOreNodes()
+    },
+    resetTrainingState() {
+      this.activeTab = 'mining'
+      this.activeTraining = Skill.None
+      Object.keys(this.training).forEach(key => {
+        this.training[key].level = 1
+        this.training[key].xp = 0
+        this.training[key].xpToNextLevel = BASE_XP
+      })
+
+      this.activeResources = []
+      this.maxActiveResources = 1
+
+      this.resourcesCollected = {}
+
+      this.activeCraftingRecipe = ''
+
+      this.craftedItems = {}
+      this.activeForagingZones = []
+
+      this.foragedZones = {
+        [ForagingArea.Grasslands]: 0,
+      }
+
+      this.maxActiveForagingZones = 1
+
+      this.selectedSeed = null
+
+      this.farmingPlots = Array(9).fill({seed: null, growthStage: 'Empty', growthProgress: 0})
+
+      this.harvestedResources = {}
+
+      this.eatenFungus = []
+
+      this.miningResources.forEach(resource => {
+        resource.level = 1
+        resource.xp = 0
+        resource.xpToNextLevel = BASE_XP
+      })
+
+      this.addMilestonesToMiningResources()
+      this.applyModifiers()
+      this.applyForagingModifiers()
+      this.applyMiningMilestoneBonusses()
+      this.applyCombatMilestones()
       this.checkMiningMilestones()
       this.checkForagingMilestones()
       this.resetAllOreNodes()
@@ -794,7 +848,7 @@ export const useTrainingStore = defineStore({
         this.resetOreNode(resource)
       })
     },
-    addMilestones() {
+    addMilestonesToMiningResources() {
       this.miningResources.forEach(resource => {
         const milestones = []
         const initialCollectionMultiplierBonus = 0.05
@@ -867,6 +921,21 @@ export const useTrainingStore = defineStore({
 
       // Apply the updated storage modifiers to the resourcesStore
       resourcesStore.applyStorageModifiers(storageModifiers)
+    },
+
+    applyCombatMilestones() {
+      this.combatMilestones.forEach(milestone => {
+        if (this.training[milestone.type].level >= milestone.levelRequired) {
+          this.applyCombatMilestone(milestone)
+        }
+      })
+    },
+
+    applyCombatMilestone(milestone) {
+      const bossStore = useBossStore()
+      Object.keys(milestone.effect).forEach(effect => {
+        bossStore.combatModifiers[effect] = milestone.effect[effect]
+      })
     },
 
     // Helper method to reset the storage modifiers to default values

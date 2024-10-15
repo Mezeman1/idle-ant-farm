@@ -10,6 +10,7 @@
       :level="attackLevel"
       :xp="attackXp"
       :xp-to-next-level="attackXpToNextLevel"
+      :milestones="trainingStore.combatMilestones.filter(milestone => milestone.type === 'attack')"
     />
 
     <SkillDisplay
@@ -17,6 +18,8 @@
       :level="defenceLevel"
       :xp="defenceXp"
       :xp-to-next-level="defenceXpToNextLevel"
+
+      :milestones="trainingStore.combatMilestones.filter(milestone => milestone.type === 'defense')"
     />
 
     <SkillDisplay
@@ -24,6 +27,8 @@
       :level="hitpointsLevel"
       :xp="hitpointsXp"
       :xp-to-next-level="hitpointsXpToNextLevel"
+
+      :milestones="trainingStore.combatMilestones.filter(milestone => milestone.type === 'hitpoints')"
     />
   </div>
 </template>

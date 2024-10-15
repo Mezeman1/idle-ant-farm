@@ -11,8 +11,8 @@ const formatTime = (milliseconds: number, hideZeros = false): string => {
   return `${days}d ${hours}h ${minutes}m ${seconds}s`
 }
 
-const toPercentage = (value: number, total: number): string => {
-  return ((value / total) * 100).toFixed(1) + '%'
+const toPercentage = (value: number, total: number): number => {
+  return ((value / total) * 100).toFixed(1)
 }
 
 export { formatTime, toPercentage }

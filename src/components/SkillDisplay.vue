@@ -1,7 +1,7 @@
 <template>
   <div
     :class="{
-      'bg-white shadow-lg rounded-lg mb-6 p-4' : withStyling,
+      'bg-white shadow-lg rounded-lg mb-6 p-4': withStyling,
     }"
   >
     <h3 class="text-xl font-semibold">
@@ -29,8 +29,21 @@
       />
     </div>
 
-    <!-- Milestones -->
+    <!-- Toggle Milestones Button -->
     <div class="mt-2">
+      <button
+        class="text-blue-600 hover:underline"
+        @click="showMilestones = !showMilestones"
+      >
+        {{ showMilestones ? 'Hide Milestones' : 'Show Milestones' }}
+      </button>
+    </div>
+
+    <!-- Milestones -->
+    <div
+      v-if="showMilestones"
+      class="mt-2"
+    >
       <div
         v-for="(milestone, index) in milestones"
         :key="index + milestone.description"
@@ -38,9 +51,9 @@
         <div
           class="flex justify-between items-center mt-2"
           :class="{
-            'border-t border-gray-200 pt-2' : index !== 0,
-            'text-green-500' : level >= milestone.levelRequired,
-            'text-gray-400' : level < milestone.levelRequired,
+            'border-t border-gray-200 pt-2': index !== 0,
+            'text-green-500': level >= milestone.levelRequired,
+            'text-gray-400': level < milestone.levelRequired,
           }"
         >
           <p>
@@ -56,7 +69,9 @@
 </template>
 
 <script setup lang="ts">
-import {useGameStore} from '@/stores/gameStore'
+import { ref } from 'vue'
+import { useGameStore } from '@/stores/gameStore'
+
 interface Milestone {
   description: string
   levelRequired: number
@@ -69,7 +84,6 @@ withDefaults(defineProps<{
   xp: number
   xpToNextLevel: number,
   milestones?: Milestone[],
-
   withStyling?: boolean
 }>(), {
   skillName: 'Skill',
@@ -78,13 +92,14 @@ withDefaults(defineProps<{
   xp: 0,
   xpToNextLevel: 100,
   milestones: () => [] as Milestone[],
-
   withStyling: true,
 })
 
-
 const gameStore = useGameStore()
 const formatNumber = gameStore.formatNumber
+
+// Toggle for showing milestones, default is hidden
+const showMilestones = ref(false)
 </script>
 
 <style scoped>
