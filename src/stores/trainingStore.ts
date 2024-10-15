@@ -15,8 +15,10 @@ import {
 } from '@/types/trainingTypes'
 import {miningResources} from '@/types/miningResources'
 import {useAdventureStore} from '@/stores/adventureStore'
+import {useSettingsStore} from '@/stores/settingsStore'
 import {foragingResources} from '@/types/foragingResources'
 import {SeedNames, seeds} from '@/types/farmingSeeds'
+import {toast} from 'vue3-toastify'
 
 export const useTrainingStore = defineStore({
   id: 'Training',
@@ -188,6 +190,8 @@ export const useTrainingStore = defineStore({
       effect: object,
       duration: number,
     }[],
+
+    pastNotifications: {}
   }),
 
   getters: {
@@ -230,6 +234,13 @@ export const useTrainingStore = defineStore({
             plot.growthStage = 'Growing'
           } else if (plot.growthStage === 'Growing' && plot.growthProgress >= plot.seed.growthTime) {
             plot.growthStage = 'Mature'
+            // If the setting is set and the first notification of this seed type was over 10 seconds ago
+            if (useSettingsStore().getNotificationSetting('matureCrops') && (!this.pastNotifications[plot.seed.name] || Date.now() - this.pastNotifications[plot.seed.name] > 10 * 1000)) {
+              this.pastNotifications[plot.seed.name] = Date.now()
+              toast.success(`Mature crop: ${plot.seed.name}`, {
+                position: toast.POSITION.TOP_LEFT,
+              })
+            }
           }
         }
       })
