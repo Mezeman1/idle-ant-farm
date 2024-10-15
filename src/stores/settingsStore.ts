@@ -24,6 +24,7 @@ export const useSettingsStore = defineStore('settings', {
       save: true,
       load: true,
       royalJelly: true,
+      matureCrops: true,
     },
     notation: 'scientific',
   }),
