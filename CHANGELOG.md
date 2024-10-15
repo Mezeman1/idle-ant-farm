@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.12.1](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.12.1) (2024-10-15)
+### [0.12.3](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.12.3) (2024-10-15)
 
 
 ### Bug Fixes
@@ -12,64 +12,75 @@ All notable changes to this project will be documented in this file. See [standa
 * storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
 * xp an hour ([d7bad6d](https://github.com/Mezeman1/idle-ant-farm/commit/d7bad6dd5179f06d260d08aa2e2155399d0ebe70))
 
-## [0.12.0](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.12.0) (2024-10-15)
-
+### [0.12.2](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.12.2) (2024-10-15)
 
 ### Bug Fixes
 
-* issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
-* set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
-* storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
+- issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
+- set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+- storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
+- xp an hour ([d7bad6d](https://github.com/Mezeman1/idle-ant-farm/commit/d7bad6dd5179f06d260d08aa2e2155399d0ebe70))
+
+### [0.12.1](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.12.1) (2024-10-15)
+
+### Bug Fixes
+
+- issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
+- set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+- storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
+- xp an hour ([d7bad6d](https://github.com/Mezeman1/idle-ant-farm/commit/d7bad6dd5179f06d260d08aa2e2155399d0ebe70))
+
+## [0.12.0](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.12.0) (2024-10-15)
+
+### Bug Fixes
+
+- issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
+- set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+- storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
 
 ### [0.11.6](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.11.6) (2024-10-14)
 
-
 ### Bug Fixes
 
-* issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
-* set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
-* storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
+- issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
+- set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+- storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
 
 ### [0.11.5](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.11.5) (2024-10-13)
 
-
 ### Bug Fixes
 
-* issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
-* set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
-* storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
+- issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
+- set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+- storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
 
 ### [0.11.4](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.11.4) (2024-10-13)
 
-
 ### Bug Fixes
 
-* issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
-* set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
-* storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
+- issue with ants creation ([36fd54a](https://github.com/Mezeman1/idle-ant-farm/commit/36fd54ab26bf1b841f9419188955d972de869f42))
+- set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+- storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
 
 ### [0.11.3](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.11.3) (2024-10-13)
 
-
 ### Bug Fixes
 
-* set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
-* storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
+- set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+- storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
 
 ### [0.11.2](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.11.2) (2024-10-13)
 
-
 ### Bug Fixes
 
-* set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
-* storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
+- set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+- storage for larvae? ([7d4610f](https://github.com/Mezeman1/idle-ant-farm/commit/7d4610fe14bbbea67acbb1fd19fc7b145a4cc7cf))
 
 ### [0.11.1](https://github.com/Mezeman1/idle-ant-farm/compare/v0.11.0...v0.11.1) (2024-10-13)
 
-
 ### Bug Fixes
 
-* set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
+- set resources as main page again ([00f27cc](https://github.com/Mezeman1/idle-ant-farm/commit/00f27cce46947fb1026e3cf201d0ee24b21f1680))
 
 ## [0.11.0](https://github.com/Mezeman1/idle-ant-farm/compare/v0.5.1...v0.11.0) (2024-10-12)
 
