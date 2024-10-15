@@ -8,6 +8,10 @@
       {{ skillName }}
     </h3>
 
+    <p class="text-gray-700">
+      {{ description }}
+    </p>
+
     <div class="flex justify-between items-center">
       <p class="text-lg">
         Level: {{ formatNumber(level, 0) }}
@@ -24,24 +28,56 @@
         :style="{ width: `${(xp / xpToNextLevel) * 100}%` }"
       />
     </div>
+
+    <!-- Milestones -->
+    <div class="mt-2">
+      <div
+        v-for="(milestone, index) in milestones"
+        :key="index + milestone.description"
+      >
+        <div
+          class="flex justify-between items-center mt-2"
+          :class="{
+            'border-t border-gray-200 pt-2' : index !== 0,
+            'text-green-500' : level >= milestone.levelRequired,
+            'text-gray-400' : level < milestone.levelRequired,
+          }"
+        >
+          <p>
+            {{ milestone.description }}
+          </p>
+          <p>
+            Level: {{ milestone.levelRequired }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import {useGameStore} from '@/stores/gameStore'
+interface Milestone {
+  description: string
+  levelRequired: number
+}
 
 withDefaults(defineProps<{
   skillName: string
+  description?: string
   level: number
   xp: number
   xpToNextLevel: number,
+  milestones?: Milestone[],
 
   withStyling?: boolean
 }>(), {
   skillName: 'Skill',
+  description: '',
   level: 1,
   xp: 0,
   xpToNextLevel: 100,
+  milestones: () => [] as Milestone[],
 
   withStyling: true,
 })

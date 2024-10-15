@@ -9,7 +9,7 @@
 
     <div
       v-if="debugMode"
-      class="flex flex-col gap-2"
+      class="flex flex-col gap-2 my-2"
     >
       <button
         v-for="resource in seeds"
@@ -21,69 +21,74 @@
       </button>
     </div>
 
-
-    <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-      <h2 class="text-lg font-semibold mb-4">
-        Harvested Resources
-      </h2>
-      <ul>
-        <li
-          v-for="harvestedResource in harvestedResources"
-          :key="harvestedResource.name"
-          class="bg-white rounded-lg shadow-md p-4 mb-4 border border-gray-200 flex justify-between items-center gap-2"
-        >
-          <span>
-            {{ harvestedResource.name }}: {{ harvestedResource.amount }}
-            <br>
-            {{ harvestedResource.description }}
-          </span>
-
-          <button
-            class="bg-green-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-600"
-            @click="trainingStore.eatFungus(harvestedResource)"
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+        <h2 class="text-lg font-semibold mb-4">
+          Harvested Resources
+        </h2>
+        <ul>
+          <li
+            v-for="harvestedResource in harvestedResources"
+            :key="harvestedResource.name"
+            class="bg-white rounded-lg shadow-md p-4 mb-4 border border-gray-200 flex justify-between items-center gap-2"
           >
-            Eat
-          </button>
-        </li>
-        <li v-if="harvestedResources.length === 0">
-          No resources harvested yet
-        </li>
-      </ul>
+            <span>
+              {{ harvestedResource.name }}: {{ harvestedResource.amount }}
+              <br>
+              {{ harvestedResource.description }}
+            </span>
+
+            <button
+              class="bg-green-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-600"
+              @click="trainingStore.eatFungus(harvestedResource)"
+            >
+              Eat
+            </button>
+          </li>
+          <li v-if="harvestedResources.length === 0">
+            No resources harvested yet
+          </li>
+        </ul>
+      </div>
+
+      <div
+        class="bg-white rounded-lg shadow-md p-4 mb-4"
+      >
+        <h2
+          class="text-lg font-semibold"
+        >
+          Eaten Fungus
+        </h2>
+        <ul
+          class="mt-4 flex flex-col gap-2"
+        >
+          <li
+            v-for="fungus in trainingStore.eatenFungus"
+            :key="fungus.name + 'modifier'"
+            class="bg-white rounded-lg shadow-md p-4 mb-4 border border-gray-200 flex flex-col justify-between gap-2"
+          >
+            <span class="flex-1">
+              <strong>{{ fungus.name }}:</strong> <br> {{ trainingStore.getSeedByName(fungus.name).description }}
+              <br>
+              {{ formatTime(fungus.duration * 1000, true) }} remaining
+            </span>
+            <span class="flex-1 flex justify-end">
+              <button
+                class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-600 small"
+                @click="trainingStore.cancelEffect(fungus)"
+              >
+                Cancel Effect
+              </button>
+            </span>
+          </li>
+
+          <li v-if="trainingStore.eatenFungus.length === 0">
+            No effects active
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <div
-      v-if="trainingStore.eatenFungus.length > 0"
-      class="bg-white rounded-lg shadow-md p-4 mb-4"
-    >
-      <h2
-        class="text-lg font-semibold"
-      >
-        Eaten Fungus
-      </h2>
-      <ul
-        class="mt-4 flex flex-col gap-2"
-      >
-        <li
-          v-for="fungus in trainingStore.eatenFungus"
-          :key="fungus.name + 'modifier'"
-          class="bg-white rounded-lg shadow-md p-4 mb-4 border border-gray-200 flex flex-col justify-between gap-2"
-        >
-          <span class="flex-1">
-            <strong>{{ fungus.name }}:</strong> <br> {{ trainingStore.getSeedByName(fungus.name).description }}
-            <br>
-            {{ formatTime(fungus.duration * 1000, true) }} remaining
-          </span>
-          <span class="flex-1 flex justify-end">
-            <button
-              class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-600 small"
-              @click="trainingStore.cancelEffect(fungus)"
-            >
-              Cancel Effect
-            </button>
-          </span>
-        </li>
-      </ul>
-    </div>
 
     <div class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200">
       <h2 class="text-lg font-semibold mb-4">
@@ -111,7 +116,7 @@
             :value="seed"
             :disabled="!canPlantSeed(seed)"
           >
-            {{ seed.name }} (Level {{ seed.levelRequired }})
+            {{ seed.name }} (Level {{ seed.levelRequired }}, Growth Time: {{ formatTime(seed.growthTime * 1000, true) }})
           </option>
         </select>
       </div>

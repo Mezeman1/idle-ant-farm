@@ -5,6 +5,8 @@
       :level="miningLevel"
       :xp="miningXp"
       :xp-to-next-level="miningXpToNextLevel"
+
+      :milestones="trainingStore.miningMilestones"
     />
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-6">
       <!-- Mining Section (Dynamic Content) -->
@@ -170,7 +172,7 @@ function stopMining() {
 
 // Helper to check if a resource is currently being mined
 function isMiningResource(resource: MiningResource) {
-  return trainingStore.activeResource === resource.name && !resource.isDepleted
+  return trainingStore.activeResources.includes(resource.name) && !resource.isDepleted
 }
 
 

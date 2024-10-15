@@ -24,7 +24,6 @@ export const useTrainingStore = defineStore({
     activeTab: 'mining',
 
     activeTraining: Skill.None,
-
     training: {
       mining: {
         level: 1,
@@ -62,10 +61,19 @@ export const useTrainingStore = defineStore({
         xpToNextLevel: BASE_XP,
       },
     },
-
-    activeResource: ResourceType.None,
+    // Mining
+    miningMilestones: [
+      {
+        levelRequired: 75,
+        effect: {
+          maxActiveResources: 2,
+        },
+        description: 'Unlocks the ability to mine 2 resources at once',
+      },
+    ],
+    activeResources: [] as ResourceType[],
+    maxActiveResources: 1,
     miningResources: miningResources,
-
     resourcesCollected: {
       [ResourceType.Dirt]: 0,
       [ResourceType.Clay]: 0,
@@ -73,8 +81,8 @@ export const useTrainingStore = defineStore({
       [ResourceType.Leaf]: 0,
     },
 
+    // Crafting
     activeCraftingRecipe: '',
-
     craftingRecipes: [
       {
         name: CraftingRecipeType.SeedStorage,
@@ -153,7 +161,6 @@ export const useTrainingStore = defineStore({
         timePerAction: 10,
       },
     ],
-
     craftedItems: {
       [CraftingRecipeType.SeedStorage]: 0,
       [CraftingRecipeType.LarvaeStorage]: 0,
@@ -161,29 +168,36 @@ export const useTrainingStore = defineStore({
     },
 
 
-    activeForagingZone: ResourceType.None,
+    // Foraging
+    activeForagingZones: [],
+    maxActiveForagingZones: 1,
     foragingResources: foragingResources,
-
     foragedZones: {
       [ForagingArea.Grasslands]: 0,
     },
+    foragingMilestones: [
+      {
+        levelRequired: 50,
+        effect: {
+          maxActiveForagingZones: 2,
+        },
+        description: 'Unlocks the ability to forage in 2 areas at once',
+      },
+    ],
 
+    // Farming
     selectedSeed: null,
     farmingPlots: Array(9).fill({seed: null, growthStage: 'Empty', growthProgress: 0}),
     harvestedResources: {
       [SeedNames.NutrientFungus]: 0,
     },
-
     farmingModifiers: {
       growthRate: 1,
       craftingRate: 1,
       regenerationRate: 1,
       spawnRate: 1,
     },
-
-    eatenFungus: [
-
-    ] as {
+    eatenFungus: [] as {
       name: SeedNames,
       effect: object,
       duration: number,
@@ -308,17 +322,19 @@ export const useTrainingStore = defineStore({
     },
 
     processForaging(deltaTime: number) {
-      const activeResource = this.foragingResources.find(res => res.name === this.activeForagingZone)
-      if (!activeResource) return
+      this.activeForagingZones.forEach(zone => {
+        const activeResource = this.foragingResources.find(res => res.name === zone)
+        if (!activeResource) return
 
-      if (this.training.foraging.level < activeResource.levelRequired) return
+        if (this.training.foraging.level < activeResource.levelRequired) return
 
-      if (!this.canForage(activeResource.name)) {
-        this.stopForaging()
-        return
-      }
+        if (!this.canForage(activeResource.name)) {
+          this.stopForaging()
+          return
+        }
 
-      this.handleForaging(activeResource, deltaTime)
+        this.handleForaging(activeResource, deltaTime)
+      })
     },
 
     handleForaging(resource, deltaTime: number) {
@@ -347,17 +363,21 @@ export const useTrainingStore = defineStore({
     },
 
     processMining(deltaTime: number) {
-      const activeResource = this.miningResources.find(res => res.name === this.activeResource)
-      if (!activeResource) return
-      if (this.training.mining.level < activeResource.levelRequired) return
+      this.activeResources.forEach((activeResourceName) => {
+        const activeResource = this.miningResources.find(res => res.name === activeResourceName)
+        if (!activeResource) return
 
-      if (activeResource.isDepleted) {
-        this.handleRespawn(activeResource, deltaTime)
-        return
-      }
+        if (this.training.mining.level < activeResource.levelRequired) return
 
-      this.handleMining(activeResource, deltaTime)
+        if (activeResource.isDepleted) {
+          this.handleRespawn(activeResource, deltaTime)
+          return
+        }
+
+        this.handleMining(activeResource, deltaTime)
+      })
     },
+
 
     processCrafting(deltaTime: number) {
       const activeRecipe = this.craftingRecipes.find(recipe => recipe.name === this.activeCraftingRecipe)
@@ -530,32 +550,74 @@ export const useTrainingStore = defineStore({
 
       this.resetOreNode(resource)
       this.setActiveResource(resource.name)
+      this.resetNoneActiveOreNodes()
+    },
+
+    resetNoneActiveOreNodes() {
+      this.miningResources.forEach(resource => {
+        if (!this.activeResources.includes(resource.name)) {
+          this.resetOreNode(resource)
+        }
+      })
     },
 
     startForaging(zone: ForagingArea) {
       this.setActiveTraining(Skill.Foraging)
-      this.setactiveForagingZone(zone)
+      this.setActiveForagingZone(zone)
     },
 
-    setactiveForagingZone(resource: ForagingArea) {
-      this.activeForagingZone = resource
+    setActiveForagingZone(resource: ForagingArea) {
+      const allowedAmount = this.maxActiveForagingZones
+      if (this.activeForagingZones.includes(resource)) return
+
+      if (this.activeForagingZones.length >= allowedAmount) {
+        this.activeForagingZones.shift()
+      }
+
+      this.activeForagingZones.push(resource)
     },
 
-    stopMining() {
-      const activeResource = this.miningResources.find(res => res.name === this.activeResource)
+    stopMining(resourceName?: string) {
+      if (!resourceName) {
+        this.activeResources.forEach(resource => {
+          this.stopMining(resource)
+        })
+        return
+      }
+
+      const resourceIndex = this.activeResources.indexOf(resourceName)
+      if (resourceIndex !== -1) {
+        this.activeResources.splice(resourceIndex, 1) // Remove resource from active list
+      }
+
+      const activeResource = this.miningResources.find(res => res.name === resourceName)
       if (activeResource) {
         this.resetOreNode(activeResource)
       }
-      this.setActiveResource(ResourceType.None)
-      this.setActiveTraining(Skill.None)
+
+      if (this.activeResources.length === 0) {
+        this.setActiveTraining(Skill.None) // Stop training if no active mining resources
+      }
     },
 
-    stopForaging() {
+    stopForaging(zone?: string) {
+      if (!zone) {
+        this.activeForagingZones.forEach(zone => {
+          this.stopForaging(zone)
+        })
+        return
+      }
+
+      const zoneIndex = this.activeForagingZones.indexOf(zone)
+      if (zoneIndex !== -1) {
+        this.activeForagingZones.splice(zoneIndex, 1) // Remove resource from active list
+      }
+
       const activeResource = this.foragingResources.find(res => res.name === this.activeForagingZone)
       if (activeResource) {
         activeResource.timePerAction = activeResource.initialTimePerAction
       }
-      this.setactiveForagingZone(ForagingArea.None)
+
       this.setActiveTraining(Skill.None)
     },
 
@@ -566,17 +628,24 @@ export const useTrainingStore = defineStore({
     },
 
     setActiveTraining(skill: Skill) {
-      if (skill !== Skill.None) this.stopEverything()
+      if (skill !== Skill.None) this.stopEverything(skill)
       this.activeTraining = skill
     },
 
-    stopEverything() {
-      this.stopMining()
-      this.stopCrafting()
+    stopEverything(skill: Skill) {
+      if (skill === Skill.Mining) this.stopCrafting()
+      if (skill === Skill.Crafting) this.stopMining()
     },
 
     setActiveResource(resource: ResourceType) {
-      this.activeResource = resource
+      const allowedAmount = this.maxActiveResources
+      if (this.activeResources.includes(resource)) return
+
+      if (this.activeResources.length >= allowedAmount) {
+        this.activeResources.shift()
+      }
+
+      this.activeResources.push(resource)
     },
 
     addLevel(skill: Skill) {
@@ -586,6 +655,41 @@ export const useTrainingStore = defineStore({
       training.level++
       training.xp = 0
       training.xpToNextLevel = this.getXpToNextLevel(training.level)
+
+      if (skill === Skill.Mining) this.checkMiningMilestones()
+      if (skill === Skill.Foraging) this.checkForagingMilestones()
+    },
+
+    checkForagingMilestones() {
+      this.foragingMilestones.forEach(milestone => {
+        if (this.training.foraging.level >= milestone.levelRequired) {
+          this.applyForagingMilestone(milestone)
+        }
+      })
+    },
+
+    applyForagingMilestone(milestone) {
+      Object.keys(milestone.effect).forEach(effect => {
+        if (effect === 'maxActiveForagingZones') {
+          this.maxActiveForagingZones = milestone.effect[effect]
+        }
+      })
+    },
+
+    checkMiningMilestones() {
+      this.miningMilestones.forEach(milestone => {
+        if (this.training.mining.level >= milestone.levelRequired) {
+          this.applyMiningMilestone(milestone)
+        }
+      })
+    },
+
+    applyMiningMilestone(milestone) {
+      Object.keys(milestone.effect).forEach(effect => {
+        if (effect === 'maxActiveResources') {
+          this.maxActiveResources = milestone.effect[effect]
+        }
+      })
     },
 
     addXp(skill: Skill, xp: number) {
@@ -617,9 +721,9 @@ export const useTrainingStore = defineStore({
 
         training: this.training,
         activeTraining: this.activeTraining,
-        activeResource: this.activeResource,
+        activeResources: this.activeResources,
         activeCraftingRecipe: this.activeCraftingRecipe,
-        activeForagingZone: this.activeForagingZone,
+        activeForagingZones: this.activeForagingZones,
         resourcesCollected: this.resourcesCollected,
         craftedItems: this.craftedItems,
         foragedZones: this.foragedZones,
@@ -645,11 +749,11 @@ export const useTrainingStore = defineStore({
       }
 
       this.activeTraining = state.activeTraining ?? this.activeTraining
-      this.activeResource = state.activeResource ?? this.activeResource
+      this.activeResources = state.activeResources ?? this.activeResources
       this.activeCraftingRecipe = state.activeCraftingRecipe ?? this.activeCraftingRecipe
       this.resourcesCollected = state.resourcesCollected ?? this.resourcesCollected
       this.craftedItems = state.craftedItems ?? this.craftedItems
-      this.activeForagingZone = state.activeForagingZone ?? this.activeForagingZone
+      this.activeForagingZones = state.activeForagingZones ?? this.activeForagingZones
       this.foragedZones = state.foragedZones ?? this.foragedZones
       this.selectedSeed = state.selectedSeed ?? this.selectedSeed
       this.harvestedResources = state.harvestedResources ?? this.harvestedResources
@@ -669,7 +773,9 @@ export const useTrainingStore = defineStore({
       this.addMilestones()
       this.applyModifiers()
       this.applyForagingModifiers()
-      this.applyMiningMilstoneBonusses()
+      this.applyMiningMilestoneBonusses()
+      this.checkMiningMilestones()
+      this.checkForagingMilestones()
       this.resetAllOreNodes()
     },
     resetAllOreNodes() {
@@ -730,7 +836,7 @@ export const useTrainingStore = defineStore({
         resource.milestones = milestones
       })
     },
-    applyMiningMilstoneBonusses() {
+    applyMiningMilestoneBonusses() {
       this.miningResources.forEach(resource => {
         this.checkAndApplyMileStoneBonusses(resource)
       })

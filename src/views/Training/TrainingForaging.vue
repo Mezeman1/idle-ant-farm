@@ -2,18 +2,12 @@
   <div>
     <SkillDisplay
       skill-name="Foraging"
+      description="Foraging is used to increase the adventure zones modifiers."
       :level="foragingLevel"
       :xp="foragingXp"
       :xp-to-next-level="foragingXpToNextLevel"
+      :milestones="trainingStore.foragingMilestones"
     />
-
-    <div
-      class="bg-white rounded-lg shadow-md p-6 border border-gray-200 my-4"
-    >
-      <p>
-        Foraging is used to increase the adventure zones modifiers.
-      </p>
-    </div>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-6">
       <div
@@ -119,7 +113,7 @@
           <button
             v-if="isForagingZone(resource.name)"
             class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-600"
-            @click="stopForaging"
+            @click="stopForaging(resource.name)"
           >
             Stop Foraging
           </button>
@@ -166,7 +160,7 @@ function stopForaging(zone) {
 }
 
 function isForagingZone(zone) {
-  return trainingStore.activeForagingZone === zone
+  return trainingStore.activeForagingZones.includes(zone)
 }
 </script>
 
