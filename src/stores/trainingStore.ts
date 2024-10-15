@@ -189,7 +189,9 @@ export const useTrainingStore = defineStore({
       name: SeedNames,
       effect: object,
       duration: number,
-    },
+    }[],
+
+    pastNotifications: {}
   }),
 
   getters: {
@@ -232,7 +234,9 @@ export const useTrainingStore = defineStore({
             plot.growthStage = 'Growing'
           } else if (plot.growthStage === 'Growing' && plot.growthProgress >= plot.seed.growthTime) {
             plot.growthStage = 'Mature'
-            if (useSettingsStore().getNotificationSetting('matureCrops')) {
+            // If the setting is set and the first notification of this seed type was over 10 seconds ago
+            if (useSettingsStore().getNotificationSetting('matureCrops') && (!this.pastNotifications[plot.seed.name] || Date.now() - this.pastNotifications[plot.seed.name] > 10 * 1000)) {
+              this.pastNotifications[plot.seed.name] = Date.now()
               toast.success(`Mature crop: ${plot.seed.name}`, {
                 position: toast.POSITION.TOP_LEFT,
               })
