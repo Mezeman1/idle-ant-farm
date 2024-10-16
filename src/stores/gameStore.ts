@@ -773,7 +773,6 @@ export const useGameStore = defineStore('gameStore', {
         if (isEvolution) {
           const prestigeStore = usePrestigeStore()
           prestigeStore.prestigePoints = 0
-          prestigeStore.timesPrestiged = 0
           prestigeStore.purchasedUpgrades = []
 
           prestigeStore.resetPrestigeShopCosts()
