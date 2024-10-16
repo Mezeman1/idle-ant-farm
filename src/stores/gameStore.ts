@@ -586,7 +586,7 @@ export const useGameStore = defineStore('gameStore', {
       return {
         ...resourcesStore.getResourcesState(),
         lastSavedTime: Date.now(),
-        activeTab: this.activeTab,
+        mainActiveTab: this.activeTab,
         userId,
 
         attackPerAnt: evolveStore.currentEvolutionData?.statsPerAnt?.attackPerAnt ?? this.attackPerAnt,
@@ -698,6 +698,7 @@ export const useGameStore = defineStore('gameStore', {
       bossStore.loadBossState(savedState)
 
       resourcesStore.applyUpgrades()
+      this.activeTab = savedState.mainActiveTab ?? this.activeTab
     },
     async resetGameState(debug = false) {
       console.log('Resetting game state...')
