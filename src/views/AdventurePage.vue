@@ -297,6 +297,8 @@
             </div>
           </div>
         </div>
+
+        <TrainingCombat />
       </div>
 
       <!-- Right Column: Inventory (on large screens) -->
@@ -332,6 +334,7 @@ import WaveSelector from '@/components/WaveSelector.vue'
 import {Skill} from '@/types/trainingTypes'
 import {toPercentage} from '../utils'
 import {useTrainingStore} from '@/stores/trainingStore'
+import TrainingCombat from '@/views/Training/TrainingCombat.vue'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
