@@ -27,6 +27,7 @@ export const useGameStore = defineStore('gameStore', {
     passwordConfirm: '',
     error: null,
     privacyAgreement: false,
+    activeTab: 'resources',
 
     currentUser: null,
 
@@ -585,6 +586,7 @@ export const useGameStore = defineStore('gameStore', {
       return {
         ...resourcesStore.getResourcesState(),
         lastSavedTime: Date.now(),
+        activeTab: this.activeTab,
         userId,
 
         attackPerAnt: evolveStore.currentEvolutionData?.statsPerAnt?.attackPerAnt ?? this.attackPerAnt,

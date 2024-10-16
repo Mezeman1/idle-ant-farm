@@ -66,6 +66,7 @@
       v-if="isModalOpen"
       :is-open="isModalOpen"
       :slot-type="selectedSlotType"
+      :slot-index="selectedSlotIndex"
       :items="availableItemsForSlot"
       @select-item="equipItem"
       @close="closeModal"
@@ -77,7 +78,7 @@
 import { computed, ref } from 'vue'
 import SlotComponent from './SlotComponent.vue'
 import ItemSelectionModal from './ItemSelectionModal.vue' // Renamed import
-import { useEquipmentStore } from '../stores/equipmentStore'
+import { useEquipmentStore } from '@/stores/equipmentStore'
 import { useWindowSize } from '@vueuse/core'
 import {Item} from '@/types/itemRegistry'
 import {useInventoryStore} from '@/stores/inventoryStore'

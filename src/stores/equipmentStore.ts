@@ -53,6 +53,13 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const inventoryStore = useInventoryStore()
       return inventoryStore.equipmentItemsInInventory.filter((item: Item) => item.slotType === slotType)
     },
+    getCurrentEquippedItemForSlot: (state) => (slotType: SlotType, index?: number) => {
+      if (slotType === 'accessory' && index !== undefined) {
+        return state.equippedItems.accessories[index]
+      }
+
+      return state.equippedItems[slotType]
+    },
   },
   actions: {
     loadLoadOut(loadOut: LoadOut) {
