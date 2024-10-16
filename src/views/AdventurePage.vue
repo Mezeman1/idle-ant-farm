@@ -340,7 +340,6 @@ const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
 const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()
-const prestigeStore = usePrestigeStore()
 const {width} = useWindowSize()
 const poisonChance = computed(() => formatNumber(adventureStore.poisonChance * 100), 0)
 const bugPoisonChance = computed(() => formatNumber((adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance ?? 0) * 100), 0 )

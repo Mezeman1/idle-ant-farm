@@ -1,27 +1,17 @@
 <template>
-  <div
+  <button
     v-tooltip="tooltipText"
     class="slot rounded-lg shadow-md flex items-center justify-center p-1 relative"
     :class="[
       slotClasses,
     ]"
-    :draggable="isDraggable"
     tabindex="0"
     role="button"
-    :aria-label="getAriaLabel()"
     :style="{
       backgroundImage: item?.image ? `url(${item.image})` : '',
       backgroundSize: item?.image ? 'cover' : '',
       backgroundPosition: item?.image ? 'center' : '',
     }"
-    @drop="onDrop"
-    @dragover.prevent
-    @dragstart="onDragStart"
-    @dragend="onDragEnd"
-    @dblclick="onDoubleClick"
-    @click="onClick"
-    @keydown.space.prevent="onKeyDownSpace"
-    @keydown.enter.prevent="onKeyDownSpace"
   >
     <p
       class="font-bold text-center break-words absolute z-10"
@@ -46,7 +36,7 @@
       class="absolute inset-0 bg-opacity-50 rounded-lg"
       :class="slotClasses"
     />
-  </div>
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -63,16 +53,6 @@ const props = defineProps({
   isMobile: Boolean,
   isInventorySlot: Boolean,
 })
-
-const emit = defineEmits([
-  'start-drag',
-  'start-drag-from-slot',
-  'drag-end',
-  'handle-drop',
-  'double-click-equip',
-  'double-click-unequip',
-  'show-context-menu',
-])
 
 const currentEquippedItems = computed(() => {
   return equipmentStore.getEquipedSetSize(props.item?.set) || 0
@@ -100,10 +80,6 @@ const defaultText = computed(() => {
   }
 })
 
-const isDraggable = computed(() => {
-  return !!props.item && props.isDesktop
-})
-
 const slotClasses = computed(() => {
   return {
     'bg-gray-700 text-white': !props.item,
@@ -112,8 +88,6 @@ const slotClasses = computed(() => {
     'bg-purple-500 text-white': props.item && (props.slotType === 'legs' || props.item?.slotType === 'legs'),
     'bg-red-500 text-white': props.item && (props.slotType === 'weapon' || props.item?.slotType === 'weapon'),
     'bg-yellow-500 text-white': props.item && (props.slotType === 'accessory' || props.item?.slotType === 'accessory'),
-    'cursor-pointer': props.isMobile && props.item,
-    'cursor-move': props.isDesktop && props.item,
   }
 })
 
@@ -130,61 +104,6 @@ const tooltipText = computed(() => {
   }
   return null
 })
-
-const onDragStart = (event: DragEvent) => {
-  if (props.item) {
-    if (props.isInventorySlot) {
-      emit('start-drag', props.item, event)
-    } else {
-      emit('start-drag-from-slot', props.item, props.slotType, props.index, event)
-    }
-  }
-}
-
-const onDragEnd = () => {
-  emit('drag-end')
-}
-
-const onDrop = (event: DragEvent) => {
-  if (!props.isInventorySlot) {
-    emit('handle-drop', props.slotType, props.index, event)
-  }
-}
-
-const onDoubleClick = () => {
-  if (props.item) {
-    if (props.isInventorySlot) {
-      emit('double-click-equip', props.item)
-    } else {
-      emit('double-click-unequip', props.item, props.slotType, props.index)
-    }
-  }
-}
-
-const onClick = (event: MouseEvent) => {
-  if (props.isMobile && props.item) {
-    emit('show-context-menu', props.item, props.slotType, props.index, event)
-  }
-}
-
-// Accessibility: Handle Space key to equip/unequip item
-const onKeyDownSpace = () => {
-  if (props.item) {
-    if (props.isInventorySlot) {
-      emit('double-click-equip', props.item)
-    } else {
-      emit('double-click-unequip', props.item, props.slotType, props.index)
-    }
-  }
-}
-
-const getAriaLabel = () => {
-  if (props.item) {
-    return `Slot ${props.slotType}, press space to equip or unequip ${props.item?.name}`
-  }
-
-  return 'Empty Slot'
-}
 </script>
 
 <style scoped>

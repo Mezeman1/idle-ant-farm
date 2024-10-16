@@ -67,32 +67,6 @@
         <LoadoutSwapper />
       </div>
     </div>
-
-    <div class="flex-1 mt-4 overflow-y-auto min-h-[250px]">
-      <!-- Inventory Section -->
-      <InventorySectionComponent
-        @start-drag="startDrag"
-        @drag-end="onDragEnd"
-        @double-click-equip="handleDoubleClickEquip"
-        @show-context-menu="showContextMenu"
-        @handle-drop-into-inventory="handleDropIntoInventory"
-      />
-    </div>
-
-    <!-- Context Menu -->
-    <ContextMenuComponent
-      :visible="contextMenu.visible"
-      :item="contextMenu.item"
-      :action="contextMenu.action"
-      :slot-type="contextMenu.slotType"
-      :index="contextMenu.index"
-      :is-mobile="isMobile"
-      :x="contextMenu.x"
-      :y="contextMenu.y"
-      @close="closeContextMenu"
-      @equip="handleEquip"
-      @unequip="handleUnequip"
-    />
   </div>
 </template>
 

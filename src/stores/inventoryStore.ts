@@ -14,6 +14,9 @@ export const useInventoryStore = defineStore('inventoryStore', {
     passiveItemsInInventory() {
       return this.inventory.filter(item => item.type === 'passive')
     },
+    equipmentItemsInInventory() {
+      return this.inventory.filter(item => item.type === 'equipment')
+    },
   },
   actions: {
     // inventoryStore.ts

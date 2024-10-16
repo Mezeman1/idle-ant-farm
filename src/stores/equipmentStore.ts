@@ -48,6 +48,12 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     loadOuts: [],
     maxLoadOuts: 3,
   }),
+  getters: {
+    getAvailableItemsForSlot: (state) => (slotType: SlotType) => {
+      const inventoryStore = useInventoryStore()
+      return inventoryStore.equipmentItemsInInventory.filter((item: Item) => item.slotType === slotType)
+    },
+  },
   actions: {
     loadLoadOut(loadOut: LoadOut) {
       const inventoryStore = useInventoryStore()
@@ -174,7 +180,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       return true
     },
 
-    async unequipItem(slotType: string, index?: number) {
+    async unequipItem(slotType: string, index?: number): Item {
       const inventoryStore = useInventoryStore()
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
@@ -203,6 +209,8 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       // Check for set bonuses
       this.checkForSetBonus()
       adventureStore.setupAdventureStats()
+
+      return item
     },
 
     checkForSetBonus() {

@@ -7,20 +7,6 @@
       :xp-to-next-level="trainingStore.training.farming.xpToNextLevel"
     />
 
-    <div
-      v-if="debugMode"
-      class="flex flex-col gap-2 my-2"
-    >
-      <button
-        v-for="resource in seeds"
-        :key="resource.name"
-        class="bg-green-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-600"
-        @click="addFungus(resource)"
-      >
-        Add Fungus {{ resource.name }}
-      </button>
-    </div>
-
     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
       <div class="bg-white rounded-lg shadow-md p-4 mb-4">
         <h2 class="text-lg font-semibold mb-4">

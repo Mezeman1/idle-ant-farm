@@ -10,7 +10,6 @@ import {
   Seed,
   Skill,
   TrainingState,
-  TrainingStoreState,
   XP_MULTIPLIER,
 } from '@/types/trainingTypes'
 import {miningResources} from '@/types/miningResources'
@@ -24,7 +23,7 @@ import combatMilestones from '@/types/combatMilestones'
 
 export const useTrainingStore = defineStore({
   id: 'Training',
-  state: (): TrainingStoreState => ({
+  state: () => ({
     activeTab: 'mining',
 
     activeTraining: Skill.None,

@@ -4,128 +4,137 @@
     <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 gap-2">
       <!-- Accessory Slots -->
       <div class="space-y-2">
-        <SlotComponent
-          :item="accessorySlots[0]"
-          slot-type="accessory"
-          :index="0"
-          :is-desktop="isDesktop"
-          :is-mobile="isMobile"
-          @start-drag-from-slot="startDragFromSlot"
-          @drag-end="onDragEnd"
-          @handle-drop="handleDrop"
-          @double-click-unequip="handleDoubleClickUnequip"
-          @show-context-menu="showContextMenu"
-        />
-        <SlotComponent
-          :item="accessorySlots[1]"
-          slot-type="accessory"
-          :index="1"
-          :is-desktop="isDesktop"
-          :is-mobile="isMobile"
-          @start-drag-from-slot="startDragFromSlot"
-          @drag-end="onDragEnd"
-          @handle-drop="handleDrop"
-          @double-click-unequip="handleDoubleClickUnequip"
-          @show-context-menu="showContextMenu"
-        />
+        <div @click="openModal('accessory', 0)">
+          <SlotComponent
+            :item="accessorySlots[0]"
+            slot-type="accessory"
+            :is-desktop="isDesktop"
+            :is-mobile="isMobile"
+          />
+        </div>
+        <div @click="openModal('accessory', 1)">
+          <SlotComponent
+            :item="accessorySlots[1]"
+            slot-type="accessory"
+            :is-desktop="isDesktop"
+            :is-mobile="isMobile"
+          />
+        </div>
       </div>
       <!-- Head, Body, Legs Slots -->
       <div class="space-y-2">
-        <SlotComponent
-          :item="headSlot"
-          slot-type="head"
-          :is-desktop="isDesktop"
-          :is-mobile="isMobile"
-          @start-drag-from-slot="startDragFromSlot"
-          @drag-end="onDragEnd"
-          @handle-drop="handleDrop"
-          @double-click-unequip="handleDoubleClickUnequip"
-          @show-context-menu="showContextMenu"
-        />
-        <SlotComponent
-          :item="bodySlot"
-          slot-type="body"
-          :is-desktop="isDesktop"
-          :is-mobile="isMobile"
-          @start-drag-from-slot="startDragFromSlot"
-          @drag-end="onDragEnd"
-          @handle-drop="handleDrop"
-          @double-click-unequip="handleDoubleClickUnequip"
-          @show-context-menu="showContextMenu"
-        />
-        <SlotComponent
-          :item="legSlot"
-          slot-type="legs"
-          :is-desktop="isDesktop"
-          :is-mobile="isMobile"
-          @start-drag-from-slot="startDragFromSlot"
-          @drag-end="onDragEnd"
-          @handle-drop="handleDrop"
-          @double-click-unequip="handleDoubleClickUnequip"
-          @show-context-menu="showContextMenu"
-        />
+        <div @click="openModal('head')">
+          <SlotComponent
+            :item="headSlot"
+            slot-type="head"
+            :is-desktop="isDesktop"
+            :is-mobile="isMobile"
+          />
+        </div>
+        <div @click="openModal('body')">
+          <SlotComponent
+            :item="bodySlot"
+            slot-type="body"
+            :is-desktop="isDesktop"
+            :is-mobile="isMobile"
+          />
+        </div>
+        <div @click="openModal('legs')">
+          <SlotComponent
+            :item="legSlot"
+            slot-type="legs"
+            :is-desktop="isDesktop"
+            :is-mobile="isMobile"
+          />
+        </div>
       </div>
       <!-- Weapon Slot -->
       <div class="space-y-2">
-        <SlotComponent
-          :item="weaponSlot"
-          slot-type="weapon"
-          :is-desktop="isDesktop"
-          :is-mobile="isMobile"
-          @start-drag-from-slot="startDragFromSlot"
-          @drag-end="onDragEnd"
-          @handle-drop="handleDrop"
-          @double-click-unequip="handleDoubleClickUnequip"
-          @show-context-menu="showContextMenu"
-        />
+        <div @click="openModal('weapon')">
+          <SlotComponent
+            :item="weaponSlot"
+            slot-type="weapon"
+            :is-desktop="isDesktop"
+            :is-mobile="isMobile"
+          />
+        </div>
       </div>
     </div>
+
+    <!-- Modal to select items for a specific slot -->
+    <ItemSelectionModal
+      v-if="isModalOpen"
+      :is-open="isModalOpen"
+      :slot-type="selectedSlotType"
+      :items="availableItemsForSlot"
+      @select-item="equipItem"
+      @close="closeModal"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import SlotComponent from './SlotComponent.vue'
+import ItemSelectionModal from './ItemSelectionModal.vue' // Renamed import
 import { useEquipmentStore } from '../stores/equipmentStore'
 import { useWindowSize } from '@vueuse/core'
+import {Item} from '@/types/itemRegistry'
+import {useInventoryStore} from '@/stores/inventoryStore'
 
 const equipmentStore = useEquipmentStore()
-const emit = defineEmits([
-  'start-drag-from-slot',
-  'drag-end',
-  'handle-drop',
-  'double-click-unequip',
-  'show-context-menu',
-])
-
+const inventoryStore = useInventoryStore()
 const { width } = useWindowSize()
 const mobileBreakpoint = 640
 const isMobile = computed(() => width.value < mobileBreakpoint)
 const isDesktop = computed(() => !isMobile.value)
 
+// Slots data
 const headSlot = computed(() => equipmentStore.equippedItems.head)
 const bodySlot = computed(() => equipmentStore.equippedItems.body)
 const legSlot = computed(() => equipmentStore.equippedItems.legs)
 const weaponSlot = computed(() => equipmentStore.equippedItems.weapon)
 const accessorySlots = computed(() => equipmentStore.equippedItems.accessories)
 
-const startDragFromSlot = (item: any, slotType: string, index: number | null, event: DragEvent) => {
-  emit('start-drag-from-slot', item, slotType, index, event)
+// Modal state
+const isModalOpen = ref(false)
+const selectedSlotType = ref('')
+const selectedSlotIndex = ref(null)
+const availableItemsForSlot = ref([])
+
+// Open modal function
+const openModal = (slotType: string, index: number | null = null) => {
+  selectedSlotType.value = slotType
+  selectedSlotIndex.value = index
+  availableItemsForSlot.value = equipmentStore.getAvailableItemsForSlot(slotType) // Fetch unlocked items
+  isModalOpen.value = true
 }
 
-const onDragEnd = () => {
-  emit('drag-end')
+// Close modal function
+const closeModal = () => {
+  isModalOpen.value = false
 }
 
-const handleDrop = (slotType: string, index: number | null, event: DragEvent) => {
-  emit('handle-drop', slotType, index, event)
-}
+// Equip item function
+const equipItem = async (item?: Item) => {
+  if (!item) {
+    const unequippedItem = await equipmentStore.unequipItem(selectedSlotType.value, selectedSlotIndex.value)
+    if (unequippedItem) {
+      await inventoryStore.addItemToInventory({
+        id: unequippedItem.id,
+        amount: 1,
+      })
+    }
 
-const handleDoubleClickUnequip = (item: any, slotType: string, index: number | null) => {
-  emit('double-click-unequip', item, slotType, index)
-}
+    closeModal()
+    return
+  }
 
-const showContextMenu = (item: any, slotType: string, index: number | null, event: MouseEvent) => {
-  emit('show-context-menu', item, slotType, index, event)
+  const success = await equipmentStore.equipItem(item, selectedSlotType.value, selectedSlotIndex.value)
+  if (success) {
+    await inventoryStore.removeItemFromInventory(item.id)
+
+    closeModal()
+  }
 }
 </script>
