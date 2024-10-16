@@ -16,7 +16,9 @@
         class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200"
       >
         <h2 class="text-xl font-semibold mb-2">
-          {{ resource.name }} {{ trainingStore.amountForagedZones(resource.name) > 0 ? `(${formatNumber(trainingStore.amountForagedZones(resource.name), 0)})` : '' }}
+          {{ resource.name }} {{
+            trainingStore.amountForagedZones(resource.name) > 0 ? `(${formatNumber(trainingStore.amountForagedZones(resource.name), 0)})` : ''
+          }}
         </h2>
         <p class="text-gray-700">
           Level Required: {{ resource.levelRequired }}
@@ -128,8 +130,7 @@ import {useTrainingStore} from '@/stores/trainingStore'
 import {computed, ref} from 'vue'
 import SkillDisplay from '@/components/SkillDisplay.vue'
 import {useGameStore} from '@/stores/gameStore'
-import {MiningResource} from '@/types/trainingTypes'
-import {toPercentage} from '../../utils'
+import {toPercentage} from '@/utils'
 
 const trainingStore = useTrainingStore()
 const gameStore = useGameStore()

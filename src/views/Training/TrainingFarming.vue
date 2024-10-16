@@ -102,7 +102,9 @@
             :value="seed"
             :disabled="!canPlantSeed(seed)"
           >
-            {{ seed.name }} (Level {{ seed.levelRequired }}, Growth Time: {{ formatTime(seed.growthTime * 1000, true) }})
+            {{ seed.name }} (Level {{ seed.levelRequired }}, Growth Time: {{
+              formatTime(seed.growthTime * 1000, true)
+            }})
           </option>
         </select>
       </div>
@@ -145,12 +147,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useTrainingStore } from '@/stores/trainingStore'
+import {computed} from 'vue'
+import {useTrainingStore} from '@/stores/trainingStore'
 import SkillDisplay from '@/components/SkillDisplay.vue'
 import {storeToRefs} from 'pinia'
 import {formatTime} from '@/utils'
-import {seeds} from '@/types/farmingSeeds'
 
 // Get the store
 const trainingStore = useTrainingStore()
@@ -201,7 +202,7 @@ function canPlantSeed(seed) {
 function formatTimeRemaining(plot) {
   const totalTime = plot.seed.growthTime
   const remainingTime = Math.max(0, totalTime - plot.growthProgress) * 1000
- return formatTime(remainingTime, true)
+  return formatTime(remainingTime, true)
 }
 
 const addFungus = (seed) => {

@@ -26,7 +26,7 @@
               :cost-string="seedStorageCostString"
               :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
               @upgrade="resourcesStore.upgradeSeedStorage()"
-              @upgradeMax="resourcesStore.upgradeMaxSeedStorage"
+              @upgrade-max="resourcesStore.upgradeMaxSeedStorage"
             />
             <p
               v-if="resourcesStore.maxSeeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
@@ -110,7 +110,7 @@
               :cost-string="larvaeStorageCostString"
               :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
               @upgrade="resourcesStore.upgradeLarvaeStorage()"
-              @upgradeMax="resourcesStore.upgradeMaxLarvaeStorage"
+              @upgrade-max="resourcesStore.upgradeMaxLarvaeStorage"
             />
             <p
               v-if="resourcesStore.maxSeeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"

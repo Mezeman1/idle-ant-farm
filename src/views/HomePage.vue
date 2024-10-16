@@ -370,6 +370,7 @@ import {toast} from 'vue3-toastify'
 import BossPage from '@/views/BossPage.vue'
 import AntTraining from '@/views/AntTraining.vue'
 import {storeToRefs} from 'pinia'
+
 const deferredPrompt = ref(null)
 const gameStore = useGameStore()
 const adventureStore = useAdventureStore()

@@ -21,7 +21,9 @@
 
     <div class="bg-white shadow-md rounded-md p-4 space-y-4">
       <p class="text-xs md:text-sm font-bold leading-relaxed">
-        Please note, this game is in early development and may have bugs or balance issues. I will be adding more features and balancing the game over time. Also, any progress made may be reset at any time during the current development stage.
+        Please note, this game is in early development and may have bugs or balance issues. I will be adding more
+        features and balancing the game over time. Also, any progress made may be reset at any time during the current
+        development stage.
       </p>
       <p class="text-right">
         Version: {{ version }}
@@ -93,7 +95,7 @@
                 class="ml-auto form-checkbox"
               >
             </div>
-            
+
             <div class="flex items-center">
               <label>Mature crop notifications</label>
               <input
@@ -325,10 +327,9 @@
 </template>
 <script setup lang="ts">
 import Modal from '../components/ModalComponent.vue'
-import { ref } from 'vue'
-import { useGameStore } from '../stores/gameStore'
-import { useSettingsStore } from '@/stores/settingsStore'
-import { useResourcesStore } from '@/stores/resourcesStore'
+import {ref} from 'vue'
+import {useGameStore} from '../stores/gameStore'
+import {useSettingsStore} from '@/stores/settingsStore'
 
 const gameStore = useGameStore()
 const settingsStore = useSettingsStore()
