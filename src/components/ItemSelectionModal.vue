@@ -5,7 +5,7 @@
     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
   >
     <!-- Full-screen modal for mobile, with scrollable content -->
-    <div class="bg-white flex flex-col max-w-full h-full w-full sm:max-w-lg sm:h-auto sm:rounded-md sm:my-8 overflow-hidden">
+    <div class="bg-white flex flex-col max-w-full h-full w-full max-h-screen sm:max-w-lg sm:h-auto sm:rounded-md sm:my-8 overflow-hidden">
       <h2 class="text-2xl font-semibold text-center p-6">
         {{ capitalize(slotType) }} Items
       </h2>
