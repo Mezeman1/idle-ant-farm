@@ -1,10 +1,14 @@
 <template>
   <div
     v-if="isOpen"
+    ref="modalContainer"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
+    tabindex="-1"
   >
     <!-- Full-screen modal for mobile, with scrollable content -->
-    <div class="bg-white flex flex-col max-w-full h-full w-full max-h-screen sm:max-w-lg sm:h-auto sm:rounded-md sm:my-8 overflow-hidden">
+    <div
+      class="bg-white flex flex-col max-w-full h-full w-full max-h-screen sm:max-w-lg sm:h-auto sm:rounded-md sm:my-8 overflow-hidden"
+    >
       <h2 class="text-2xl font-semibold text-center p-6">
         {{ capitalize(slotType) }} Items
       </h2>
@@ -68,7 +72,9 @@
           >
           <div>
             <p class="font-semibold text-lg">
-              {{ currentEquippedItem.name }} <span class="text-sm text-gray-500">({{ currentEquippedItem.rarity }})</span>
+              {{ currentEquippedItem.name }} <span class="text-sm text-gray-500">({{
+                currentEquippedItem.rarity
+              }})</span>
             </p>
             <p
               v-if="currentEquippedItem.level"
@@ -107,10 +113,10 @@
 </template>
 
 <script setup lang="ts">
-import { capitalize } from '../utils'
-import { Item } from '@/types/itemRegistry'
-import { useEquipmentStore } from '@/stores/equipmentStore'
-import { computed } from 'vue'
+import {capitalize} from '../utils'
+import {Item} from '@/types/itemRegistry'
+import {useEquipmentStore} from '@/stores/equipmentStore'
+import {computed, ref, watch} from 'vue'
 
 const equipmentStore = useEquipmentStore()
 
@@ -137,6 +143,16 @@ const selectItem = (item?: Item) => {
 const closeModal = () => {
   emit('close')
 }
+
+const modalContainer = ref<HTMLElement | null>(null)
+
+watch(() => props.isOpen, (isOpen) => {
+  if (isOpen) {
+    if (modalContainer.value) {
+      modalContainer.value.focus()
+    }
+  }
+})
 </script>
 
 <style scoped>
