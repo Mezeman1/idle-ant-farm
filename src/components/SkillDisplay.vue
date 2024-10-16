@@ -30,7 +30,10 @@
     </div>
 
     <!-- Toggle Milestones Button -->
-    <div class="mt-2">
+    <div
+      v-if="milestones.length > 0"
+      class="mt-2"
+    >
       <button
         class="text-blue-600 hover:underline"
         @click="showMilestones = !showMilestones"
