@@ -649,7 +649,7 @@ export const useTrainingStore = defineStore({
 
     stopEverything(skill: Skill) {
       if (skill === Skill.Mining) this.stopCrafting()
-      if (skill === Skill.Crafting) this.stopMining()
+      if (skill === Skill.Crafting || skill === Skill.Foraging) this.stopMining()
     },
 
     setActiveResource(resource: ResourceType) {
