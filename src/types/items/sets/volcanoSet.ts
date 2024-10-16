@@ -1,3 +1,5 @@
+import {Item} from '@/types/items/itemRegistry'
+
 export const volcanoSet = [
   {
     id: 'volcano-helm',
@@ -11,12 +13,12 @@ export const volcanoSet = [
     level: 1,
     maxLevel: 500,
     multiplier: 0.005, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
     },
@@ -33,12 +35,12 @@ export const volcanoSet = [
     level: 1,
     maxLevel: 500,
     multiplier: 0.0075, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
@@ -55,12 +57,12 @@ export const volcanoSet = [
     level: 1,
     maxLevel: 500,
     multiplier: 0.006, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier -= bonusMultiplier
     },
@@ -77,13 +79,13 @@ export const volcanoSet = [
     level: 1,
     maxLevel: 500,
     multiplier: 0.008, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
       adventureStore.armyDefenseModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
       adventureStore.armyDefenseModifier -= bonusMultiplier
@@ -101,12 +103,12 @@ export const volcanoSet = [
     level: 1,
     maxLevel: 500,
     multiplier: 0.01, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
     },
@@ -123,12 +125,12 @@ export const volcanoSet = [
     level: 1,
     maxLevel: 500,
     multiplier: 0.012, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyMaxHealthModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyMaxHealthModifier -= bonusMultiplier
     },
@@ -145,12 +147,12 @@ export const volcanoSet = [
     level: 1,
     maxLevel: 500,
     multiplier: 0.015, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
     },

@@ -11,7 +11,9 @@ const formatTime = (milliseconds: number, hideZeros = false): string => {
   return `${days}d ${hours}h ${minutes}m ${seconds}s`
 }
 
-const toPercentage = (value: number, total: number): number => {
+const toPercentage = (value?: number, total: number): number => {
+  if (!value) return 0
+
   return ((value / total) * 100).toFixed(1)
 }
 

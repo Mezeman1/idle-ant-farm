@@ -1,3 +1,5 @@
+import {Item} from '@/types/items/itemRegistry'
+
 export const underworldSet = [
   {
     id: 'underworld-helm',
@@ -11,12 +13,12 @@ export const underworldSet = [
     level: 1,
     maxLevel: 750,
     multiplier: 0.009, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
@@ -33,12 +35,12 @@ export const underworldSet = [
     level: 1,
     maxLevel: 750,
     multiplier: 0.012, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyMaxHealthModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyMaxHealthModifier -= bonusMultiplier
     },
@@ -55,12 +57,12 @@ export const underworldSet = [
     level: 1,
     maxLevel: 750,
     multiplier: 0.006, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
@@ -77,12 +79,12 @@ export const underworldSet = [
     level: 1,
     maxLevel: 750,
     multiplier: 0.009, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier -= bonusMultiplier
     },
@@ -99,12 +101,12 @@ export const underworldSet = [
     level: 1,
     maxLevel: 750,
     multiplier: 0.015, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
     },
