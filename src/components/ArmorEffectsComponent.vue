@@ -33,7 +33,7 @@
 import { computed } from 'vue'
 import { useEquipmentStore } from '../stores/equipmentStore'
 import { useGameStore } from '@/stores/gameStore'
-import {setBonuses} from '@/types/itemRegistry'
+import {setBonuses} from '@/types/items/itemRegistry'
 
 // Access the equipment store
 const equipmentStore = useEquipmentStore()

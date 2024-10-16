@@ -41,9 +41,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Item, passiveItems } from '@/types/itemRegistry'
+import { Item } from '@/types/items/itemRegistry'
 import { useInventoryStore } from '@/stores/inventoryStore'
 import defaultImage from '@/assets/items/default-item.webp'
+import {passiveItems} from '@/types/items/passiveItems'
 
 const inventoryStore = useInventoryStore()
 

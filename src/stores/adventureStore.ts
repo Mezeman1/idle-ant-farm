@@ -3,7 +3,7 @@ import {useGameStore} from './gameStore'
 import {useInventoryStore} from './inventoryStore'
 import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
 import {useResourcesStore} from '@/stores/resourcesStore'
-import {itemRegistry} from '@/types/itemRegistry'
+import {itemRegistry} from '@/types/items/itemRegistry'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {toast} from 'vue3-toastify'
 import {useSettingsStore} from '@/stores/settingsStore'
@@ -28,7 +28,7 @@ interface ActiveBuff {
 interface StatusEffect {
   id: string
   name: string
-  type: 'poison' | 'burn' | 'freeze' | 'regen'
+  type: 'poison' | 'burn' | 'freeze' | 'regen' | 'bleed'
   duration: number
   damagePerSecond?: number
   healingPerSecond?: number
@@ -67,6 +67,10 @@ export const useAdventureStore = defineStore('adventureStore', {
     poisonChance: 0.0,
     poisonDamage: 10,
     poisonDuration: 2,
+
+    bleedChance: 0.0,
+    bleedDamage: 100,
+    bleedDuration: 2,
 
     bugHealth: 0,
     bugMaxHealth: 0,
@@ -228,6 +232,14 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.poisonChance,
         this.poisonDuration,
         this.poisonDamage,
+      )
+
+      this.applyStatusEffectWithChance(
+        'bug',
+        'bleed',
+        this.bleedChance,
+        this.bleedDuration,
+        this.bleedDamage,
       )
 
       this.currentEnemy.effectChances?.forEach((effect) => {
@@ -504,22 +516,38 @@ export const useAdventureStore = defineStore('adventureStore', {
     applyRegeneration(deltaTime = null) {
       // If deltaTime is passed, use it; otherwise assume it's 1 tick (for real-time)
       const regenMultiplier = deltaTime ? deltaTime : 1
+      const effectsToStop = [
+        'poison',
+        'burn',
+        'freeze',
+        'bleed',
+      ]
 
       // Apply army regeneration per tick
       if (this.armyHealth < this.armyMaxHealth) {
-        this.armyHealth = Math.min(
-          this.armyHealth + this.armyRegen * regenMultiplier * (useTrainingStore().farmingModifiers.regenerationRate ?? 1),
-          this.armyMaxHealth,
-        )
+        if (!this.armyActiveEffects.some((effect) => effectsToStop.includes(effect.type))) {
+          this.regenArmy(regenMultiplier)
+        }
       }
 
       // Apply bug regeneration if the bug is spawned and not at max health
       if (this.enemySpawned && this.bugHealth < this.bugMaxHealth) {
-        this.bugHealth = Math.min(
-          this.bugHealth + this.bugRegen * regenMultiplier,
-          this.bugMaxHealth,
-        )
+        this.regenBug(regenMultiplier)
       }
+    },
+
+    regenArmy(regenMultiplier) {
+      this.armyHealth = Math.min(
+        this.armyHealth + this.armyRegen * regenMultiplier * (useTrainingStore().farmingModifiers.regenerationRate ?? 1),
+        this.armyMaxHealth,
+      )
+    },
+
+    regenBug(regenMultiplier) {
+      this.bugHealth = Math.min(
+        this.bugHealth + this.bugRegen * regenMultiplier,
+        this.bugMaxHealth,
+      )
     },
 
     spawnRandomEnemy() {
@@ -585,6 +613,10 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.poisonChance = 0.0
       this.poisonDamage = 10
       this.poisonDuration = 2
+
+      this.bleedChance = 0.0
+      this.bleedDamage = 100
+      this.bleedDuration = 2
 
       const inventoryStore = useInventoryStore()
       this.activeBuffs = adventureState.activeBuffs?.map((buff) => {
@@ -687,6 +719,10 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.poisonChance = 0.0
       this.poisonDamage = 10
       this.poisonDuration = 2
+
+      this.bleedChance = 0.0
+      this.bleedDamage = 100
+      this.bleedDuration = 2
 
       this.lastSavedTime = Date.now()
       this.currentArea = 'Safe Zone'

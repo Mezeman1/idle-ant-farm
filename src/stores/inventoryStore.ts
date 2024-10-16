@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {Item, itemRegistry} from '../types/itemRegistry'
+import {Item, itemRegistry} from '@/types/items/itemRegistry'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {v4 as uuidv4} from 'uuid'
 import {useEquipmentStore} from '@/stores/equipmentStore'

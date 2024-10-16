@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.15.0](https://github.com/Mezeman1/idle-ant-farm/compare/v0.12.3...v0.15.0) (2024-10-16)
+
+
+### Features
+
+* boss fights ([d9e05f7](https://github.com/Mezeman1/idle-ant-farm/commit/d9e05f70a6af31a6f74f33c73b9d22782ff63a8b))
+* set focus ([ce27ab5](https://github.com/Mezeman1/idle-ant-farm/commit/ce27ab5a4fe888831bb37310057f85e34417ab14))
+
+
+### Bug Fixes
+
+* also add combat levels to adventure ([b9918c1](https://github.com/Mezeman1/idle-ant-farm/commit/b9918c1c673446c0ebaa648ddaaffcad6b846f22))
+
 ## [0.14.0](https://github.com/Mezeman1/idle-ant-farm/compare/v0.12.3...v0.14.0) (2024-10-16)
 
 

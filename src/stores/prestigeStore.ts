@@ -291,6 +291,16 @@ export const usePrestigeStore = defineStore('prestige', {
         applyOnPrestige: true,
       },
       {
+        id: 'leafcutterGrove',
+        name: 'Leafcutter Grove',
+        description: 'Unlock the leafcutter grove area for exploration',
+        cost: 100,
+        initialCost: 100,
+        category: 'adventure',
+        applyOnPrestige: true,
+        oneTimePurchase: true,
+      },
+      {
         id: 'mountains',
         name: 'Mountains',
         description: 'Unlock the mountain area for exploration',
@@ -299,6 +309,10 @@ export const usePrestigeStore = defineStore('prestige', {
         category: 'adventure',
         applyOnPrestige: true,
         oneTimePurchase: true,
+        unlockedWhen: () => {
+          return usePrestigeStore().upgradePurchased('leafcutterGrove')
+        },
+        unlockedWhenDescription: 'Unlock the Leafcutter Grove upgrade',
       },
       {
         id: 'volcano',

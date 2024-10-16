@@ -388,6 +388,82 @@
     "unlockText": "Unlocked when you have 100 ants or 2 queens."
   },
   {
+    "name" : "Leafcutter Grove",
+    "enemies": [
+      {
+        "name": "Army of Leafcutters",
+        "health": 5000,
+        "attack": 900,
+        "defense": 800,
+        "regen": 60,
+        "xp": 120,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.7,
+            "amountBetween": [300, 750]
+          }
+        ],
+        "effectChances": [
+          {
+            "effect": "bleed",
+            "chance": 0.2,
+            "damage": 80,
+            "duration": 8
+          }
+        ]
+      },
+      {
+        "name": "Bark Beetles",
+        "health": 6000,
+        "attack": 1000,
+        "defense": 700,
+        "regen": 85,
+        "xp": 120,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.7,
+            "amountBetween": [300, 750]
+          }
+        ]
+      },
+      {
+        "name": "Mantis Hunters",
+        "health": 7000,
+        "attack": 900,
+        "defense": 1200,
+        "regen": 120,
+        "xp": 130,
+        "dropOptions": [
+          {
+            "name": "Seeds",
+            "chance": 0.7,
+            "amountBetween": [300, 750]
+          },
+          {
+            "name": "Mantis Hunter Claw",
+            "chance": 0.01,
+            "amountBetween": [1, 2]
+          }
+        ],
+        "effectChances": [
+          {
+            "effect": "bleed",
+            "chance": 0.5,
+            "damage": 120,
+            "duration": 5
+          }
+        ]
+      }
+    ],
+    "unlockedWhen": {
+      "condition": "prestigeBought",
+      "upgradeId": "leafcutterGrove"
+    },
+    "unlockText": "Unlocked when you buy the Leafcutter Grove upgrade from the prestige shop."
+  },
+  {
     "name": "Mountains",
     "enemies": [
       {

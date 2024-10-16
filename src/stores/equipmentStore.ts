@@ -1,9 +1,9 @@
 import {defineStore} from 'pinia'
-import {Item} from './itemRegistry'
+import {Item} from '@/types/items/itemRegistry'
 import {useInventoryStore} from '@/stores/inventoryStore'
 import {useGameStore} from '@/stores/gameStore'
 import {useAdventureStore} from '@/stores/adventureStore'
-import {equipmentSets, setBonuses, SetName} from '@/types/itemRegistry'
+import {equipmentSets, setBonuses, SetName} from '@/types/items/itemRegistry'
 import {useResourcesStore} from '@/stores/resourcesStore'
 
 interface EquipmentState {

@@ -265,6 +265,20 @@
                   />
                 </div>
               </div>
+
+              <!-- Bleed Chance -->
+              <div>
+                <div class="flex justify-between items-center">
+                  <span class="text-sm font-medium text-red-600">Bleed</span>
+                  <span class="text-sm font-medium text-gray-600">{{ bleedChance }}%</span>
+                </div>
+                <div class="w-full bg-gray-200 h-2 rounded">
+                  <div
+                    class="bg-red-600 h-2 rounded"
+                    :style="{ width: `${bleedChance}%` }"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <!-- Bug effects chances         -->
@@ -291,6 +305,20 @@
                   <div
                     class="bg-green-600 h-2 rounded"
                     :style="{ width: `${bugPoisonChance}%` }"
+                  />
+                </div>
+              </div>
+
+              <!-- Bleed Chance -->
+              <div>
+                <div class="flex justify-between items-center">
+                  <span class="text-sm font-medium text-red-600">Bleed</span>
+                  <span class="text-sm font-medium text-gray-600">{{ bugBleedChance }}%</span>
+                </div>
+                <div class="w-full bg-gray-200 h-2 rounded">
+                  <div
+                    class="bg-red-600 h-2 rounded"
+                    :style="{ width: `${bugBleedChance}%` }"
                   />
                 </div>
               </div>
@@ -343,6 +371,10 @@ const resourcesStore = useResourcesStore()
 const {width} = useWindowSize()
 const poisonChance = computed(() => formatNumber(adventureStore.poisonChance * 100), 0)
 const bugPoisonChance = computed(() => formatNumber((adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance ?? 0) * 100), 0 )
+
+const bleedChance = computed(() => formatNumber(adventureStore.bleedChance * 100), 0)
+const bugBleedChance = computed(() => formatNumber((adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'bleed')?.chance ?? 0) * 100), 0)
+
 // Set a breakpoint for large screens
 const isLargeScreen = computed(() => width.value >= 1024)
 const battleStyle = computed(() => adventureStore.battleStyle)

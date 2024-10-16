@@ -114,7 +114,7 @@
 
 <script setup lang="ts">
 import {capitalize} from '../utils'
-import {Item} from '@/types/itemRegistry'
+import {Item} from '@/types/items/itemRegistry'
 import {useEquipmentStore} from '@/stores/equipmentStore'
 import {computed, ref, watch} from 'vue'
 

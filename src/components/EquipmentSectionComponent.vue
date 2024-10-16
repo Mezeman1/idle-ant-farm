@@ -80,7 +80,7 @@ import SlotComponent from './SlotComponent.vue'
 import ItemSelectionModal from './ItemSelectionModal.vue' // Renamed import
 import { useEquipmentStore } from '@/stores/equipmentStore'
 import { useWindowSize } from '@vueuse/core'
-import {Item} from '@/types/itemRegistry'
+import {Item} from '@/types/items/itemRegistry'
 import {useInventoryStore} from '@/stores/inventoryStore'
 
 const equipmentStore = useEquipmentStore()

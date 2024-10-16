@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col overflow-y-auto">
+  <div class="flex flex-col overflow-y-auto p-2">
     <h2 class="text-2xl font-bold mb-4 text-gray-800">
       Bestiary
     </h2>
@@ -72,7 +72,7 @@
             v-if="selectedEnemy.image"
             :src="selectedEnemy.image"
             :alt="selectedEnemy.name"
-            class="mb-4 w-full h-48 object-cover rounded-lg"
+            class="mb-4 w-full h-64 object-cover rounded-lg"
           >
           <p class="text-gray-700 mb-4">
             {{ selectedEnemy.description || 'No description available.' }}
@@ -134,6 +134,9 @@
                   <span class="text-2xs">
                     {{ inventoryStore.getItemById(drop.name)?.type }}
                   </span>
+                  <span class="text-2xs">
+                    {{ inventoryStore.getItemById(drop.name)?.description }}
+                  </span>
                 </div>
                 <div class="text-sm text-gray-600 flex flex-col">
                   <span>
@@ -149,12 +152,11 @@
               </div>
               <div
                 v-else
-                v-tooltip="drop.unlockText"
               >
                 <div
                   class="text-gray-400"
                 >
-                  Locked
+                  Locked ({{ drop.unlockText }})
                 </div>
               </div>
             </li>
