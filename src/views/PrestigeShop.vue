@@ -216,8 +216,8 @@ const isUpgradeMaxed = (upgrade) => {
 const getUpgradeCount = (upgrade) => {
   if (upgrade.oneTimePurchase) return ''
 
-  return !upgrade.oneTimePurchase && prestigeStore.amountOfUpgrade(upgrade.id) > 0
-    ? `(${prestigeStore.amountOfUpgrade(upgrade.id)})`
+  return !upgrade.oneTimePurchase
+    ? `(${prestigeStore.amountOfUpgrade(upgrade.id)}${upgrade.maxPurchases ? `/${upgrade.maxPurchases}` : ''})`
     : ''
 }
 
