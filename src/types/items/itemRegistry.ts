@@ -82,6 +82,19 @@ export const setBonuses: Record<SetName, SetBonus> = {
     },
     explanation: 'Increases army attack and defense by 15%.',
   },
+  'Soldier Set II': {
+    apply: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier += 0.20
+      adventureStore.armyDefenseModifier += 0.20
+    },
+    remove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier -= 0.20
+      adventureStore.armyDefenseModifier -= 0.20
+    },
+    explanation: 'Increases army attack and defense by 20%.',
+  },
   'Royal Set': {
     apply: () => {
       const resourcesStore = useResourcesStore()
