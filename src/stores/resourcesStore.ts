@@ -187,6 +187,13 @@ export const useResourcesStore = defineStore('resources', {
         this.resources.royalJellyAnts += 1
       }
     },
+    maxUpgradeAnt() {
+      if (useGameStore().royalJellyUnlocked && this.resourceCosts.royalJellyCostPerUpgrade > 0) {
+        const count = Math.floor(this.resources.royalJelly / this.resourceCosts.royalJellyCostPerUpgrade)
+        this.resources.royalJelly -= this.resourceCosts.royalJellyCostPerUpgrade * count
+        this.resources.royalJellyAnts += count
+      }
+    },
     upgradeAntTo(antType: AntTypes) {
       if (this.resources.royalJellyAnts > 0) {
         if (antType === 'workers' && this.resources.workers >= this.maxWorkers) {
@@ -205,8 +212,32 @@ export const useResourcesStore = defineStore('resources', {
         this.resources[antType] += 1
       }
     },
+    maxUpgradeAntTo(antType: AntTypes) {
+      while (this.resources.royalJellyAnts > 0) {
+        if (antType === 'workers' && this.resources.workers >= this.maxWorkers) {
+          return
+        }
+
+        if (antType === 'soldiers' && this.resources.soldiers >= this.maxSoldiers) {
+          return
+        }
+
+        if (antType === 'royalQueens' && this.resources.royalQueens >= this.maxRoyalQueens) {
+          return
+        }
+
+        this.resources.royalJellyAnts -= 1
+        this.resources[antType] += 1
+      }
+    },
     downgradeAntFrom(antType: AntTypes) {
       if (this.resources[antType] > 0) {
+        this.resources[antType] -= 1
+        this.resources.royalJellyAnts += 1
+      }
+    },
+    maxDowngradeAntFrom(antType: AntTypes) {
+      while (this.resources[antType] > 0) {
         this.resources[antType] -= 1
         this.resources.royalJellyAnts += 1
       }
