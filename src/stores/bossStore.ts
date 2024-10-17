@@ -41,7 +41,9 @@ export const useBossStore = defineStore({
     battleState: 'idle',
   }),
   getters: {
-    currentBossData: (state) => state.bosses[state.currentBoss],
+    currentBossData: (state) => {
+      return state.bosses[state.currentBoss]
+    },
   },
   actions: {
     setBattleState(battleState: string) {
@@ -66,12 +68,13 @@ export const useBossStore = defineStore({
       }
     },
     generateBosses() {
-      this.bosses = Array.from({length: 50}, (_, i) => this.generateBoss(i))
+      this.bosses = Array.from({length: 1000}, (_, i) => this.generateBoss(i))
     },
     generateBoss(level: number): Boss {
       level += 1
 
-      const multiplier = Math.pow(10, level) // exponential scaling
+      const multiplier = Math.pow(3, level) // exponential scaling
+
       const baseBossStats = {
         health: 100,
         damage: 10,
@@ -121,6 +124,10 @@ export const useBossStore = defineStore({
 
     loadBossState(state) {
       this.currentBoss = state.boss ?? 0
+    },
+
+    resetBossState() {
+      this.currentBoss = 0
     },
   },
 })

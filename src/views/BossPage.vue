@@ -2,7 +2,10 @@
   <div class="flex-grow overflow-y-auto p-4">
     <div class="grid sm:grid-cols-2 grid-cols-1 gap-4">
       <!-- Boss Stats Section -->
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
+      <div
+        v-if="currentBoss"
+        class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
+      >
         <div>
           <p class="font-bold text-lg">
             {{ currentBoss.name }}

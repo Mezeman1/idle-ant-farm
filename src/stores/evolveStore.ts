@@ -4,6 +4,7 @@ import {useGameStore} from '@/stores/gameStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {toast} from 'vue3-toastify'
 import {useAdventureStore} from '@/stores/adventureStore'
+import {useBossStore} from '@/stores/bossStore'
 
 type AntNames = 'Start' | 'Leaf cutters' | 'Fire Ants' | 'Harvester Ants' | 'Army Ants' | 'Weaver Ants' | 'Desert Ants' | 'Bullet Ants' | 'Carpenter Ants'
 
@@ -685,6 +686,22 @@ export const useEvolveStore = defineStore({
     },
   },
   actions: {
+    getEvolveDescription(): string {
+      let bossesToDefeat = 7 // Base number of bosses to defeat
+
+      // Add 3 bosses for each evolution
+      bossesToDefeat += this.currentEvolution * 3
+
+      return `Defeat ${bossesToDefeat} bosses to evolve.`
+    },
+    canEvolve() {
+      let bossesToDefeat = 7 // Base number of bosses to defeat
+
+      // Add 3 bosses for each evolution
+      bossesToDefeat += this.currentEvolution * 3
+
+      return useBossStore().currentBoss >= bossesToDefeat
+    },
     async evolve() {
       if (this.currentEvolution + 1 >= this.evolutions.length) {
         toast.info('You have reached the end of the evolutions.', {

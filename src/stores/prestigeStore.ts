@@ -274,8 +274,9 @@ export const usePrestigeStore = defineStore('prestige', {
         applyOnPrestige: true,
         oneTimePurchase: true,
         unlockedWhen: () => {
-          return true
+          return useEvolveStore().canEvolve()
         },
+        unlockedWhenDescription: useEvolveStore().getEvolveDescription(),
       },
       {
         id: 'adventureEnemySpawnModifier',

@@ -642,8 +642,8 @@ export const useGameStore = defineStore('gameStore', {
 
         const adventureStore = useAdventureStore()
         await adventureStore.calculateOfflineProgress()
-        adventureStore.startBattle()
         useBossStore().generateBosses()
+        adventureStore.startBattle()
         if (useSettingsStore().getNotificationSetting('load')) {
           toast.success('Game loaded successfully', {
             position: 'top-left',
@@ -771,6 +771,8 @@ export const useGameStore = defineStore('gameStore', {
 
           const trainingStore = useTrainingStore()
           trainingStore.resetTrainingState()
+
+          useBossStore().resetBossState()
         }
 
         if (isEvolution) {
@@ -787,6 +789,8 @@ export const useGameStore = defineStore('gameStore', {
           prestigeStore.autoLarvaeStorageUpgrade = false
           prestigeStore.autoEliteAntsCreation = false
           prestigeStore.autoCreateHousing = false
+
+          useBossStore().resetBossState()
         }
 
         const evolveStore = useEvolveStore()
