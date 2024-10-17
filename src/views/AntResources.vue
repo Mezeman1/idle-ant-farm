@@ -461,13 +461,22 @@
         </div>
 
         <div class="flex flex-col gap-1">
-          <button
-            :disabled="resourcesStore.resources.royalJelly < resourcesStore.resourceCosts.royalJellyCostPerUpgrade"
-            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
-            @click="resourcesStore.upgradeAnt"
-          >
-            Upgrade Ant ({{ formatNumber(resourcesStore.resourceCosts.royalJellyCostPerUpgrade, 1) }} Royal Jelly)
-          </button>
+          <div class="w-full flex gap-2">
+            <button
+              :disabled="resourcesStore.resources.royalJelly < resourcesStore.resourceCosts.royalJellyCostPerUpgrade"
+              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+              @click="resourcesStore.upgradeAnt"
+            >
+              Upgrade Ant ({{ formatNumber(resourcesStore.resourceCosts.royalJellyCostPerUpgrade, 1) }} Royal Jelly)
+            </button>
+            <button
+              :disabled="resourcesStore.resources.royalJelly < resourcesStore.resourceCosts.royalJellyCostPerUpgrade"
+              class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+              @click="resourcesStore.maxUpgradeAnt"
+            >
+              Max
+            </button>
+          </div>
           <span>
             You currently have {{ formatNumber(resourcesStore.resources.royalJellyAnts ?? 0, 0) }} Royal Jelly Ants.
           </span>
@@ -482,16 +491,30 @@
               <button
                 :disabled="resourcesStore.resources.workers < 1"
                 class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="resourcesStore.maxDowngradeAntFrom('workers')"
+              >
+                -Max
+              </button>
+              <button
+                :disabled="resourcesStore.resources.workers < 1"
+                class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.downgradeAntFrom('workers')"
               >
-                -
+                -1
               </button>
               <button
                 :disabled="resourcesStore.resources.royalJellyAnts < 1 || (resourcesStore.resources.workers ?? 0) >= resourcesStore.maxWorkers"
                 class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.upgradeAntTo('workers')"
               >
-                +
+                +1
+              </button>
+              <button
+                :disabled="resourcesStore.resources.royalJellyAnts < 1 || (resourcesStore.resources.workers ?? 0) >= resourcesStore.maxWorkers"
+                class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="resourcesStore.maxUpgradeAntTo('workers')"
+              >
+                +Max
               </button>
             </div>
           </div>
@@ -508,16 +531,30 @@
               <button
                 :disabled="resourcesStore.resources.soldiers < 1"
                 class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="resourcesStore.maxDowngradeAntFrom('soldiers')"
+              >
+                -Max
+              </button>
+              <button
+                :disabled="resourcesStore.resources.soldiers < 1"
+                class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.downgradeAntFrom('soldiers')"
               >
-                -
+                -1
               </button>
               <button
                 :disabled="resourcesStore.resources.royalJellyAnts < 1 || (resourcesStore.resources.soldiers ?? 0) >= resourcesStore.maxSoldiers"
                 class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.upgradeAntTo('soldiers')"
               >
-                +
+                +1
+              </button>
+              <button
+                :disabled="resourcesStore.resources.royalJellyAnts < 1 || (resourcesStore.resources.soldiers ?? 0) >= resourcesStore.maxSoldiers"
+                class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="resourcesStore.maxUpgradeAntTo('soldiers')"
+              >
+                +Max
               </button>
             </div>
           </div>
@@ -534,16 +571,30 @@
               <button
                 :disabled="resourcesStore.resources.royalQueens < 1"
                 class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="resourcesStore.maxDowngradeAntFrom('royalQueens')"
+              >
+                -Max
+              </button>
+              <button
+                :disabled="resourcesStore.resources.royalQueens < 1"
+                class="small bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.downgradeAntFrom('royalQueens')"
               >
-                -
+                -1
               </button>
               <button
                 :disabled="resourcesStore.resources.royalJellyAnts < 1 || (resourcesStore.resources.royalQueens ?? 0) >= resourcesStore.maxRoyalQueens"
                 class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
                 @click="resourcesStore.upgradeAntTo('royalQueens')"
               >
-                +
+                +1
+              </button>
+              <button
+                :disabled="resourcesStore.resources.royalJellyAnts < 1 || (resourcesStore.resources.royalQueens ?? 0) >= resourcesStore.maxRoyalQueens"
+                class="small bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
+                @click="resourcesStore.maxUpgradeAntTo('royalQueens')"
+              >
+                +Max
               </button>
             </div>
           </div>

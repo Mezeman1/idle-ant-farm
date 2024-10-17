@@ -1,6 +1,6 @@
 {
   "name": "idle-ant-farm",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "scripts": {
     "dev": "vite --mode localhost",
     "dev:tsc": "vue-tsc --noEmit --skipLibCheck && vite --mode localhost",
