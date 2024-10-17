@@ -95,7 +95,11 @@
                   v-if="!isUpgradeUnlocked(upgrade)"
                   class="text-xs text-gray-500"
                 >
-                  Unlocked by: {{ upgrade.unlockedWhenDescription }}
+                  Unlocked by:
+                  {{ typeof upgrade.unlockedWhenDescription === 'function'
+                    ? upgrade.unlockedWhenDescription()
+                    : upgrade.unlockedWhenDescription
+                  }}
                 </p>
                 <p class="text-xs text-gray-500">
                   {{ upgrade.description }}

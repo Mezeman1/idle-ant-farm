@@ -5,6 +5,8 @@ import {useAdventureStore} from '@/stores/adventureStore'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {toast} from 'vue3-toastify'
 import {formatTime} from '@/utils'
+import firebase from 'firebase/compat'
+import functions = firebase.functions;
 
 interface PrestigeShopItem {
   id: string
@@ -16,7 +18,8 @@ interface PrestigeShopItem {
   applyOnPrestige?: boolean
   category?: 'auto' | 'production' | 'storage' | 'combat' | 'expansion' | 'bosses' | 'adventure'
   unlockedWhen?: () => boolean // Function to determine if the upgrade is unlocked
-  unlockedWhenDescription?: string // Description of the unlock condition
+  // Can be string or function
+  unlockedWhenDescription?: string | (() => string) // Description of the unlock condition
   maxPurchases?: number // Maximum number of times the upgrade can be purchased
 }
 
@@ -276,7 +279,7 @@ export const usePrestigeStore = defineStore('prestige', {
         unlockedWhen: () => {
           return useEvolveStore().canEvolve()
         },
-        unlockedWhenDescription: useEvolveStore().getEvolveDescription(),
+        unlockedWhenDescription: () => useEvolveStore().getEvolveDescription(),
       },
       {
         id: 'adventureEnemySpawnModifier',
