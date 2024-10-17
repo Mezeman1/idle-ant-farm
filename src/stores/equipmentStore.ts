@@ -14,6 +14,7 @@ interface EquipmentState {
     weapon: Item | null;
     accessories: (Item | null)[]; // Plural form, matching the state structure
   };
+  maxAccessories: number;
   activeSetBonus: SetName | null;
 
   loadOuts: LoadOut[];
@@ -41,8 +42,10 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       body: null,
       legs: null,
       weapon: null,
-      accessories: [null, null] as (Item | null)[],
+      accessories: [] as (Item | null)[],
     },
+
+    maxAccessories: 3,
     activeSetBonus: null,
 
     loadOuts: [],
@@ -59,6 +62,17 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       }
 
       return state.equippedItems[slotType]
+    },
+    hasItemEquipped: (state) => (itemId: string) => {
+      // Check non-accessory slots
+      const isEquippedInSlots = Object.values(state.equippedItems)
+        .filter(slot => !Array.isArray(slot)) // Filter out the accessories array
+        .some(item => item && item.id === itemId)
+
+      // Check accessories array
+      const isEquippedInAccessories = state.equippedItems.accessories.some(item => item && item.id === itemId)
+
+      return isEquippedInSlots || isEquippedInAccessories
     },
   },
   actions: {
@@ -156,6 +170,10 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       await inventoryStore.removeItemFromInventory(item.id)
 
       if (slotType === 'accessory' && index !== undefined) {
+        if (index >= this.maxAccessories) {
+          return false
+        }
+
         if (this.equippedItems.accessories[index]) {
           // Unequip the current accessory
           await this.unequipItem('accessory', index)

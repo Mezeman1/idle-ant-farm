@@ -639,6 +639,30 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.loaded = true
     },
 
+    getEnemiesThatDropItem(itemId: string) {
+      const enemiesThatDropItem: Enemy[] = []
+
+      const transformNameToId = (name: string) => {
+        return name.toLowerCase().replace(/\s+/g, '-')
+      }
+
+      // Iterate over all enemy waves
+      this.enemyWaves.forEach((wave) => {
+        // Iterate over all enemies in the wave
+        wave.enemies.forEach((enemy) => {
+          // Check if any dropOption contains the specified itemId
+          if (enemy.dropOptions.some((drop) => transformNameToId(drop.name) === itemId)) {
+            enemiesThatDropItem.push({
+              ...enemy,
+              wave: wave.name,
+            })
+          }
+        })
+      })
+
+      return enemiesThatDropItem
+    },
+
     async setEnemyUnlockConditions() {
       return new Promise((resolve) => {
         this.enemyWaves = adventureEnemyWaves.map((wave) => {
@@ -702,6 +726,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           const image = await import(`../assets/items/${itemRegistry[item].name.toLowerCase().replaceAll(' ', '-')}.webp`)
           itemRegistry[item].image = image.default
         } catch (error) {
+          const image = await import('../assets/items/default-item.webp')
+          itemRegistry[item].image = image.default
         }
       }
     },

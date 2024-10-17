@@ -28,7 +28,6 @@
     <!-- Mobile Layout -->
     <div
       v-else
-      class="flex-1 overflow-y-auto min-h-[260px]"
     >
       <!-- Equipment Section -->
       <EquipmentSectionComponent />
@@ -55,6 +54,8 @@
         <LoadoutSwapper />
       </div>
     </div>
+
+    <AvailableEquipment />
   </div>
 </template>
 
@@ -65,6 +66,7 @@ import ArmorEffectsComponent from '../components/ArmorEffectsComponent.vue'
 import {useWindowSize} from '@vueuse/core'
 import {useInventoryStore} from '../stores/inventoryStore'
 import LoadoutSwapper from '@/components/LoadoutSwapper.vue'
+import AvailableEquipment from '@/components/AvailableEquipment.vue'
 
 const inventoryStore = useInventoryStore()
 

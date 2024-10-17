@@ -1,28 +1,23 @@
-<!-- EquipmentSectionComponent.vue -->
 <template>
-  <div class="max-w-screen-lg mx-auto">
-    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 gap-2">
-      <!-- Accessory Slots -->
-      <div class="space-y-2">
-        <div @click="openModal('accessory', 0)">
-          <SlotComponent
-            :item="accessorySlots[0]"
-            slot-type="accessory"
-            :is-desktop="isDesktop"
-            :is-mobile="isMobile"
-          />
-        </div>
-        <div @click="openModal('accessory', 1)">
-          <SlotComponent
-            :item="accessorySlots[1]"
-            slot-type="accessory"
-            :is-desktop="isDesktop"
-            :is-mobile="isMobile"
-          />
-        </div>
+  <div class="max-w-screen-lg mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Accessory Slots -->
+    <div class="grid grid-rows-3 sm:grid-rows-3 gap-2">
+      <div
+        v-for="index in accessorySlotCount"
+        :key="index"
+        @click="openModal('accessory', index - 1)"
+      >
+        <SlotComponent
+          :item="accessorySlots[index - 1]"
+          slot-type="accessory"
+          :is-desktop="isDesktop"
+          :is-mobile="isMobile"
+        />
       </div>
-      <!-- Head, Body, Legs Slots -->
-      <div class="space-y-2">
+    </div>
+    <!-- Main Equipment Slots (Head, Body, Legs, Weapon) -->
+    <div class="grid grid-cols-2 gap-2">
+      <div class="flex flex-col gap-1">
         <div @click="openModal('head')">
           <SlotComponent
             :item="headSlot"
@@ -48,8 +43,8 @@
           />
         </div>
       </div>
-      <!-- Weapon Slot -->
-      <div class="space-y-2">
+      <div class="flex flex-col gap-1">
+        <div />
         <div @click="openModal('weapon')">
           <SlotComponent
             :item="weaponSlot"
@@ -96,6 +91,12 @@ const bodySlot = computed(() => equipmentStore.equippedItems.body)
 const legSlot = computed(() => equipmentStore.equippedItems.legs)
 const weaponSlot = computed(() => equipmentStore.equippedItems.weapon)
 const accessorySlots = computed(() => equipmentStore.equippedItems.accessories)
+const accessorySlotCount = computed(() => equipmentStore.maxAccessories)
+
+// Calculate number of columns needed based on accessory count
+const accessoryColumns = computed(() => {
+  return Math.ceil(accessorySlotCount.value / 3) // Ensure there are always 3 rows
+})
 
 // Modal state
 const isModalOpen = ref(false)
@@ -139,3 +140,4 @@ const equipItem = async (item?: Item) => {
   }
 }
 </script>
+

@@ -82,12 +82,7 @@ const defaultText = computed(() => {
 
 const slotClasses = computed(() => {
   return {
-    'bg-gray-700 text-white': !props.item,
-    'bg-green-500 text-white': props.item && (props.slotType === 'head' || props.item?.slotType === 'head'),
-    'bg-blue-500 text-white': props.item && (props.slotType === 'body' || props.item?.slotType === 'body'),
-    'bg-purple-500 text-white': props.item && (props.slotType === 'legs' || props.item?.slotType === 'legs'),
-    'bg-red-500 text-white': props.item && (props.slotType === 'weapon' || props.item?.slotType === 'weapon'),
-    'bg-yellow-500 text-white': props.item && (props.slotType === 'accessory' || props.item?.slotType === 'accessory'),
+    'bg-gray-700 text-white': true,
   }
 })
 
