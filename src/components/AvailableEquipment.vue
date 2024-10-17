@@ -1,24 +1,33 @@
 <template>
-  <div class="container mx-auto p-4">
+  <div class="container mx-auto">
     <!-- Legend Section -->
     <div class="mb-4 p-4 bg-gray-100 rounded-lg border-2">
       <h2 class="text-lg font-semibold mb-2">
         Legend
       </h2>
-      <ul class="space-y-2">
-        <li class="flex items-center">
-          <span class="inline-block w-4 h-4 bg-green-500 border-4 border-green-500 mr-2" />
-          <span>Equipped Item</span>
-        </li>
-        <li class="flex items-center">
-          <span class="inline-block w-4 h-4 bg-blue-500 border-4 border-blue-500 mr-2" />
-          <span>Owned Item</span>
-        </li>
-        <li class="flex items-center">
-          <span class="inline-block w-4 h-4 bg-gray-300 border-2 border-gray-300 opacity-50 mr-2" />
-          <span>Locked Item</span>
-        </li>
-      </ul>
+      <div class="flex justify-between items-start">
+        <ul class="space-y-2">
+          <li class="flex items-center">
+            <span class="inline-block w-4 h-4 bg-green-500 border-4 border-green-500 mr-2" />
+            <span>Equipped Item</span>
+          </li>
+          <li class="flex items-center">
+            <span class="inline-block w-4 h-4 bg-blue-500 border-4 border-blue-500 mr-2" />
+            <span>Owned Item</span>
+          </li>
+          <li class="flex items-center">
+            <span class="inline-block w-4 h-4 bg-gray-300 border-2 border-gray-300 opacity-50 mr-2" />
+            <span>Locked Item</span>
+          </li>
+        </ul>
+
+        <button
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
+          @click="equipmentStore.unequipAllItems()"
+        >
+          Unequip All Items
+        </button>
+      </div>
     </div>
 
     <!-- Pagination Controls -->
@@ -42,15 +51,16 @@
 
     <!-- Equipment Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <div
+      <button
         v-for="item in paginatedEquipment"
         :key="item.id"
         :class="[
           'bg-white rounded-lg shadow-lg p-4 flex flex-col items-center',
           hasItemEquipped(item.id) ? 'border-green-500 border-4' :
           hasItem(item.id) ? 'border-4 border-blue-500' : 'border-2 border-gray-300 opacity-50',
-
         ]"
+        :disabled="!hasItem(item.id) && !hasItemEquipped(item.id)"
+        @click="doAction(item)"
       >
         <img
           :src="item.image || defaultImage"
@@ -78,14 +88,14 @@
         </p>
 
         <EnemyDropItem :item="item" />
-      </div>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { equipmentSets } from '@/types/items/itemRegistry'
+import {equipmentSets, Item} from '@/types/items/itemRegistry'
 import { capitalize } from '../utils'
 import { useEquipmentStore } from '@/stores/equipmentStore'
 import { useInventoryStore } from '@/stores/inventoryStore'
@@ -118,6 +128,17 @@ const prevPage = () => {
 }
 const nextPage = () => {
   if (currentPage.value < totalPages.value) currentPage.value++
+}
+
+const doAction = (item: Item) => {
+  if (hasItemEquipped(item.id)) {
+    equipmentStore.unequipItem(item.slotType, undefined, item)
+    return
+  }
+
+  if (hasItem(item.id)) {
+    equipmentStore.equipItem(item, item.slotType)
+  }
 }
 </script>
 

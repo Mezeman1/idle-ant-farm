@@ -167,9 +167,16 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const context = {gameStore, adventureStore}
 
       // Remove the item from the inventory
-      await inventoryStore.removeItemFromInventory(item.id)
+      if (slotType === 'accessory') {
+        if (index === undefined) {
+          const firstEmptySlot = this.equippedItems.accessories.findIndex((accessory) => !accessory)
+          if (firstEmptySlot !== -1) {
+            index = firstEmptySlot
+          } else {
+            index = Math.random() < 0.5 ? 0 : 1
+          }
+        }
 
-      if (slotType === 'accessory' && index !== undefined) {
         if (index >= this.maxAccessories) {
           return false
         }
@@ -187,8 +194,10 @@ export const useEquipmentStore = defineStore('equipmentStore', {
 
       // Equip the item
       if (slotType === 'accessory' && index !== undefined) {
+        await inventoryStore.removeItemFromInventory(item.id)
         this.equippedItems.accessories[index] = item
       } else {
+        await inventoryStore.removeItemFromInventory(item.id)
         this.equippedItems[slotType] = item
       }
 
@@ -205,15 +214,18 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       return true
     },
 
-    async unequipItem(slotType: string, index?: number): Item {
+    async unequipItem(slotType: string, index?: number, equippedItem?:Item ): Item {
       const inventoryStore = useInventoryStore()
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
       const context = {gameStore, adventureStore}
       let item: Item | null = null
-
       // Unequip the item
-      if (slotType === 'accessory' && index !== undefined) {
+      if (slotType === 'accessory') {
+        if (index === undefined && equippedItem) {
+          index = this.equippedItems.accessories.findIndex((accessory) => accessory.id === equippedItem.id)
+        }
+
         item = this.equippedItems.accessories[index]
         this.equippedItems.accessories[index] = null
       } else {
@@ -236,6 +248,30 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       adventureStore.setupAdventureStats()
 
       return item
+    },
+
+    async unequipAllItems() {
+      const equippedItems = [
+        this.equippedItems.head,
+        this.equippedItems.body,
+        this.equippedItems.legs,
+        this.equippedItems.weapon,
+      ]
+
+      const equippedAccessories = this.equippedItems.accessories
+
+      // Unequip all items
+      equippedItems.forEach((item) => {
+        if (item) {
+          this.unequipItem(item.slotType)
+        }
+      })
+
+      equippedAccessories.forEach((item, index) => {
+        if (item) {
+          this.unequipItem('accessory', index)
+        }
+      })
     },
 
     checkForSetBonus() {
