@@ -525,6 +525,8 @@ export const useTrainingStore = defineStore({
       resource.xp -= resource.xpToNextLevel
       resource.xpToNextLevel = this.getXpToNextLevel(resource.level)
 
+      if (resource.xp >= resource.xpToNextLevel) this.addLevelToMiningResource(resource)
+
       this.checkAndApplyMileStoneBonusses(resource)
     },
 
@@ -669,6 +671,7 @@ export const useTrainingStore = defineStore({
       training.level++
       training.xp -= training.xpToNextLevel
       training.xpToNextLevel = this.getXpToNextLevel(training.level)
+
       if (training.xp >= training.xpToNextLevel) this.addLevel(skill)
 
       if (skill === Skill.Mining) this.checkMiningMilestones()
