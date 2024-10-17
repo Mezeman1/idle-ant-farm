@@ -669,6 +669,7 @@ export const useTrainingStore = defineStore({
       training.level++
       training.xp -= training.xpToNextLevel
       training.xpToNextLevel = this.getXpToNextLevel(training.level)
+      if (training.xp >= training.xpToNextLevel) this.addLevel(skill)
 
       if (skill === Skill.Mining) this.checkMiningMilestones()
       if (skill === Skill.Foraging) this.checkForagingMilestones()
