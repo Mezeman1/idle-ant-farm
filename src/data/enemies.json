@@ -584,6 +584,11 @@
             "name": "Seeds",
             "chance": 0.75,
             "amountBetween": [1500, 3500]
+          },
+          {
+            "name": "Molded Slot",
+            "chance": 0.01,
+            "amountBetween": [1, 1]
           }
         ]
       }

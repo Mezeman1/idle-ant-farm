@@ -77,24 +77,7 @@
           {{ item.description }}
         </p>
 
-        <!-- List of enemies that drop the item -->
-        <div class="mt-4 w-full">
-          <h3 class="text-md font-medium mb-2">
-            Enemies That Drop This Item:
-          </h3>
-          <ul class="space-y-3">
-            <li
-              v-for="enemy in getEnemiesThatDropItem(item.id)"
-              :key="enemy.name"
-              class="border-t pt-2"
-            >
-              <div class="flex items-center justify-between">
-                <span class="font-semibold">{{ enemy.name }}</span>
-                <span class="text-sm">{{ enemy.wave }}</span>
-              </div>
-            </li>
-          </ul>
-        </div>
+        <EnemyDropItem :item="item" />
       </div>
     </div>
   </div>
@@ -108,6 +91,7 @@ import { useEquipmentStore } from '@/stores/equipmentStore'
 import { useInventoryStore } from '@/stores/inventoryStore'
 import { useAdventureStore } from '@/stores/adventureStore'
 import defaultImage from '@/assets/items/default.webp'
+import EnemyDropItem from '@/components/EnemyDropItem.vue'
 const availableEquipment = computed(() => equipmentSets)
 const equipmentStore = useEquipmentStore()
 const inventoryStore = useInventoryStore()
@@ -134,11 +118,6 @@ const prevPage = () => {
 }
 const nextPage = () => {
   if (currentPage.value < totalPages.value) currentPage.value++
-}
-
-// Function to get enemies that drop the item
-const getEnemiesThatDropItem = (itemId: string) => {
-  return useAdventureStore().getEnemiesThatDropItem(itemId)
 }
 </script>
 

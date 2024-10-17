@@ -34,6 +34,8 @@
         >
           Not Collected
         </p>
+
+        <EnemyDropItem :item="item" />
       </div>
     </div>
   </div>
@@ -45,6 +47,8 @@ import { Item } from '@/types/items/itemRegistry'
 import { useInventoryStore } from '@/stores/inventoryStore'
 import defaultImage from '@/assets/items/default-item.webp'
 import {passiveItems} from '@/types/items/passiveItems'
+import {useAdventureStore} from '@/stores/adventureStore'
+import EnemyDropItem from '@/components/EnemyDropItem.vue'
 
 const inventoryStore = useInventoryStore()
 
@@ -55,5 +59,4 @@ const passiveComputed = computed(() => passiveItems)
 const isCollected = (item: Item) => {
   return inventoryStore.hasItem(item.id)
 }
-
 </script>

@@ -1,6 +1,7 @@
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {Item} from '@/types/items/itemRegistry'
+import {useEquipmentStore} from '@/stores/equipmentStore'
 
 export const passiveItems: Item[] = [
   {
@@ -197,6 +198,20 @@ export const passiveItems: Item[] = [
       return true
     },
     rarity: 'rare',
+    applyOnLoad: true,
+  },
+  {
+    id: 'molded-slot',
+    name: 'Molded Slot',
+    type: 'passive',
+    description: 'Adds an additional accessory slot.',
+    applyOnPrestige: true,
+    effect: () => {
+      const equipmentStore = useEquipmentStore()
+      equipmentStore.maxAccessories += 1
+      return true
+    },
+    rarity: 'legendary',
     applyOnLoad: true,
   },
   {
