@@ -248,7 +248,6 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
       this.sortInventory()
       this.maxInventory = savedInventory.maxInventory ?? this.maxInventory
-      console.log('Inventory loaded from Firestore')
     },
 
     reApplyPassiveEffects() {

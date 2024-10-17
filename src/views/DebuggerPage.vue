@@ -69,6 +69,38 @@
         </div>
       </div>
 
+      <!-- Add item to inventory -->
+      <div class="flex flex-col gap-2">
+        <label>Select Item to Add:</label>
+        <select
+          v-model="selectedItem"
+          class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+        >
+          <option
+            v-for="(item, index) in availableItems"
+            :key="index"
+            :value="item.id"
+          >
+            {{ item.name }}
+          </option>
+        </select>
+
+        <label>Amount:</label>
+        <input
+          v-model="selectedAmount"
+          class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+          type="number"
+          min="1"
+        >
+        <button
+          class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+          @click="addItemToInventory"
+        >
+          Add to Inventory
+        </button>
+      </div>
+
+      <!-- Example buttons for specific items (if needed) -->
       <button
         class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
         @click="inventoryStore.addItemToInventory({
@@ -90,49 +122,6 @@
       >
         Give 1000 Grasshopper legs
       </button>
-
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="inventoryStore.addItemToInventory({
-          id: 'ant-strength-potion',
-          name: 'Ant Strength Potion',
-          amount: 1000,
-        })"
-      >
-        Give 1000 Ant Strength Potions
-      </button>
-
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="inventoryStore.addItemToInventory({
-          id: 'butterfly-wing',
-          name: 'Butterfly Wing',
-          amount: 1,
-        })"
-      >
-        Give butterfly wings
-      </button>
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="inventoryStore.addItemToInventory({
-          id: 'underworld-crown',
-          name: 'Underworld Crown',
-          amount: 1,
-        })"
-      >
-        Give underworld crown
-      </button>
-
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-        @click="inventoryStore.addItemToInventory({
-          id: 'worker-helm',
-          name: 'Worker Helm',
-          amount: 1,
-        })"
-      >
-        Give worker helm
-      </button>
     </div>
   </div>
 </template>
@@ -143,13 +132,32 @@ import {usePrestigeStore} from '../stores/prestigeStore'
 import {useInventoryStore} from '../stores/inventoryStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useEvolveStore} from '@/stores/evolveStore'
+import {itemRegistry} from '@/types/items/itemRegistry'
+import {ref} from 'vue'
 
 const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
-
 const inventoryStore = useInventoryStore()
+const availableItems = itemRegistry
 
+// Variables for selected item and amount
+const selectedItem = ref(availableItems[0].id)
+const selectedAmount = ref(1)
+
+// Function to add selected item to the inventory
+const addItemToInventory = () => {
+  const item = availableItems.find(i => i.id === selectedItem.value)
+  if (item) {
+    inventoryStore.addItemToInventory({
+      id: item.id,
+      name: item.name,
+      amount: Number(selectedAmount.value),
+    })
+  }
+}
+
+// Function to max all resources
 const maxAllResources = () => {
   resourcesStore.resources.seeds = resourcesStore.maxSeeds
   resourcesStore.resources.larvae = resourcesStore.storage.maxLarvae
@@ -160,7 +168,3 @@ const maxAllResources = () => {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

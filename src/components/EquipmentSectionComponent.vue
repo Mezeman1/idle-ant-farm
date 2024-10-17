@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-screen-lg mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
     <!-- Accessory Slots -->
-    <div class="grid grid-rows-3 sm:grid-rows-3 gap-2">
+    <div class="grid grid-rows-3 grid-flow-col gap-2">
       <div
         v-for="index in accessorySlotCount"
         :key="index"

@@ -45,7 +45,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       accessories: [] as (Item | null)[],
     },
 
-    maxAccessories: 3,
+    maxAccessories: 2,
     activeSetBonus: null,
 
     loadOuts: [],
@@ -369,6 +369,8 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       this.activeSetBonus = null
       this.loadOuts = state.loadOuts ?? []
       this.maxLoadOuts = state.maxLoadOuts ?? this.maxLoadOuts
+
+      this.maxAccessories = 2
       if (!state.equippedItems) {
         return
       }
