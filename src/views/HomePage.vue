@@ -58,37 +58,6 @@
             </span>
           </div>
         </div>
-
-        <!-- Right Side Button -->
-        <button
-          v-if="gameStore.currentUser"
-          class="flex items-center bg-red-600 hover:bg-red-500 px-3 py-2 rounded"
-          @click="gameStore.logout()"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 mr-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <!-- Logout Icon -->
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7"
-            />
-          </svg>
-          Log out
-        </button>
-        <button
-          v-if="gameStore.currentUser.isAnonymous"
-          class="flex items-center bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded"
-          @click="gameStore.linkAnonymousAccountToGoogle()"
-        >
-          Link anonynous account to google
-        </button>
       </div>
       <div
         v-show="!isMinimized"
