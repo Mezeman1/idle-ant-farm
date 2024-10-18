@@ -517,6 +517,7 @@ export const useGameStore = defineStore('gameStore', {
       // Ensure the toast isn't shown again if cooldown hasn't passed
       if (now - this.lastToastShownTime > this.toastCooldown) {
         toast.success('Game saved successfully', {
+          toastId: 'save-toast',
           position: 'top-left',
         })
         this.lastToastShownTime = now // Update the last toast time
@@ -646,6 +647,7 @@ export const useGameStore = defineStore('gameStore', {
         adventureStore.startBattle()
         if (useSettingsStore().getNotificationSetting('load')) {
           toast.success('Game loaded successfully', {
+            toastId: 'load-toast',
             position: 'top-left',
           })
         }
