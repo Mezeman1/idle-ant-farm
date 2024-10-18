@@ -80,7 +80,7 @@
         </div>
 
         <nav class="bg-gray-800 text-white">
-          <div class="flex items-center justify-between px-2 py-1 overflow-x-auto">
+          <div class="flex items-center justify-between px-2 py-1 overflow-x-auto overflow-y-auto max-h-[calc(100vh-65px)]">
             <!-- Left Side Tabs -->
             <div class="flex flex-row sm:flex-col gap-2">
               <button
