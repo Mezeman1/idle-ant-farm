@@ -17,6 +17,7 @@ import {useBossStore} from '@/stores/bossStore'
 import {useStatStore} from '@/stores/statStore'
 import FirestoreError = firebase.firestore.FirestoreError;
 import {useTrainingStore} from '@/stores/trainingStore'
+import BigNumber from 'bignumber.js'
 
 
 export const useGameStore = defineStore('gameStore', {
@@ -912,43 +913,73 @@ export const useGameStore = defineStore('gameStore', {
         console.error('Error updating consent:', error)
       }
     },
+    formatNumber(num: number | BigNumber, toFixed = 2): string {
+      const isBigNumber = BigNumber.isBigNumber(num)
+      let value: BigNumber
 
-    formatNumber(num: number, toFixed = 2): string {
-      if (num > Number.MAX_VALUE) return 'Infinity'
+      // Convert to BigNumber if it's not already
+      value = isBigNumber ? (num as BigNumber) : new BigNumber(num)
 
-      if (toFixed === 0) num = Math.floor(num)
+      if (toFixed === 0) value = value.integerValue(BigNumber.ROUND_FLOOR)
 
       const notation = useSettingsStore().notation
 
-      const longTextSuffixes = [
-        '', 'Thousand', 'Million', 'Billion', 'Trillion', 'Quadrillion', 'Quintillion',
-        'Sextillion', 'Septillion', 'Octillion', 'Nonillion', 'Decillion', 'Undecillion',
-        'Duodecillion', 'Tredecillion', 'Quattuordecillion', 'Quindecillion', 'Sexdecillion',
-        'Septendecillion', 'Octodecillion', 'Novemdecillion', 'Vigintillion',
-      ]
+      // Dynamically generate longTextSuffixes for large numbers
+      const generateLongTextSuffixes = (length: number) => {
+        const baseSuffixes = ['Thousand', 'Million', 'Billion', 'Trillion', 'Quadrillion']
+        const largeNumberSuffixes = ['Illion', 'Decillion', 'Centillion']
 
+        const suffixes = ['']
+        for (let i = 0; i < length; i++) {
+          const baseIndex = Math.floor(i / 5)
+          const suffix = baseSuffixes[i % 5] || (largeNumberSuffixes[baseIndex - 1] || `E${i * 3}`)
+          suffixes.push(suffix)
+        }
+
+        return suffixes
+      }
+
+      const longTextSuffixes = generateLongTextSuffixes(100) // Adjust this limit based on how far you want to go
+
+      // Calculate exponent for large numbers without converting to normal number
+      const getExponent = (value: BigNumber): number => {
+        let exponent = 0
+        const thousand = new BigNumber(1000)
+
+        while (value.isGreaterThanOrEqualTo(thousand)) {
+          value = value.dividedBy(thousand)
+          exponent++
+        }
+
+        return exponent
+      }
+
+      // Handle 'longText' notation
       if (notation === 'longText') {
-        if (num < 1000) return num.toFixed(toFixed)
+        if (value.isLessThan(1000)) return value.toFixed(toFixed)
 
-        const exponent = Math.floor(Math.log10(Math.abs(num)) / 3)
-        const scaledNumber = num / Math.pow(1000, exponent)
+        const exponent = getExponent(value) // Custom exponent calculation
+        const scaledNumber = value.dividedBy(new BigNumber(1000).pow(exponent))
         const suffix = longTextSuffixes[exponent] || `E${exponent * 3}`
 
-        return scaledNumber.toFixed(2) + ' ' + suffix
+        return scaledNumber.toFixed(toFixed) + ' ' + suffix
       }
 
-      // Use normal formatting for numbers below 1 million
-      if (num < 100e6) {
-        if (num < 1000) return num.toFixed(toFixed)
-
+      // Use normal formatting for numbers below 100 million
+      if (value.isLessThan(100e6)) {
+        if (value.isLessThan(1000)) return value.toFixed(toFixed)
+        if (toFixed === 0) {
+          toFixed = 2
+        }
         const suffixes = ['', 'K', 'M']
-        const exponent = Math.floor(Math.log10(Math.abs(num)) / 3)
-        const scaledNumber = num / Math.pow(1000, exponent)
-        return scaledNumber.toFixed(2) + suffixes[exponent]
+        const exponent = getExponent(value)
+        const scaledNumber = value.dividedBy(new BigNumber(1000).pow(exponent))
+        return scaledNumber.toFixed(toFixed) + suffixes[exponent]
       }
 
-      // Use E notation for numbers 1 million and above
-      return num.toExponential(2)
+      // Use E notation for numbers 100 million and above
+      return value.toExponential(toFixed)
     },
   },
+
 })

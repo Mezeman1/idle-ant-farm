@@ -9,7 +9,9 @@ export type AntNames = 'Start' |
   'Carpenter Ants' |
   'Trap-jaw Ants' |
   'Argentine Ants' |
-  'Slave-making Ants'
+  'Slave-making Ants' |
+  'Honey Pot Ants' |
+  'Acrobat Ants'
 
 export interface ProductionRates {
   larvaeProductionRate: number;

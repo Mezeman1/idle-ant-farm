@@ -63,7 +63,7 @@ export const useSettingsStore = defineStore('settings', {
       }
 
       this.notifications = {
-        loot: this.notifications.lo,
+        loot: this.notifications.loot,
         achievements: this.notifications.achievements,
         save: this.notifications.save,
         load: this.notifications.load,

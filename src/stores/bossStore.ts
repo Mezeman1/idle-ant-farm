@@ -1,14 +1,15 @@
-import {defineStore} from 'pinia'
-import {useAdventureStore} from '@/stores/adventureStore'
+import { defineStore } from 'pinia'
+import BigNumber from 'bignumber.js'
+import { useAdventureStore } from '@/stores/adventureStore'
+
 interface Boss {
   id: number
   name: string
-
-  health: number
-  maxHealth: number
-  damage: number
-  defense: number
-  regen: number
+  health: BigNumber
+  maxHealth: BigNumber
+  damage: BigNumber
+  defense: BigNumber
+  regen: BigNumber
 }
 
 export const useBossStore = defineStore({
@@ -16,26 +17,26 @@ export const useBossStore = defineStore({
   state: () => ({
     currentBoss: 0,
 
-    bosses: [],
+    bosses: [] as Boss[],
 
     armyStats: {
-      health: 0,
-      maxHealth: 0,
+      health: new BigNumber(0),
+      maxHealth: new BigNumber(0),
 
-      damage: 0,
-      defense: 0,
-      regen: 0,
+      damage: new BigNumber(0),
+      defense: new BigNumber(0),
+      regen: new BigNumber(0),
 
-      damageMultiplier: 1,
-      defenseMultiplier: 1,
-      regenMultiplier: 1,
+      damageMultiplier: new BigNumber(1),
+      defenseMultiplier: new BigNumber(1),
+      regenMultiplier: new BigNumber(1),
     },
 
     combatModifiers: {
-      damage: 1,
-      defense: 1,
-      regen: 1,
-      health: 1,
+      damage: new BigNumber(1),
+      defense: new BigNumber(1),
+      regen: new BigNumber(1),
+      health: new BigNumber(1),
     },
 
     battleState: 'idle',
@@ -63,56 +64,77 @@ export const useBossStore = defineStore({
       regenMultiplier: number
     }) {
       this.armyStats = {
-        ...this.armyStats,
-        ...stats,
+        health: new BigNumber(this.armyStats.health ?? 0),
+        maxHealth: new BigNumber(stats.maxHealth),
+        damage: new BigNumber(stats.damage),
+        defense: new BigNumber(stats.defense),
+        regen: new BigNumber(stats.regen),
+        damageMultiplier: new BigNumber(stats.damageMultiplier),
+        defenseMultiplier: new BigNumber(stats.defenseMultiplier),
+        regenMultiplier: new BigNumber(stats.regenMultiplier),
       }
     },
     generateBosses() {
-      this.bosses = Array.from({length: 1000}, (_, i) => this.generateBoss(i))
+      this.bosses = Array.from({ length: 1000 }, (_, i) => this.generateBoss(i))
     },
     generateBoss(level: number): Boss {
       level += 1
 
-      const multiplier = Math.pow(3, level) // exponential scaling
+      const multiplier = new BigNumber(3).pow(level) // exponential scaling
 
       const baseBossStats = {
-        health: 100,
-        damage: 10,
-        defense: 5,
-        regen: 5,
+        health: new BigNumber(100),
+        damage: new BigNumber(10),
+        defense: new BigNumber(5),
+        regen: new BigNumber(5),
       }
 
       return {
         id: level,
         name: `Boss ${level}`,
-        health: baseBossStats.health * multiplier,
-        maxHealth: baseBossStats.health * multiplier,
-        damage: baseBossStats.damage * multiplier,
-        defense: baseBossStats.defense * multiplier,
-        regen: baseBossStats.regen * multiplier,
+        health: baseBossStats.health.multipliedBy(multiplier),
+        maxHealth: baseBossStats.health.multipliedBy(multiplier),
+        damage: baseBossStats.damage.multipliedBy(multiplier),
+        defense: baseBossStats.defense.multipliedBy(multiplier),
+        regen: baseBossStats.regen.multipliedBy(multiplier),
       }
     },
-    processCombat(deltaTime) {
+    processCombat(deltaTime: number) {
       const boss = this.currentBossData
       const army = this.armyStats
-      army.health = Math.min(army.health + army.regen * army.regenMultiplier * deltaTime, army.maxHealth * this.combatModifiers.health)
-      boss.health = Math.min(boss.health + boss.regen * deltaTime, boss.maxHealth)
+
+      // Army regeneration and boss regeneration
+      army.health = BigNumber.min(
+        army.health.plus(army.regen.times(army.regenMultiplier).times(deltaTime)),
+        army.maxHealth.times(this.combatModifiers.health),
+      )
+      boss.health = BigNumber.min(
+        boss.health.plus(boss.regen.times(deltaTime)),
+        boss.maxHealth,
+      )
 
       if (this.battleState === 'idle') return
 
-      const bossDamage = Math.max(boss.damage - army.defense * army.defenseMultiplier * this.combatModifiers.defense, 0)
-      const armyDamage = Math.max(army.damage * army.damageMultiplier * this.combatModifiers.damage - boss.defense, 0)
+      const bossDamage = BigNumber.max(
+        boss.damage.minus(army.defense.times(army.defenseMultiplier).times(this.combatModifiers.defense)),
+        new BigNumber(0),
+      )
+      const armyDamage = BigNumber.max(
+        army.damage.times(army.damageMultiplier).times(this.combatModifiers.damage).minus(boss.defense),
+        new BigNumber(0),
+      )
 
-      boss.health -= armyDamage * deltaTime
-      army.health -= bossDamage * deltaTime
+      boss.health = boss.health.minus(armyDamage.times(deltaTime))
+      army.health = army.health.minus(bossDamage.times(deltaTime))
 
-      if (boss.health <= 0) {
+      // Check for battle outcomes
+      if (boss.health.lte(0)) {
         this.setBattleState('idle')
         this.currentBoss++
       }
 
-      if (army.health <= 0) {
-        army.health = 0
+      if (army.health.lte(0)) {
+        army.health = new BigNumber(0)
         this.setBattleState('idle')
       }
     },
@@ -121,11 +143,9 @@ export const useBossStore = defineStore({
         boss: this.currentBoss,
       }
     },
-
-    loadBossState(state) {
+    loadBossState(state: { boss?: number }) {
       this.currentBoss = state.boss ?? 0
     },
-
     resetBossState() {
       this.currentBoss = 0
     },

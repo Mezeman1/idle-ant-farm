@@ -238,7 +238,7 @@ export const consumableItems: Item[] = [
   {
     id: 'ice-beetle-shell',
     name: 'Ice Beetle Shell',
-    type: 'passive',
+    type: 'consumable',
     description: 'Increases army defense by 50% for 2 minutes.',
     effect: () => {
       const adventureStore = useAdventureStore()
