@@ -52,6 +52,7 @@ app.use(ToastPlugin, {
 app.use(
   Vue3Toastify,
   {
+    pauseOnFocusLoss: false,
     autoClose: 1000,
     limit: 5,
     position: 'top-right',
