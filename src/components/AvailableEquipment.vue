@@ -87,6 +87,10 @@
           {{ item.description }}
         </p>
 
+        <p v-if="hasItem(item.id) || hasItemEquipped(item.id)">
+          Level: {{ getLevel(item.id) }}/{{ item.maxLevel }}
+        </p>
+
         <EnemyDropItem :item="item" />
       </button>
     </div>
@@ -139,6 +143,18 @@ const doAction = (item: Item) => {
   if (hasItem(item.id)) {
     equipmentStore.equipItem(item, item.slotType)
   }
+}
+
+const getCurrentLevelFromInventory = (itemId: string) => {
+  return inventoryStore.getItemFromInventory(itemId)?.level || 0
+}
+
+const getCurrentLevelFromEquipment = (itemId: string) => {
+  return equipmentStore.getItemFromEquipment(itemId)?.level || 0
+}
+
+const getLevel = (itemId: string) => {
+  return hasItemEquipped(itemId) ? getCurrentLevelFromEquipment(itemId) : getCurrentLevelFromInventory(itemId)
 }
 </script>
 

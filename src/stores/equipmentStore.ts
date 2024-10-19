@@ -76,6 +76,16 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     },
   },
   actions: {
+    getItemFromEquipment(itemId: string): Item | null {
+      const equippedItems = [
+        this.equippedItems.head,
+        this.equippedItems.body,
+        this.equippedItems.legs,
+        this.equippedItems.weapon,
+        ...this.equippedItems.accessories,
+      ]
+      return equippedItems.find((item) => item && item.id === itemId) || null
+    },
     loadLoadOut(loadOut: LoadOut) {
       const inventoryStore = useInventoryStore()
       // Loop over each key in the equippedItems object from the loadOut
