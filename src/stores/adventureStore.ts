@@ -151,8 +151,6 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.spawnRandomEnemy()
       }
     },
-
-    // Stop all active battles (useful when managing multiple loops)
     stopAllBattles() {
       this.battleStatus = 'idle'
     },
@@ -574,6 +572,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       this.enemySpawned = true
     },
+
     getAdventureState() {
       return {
         armyHealth: this.armyHealth,

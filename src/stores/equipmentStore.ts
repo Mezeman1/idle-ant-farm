@@ -165,6 +165,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
       const context = {gameStore, adventureStore}
+      item = inventoryStore.getItemFromInventory(item.id)
 
       // Remove the item from the inventory
       if (slotType === 'accessory') {
@@ -397,63 +398,77 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     },
 
     loadEquipmentState(state) {
-      const inventoryStore = useInventoryStore()
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
-      const context = {gameStore, adventureStore}
+      const context = { gameStore, adventureStore }
 
+      this.resetState(state)
+      if (!state.equippedItems) return
+
+      // Load equipped items for main slots (head, body, legs, weapon)
+      this.loadEquippedItems(state.equippedItems, context)
+
+      // Load accessory slots
+      this.loadAccessories(state.equippedItems.accessories, context)
+
+      // Recalculate bonuses and stats
+      this.finalizeLoading()
+    },
+
+    resetState(state) {
       this.activeSetBonus = null
       this.loadOuts = state.loadOuts ?? []
       this.maxLoadOuts = state.maxLoadOuts ?? this.maxLoadOuts
-
       this.maxAccessories = 2
-      if (!state.equippedItems) {
-        return
-      }
+    },
 
-      // Load equipped items and apply their effects
-      ['head', 'body', 'legs', 'weapon'].forEach((slotType) => {
-        const itemId = state.equippedItems[slotType]?.id || null
+    loadEquippedItems(equippedItems, context) {
+      const inventoryStore = useInventoryStore()
 
+      // Iterate over the main slots and load items
+      const slots = ['head', 'body', 'legs', 'weapon']
+      slots.forEach((slotType) => {
+        const itemId = equippedItems[slotType]?.id || null
         if (itemId) {
           const item = inventoryStore.getItemById(itemId)
           if (item) {
             this.equippedItems[slotType] = item
+            item.level = equippedItems[slotType]?.level || 1
+            this.applyItemEffect(item, context)
+          }
+          return
+        }
 
-            item.level = state.equippedItems[slotType]?.level || 1 // Set level from state
+        this.equippedItems[slotType] = null
+      })
+    },
 
-            if (item.effect) {
-              item.effect(context, item)
-            }
+    loadAccessories(accessories = [], context) {
+      const inventoryStore = useInventoryStore()
+
+      accessories.forEach((accessoryState, index) => {
+        const itemId = accessoryState?.id || null
+        if (itemId) {
+          const item = inventoryStore.getItemById(itemId)
+          if (item) {
+            this.equippedItems.accessories[index] = item
+            item.level = accessoryState?.level || 1
+            this.applyItemEffect(item, context)
           }
         } else {
-          this.equippedItems[slotType] = null
+          this.equippedItems.accessories[index] = null
         }
       })
+    },
 
-      // Load accessories
-      if (Array.isArray(state.equippedItems.accessories)) {
-        state.equippedItems.accessories.forEach((accessoryState, index) => {
-          const itemId = accessoryState?.id || null
-          if (itemId) {
-            const item = inventoryStore.getItemById(itemId)
-            if (item) {
-              this.equippedItems.accessories[index] = item
-              item.level = accessoryState?.level || 1 // Set level from state
-              if (item.effect) {
-                item.effect(context, item)
-              }
-            }
-          } else {
-            this.equippedItems.accessories[index] = null
-          }
-        })
+    applyItemEffect(item, context) {
+      if (item.effect) {
+        item.effect(context, item)
       }
+    },
 
-      // Recalculate set bonuses
+    finalizeLoading() {
       this.checkForSetBonus()
-
-      // Add this line to recalculate adventure stats after loading equipment
       useGameStore().setupAdventureStats()
     },
 

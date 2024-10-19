@@ -91,7 +91,7 @@
           <button
             v-if="isMiningResource(resource) || resource.isDepleted"
             class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-600"
-            @click="stopMining"
+            @click="stopMining(resource)"
           >
             Stop Mining
           </button>
@@ -166,8 +166,8 @@ function startMining(resource: MiningResource) {
 }
 
 // Stop mining action
-function stopMining() {
-  trainingStore.stopMining()
+function stopMining(resource: MiningResource) {
+  trainingStore.stopMining(resource.name)
 }
 
 // Helper to check if a resource is currently being mined

@@ -32,62 +32,82 @@ export const useInventoryStore = defineStore('inventoryStore', {
         return false
       }
 
-      // Handle equipment items
-      if (registryItem.type === 'equipment') {
-        const equippedItem = equipmentStore.findEquippedItemById(registryItem.id)
-        if (equippedItem) {
-          // Level up equipped item
-          if (equippedItem.level < equippedItem.maxLevel) {
-            equipmentStore.levelUpEquippedItem(equippedItem)
-            return true
-          }
-          return false // Early return
-        }
-
-        const inventoryItem = this.findEquipmentItemById(registryItem.id)
-        if (inventoryItem) {
-          // Level up inventory item
-          if (inventoryItem.level < inventoryItem.maxLevel) {
-            this.levelUpInventoryItem(inventoryItem)
-            return true
-          }
-          return false // Early return
-        }
-
-        // Add new equipment item to inventory with amount: 1
-        const newItem: Item = {
-          ...registryItem,
-          amount: 1, // Ensure amount is set to 1
-          level: itemData.level || 1,
-          maxLevel: registryItem.maxLevel || 5,
-          // Include other necessary properties
-        }
-        this.inventory.push(newItem)
-        this.sortInventory()
-        return true // Early return
+      // Handle equipment items separately
+      if (this.isEquipmentItem(registryItem)) {
+        return this.handleEquipmentItem(registryItem, itemData, equipmentStore)
       }
 
-      // Handle non-equipment items (stackable)
-      const existingItem = this.inventory.find((i) => i.id === itemData.id)
-      if (existingItem) {
-        if (existingItem.type !== 'passive') {
-          existingItem.amount += itemData.amount || 1
-        }
-        this.sortInventory()
-        return true // Early return
+      // Handle non-equipment items
+      return this.handleNonEquipmentItem(registryItem, itemData)
+    },
+
+    isEquipmentItem(item: Item): boolean {
+      return item.type === 'equipment'
+    },
+
+    handleEquipmentItem(registryItem: Item, itemData: Partial<Item>, equipmentStore) {
+      const equippedItem = equipmentStore.findEquippedItemById(registryItem.id)
+      if (equippedItem) {
+        return this.levelUpIfPossible(equippedItem, equipmentStore.levelUpEquippedItem)
       }
 
-      // Add new non-equipment item
+      const inventoryItem = this.findEquipmentItemById(registryItem.id)
+      if (inventoryItem) {
+        return this.levelUpIfPossible(inventoryItem, this.levelUpInventoryItem)
+      }
+
+      // If the equipment item is not found in inventory or equipped, add as a new item
+      this.addNewEquipmentItem(registryItem, itemData)
+      return true
+    },
+
+    levelUpIfPossible(item: Item, levelUpFn: (item: Item) => void): boolean {
+      if (item.level < item.maxLevel) {
+        levelUpFn(item)
+        return true
+      }
+      return false
+    },
+
+    addNewEquipmentItem(registryItem: Item, itemData: Partial<Item>) {
       const newItem: Item = {
         ...registryItem,
-        amount: itemData.amount || 1,
-        // Include other necessary properties
+        amount: 1,
+        level: itemData.level || 1,
+        maxLevel: registryItem.maxLevel || 5,
       }
       this.inventory.push(newItem)
+      this.sortInventory()
+    },
+
+    handleNonEquipmentItem(registryItem: Item, itemData: Partial<Item>): boolean {
+      const existingItem = this.inventory.find((i) => i.id === itemData.id)
+
+      if (existingItem) {
+        return this.updateExistingItem(existingItem, itemData)
+      }
+
+      // Add as a new non-equipment item
+      this.addNewNonEquipmentItem(registryItem, itemData)
+      return true
+    },
+
+    updateExistingItem(existingItem: Item, itemData: Partial<Item>): boolean {
+      if (existingItem.type !== 'passive') {
+        existingItem.amount += itemData.amount || 1
+      }
       this.sortInventory()
       return true
     },
 
+    addNewNonEquipmentItem(registryItem: Item, itemData: Partial<Item>) {
+      const newItem: Item = {
+        ...registryItem,
+        amount: itemData.amount || 1,
+      }
+      this.inventory.push(newItem)
+      this.sortInventory()
+    },
     findEquipmentItemById(itemId: string): Item | null {
       return this.inventory.find(
         (item) => item.id === itemId && item.type === 'equipment',
@@ -270,6 +290,10 @@ export const useInventoryStore = defineStore('inventoryStore', {
       itemId = itemId.toLowerCase().replace(/ /g, '-')
 
       return itemRegistry.find(item => item.id === itemId) ?? null
+    },
+
+    getItemFromInventory(itemId: string): Item | null {
+      return this.inventory.find(item => item.id === itemId) ?? null
     },
 
     applyPassiveEffects() {
