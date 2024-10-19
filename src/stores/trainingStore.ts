@@ -935,10 +935,35 @@ export const useTrainingStore = defineStore({
     },
 
     applyCombatMilestone(milestone) {
-      const bossStore = useBossStore()
-      Object.keys(milestone.effect).forEach(effect => {
-        bossStore.combatModifiers[effect] = milestone.effect[effect]
-      })
+      if (milestone.appliedTo === 'bosses') {
+        const bossStore = useBossStore()
+        Object.keys(milestone.effect).forEach(effect => {
+          bossStore.combatModifiers[effect] = milestone.effect[effect]
+        })
+      }
+
+      if (milestone.appliedTo === 'army') {
+        const adventureStore = useAdventureStore()
+        Object.keys(milestone.effect).forEach(effect => {
+          const modifier = milestone.effect[effect]
+          switch (effect) {
+            case 'attack':
+              adventureStore.armyAttackModifier += modifier
+              break
+            case 'defense':
+              adventureStore.armyDefenseModifier += modifier
+              break
+            case 'health':
+              adventureStore.armyMaxHealthModifier += modifier
+              break
+            case 'regen':
+              adventureStore.armyRegenModifier += modifier
+              break
+          }
+        })
+
+        adventureStore.setupAdventureStats()
+      }
     },
 
     // Helper method to reset the storage modifiers to default values

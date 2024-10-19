@@ -48,7 +48,7 @@
       class="mt-2"
     >
       <div
-        v-for="(milestone, index) in milestones"
+        v-for="(milestone, index) in sortedMilestones"
         :key="index + milestone.description"
       >
         <div
@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 import { useGameStore } from '@/stores/gameStore'
 
 interface Milestone {
@@ -80,7 +80,7 @@ interface Milestone {
   levelRequired: number
 }
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   skillName: string
   description?: string
   level: number
@@ -103,6 +103,11 @@ const formatNumber = gameStore.formatNumber
 
 // Toggle for showing milestones, default is hidden
 const showMilestones = ref(false)
+
+const sortedMilestones = computed(() => {
+  const milestones = props.milestones
+  return milestones.sort((a, b) => a.levelRequired - b.levelRequired)
+})
 </script>
 
 <style scoped>

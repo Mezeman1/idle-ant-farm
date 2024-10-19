@@ -674,12 +674,12 @@ export const useGameStore = defineStore('gameStore', {
       const adventureStore = useAdventureStore()
       await adventureStore.loadAdventureState(savedState)
 
-      const trainingStore = useTrainingStore()
-      trainingStore.loadTrainingState(savedState)
-
       const prestigeStore = usePrestigeStore()
       prestigeStore.resetPrestigeState()
       prestigeStore.loadPrestigeState(savedState)
+
+      const trainingStore = useTrainingStore()
+      trainingStore.loadTrainingState(savedState)
 
       this.eliteAntsUnlocked = prestigeStore.upgradePurchased('eliteAnts')
       this.royalJellyUnlocked = prestigeStore.upgradePurchased('royalJelly')
