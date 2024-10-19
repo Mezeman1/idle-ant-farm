@@ -1,6 +1,6 @@
 import {useAdventureStore} from '@/stores/adventureStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
-import {workerSet, workerSetII} from '@/types/items/sets/WorkerSet'
+import {workerSet} from '@/types/items/sets/WorkerSet'
 import {soldierSet, soldierSetII} from '@/types/items/sets/SoldierSet'
 import {royalSet} from '@/types/items/sets/royalSet'
 import {volcanoSet} from '@/types/items/sets/volcanoSet'
@@ -8,6 +8,7 @@ import {underworldSet} from '@/types/items/sets/underworldSet'
 import {arcticTundraSet} from '@/types/items/sets/arcticTundraSet'
 import {consumableItems} from '@/types/items/consumableItems'
 import {passiveItems} from '@/types/items/passiveItems'
+import {useEvolveStore} from '@/stores/evolveStore'
 
 export interface Item {
   id: string
@@ -19,7 +20,8 @@ export interface Item {
   set?: string
   rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'
   level?: number      // Current level of the item
-  maxLevel?: number   // Maximum level the item can reach
+  // number or callable function that returns a number
+  maxLevel?: number | (() => number) // Maximum level of the item
   amount?: number     // For stackable items
   effect?: (context: any, item: Item) => boolean
   onRemove?: (context: any, item: Item) => void
@@ -28,17 +30,39 @@ export interface Item {
   duration?: number;
   image?: string;
   multiplier?: number;
+
+  evolves?: boolean;
+}
+
+export function getMaxItemLevel(item: Item): number|null {
+  if (item.maxLevel) {
+    if (typeof item.maxLevel === 'function') {
+      return item.maxLevel()
+    }
+
+    return item.maxLevel
+  }
+
+  return null
+}
+
+export function getItemName(item: Item): string {
+  if (item.evolves) {
+    return `${item.name} ${useEvolveStore().getCurrentEvolutionInRomanLetters(item.set)}`
+  }
+
+  return item.name
 }
 
 export type SetBonus = {
   apply: () => void;
   remove: () => void;
-  explanation?: string;
+  explanation?: string | (() => string);
+  maxLevelsPerEvolution?: Record<number, number>;
 };
 
 export type SetName =
   'Worker Set'
-  | 'Worker Set II'
   | 'Soldier Set'
   | 'Soldier Set II'
   | 'Royal Set'
@@ -50,50 +74,71 @@ export const setBonuses: Record<SetName, SetBonus> = {
   'Worker Set': {
     apply: () => {
       const resourcesStore = useResourcesStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        resourcesStore.productionRates.collectionRateModifier += 0.05 * currentEvolution
+      }
+
       resourcesStore.productionRates.collectionRateModifier += 0.15
     },
     remove: () => {
       const resourcesStore = useResourcesStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        resourcesStore.productionRates.collectionRateModifier -= 0.05 * currentEvolution
+      }
+
       resourcesStore.productionRates.collectionRateModifier -= 0.15
     },
-    explanation: 'Increases resource gathering by 15%.',
-  },
-  'Worker Set II': {
-    apply: () => {
-      const resourcesStore = useResourcesStore()
-      resourcesStore.productionRates.collectionRateModifier += 0.20
+    explanation: () => {
+      const currentEvolution = useEvolveStore().currentEvolution
+      const totalBonus = 0.15 + 0.05 * currentEvolution
+
+      return `Increases resource gathering by ${totalBonus * 100}%.`
     },
-    remove: () => {
-      const resourcesStore = useResourcesStore()
-      resourcesStore.productionRates.collectionRateModifier -= 0.20
+    maxLevelsPerEvolution: {
+      0: 100,
+      1: 250,
+      2: 300,
+      3: 400,
+      4: 500,
+      5: 650,
+      6: 750,
+      7: 900,
+      8: 1000,
     },
-    explanation: 'Increases resource gathering by 20%.',
   },
   'Soldier Set': {
     apply: () => {
       const adventureStore = useAdventureStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        adventureStore.armyAttackModifier += 0.05 * currentEvolution
+        adventureStore.armyDefenseModifier += 0.05 * currentEvolution
+      }
+
       adventureStore.armyAttackModifier += 0.15
       adventureStore.armyDefenseModifier += 0.15
     },
     remove: () => {
       const adventureStore = useAdventureStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        adventureStore.armyAttackModifier -= 0.05 * currentEvolution
+        adventureStore.armyDefenseModifier -= 0.05 * currentEvolution
+      }
+
       adventureStore.armyAttackModifier -= 0.15
       adventureStore.armyDefenseModifier -= 0.15
     },
     explanation: 'Increases army attack and defense by 15%.',
-  },
-  'Soldier Set II': {
-    apply: () => {
-      const adventureStore = useAdventureStore()
-      adventureStore.armyAttackModifier += 0.20
-      adventureStore.armyDefenseModifier += 0.20
+    maxLevelsPerEvolution: {
+      0: 500,
+      1: 800,
+      2: 1000,
+      3: 1200,
+      4: 1500,
     },
-    remove: () => {
-      const adventureStore = useAdventureStore()
-      adventureStore.armyAttackModifier -= 0.20
-      adventureStore.armyDefenseModifier -= 0.20
-    },
-    explanation: 'Increases army attack and defense by 20%.',
   },
   'Royal Set': {
     apply: () => {
@@ -146,11 +191,9 @@ export const setBonuses: Record<SetName, SetBonus> = {
 export const equipmentSets: Item[] = [
   // Worker Set
   ...workerSet,
-  ...workerSetII,
 
   // Soldier Set
   ...soldierSet,
-  ...soldierSetII,
 
   {
     id: 'mantis-hunter-claw',

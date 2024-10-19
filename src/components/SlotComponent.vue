@@ -18,7 +18,7 @@
       :class="{'text-3xs': isMobile, 'text-xs': !isMobile }"
     >
       <span v-if="item">
-        {{ item.name }}
+        {{ getItemName(item) }}
         <span v-if="item.level"> (Level {{ item.level }})</span>
       </span>
       <span v-else>{{ defaultText }}</span>
@@ -42,6 +42,7 @@
 <script setup lang="ts">
 import {computed, defineEmits, defineProps} from 'vue'
 import {useEquipmentStore} from '@/stores/equipmentStore'
+import {getItemName, getMaxItemLevel} from '@/types/items/itemRegistry'
 
 const equipmentStore = useEquipmentStore()
 
@@ -90,7 +91,7 @@ const tooltipText = computed(() => {
   if (props.isDesktop && props.item) {
     let text = ''
     if (props.item.level) {
-      text += `Level ${props.item.level}/${props.item.maxLevel}\n`
+      text += `Level ${props.item.level}/${getMaxItemLevel(props.item)}\n`
     }
     if (props.item.description) {
       text += props.item.description + '\n\n'

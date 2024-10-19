@@ -72,7 +72,7 @@
           class="text-lg font-semibold text-center"
           :class="{'text-gray-300': !hasItem(item.id)}"
         >
-          {{ item.name }}
+          {{ getItemName(item) }}
         </h2>
         <p
           class="text-gray-500 text-center"
@@ -87,8 +87,8 @@
           {{ item.description }}
         </p>
 
-        <p v-if="hasItem(item.id) || hasItemEquipped(item.id)">
-          Level: {{ getLevel(item.id) }}/{{ item.maxLevel }}
+        <p>
+          Level: {{ getLevel(item.id) }}/{{ getMaxItemLevel(item) }}
         </p>
 
         <EnemyDropItem :item="item" />
@@ -99,7 +99,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import {equipmentSets, Item} from '@/types/items/itemRegistry'
+import {equipmentSets, getItemName, getMaxItemLevel, Item} from '@/types/items/itemRegistry'
 import { capitalize } from '../utils'
 import { useEquipmentStore } from '@/stores/equipmentStore'
 import { useInventoryStore } from '@/stores/inventoryStore'

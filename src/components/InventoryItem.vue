@@ -32,7 +32,7 @@
         'mt-6': itemFromRegistry?.type !== 'passive',
       }"
     >
-      {{ item.name }}
+      {{ getItemName(item) }}
     </div>
 
     <!-- Item type -->
@@ -43,9 +43,10 @@
 </template>
 
 <script setup lang="ts">
-import {useGameStore} from '../stores/gameStore'
-import {useInventoryStore} from '../stores/inventoryStore'
+import {useGameStore} from '@/stores/gameStore'
+import {useInventoryStore} from '@/stores/inventoryStore'
 import {computed} from 'vue'
+import {getItemName} from '@/types/items/itemRegistry'
 
 const props = defineProps<{
   item: {

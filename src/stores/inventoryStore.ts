@@ -1,8 +1,9 @@
 import {defineStore} from 'pinia'
-import {Item, itemRegistry} from '@/types/items/itemRegistry'
+import {getMaxItemLevel, Item, itemRegistry} from '@/types/items/itemRegistry'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {v4 as uuidv4} from 'uuid'
 import {useEquipmentStore} from '@/stores/equipmentStore'
+import {useEvolveStore} from '@/stores/evolveStore'
 
 export const useInventoryStore = defineStore('inventoryStore', {
   state: () => ({
@@ -62,7 +63,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
     },
 
     levelUpIfPossible(item: Item, levelUpFn: (item: Item) => void): boolean {
-      if (item.level < item.maxLevel) {
+      if (item.level < getMaxItemLevel(item)) {
         levelUpFn(item)
         return true
       }
@@ -74,7 +75,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
         ...registryItem,
         amount: 1,
         level: itemData.level || 1,
-        maxLevel: registryItem.maxLevel || 5,
+        maxLevel: getMaxItemLevel(itemData) || 5,
       }
       this.inventory.push(newItem)
       this.sortInventory()
@@ -115,7 +116,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
     },
 
     levelUpInventoryItem(item: Item) {
-      if (item.level >= item.maxLevel) {
+      if (item.level >= getMaxItemLevel(item)) {
         return // Early return
       }
       item.level += 1
@@ -240,7 +241,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
             id: item.id,
             name: item.name,
             level: item.level ?? 1,     // Default to level 1 if undefined
-            maxLevel: item.maxLevel ?? 1, // Default to maxLevel 1 if undefined
+            maxLevel: getMaxItemLevel(item) ?? 1, // Default to maxLevel 1 if undefined
             amount: item.amount ?? 1,   // Default to amount 1 if undefined
           }),
         ),
@@ -259,7 +260,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
             ...registryItem,
             amount: item.amount,
             level: item.level ?? 1,
-            maxLevel: item.maxLevel ?? 5,
+            maxLevel: getMaxItemLevel(item) ?? 5,
           }
         } else {
           return null

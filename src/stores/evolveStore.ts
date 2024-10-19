@@ -6,6 +6,7 @@ import {toast} from 'vue3-toastify'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {useBossStore} from '@/stores/bossStore'
 import {evolutions} from '@/types/evolutions'
+import {setBonuses, SetName} from '@/types/items/itemRegistry'
 
 export const useEvolveStore = defineStore({
   id: 'evolveStore',
@@ -19,6 +20,65 @@ export const useEvolveStore = defineStore({
     },
   },
   actions: {
+    getMaxItemLevel(set: SetName) {
+      const currentEvolution = this.currentEvolution
+
+      // Check if the set exists in setBonuses and has maxLevelsPerEvolution
+      if (setBonuses[set] && setBonuses[set].maxLevelsPerEvolution) {
+        const levels = setBonuses[set].maxLevelsPerEvolution
+
+        // Find the maximum level for the current evolution
+        const evolutionLevels = Object.keys(levels).map(Number).sort((a, b) => b - a) // Sort evolutions in descending order
+        for (const evolution of evolutionLevels) {
+          if (currentEvolution >= evolution) {
+            return levels[evolution] // Return the max level for the current evolution
+          }
+        }
+      }
+
+      return 0 // Default value if no match is found
+    },
+
+    getMaxEvolutionsForSet(set: SetName) {
+      if (setBonuses[set] && setBonuses[set].maxLevelsPerEvolution) {
+        return Object.keys(setBonuses[set].maxLevelsPerEvolution).length
+      }
+
+      return 0
+    },
+
+    getCurrentEvolutionInRomanLetters(set: SetName) {
+      const romanNumeralsMap: { [key: number]: string } = {
+        1: 'I', 4: 'IV', 5: 'V', 9: 'IX',
+        10: 'X', 40: 'XL', 50: 'L', 90: 'XC',
+        100: 'C', 400: 'CD', 500: 'D', 900: 'CM',
+        1000: 'M',
+      }
+
+      let evolution = this.currentEvolution + 1
+      let roman = ''
+
+      const maxEvolutions = this.getMaxEvolutionsForSet(set)
+
+      // Cap the evolution value at the maxEvolutions limit
+      if (evolution > maxEvolutions) {
+        evolution = maxEvolutions
+      }
+
+      // Loop through the Roman numeral values, from largest to smallest
+      const romanValues = Object.keys(romanNumeralsMap)
+        .map(Number)
+        .sort((a, b) => b - a) // Sort descending
+
+      for (const value of romanValues) {
+        while (evolution >= value) {
+          roman += romanNumeralsMap[value]
+          evolution -= value
+        }
+      }
+
+      return roman || 'I'
+    },
     getEvolveDescription(): string {
       let bossesToDefeat = 7 // Base number of bosses to defeat
 

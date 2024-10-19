@@ -7,7 +7,7 @@
     >
       <div>
         <h3 class="font-bold text-lg md:text-xl">
-          {{ activeItem.name }}
+          {{ getItemName(activeItem) }}
         </h3>
         <p class="text-sm md:text-base mt-2">
           {{ activeItem.description }}
@@ -77,6 +77,7 @@ import {useElementSize} from '@vueuse/core'
 import {useInventoryStore} from '../stores/inventoryStore'
 import {toast} from 'vue3-toastify'
 import {v4 as uuidv4} from 'uuid'
+import {getItemName} from '@/types/items/itemRegistry'
 
 const gridContainer = ref<HTMLElement>(null) // Reference to the scrollable grid container
 const {width} = useElementSize(gridContainer)

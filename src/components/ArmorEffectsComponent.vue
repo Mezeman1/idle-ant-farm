@@ -11,7 +11,7 @@
           :key="index"
           class="flex flex-col gap-1"
         >
-          <strong>{{ item.name }} (Level {{ item.level }})</strong>
+          <strong>{{ getItemName(item) }} (Level {{ item.level }})</strong>
           {{ item.description }}
           <strong>Total bonus: {{ formatNumber(item.level * item.multiplier * 100) }}%</strong>
         </li>
@@ -19,7 +19,7 @@
       <!-- Display the active set bonus -->
       <div v-if="activeSetBonus">
         <h4 class="text-md font-bold mt-4 text-green-300">
-          Set Bonus: {{ activeSetBonus }}
+          Set Bonus: {{ activeSetBonus }} {{ useEvolveStore().getCurrentEvolutionInRomanLetters(activeSetBonus) }}
         </h4>
         <p>
           {{ setBonusDescription }}
@@ -33,7 +33,8 @@
 import { computed } from 'vue'
 import { useEquipmentStore } from '../stores/equipmentStore'
 import { useGameStore } from '@/stores/gameStore'
-import {setBonuses} from '@/types/items/itemRegistry'
+import {getItemName, setBonuses} from '@/types/items/itemRegistry'
+import {useEvolveStore} from '../stores/evolveStore'
 
 // Access the equipment store
 const equipmentStore = useEquipmentStore()
@@ -63,29 +64,16 @@ const activeSetBonus = computed(() => equipmentStore.activeSetBonus)
 // Get the description of the active set bonus
 const setBonusDescription = computed(() => {
   if (activeSetBonus.value) {
-    return setBonuses[activeSetBonus.value]?.explanation || ''
-  }
-  return ''
-})
+    const setBonus = setBonuses[activeSetBonus.value]
+    if (!setBonus) return ''
 
-const getTotalBonus = computed(() => {
-  const equippedItems = equipmentStore.equippedItems
-  const allEquipped = [
-    equippedItems.head,
-    equippedItems.body,
-    equippedItems.legs,
-    equippedItems.weapon,
-    ...equippedItems.accessories,
-  ]
-
-  // Calculate the total bonus based on equipped items
-  return allEquipped.reduce((total, item) => {
-    if (item) {
-      return total + item.level * item.multiplier
+    if (typeof setBonus.explanation === 'function') {
+      return setBonus.explanation()
     }
 
-    return total
-  }, 0) * 100
+    return setBonus.explanation || ''
+  }
+  return ''
 })
 
 </script>

@@ -3,7 +3,7 @@ import {useGameStore} from './gameStore'
 import {useInventoryStore} from './inventoryStore'
 import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
 import {useResourcesStore} from '@/stores/resourcesStore'
-import {itemRegistry} from '@/types/items/itemRegistry'
+import {getItemName, itemRegistry} from '@/types/items/itemRegistry'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {toast} from 'vue3-toastify'
 import {useSettingsStore} from '@/stores/settingsStore'
@@ -506,7 +506,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       const inventoryStore = useInventoryStore()
       await inventoryStore.addItemToInventory({
         id: item.id,
-        name: item.name,
+        name: getItemName(item),
         amount,
       })
     },

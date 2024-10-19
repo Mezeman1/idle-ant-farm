@@ -32,13 +32,13 @@
             >
             <div>
               <p class="font-bold text-lg">
-                {{ item.name }} <span class="text-sm text-gray-500">({{ item.rarity }})</span>
+                {{ getItemName(item) }} <span class="text-sm text-gray-500">({{ item.rarity }})</span>
               </p>
               <p
                 v-if="item.level"
                 class="text-sm text-gray-600"
               >
-                Level: {{ item.level }} / {{ item.maxLevel }}
+                Level: {{ item.level }} / {{ getMaxItemLevel(item) }}
               </p>
               <p class="text-sm text-gray-500">
                 {{ item.description }}
@@ -80,7 +80,7 @@
               v-if="currentEquippedItem.level"
               class="text-sm text-gray-600"
             >
-              Level: {{ currentEquippedItem.level }} / {{ currentEquippedItem.maxLevel }}
+              Level: {{ currentEquippedItem.level }} / {{ getMaxItemLevel(currentEquippedItem) }}
             </p>
             <p class="text-sm text-gray-500">
               {{ currentEquippedItem.description }}
@@ -114,7 +114,7 @@
 
 <script setup lang="ts">
 import {capitalize} from '../utils'
-import {Item} from '@/types/items/itemRegistry'
+import {getItemName, getMaxItemLevel, Item} from '@/types/items/itemRegistry'
 import {useEquipmentStore} from '@/stores/equipmentStore'
 import {computed, ref, watch} from 'vue'
 

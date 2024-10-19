@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {Item} from '@/types/items/itemRegistry'
+import {getMaxItemLevel, Item} from '@/types/items/itemRegistry'
 import {useInventoryStore} from '@/stores/inventoryStore'
 import {useGameStore} from '@/stores/gameStore'
 import {useAdventureStore} from '@/stores/adventureStore'
@@ -151,7 +151,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       return equippedItems.find((item) => item && item.id === itemId) || null
     },
     levelUpEquippedItem(item: Item) {
-      if (item.level >= item.maxLevel) {
+      if (item.level >= getMaxItemLevel(item)) {
         return // Early return
       }
       // Remove old effect

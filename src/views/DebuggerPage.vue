@@ -81,7 +81,7 @@
             :key="index"
             :value="item.id"
           >
-            {{ item.name }}
+            {{ getItemName(item) }}
           </option>
         </select>
 
@@ -132,7 +132,7 @@ import {usePrestigeStore} from '../stores/prestigeStore'
 import {useInventoryStore} from '../stores/inventoryStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useEvolveStore} from '@/stores/evolveStore'
-import {itemRegistry} from '@/types/items/itemRegistry'
+import {getItemName, itemRegistry} from '@/types/items/itemRegistry'
 import {ref} from 'vue'
 
 const gameStore = useGameStore()
