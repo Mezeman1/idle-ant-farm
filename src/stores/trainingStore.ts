@@ -131,7 +131,7 @@ export const useTrainingStore = defineStore({
       },
       {
         name: CraftingRecipeType.AntHill,
-        description: 'Generates ants passively',
+        description: 'Generates 1 ant passively per Ant Hill',
         cost: {
           [ResourceType.Leaf]: 5,
           [ResourceType.Clay]: 20,
@@ -162,6 +162,58 @@ export const useTrainingStore = defineStore({
         levelRequired: 25,
         initialTimePerAction: 10,
         timePerAction: 10,
+      },
+      {
+        name: CraftingRecipeType.AdvancedLarvaeStorage,
+        description: 'Increase the storage capacity for ant larvae by 0.5%',
+        cost: {
+          [ResourceType.RottenWood]: 10,
+          [ResourceType.Fungus]: 10,
+        },
+
+        storageIncrease: {
+          larvae: 0.005,
+        },
+
+        xpPerAction: 50,
+        levelRequired: 25,
+        initialTimePerAction: 10,
+        timePerAction: 10,
+      },
+      {
+        name: CraftingRecipeType.AdvancedAntStorage,
+        description: 'Increase the storage capacity for ants by 0.5%',
+        cost: {
+          [ResourceType.RockFragment]: 10,
+          [ResourceType.RottenWood]: 15,
+          [ResourceType.Fungus]: 15,
+        },
+
+        storageIncrease: {
+          ant: 0.005,
+        },
+
+        xpPerAction: 50,
+        levelRequired: 25,
+        initialTimePerAction: 10,
+        timePerAction: 10,
+      },
+      {
+        name: CraftingRecipeType.AdvancedAntHill,
+        description: 'Generates 5 ants passively per Ant Hill',
+        cost: {
+          [ResourceType.RockFragment]: 10,
+          [ResourceType.Fungus]: 10,
+          ants: 100,
+        },
+
+        xpPerAction: 100,
+        levelRequired: 50,
+        initialTimePerAction: 20,
+        timePerAction: 20,
+        effect: {
+          antGeneration: 5,
+        },
       },
     ],
     craftedItems: {

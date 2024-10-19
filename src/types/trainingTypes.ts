@@ -57,6 +57,7 @@ export enum CraftingRecipeType {
   AdvancedAntStorage = 'Advanced Ant Storage',
 
   AntHill = 'Ant Hill',
+  AdvancedAntHill = 'Advanced Ant Hill',
 }
 
 export interface TrainingState {
