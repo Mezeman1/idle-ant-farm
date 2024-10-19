@@ -977,6 +977,10 @@ export const useGameStore = defineStore('gameStore', {
         return scaledNumber.toFixed(toFixed) + suffixes[exponent]
       }
 
+      if (toFixed === 0) {
+        toFixed = 2
+      }
+
       // Use E notation for numbers 100 million and above
       return value.toExponential(toFixed)
     },
