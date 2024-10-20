@@ -1,11 +1,11 @@
 // achievementStore.ts or gameStore.ts
 import {defineStore} from 'pinia'
-import {useGameStore} from '@/stores/gameStore'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {toast} from 'vue3-toastify'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useSettingsStore} from '@/stores/settingsStore'
+import BigNumber from 'bignumber.js'
 
 interface Achievement {
   id: string;
@@ -14,123 +14,193 @@ interface Achievement {
   isUnlocked: boolean;
   unlockCondition: () => boolean; // A function to check if the achievement is unlocked
   progress?: () => number; // A function to calculate the progress of an achievement
+  reward?: AchievementReward; // An optional reward for the achievement
+}
+
+interface AchievementReward {
+  description: string;
+  isClaimed: boolean;
+  onClaim: () => void;
 }
 
 export const useAchievementStore = defineStore({
   id: 'achievementStore',
   state: () => ({
+    totals: {
+      seeds: new BigNumber(0),
+      ants: new BigNumber(0),
+      queens: new BigNumber(0),
+      larvae: new BigNumber(0),
+      enemyKills: new BigNumber(0),
+      timesPrestiged: new BigNumber(0),
+    },
     achievements: [
       {
         id: 'first_100_seeds',
         name: 'Seed Collector',
         description: 'Collect 100 seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 100,
-        progress: () => useResourcesStore().resources.seeds / 100,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 100,
+        progress: () => useAchievementStore().totals.seeds / 100,
       },
       {
         id: 'first_1000_seeds',
         name: 'Seed Hoarder',
         description: 'Collect 1,000 seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 1000,
-        progress: () => useResourcesStore().resources.seeds / 1000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 1000,
+        progress: () => useAchievementStore().totals.seeds / 1000,
       },
       {
         id: 'first_10000_seeds',
         name: 'Seed Master',
         description: 'Collect 10,000 seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 10000,
-        progress: () => useResourcesStore().resources.seeds / 10000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 10000,
+        progress: () => useAchievementStore().totals.seeds / 10000,
+
+        reward: {
+          description: 'Ants now produce 10% more seeds.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().productionRates.collectionRateModifier += 0.1
+          },
+        },
       },
       {
         id: 'first_100000_seeds',
         name: 'Seed Tycoon',
         description: 'Collect 100,000 seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 100000,
-        progress: () => useResourcesStore().resources.seeds / 100000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 100000,
+        progress: () => useAchievementStore().totals.seeds / 100000,
+        reward: {
+          description: 'Ants now produce 100% more seeds.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().productionRates.collectionRateModifier += 1
+          },
+        },
       },
       {
         id: 'first_1_million_seeds',
         name: 'Seed Millionaire',
         description: 'Collect 1 million seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 1_000_000,
-        progress: () => useResourcesStore().resources.seeds / 1_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 1_000_000,
+        progress: () => useAchievementStore().totals.seeds / 1_000_000,
+
+        reward: {
+          description: 'Storage capacity for seeds increased by 10%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.seed += 0.1
+          },
+        },
       },
       {
         id: 'first_10_million_seeds',
         name: 'Seed Multimillionaire',
         description: 'Collect 10 million seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 10_000_000,
-        progress: () => useResourcesStore().resources.seeds / 10_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 10_000_000,
+        progress: () => useAchievementStore().totals.seeds / 10_000_000,
+
+        reward: {
+          description: 'Storage capacity for seeds increased by 10%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.seed += 0.1
+          },
+        },
       },
       {
         id: 'first_100_million_seeds',
         name: 'Seed Billionaire',
         description: 'Collect 100 million seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 100_000_000,
-        progress: () => useResourcesStore().resources.seeds / 100_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 100_000_000,
+        progress: () => useAchievementStore().totals.seeds / 100_000_000,
+
+        reward: {
+          description: 'Storage capacity for seeds increased by 50%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.seed += 0.5
+          },
+        },
       },
       {
         id: 'first_1_billion_seeds',
         name: 'Seed Titan',
         description: 'Collect 1 billion seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 1_000_000_000,
-        progress: () => useResourcesStore().resources.seeds / 1_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 1_000_000_000,
+        progress: () => useAchievementStore().totals.seeds / 1_000_000_000,
+
+        reward: {
+          description: 'Storage capacity for seeds increased by 100%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.seed += 1
+          },
+        },
       },
       {
         id: 'first_10_billion_seeds',
         name: 'Seed Overlord',
         description: 'Collect 10 billion seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 10_000_000_000,
-        progress: () => useResourcesStore().resources.seeds / 10_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 10_000_000_000,
+        progress: () => useAchievementStore().totals.seeds / 10_000_000_000,
       },
       {
         id: 'first_100_billion_seeds',
         name: 'Seed Magnate',
         description: 'Collect 100 billion seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 100_000_000_000,
-        progress: () => useResourcesStore().resources.seeds / 100_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 100_000_000_000,
+        progress: () => useAchievementStore().totals.seeds / 100_000_000_000,
       },
       {
         id: 'first_1_trillion_seeds',
         name: 'Seed Emperor',
         description: 'Collect 1 trillion seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 1_000_000_000_000,
-        progress: () => useResourcesStore().resources.seeds / 1_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 1_000_000_000_000,
+        progress: () => useAchievementStore().totals.seeds / 1_000_000_000_000,
       },
       {
         id: 'first_10_trillion_seeds',
         name: 'Seed God',
         description: 'Collect 10 trillion seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 10_000_000_000_000,
-        progress: () => useResourcesStore().resources.seeds / 10_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 10_000_000_000_000,
+        progress: () => useAchievementStore().totals.seeds / 10_000_000_000_000,
+
+        reward: {
+          description: 'Storage capacity for seeds increased by 100%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.seed += 1
+          },
+        },
       },
       {
         id: 'first_100_trillion_seeds',
         name: 'Seed Deity',
         description: 'Collect 100 trillion seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 100_000_000_000_000,
-        progress: () => useResourcesStore().resources.seeds / 100_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 100_000_000_000_000,
+        progress: () => useAchievementStore().totals.seeds / 100_000_000_000_000,
       },
       {
         id: 'first_1_quadrillion_seeds',
         name: 'Seed Eternal',
         description: 'Collect 1 quadrillion seeds.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.seeds >= 1_000_000_000_000_000,
-        progress: () => useResourcesStore().resources.seeds / 1_000_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.seeds >= 1_000_000_000_000_000,
+        progress: () => useAchievementStore().totals.seeds / 1_000_000_000_000_000,
       },
 
       // Ant Creation Achievements
@@ -139,235 +209,345 @@ export const useAchievementStore = defineStore({
         name: 'Ant Keeper',
         description: 'Create 50 ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 50,
-        progress: () => useResourcesStore().resources.ants / 50,
+        unlockCondition: () => useAchievementStore().totals.ants >= 50,
+        progress: () => useAchievementStore().totals.ants / 50,
+
+        reward: {
+          description: 'Ant storage capacity increased by 5%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.ant += 0.05
+          },
+        },
       },
       {
         id: 'first_500_ants',
         name: 'Ant Commander',
         description: 'Create 500 ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 500,
-        progress: () => useResourcesStore().resources.ants / 500,
+        unlockCondition: () => useAchievementStore().totals.ants >= 500,
+        progress: () => useAchievementStore().totals.ants / 500,
+
+        reward: {
+          description: 'Ant storage capacity increased by 5%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.ant += 0.05
+          },
+        },
       },
       {
         id: 'first_5000_ants',
         name: 'Ant General',
         description: 'Create 5,000 ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 5000,
-        progress: () => useResourcesStore().resources.ants / 5000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 5000,
+        progress: () => useAchievementStore().totals.ants / 5000,
+
+        reward: {
+          description: 'Ant storage capacity increased by 10% and ants are now 10% stronger.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.ant += 0.1
+            const adventureStore = useAdventureStore()
+            adventureStore.armyAttackModifier += 0.1
+            adventureStore.armyDefenseModifier += 0.1
+            adventureStore.armyMaxHealthModifier += 0.1
+            adventureStore.regenMultiplier += 0.1
+          },
+        },
       },
       {
         id: 'first_50000_ants',
         name: 'Ant Warlord',
         description: 'Create 50,000 ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 50000,
-        progress: () => useResourcesStore().resources.ants / 50000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 50000,
+        progress: () => useAchievementStore().totals.ants / 50000,
+
+        reward: {
+          description: 'Ant storage capacity increased by 10% and ants are now 10% stronger.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.ant += 0.1
+            const adventureStore = useAdventureStore()
+            adventureStore.armyAttackModifier += 0.1
+            adventureStore.armyDefenseModifier += 0.1
+            adventureStore.armyMaxHealthModifier += 0.1
+            adventureStore.regenMultiplier += 0.1
+          },
+        },
       },
       {
         id: 'first_500000_ants',
         name: 'Ant King',
         description: 'Create 500,000 ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 500000,
-        progress: () => useResourcesStore().resources.ants / 500000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 500000,
+        progress: () => useAchievementStore().totals.ants / 500000,
+
+        reward: {
+          description: 'Ants are now 100% stronger.',
+          isClaimed: false,
+          onClaim: () => {
+            const adventureStore = useAdventureStore()
+            adventureStore.armyAttackModifier += 1
+            adventureStore.armyDefenseModifier += 1
+            adventureStore.armyMaxHealthModifier += 1
+            adventureStore.regenMultiplier += 1
+          },
+        },
       },
       {
         id: 'first_5_million_ants',
         name: 'Ant Emperor',
         description: 'Create 5 million ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 5_000_000,
-        progress: () => useResourcesStore().resources.ants / 5_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 5_000_000,
+        progress: () => useAchievementStore().totals.ants / 5_000_000,
+
+        reward: {
+          description: 'Storage capacity for seeds increased by 100% and storage capacity for ants increased by 100%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.seed += 1
+            useResourcesStore().achievementModifiers.storage.ant += 1
+          },
+        },
       },
       {
         id: 'first_50_million_ants',
         name: 'Ant Overlord',
         description: 'Create 50 million ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 50_000_000,
-        progress: () => useResourcesStore().resources.ants / 50_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 50_000_000,
+        progress: () => useAchievementStore().totals.ants / 50_000_000,
       },
       {
         id: 'first_500_million_ants',
         name: 'Ant God',
         description: 'Create 500 million ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 500_000_000,
-        progress: () => useResourcesStore().resources.ants / 500_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 500_000_000,
+        progress: () => useAchievementStore().totals.ants / 500_000_000,
       },
       {
         id: 'first_5_billion_ants',
         name: 'Ant Supreme',
         description: 'Create 5 billion ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 5_000_000_000,
-        progress: () => useResourcesStore().resources.ants / 5_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 5_000_000_000,
+        progress: () => useAchievementStore().totals.ants / 5_000_000_000,
       },
       {
         id: 'first_50_billion_ants',
         name: 'Ant Titan',
         description: 'Create 50 billion ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 50_000_000_000,
-        progress: () => useResourcesStore().resources.ants / 50_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 50_000_000_000,
+        progress: () => useAchievementStore().totals.ants / 50_000_000_000,
       },
       {
         id: 'first_500_billion_ants',
         name: 'Ant Immortal',
         description: 'Create 500 billion ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 500_000_000_000,
-        progress: () => useResourcesStore().resources.ants / 500_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 500_000_000_000,
+        progress: () => useAchievementStore().totals.ants / 500_000_000_000,
       },
       {
         id: 'first_5_trillion_ants',
         name: 'Ant Deity',
         description: 'Create 5 trillion ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 5_000_000_000_000,
-        progress: () => useResourcesStore().resources.ants / 5_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 5_000_000_000_000,
+        progress: () => useAchievementStore().totals.ants / 5_000_000_000_000,
       },
       {
         id: 'first_50_trillion_ants',
         name: 'Ant Eternal',
         description: 'Create 50 trillion ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 50_000_000_000_000,
-        progress: () => useResourcesStore().resources.ants / 50_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 50_000_000_000_000,
+        progress: () => useAchievementStore().totals.ants / 50_000_000_000_000,
       },
       {
         id: 'first_500_trillion_ants',
         name: 'Ant Infinity',
         description: 'Create 500 trillion ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 500_000_000_000_000,
-        progress: () => useResourcesStore().resources.ants / 500_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 500_000_000_000_000,
+        progress: () => useAchievementStore().totals.ants / 500_000_000_000_000,
       },
       {
         id: 'first_5_quadrillion_ants',
         name: 'Ant Omnipotent',
         description: 'Create 5 quadrillion ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 5_000_000_000_000_000,
-        progress: () => useResourcesStore().resources.ants / 5_000_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 5_000_000_000_000_000,
+        progress: () => useAchievementStore().totals.ants / 5_000_000_000_000_000,
       },
       {
         id: 'first_50_quadrillion_ants',
         name: 'Ant Eternal',
         description: 'Create 50 quadrillion ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 50_000_000_000_000_000,
-        progress: () => useResourcesStore().resources.ants / 50_000_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 50_000_000_000_000_000,
+        progress: () => useAchievementStore().totals.ants / 50_000_000_000_000_000,
       },
       {
         id: 'first_500_quadrillion_ants',
         name: 'Ant Universal',
         description: 'Create 500 quadrillion ants.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.ants >= 500_000_000_000_000_000,
-        progress: () => useResourcesStore().resources.ants / 500_000_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.ants >= 500_000_000_000_000_000,
+        progress: () => useAchievementStore().totals.ants / 500_000_000_000_000_000,
       },
 
-      // Queen Creation Achievements
       // Queen Creation Achievements
       {
         id: 'create_1_queen',
         name: 'Royalty Raiser',
         description: 'Create 1 Queen ant.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 1,
-        progress: () => useResourcesStore().resources.queens / 1,
+        unlockCondition: () => useAchievementStore().totals.queens >= 1,
+        progress: () => useAchievementStore().totals.queens / 1,
       },
       {
         id: 'create_5_queens',
         name: 'Queen Caretaker',
         description: 'Create 5 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 5,
-        progress: () => useResourcesStore().resources.queens / 5,
+        unlockCondition: () => useAchievementStore().totals.queens >= 5,
+        progress: () => useAchievementStore().totals.queens / 5,
       },
       {
         id: 'create_10_queens',
         name: 'Queen Commander',
         description: 'Create 10 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 10,
-        progress: () => useResourcesStore().resources.queens / 10,
+        unlockCondition: () => useAchievementStore().totals.queens >= 10,
+        progress: () => useAchievementStore().totals.queens / 10,
+      },
+      {
+        id: 'create_15_queens',
+        name: 'Queen Keeper',
+        description: 'Create 15 Queens.',
+        isUnlocked: false,
+        unlockCondition: () => useAchievementStore().totals.queens >= 15,
+        progress: () => useAchievementStore().totals.queens / 15,
+
+        reward: {
+          description: 'Queen storage capacity increased by 10%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.queen += 0.1
+          },
+        },
       },
       {
         id: 'create_25_queens',
         name: 'Royal Overseer',
         description: 'Create 25 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 25,
-        progress: () => useResourcesStore().resources.queens / 25,
+        unlockCondition: () => useAchievementStore().totals.queens >= 25,
+        progress: () => useAchievementStore().totals.queens / 25,
+
+        reward: {
+          description: 'Queens now produce 10% more larvae.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().productionRates.larvaeProductionModifier += 0.1
+          },
+        },
       },
       {
         id: 'create_50_queens',
         name: 'Queen Warden',
         description: 'Create 50 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 50,
-        progress: () => useResourcesStore().resources.queens / 50,
+        unlockCondition: () => useAchievementStore().totals.queens >= 50,
+        progress: () => useAchievementStore().totals.queens / 50,
+
+        reward: {
+          description: 'Queen storage capacity increased by 10%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.queen += 0.1
+          },
+        },
       },
       {
         id: 'create_100_queens',
         name: 'Queen Regent',
         description: 'Create 100 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 100,
-        progress: () => useResourcesStore().resources.queens / 100,
+        unlockCondition: () => useAchievementStore().totals.queens >= 100,
+        progress: () => useAchievementStore().totals.queens / 100,
+
+        reward: {
+          description: 'Queen storage capacity increased by 50%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.queen += 0.5
+          },
+        },
       },
       {
         id: 'create_250_queens',
         name: 'Royal Monarch',
         description: 'Create 250 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 250,
-        progress: () => useResourcesStore().resources.queens / 250,
+        unlockCondition: () => useAchievementStore().totals.queens >= 250,
+        progress: () => useAchievementStore().totals.queens / 250,
+
+        reward: {
+          description: 'Queens now produce 50% more larvae.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().productionRates.larvaeProductionModifier += 0.5
+          },
+        },
       },
       {
         id: 'create_500_queens',
         name: 'Queen Sovereign',
         description: 'Create 500 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 500,
-        progress: () => useResourcesStore().resources.queens / 500,
+        unlockCondition: () => useAchievementStore().totals.queens >= 500,
+        progress: () => useAchievementStore().totals.queens / 500,
       },
       {
         id: 'create_1000_queens',
         name: 'Queen Empress',
         description: 'Create 1,000 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 1000,
-        progress: () => useResourcesStore().resources.queens / 1000,
+        unlockCondition: () => useAchievementStore().totals.queens >= 1000,
+        progress: () => useAchievementStore().totals.queens / 1000,
       },
       {
         id: 'create_5000_queens',
         name: 'Queen Supreme',
         description: 'Create 5,000 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 5000,
-        progress: () => useResourcesStore().resources.queens / 5000,
+        unlockCondition: () => useAchievementStore().totals.queens >= 5000,
+        progress: () => useAchievementStore().totals.queens / 5000,
       },
       {
         id: 'create_10000_queens',
         name: 'Queen Eternal',
         description: 'Create 10,000 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 10000,
-        progress: () => useResourcesStore().resources.queens / 10000,
+        unlockCondition: () => useAchievementStore().totals.queens >= 10000,
+        progress: () => useAchievementStore().totals.queens / 10000,
       },
       {
         id: 'create_50000_queens',
         name: 'Queen Infinite',
         description: 'Create 50,000 Queens.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.queens >= 50000,
-        progress: () => useResourcesStore().resources.queens / 50000,
+        unlockCondition: () => useAchievementStore().totals.queens >= 50000,
+        progress: () => useAchievementStore().totals.queens / 50000,
       },
 
       // Larvae Production Achievements
@@ -376,131 +556,152 @@ export const useAchievementStore = defineStore({
         name: 'Larvae Amateur',
         description: 'Produce 10 larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 10,
-        progress: () => useResourcesStore().resources.larvae / 10,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 10,
+        progress: () => useAchievementStore().totals.larvae / 10,
       },
       {
         id: 'first_100_larvae',
         name: 'Larvae Producer',
         description: 'Produce 100 larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 100,
-        progress: () => useResourcesStore().resources.larvae / 100,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 100,
+        progress: () => useAchievementStore().totals.larvae / 100,
       },
       {
         id: 'produce_1000_larvae',
         name: 'Larvae Breeder',
         description: 'Produce 1,000 larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 1000,
-        progress: () => useResourcesStore().resources.larvae / 1000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 1000,
+        progress: () => useAchievementStore().totals.larvae / 1000,
+
+        reward: {
+          description: 'Larvae storage capacity increased by 10%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.larvae += 0.1
+          },
+        },
       },
       {
         id: 'produce_10000_larvae',
         name: 'Larvae Master',
         description: 'Produce 10,000 larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 10000,
-        progress: () => useResourcesStore().resources.larvae / 10000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 10000,
+        progress: () => useAchievementStore().totals.larvae / 10000,
+        reward: {
+          description: 'Larvae storage capacity increased by 10%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.larvae += 0.1
+          },
+        },
       },
       {
         id: 'produce_100000_larvae',
         name: 'Larvae Lord',
         description: 'Produce 100,000 larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 100000,
-        progress: () => useResourcesStore().resources.larvae / 100000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 100000,
+        progress: () => useAchievementStore().totals.larvae / 100000,
       },
       {
         id: 'produce_1_million_larvae',
         name: 'Larvae Magnate',
         description: 'Produce 1 million larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 1_000_000,
-        progress: () => useResourcesStore().resources.larvae / 1_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 1_000_000,
+        progress: () => useAchievementStore().totals.larvae / 1_000_000,
+        reward: {
+          description: 'Larvae storage capacity increased by 50%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.larvae += 0.5
+          },
+        },
       },
       {
         id: 'produce_10_million_larvae',
         name: 'Larvae Emperor',
         description: 'Produce 10 million larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 10_000_000,
-        progress: () => useResourcesStore().resources.larvae / 10_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 10_000_000,
+        progress: () => useAchievementStore().totals.larvae / 10_000_000,
       },
       {
         id: 'produce_100_million_larvae',
         name: 'Larvae Overlord',
         description: 'Produce 100 million larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 100_000_000,
-        progress: () => useResourcesStore().resources.larvae / 100_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 100_000_000,
+        progress: () => useAchievementStore().totals.larvae / 100_000_000,
       },
       {
         id: 'produce_1_billion_larvae',
         name: 'Larvae Titan',
         description: 'Produce 1 billion larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 1_000_000_000,
-        progress: () => useResourcesStore().resources.larvae / 1_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 1_000_000_000,
+        progress: () => useAchievementStore().totals.larvae / 1_000_000_000,
       },
       {
         id: 'produce_10_billion_larvae',
         name: 'Larvae God',
         description: 'Produce 10 billion larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 10_000_000_000,
-        progress: () => useResourcesStore().resources.larvae / 10_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 10_000_000_000,
+        progress: () => useAchievementStore().totals.larvae / 10_000_000_000,
       },
       {
         id: 'produce_100_billion_larvae',
         name: 'Larvae Eternal',
         description: 'Produce 100 billion larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 100_000_000_000,
-        progress: () => useResourcesStore().resources.larvae / 100_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 100_000_000_000,
+        progress: () => useAchievementStore().totals.larvae / 100_000_000_000,
       },
       {
         id: 'produce_1_trillion_larvae',
         name: 'Larvae Infinite',
         description: 'Produce 1 trillion larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 1_000_000_000_000,
-        progress: () => useResourcesStore().resources.larvae / 1_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 1_000_000_000_000,
+        progress: () => useAchievementStore().totals.larvae / 1_000_000_000_000,
       },
       {
         id: 'produce_10_trillion_larvae',
         name: 'Larvae Deity',
         description: 'Produce 10 trillion larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 10_000_000_000_000,
-        progress: () => useResourcesStore().resources.larvae / 10_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 10_000_000_000_000,
+        progress: () => useAchievementStore().totals.larvae / 10_000_000_000_000,
       },
       {
         id: 'produce_100_trillion_larvae',
         name: 'Larvae Supreme',
         description: 'Produce 100 trillion larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 100_000_000_000_000,
-        progress: () => useResourcesStore().resources.larvae / 100_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 100_000_000_000_000,
+        progress: () => useAchievementStore().totals.larvae / 100_000_000_000_000,
       },
       {
         id: 'produce_1_quadrillion_larvae',
         name: 'Larvae Omnipotent',
         description: 'Produce 1 quadrillion larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 1_000_000_000_000_000,
-        progress: () => useResourcesStore().resources.larvae / 1_000_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 1_000_000_000_000_000,
+        progress: () => useAchievementStore().totals.larvae / 1_000_000_000_000_000,
       },
       {
         id: 'produce_10_quadrillion_larvae',
         name: 'Larvae Universal',
         description: 'Produce 10 quadrillion larvae.',
         isUnlocked: false,
-        unlockCondition: () => useResourcesStore().resources.larvae >= 10_000_000_000_000_000,
-        progress: () => useResourcesStore().resources.larvae / 10_000_000_000_000_000,
+        unlockCondition: () => useAchievementStore().totals.larvae >= 10_000_000_000_000_000,
+        progress: () => useAchievementStore().totals.larvae / 10_000_000_000_000_000,
       },
 
-      // Adventure Mode Achievements
       // Enemy Kill Achievements
       {
         id: 'defeat_10_enemies',
@@ -525,6 +726,18 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAdventureStore().enemyKillCount >= 1000,
         progress: () => useAdventureStore().enemyKillCount / 1000,
+
+        reward: {
+          description: 'Ants are now 10% stronger.',
+          isClaimed: false,
+          onClaim: () => {
+            const adventureStore = useAdventureStore()
+            adventureStore.armyAttackModifier += 0.1
+            adventureStore.armyDefenseModifier += 0.1
+            adventureStore.armyMaxHealthModifier += 0.1
+            adventureStore.regenMultiplier += 0.1
+          },
+        },
       },
       {
         id: 'defeat_10000_enemies',
@@ -541,6 +754,18 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAdventureStore().enemyKillCount >= 100000,
         progress: () => useAdventureStore().enemyKillCount / 100000,
+
+        reward: {
+          description: 'Ants are now 15% stronger.',
+          isClaimed: false,
+          onClaim: () => {
+            const adventureStore = useAdventureStore()
+            adventureStore.armyAttackModifier += 0.15
+            adventureStore.armyDefenseModifier += 0.15
+            adventureStore.armyMaxHealthModifier += 0.15
+            adventureStore.regenMultiplier += 0.15
+          },
+        },
       },
       {
         id: 'defeat_1_million_enemies',
@@ -549,6 +774,18 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAdventureStore().enemyKillCount >= 1_000_000,
         progress: () => useAdventureStore().enemyKillCount / 1_000_000,
+
+        reward: {
+          description: 'Ants are now 100% stronger.',
+          isClaimed: false,
+          onClaim: () => {
+            const adventureStore = useAdventureStore()
+            adventureStore.armyAttackModifier += 1
+            adventureStore.armyDefenseModifier += 1
+            adventureStore.armyMaxHealthModifier += 1
+            adventureStore.regenMultiplier += 1
+          },
+        },
       },
       {
         id: 'defeat_10_million_enemies',
@@ -639,6 +876,13 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => usePrestigeStore().timesPrestiged >= 10,
         progress: () => usePrestigeStore().timesPrestiged / 10,
+        reward: {
+          description: 'Prestige now grans 10% more mutagen',
+          isClaimed: false,
+          onClaim: () => {
+            usePrestigeStore().prestigeMultiplierNumber += 0.1
+          },
+        },
       },
       {
         id: 'prestige_50_times',
@@ -655,6 +899,14 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => usePrestigeStore().timesPrestiged >= 100,
         progress: () => usePrestigeStore().timesPrestiged / 100,
+
+        reward: {
+          description: 'Prestige now grans 50% more mutagen',
+          isClaimed: false,
+          onClaim: () => {
+            usePrestigeStore().prestigeMultiplierNumber += 0.5
+          },
+        },
       },
       {
         id: 'prestige_500_times',
@@ -705,8 +957,23 @@ export const useAchievementStore = defineStore({
         progress: () => usePrestigeStore().timesPrestiged / 100_000,
       },
     ] as Achievement[],
+
+    rewards: [] as AchievementReward[],
   }),
   actions: {
+    claimReward(reward: AchievementReward) {
+      reward.claimed = true
+      reward.onClaim()
+
+      this.rewards.push(reward)
+    },
+    addToTotal(type: string, amount: BigNumber) {
+      if (!this.totals[type]) {
+        this.totals[type] = new BigNumber(0)
+      }
+
+      this.totals[type] = this.totals[type].plus(amount)
+    },
     checkAchievements() {
       const settingsStore = useSettingsStore()
       this.achievements.forEach((achievement) => {
@@ -718,11 +985,16 @@ export const useAchievementStore = defineStore({
               position: 'top-right',
             })
           }
+
+          if (achievement.reward) {
+            this.claimReward(achievement.reward)
+          }
         }
       })
     },
     getAchievementState() {
       return {
+        totals: this.totals,
         achievements: this.achievements.map(achievement => ({
           id: achievement.id,
           isUnlocked: achievement.isUnlocked,
@@ -735,6 +1007,26 @@ export const useAchievementStore = defineStore({
         if (savedAchievement) {
           achievement.isUnlocked = savedAchievement.isUnlocked
         }
+      })
+
+      this.achievements.forEach((achievement) => {
+        if (achievement.isUnlocked) {
+          if (achievement.reward) {
+            this.claimReward(achievement.reward)
+          }
+        }
+      })
+
+      if (!state.totals) {
+        return
+      }
+
+      Object.keys(state.totals).forEach((key) => {
+        if (!this.totals[key]) {
+          this.totals[key] = new BigNumber(0)
+        }
+
+        this.totals[key] = new BigNumber(state.totals[key])
       })
     },
     resetAchievements() {

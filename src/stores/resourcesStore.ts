@@ -4,6 +4,7 @@ import {toast} from 'vue3-toastify'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 import {useTrainingStore} from '@/stores/trainingStore'
+import {useAchievementStore} from '@/stores/achievementStore'
 
 const MAX_SAFE_VALUE = Number.MAX_VALUE
 type AntTypes = 'workers' | 'soldiers' | 'royalQueens'
@@ -41,6 +42,17 @@ export const useResourcesStore = defineStore('resources', {
       ant: 1,
       queen: 1,
       eliteAnt: 1,
+    },
+
+    achievementModifiers: {
+      storage: {
+        seed: 1,
+        larvae: 1,
+        ant: 1,
+        queen: 1,
+      },
+
+      // Production is set directly in productionRates, since the storageModifiers are set on each upgrade.
     },
 
     upgrades: {
@@ -143,16 +155,19 @@ export const useResourcesStore = defineStore('resources', {
     },
     maxAnts: (state) => {
       if (state.resources.antHousing === 0) {
-        return Math.floor(state.storage.maxAnts * state.storageModifiers.ant)
+        return Math.floor(state.storage.maxAnts * state.storageModifiers.ant * state.achievementModifiers.storage.ant)
       }
 
-      return Math.floor(state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant)
+      return Math.floor(state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant * state.achievementModifiers.storage.ant)
     },
     maxSeeds: (state) => {
-      return Math.floor(state.storage.maxSeeds * state.storageModifiers.seed)
+      return Math.floor(state.storage.maxSeeds * state.storageModifiers.seed * state.achievementModifiers.storage.seed)
     },
     maxLarvae: (state) => {
-      return Math.floor(state.storage.maxLarvae * state.storageModifiers.larvae)
+      return Math.floor(state.storage.maxLarvae * state.storageModifiers.larvae * state.achievementModifiers.storage.larvae)
+    },
+    maxQueens: (state) => {
+      return Math.floor(state.storage.maxQueens * state.storageModifiers.queen * state.achievementModifiers.storage.queen)
     },
     maxWorkers: (state) => {
       return Math.floor(state.storage.maxAnts * 0.01)
@@ -271,6 +286,7 @@ export const useResourcesStore = defineStore('resources', {
     createAnts() {
       if (this.resources.larvae >= this.resourceCosts.larvaCostPerAnt && this.resources.seeds >= this.resourceCosts.seedCostPerAnt && this.resources.ants < Math.floor(this.maxAnts)) {
         this.resources.ants += 1
+        useAchievementStore().addToTotal('ants', 1)
         this.resources.larvae -= this.resourceCosts.larvaCostPerAnt
         this.resources.seeds -= this.resourceCosts.seedCostPerAnt
         return true
@@ -300,6 +316,8 @@ export const useResourcesStore = defineStore('resources', {
         this.resources.ants += antsToCreate
         this.resources.larvae -= antsToCreate * this.resourceCosts.larvaCostPerAnt
         this.resources.seeds -= antsToCreate * this.resourceCosts.seedCostPerAnt
+
+        useAchievementStore().addToTotal('ants', antsToCreate)
       }
     },
 
@@ -380,17 +398,21 @@ export const useResourcesStore = defineStore('resources', {
     },
     // Function to buy more queens
     buyQueen() {
-      if (this.resources.ants >= this.resourceCosts.antCostPerQueen && this.resources.seeds >= this.resourceCosts.seedCostPerQueen && this.resources.queens < Math.floor(this.storage.maxQueens)) {
+      if (this.resources.ants >= this.resourceCosts.antCostPerQueen && this.resources.seeds >= this.resourceCosts.seedCostPerQueen && this.resources.queens < Math.floor(this.maxQueens)) {
         this.resources.queens += 1
         this.resources.ants -= this.resourceCosts.antCostPerQueen
         this.resources.seeds -= this.resourceCosts.seedCostPerQueen
+
+        useAchievementStore().addToTotal('queens', 1)
         return true
       }
 
       return false
     },
     addQueen(amount = 1) {
-      this.resources.queens = Math.min(this.resources.queens + amount, this.storage.maxQueens)
+      this.resources.queens = Math.min(this.resources.queens + amount, this.maxQueens)
+
+      useAchievementStore().addToTotal('queens', amount)
     },
     // Buy max queens based on available ants and seeds
     buyMaxQueens(fromPrestige = false) {
@@ -403,7 +425,7 @@ export const useResourcesStore = defineStore('resources', {
         return
       }
 
-      const availableQueenSpace = Math.floor(this.storage.maxQueens) - this.resources.queens
+      const availableQueenSpace = Math.floor(this.maxQueens) - this.resources.queens
       const maxPurchasableQueensByAnts = Math.floor(this.resources.ants / this.resourceCosts.antCostPerQueen)
       const maxPurchasableQueensBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerQueen)
 
@@ -415,6 +437,8 @@ export const useResourcesStore = defineStore('resources', {
         this.resources.queens += queensToBuy
         this.resources.ants -= queensToBuy * this.resourceCosts.antCostPerQueen
         this.resources.seeds -= queensToBuy * this.resourceCosts.seedCostPerQueen
+
+        useAchievementStore().addToTotal('queens', queensToBuy)
       }
     },
     // Collect seeds manually, but respect the seed cap
@@ -558,6 +582,7 @@ export const useResourcesStore = defineStore('resources', {
         if (wholeLarvae > 0) {
           this.resources.larvae = Math.min(this.resources.larvae + wholeLarvae, this.maxLarvae)
           this.accumulators.larvaeAccumulator -= wholeLarvae // Subtract the whole units from the accumulator
+          useAchievementStore().addToTotal('larvae', wholeLarvae)
 
           this.tryCollectJelly()
         }
@@ -576,6 +601,8 @@ export const useResourcesStore = defineStore('resources', {
         if (wholeSeeds > 0) {
           this.resources.seeds = Math.min(this.resources.seeds + wholeSeeds, this.maxSeeds)
           this.accumulators.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
+
+          useAchievementStore().addToTotal('seeds', wholeSeeds)
         }
       }
 
@@ -588,6 +615,8 @@ export const useResourcesStore = defineStore('resources', {
       if (wholeAnts > 0) {
         this.resources.ants = Math.min(this.resources.ants + wholeAnts, this.maxAnts)
         this.accumulators.antAccumulator -= wholeAnts
+
+        useAchievementStore().addToTotal('ants', wholeAnts)
       }
     },
 
@@ -595,7 +624,7 @@ export const useResourcesStore = defineStore('resources', {
       this.resources.seeds = Math.min(this.resources.seeds, this.maxSeeds)
       this.resources.larvae = Math.min(this.resources.larvae, this.maxLarvae)
       this.resources.ants = Math.min(this.resources.ants, this.maxAnts)
-      this.resources.queens = Math.min(this.resources.queens, this.storage.maxQueens)
+      this.resources.queens = Math.min(this.resources.queens, this.maxQueens)
       this.resources.eliteAnts = Math.min(this.resources.eliteAnts, this.storage.maxEliteAnts)
     },
 

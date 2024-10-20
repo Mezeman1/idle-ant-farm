@@ -378,8 +378,8 @@
         <div class="flex flex-wrap items-start justify-between w-full space-y-2">
           <div class="flex flex-col gap-2 w-full ">
             <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.queens, 0) }}/{{ formatNumber(resourcesStore.storage.maxQueens, 0) }}
-              ({{ formatNumber(resourcesStore.resources.queens / resourcesStore.storage.maxQueens * 100, 1) }}%)
+              Count: {{ formatNumber(resourcesStore.resources.queens, 0) }}/{{ formatNumber(resourcesStore.maxQueens, 0) }}
+              ({{ formatNumber(resourcesStore.resources.queens / resourcesStore.maxQueens * 100, 1) }}%)
             </p>
           </div>
           <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
@@ -695,7 +695,7 @@ const seedCollectingDisabled = computed(() => resourcesStore.resources.seeds >= 
 const createLarvaeDisabled = computed(() => resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerLarva || resourcesStore.resources.larvae >= resourcesStore.maxLarvae)
 const createAntDisabled = computed(() => resourcesStore.resources.larvae < resourcesStore.resourceCosts.larvaCostPerAnt || resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerAnt || resourcesStore.resources.ants >= resourcesStore.maxAnts)
 const createEliteAntDisabled = computed(() => resourcesStore.resources.larvae < resourcesStore.resourceCosts.larvaCostPerEliteAnt || resourcesStore.resources.seeds < resourcesStore.resourceCosts.seedCostPerEliteAnt || resourcesStore.resources.eliteAnts >= resourcesStore.storage.maxEliteAnts)
-const createQueenDisabled = computed(() => resourcesStore.resources.ants < 50 || resourcesStore.resources.seeds < 500 || resourcesStore.resources.queens >= resourcesStore.storage.maxQueens)
+const createQueenDisabled = computed(() => resourcesStore.resources.ants < 50 || resourcesStore.resources.seeds < 500 || resourcesStore.resources.queens >= resourcesStore.maxQueens)
 </script>
 
 <style scoped>

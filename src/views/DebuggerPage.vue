@@ -160,9 +160,9 @@ const addItemToInventory = () => {
 // Function to max all resources
 const maxAllResources = () => {
   resourcesStore.resources.seeds = resourcesStore.maxSeeds
-  resourcesStore.resources.larvae = resourcesStore.storage.maxLarvae
+  resourcesStore.resources.larvae = resourcesStore.maxLarvae
   resourcesStore.resources.ants = resourcesStore.maxAnts
-  resourcesStore.resources.queens = resourcesStore.storage.maxQueens
+  resourcesStore.resources.queens = resourcesStore.maxQueens
   if (gameStore.eliteAntsUnlocked) {
     resourcesStore.resources.eliteAnts = resourcesStore.storage.maxEliteAnts
   }

@@ -7,6 +7,7 @@ import {toast} from 'vue3-toastify'
 import {formatTime} from '@/utils'
 import firebase from 'firebase/compat'
 import functions = firebase.functions;
+import {useAchievementStore} from '@/stores/achievementStore'
 
 interface PrestigeShopItem {
   id: string
@@ -495,6 +496,7 @@ export const usePrestigeStore = defineStore('prestige', {
         // Add earned prestige points
         this.prestigePoints += earnedPrestigePoints
         this.timesPrestiged += 1
+        useAchievementStore().addToTotal('timesPrestiged', 1)
         this.lastPrestige = Date.now()
 
         // Reset the game state for prestige without deleting the Firestore doc

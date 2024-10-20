@@ -11,6 +11,7 @@ import {useBossStore} from '@/stores/bossStore'
 import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useTrainingStore} from '@/stores/trainingStore'
 import {ForagingArea, Skill} from '@/types/trainingTypes'
+import {useAchievementStore} from '@/stores/achievementStore'
 
 interface KillCounts {
   [key: string]: number
@@ -391,6 +392,8 @@ export const useAdventureStore = defineStore('adventureStore', {
       }
 
       this.enemyKillCount += 1
+
+      useAchievementStore().addToTotal('enemyKills', 1)
     },
     async handleEnemyDrop() {
       const settingsStore = useSettingsStore()
