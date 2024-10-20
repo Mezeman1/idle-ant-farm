@@ -357,11 +357,10 @@
       </div>
       <div
         v-else
-        v-tooltip="'Maybe it has something to do with how many times we\'ve prestiged?'"
         class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
       >
         <h2>
-          LOCKED
+          LOCKED (Unlocked through prestige shop)
         </h2>
       </div>
 
@@ -608,7 +607,7 @@
         class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
       >
         <h2>
-          LOCKED
+          LOCKED (Unlocked through prestige shop)
         </h2>
       </div>
 
