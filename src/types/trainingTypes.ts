@@ -12,7 +12,12 @@ export enum ForagingArea {
   None = 'None',
   Wasteland = 'Wasteland',
   Forest = 'Forest',
+  LeafcutterGrove = 'Leafcutter Grove',
   Mountains = 'Mountains',
+  Volcano = 'Volcano',
+  Underworld = 'Underworld',
+  ArcticTundra = 'Arctic Tundra',
+  AbyssalDepths = 'Abyssal Depths',
 }
 
 export interface Seed {

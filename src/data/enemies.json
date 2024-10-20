@@ -35,13 +35,6 @@
             "name": "Worker Helm",
             "chance": 0.05,
             "amountBetween": [1, 1]
-          },
-          {
-            "name": "Worker Helm II",
-            "chance": 0.05,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
         ]
       },
@@ -77,20 +70,6 @@
             "name": "Worker Pickaxe",
             "chance": 0.05,
             "amountBetween": [1, 1]
-          },
-          {
-            "name": "Worker Pickaxe II",
-            "chance": 0.05,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
-          },
-          {
-            "name": "Worker Body II",
-            "chance": 0.05,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
         ]
       },
@@ -133,20 +112,6 @@
             "name": "Worker Gloves",
             "chance": 0.05,
             "amountBetween": [1, 1]
-          },
-          {
-            "name": "Worker Legs II",
-            "chance": 0.05,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
-          },
-          {
-            "name": "Worker Gloves II",
-            "chance": 0.05,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
         ],
         "effectChances": [
@@ -180,13 +145,6 @@
             "name": "Worker Shield",
             "chance": 0.05,
             "amountBetween": [1, 1]
-          },
-          {
-            "name": "Worker Shield II",
-            "chance": 0.05,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
         ]
       }
@@ -223,13 +181,6 @@
             "name": "Soldier Helm",
             "chance": 0.04,
             "amountBetween": [1, 1]
-          },
-          {
-            "name": "Soldier Helm II",
-            "chance": 0.04,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
         ]
       },
@@ -255,13 +206,6 @@
             "name": "Soldier Body",
             "chance": 0.04,
             "amountBetween": [1, 1]
-          },
-          {
-            "name": "Soldier Body II",
-            "chance": 0.04,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
         ]
       },
@@ -287,13 +231,6 @@
             "name": "Soldier Legs",
             "chance": 0.04,
             "amountBetween": [1, 1]
-          },
-          {
-            "name": "Soldier Legs II",
-            "chance": 0.04,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
         ]
       },
@@ -324,13 +261,6 @@
             "name": "Soldier Shield",
             "chance": 0.03,
             "amountBetween": [1, 1]
-          },
-          {
-            "name": "Soldier Shield II",
-            "chance": 0.03,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
         ]
       },
@@ -369,13 +299,6 @@
             "name": "Soldier Sword",
             "chance": 0.02,
             "amountBetween": [1, 1]
-          },
-          {
-            "name": "Soldier Sword II",
-            "chance": 0.02,
-            "amountBetween": [1, 1],
-            "unlockedWhenContext": "evolutionAtLeastLeafcutter",
-            "unlockText": "Unlocked when evolved to at least Leafcutter Ant."
           }
         ]
       }

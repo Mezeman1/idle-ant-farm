@@ -690,6 +690,15 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.larvae >= 1_000_000_000_000,
         progress: () => useAchievementStore().totals.larvae / 1_000_000_000_000,
+
+        reward: {
+          description: 'You\'re an achievement hunter, ha? Increases both larvae storage capacity and larvae production by 250%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.larvae += 2.5
+            useResourcesStore().productionRates.larvaeProductionModifier += 2.5
+          },
+        },
       },
       {
         id: 'produce_10_trillion_larvae',
@@ -698,6 +707,13 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.larvae >= 10_000_000_000_000,
         progress: () => useAchievementStore().totals.larvae / 10_000_000_000_000,
+        reward: {
+          description: 'Ha, you\'re still here? Production of larvae increased by 100%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().productionRates.larvaeProductionModifier += 1
+          },
+        },
       },
       {
         id: 'produce_100_trillion_larvae',
@@ -714,6 +730,14 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.larvae >= 1_000_000_000_000_000,
         progress: () => useAchievementStore().totals.larvae / 1_000_000_000_000_000,
+
+        reward: {
+          description: 'How many larvae do you need? Larvae storage increased by 1000%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.larvae += 10
+          },
+        },
       },
       {
         id: 'produce_10_quadrillion_larvae',

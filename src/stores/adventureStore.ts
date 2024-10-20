@@ -89,7 +89,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     currentArea: 'Safe Zone',
     enemyWaves: [],
     areaModifiers: {
-      [ForagingArea.Grasslands]: {
+      [ForagingArea.None]: {
         dropChanceModifier: 1.0,
         dropAmountModifier: 1.0,
         xpModifier: 1.0,

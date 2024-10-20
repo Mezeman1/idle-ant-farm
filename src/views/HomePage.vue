@@ -351,9 +351,10 @@ const {
   activeTab,
 } = storeToRefs(gameStore)
 const progress = computed(() => {
-  const gameProgress = gameStore.loaded ? 50 : (gameStore.progress / 2) // Half for game progress
-  const adventureProgress = adventureStore.loaded ? 50 : (adventureStore.progress / 2) // Half for adventure progress
-  return gameProgress + adventureProgress
+  // const gameProgress = gameStore.loaded ? 50 : (gameStore.progress / 2) // Half for game progress
+  // const adventureProgress = adventureStore.loaded ? 50 : (adventureStore.progress / 2) // Half for adventure progress
+
+  return gameStore.progress
 })
 const debugMode = import.meta.env.MODE === 'localhost'
 

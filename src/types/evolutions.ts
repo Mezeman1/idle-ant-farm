@@ -690,10 +690,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 3.0,
-      bugDefenseModifier: 2.5,
-      bugMaxHealthModifier: 2.5,
-      bugRegenModifier: 2.0,
+      bugAttackModifier: 30,
+      bugDefenseModifier: 30,
+      bugMaxHealthModifier: 30,
+      bugRegenModifier: 30,
     },
 
     productionRates: {
@@ -763,10 +763,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 2.8,
-      bugDefenseModifier: 2.8,
-      bugMaxHealthModifier: 2.8,
-      bugRegenModifier: 2.5,
+      bugAttackModifier: 25,
+      bugDefenseModifier: 25,
+      bugMaxHealthModifier: 25,
+      bugRegenModifier: 25,
     },
 
     productionRates: {
@@ -836,10 +836,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 3.5,
-      bugDefenseModifier: 3.0,
-      bugMaxHealthModifier: 3.0,
-      bugRegenModifier: 2.5,
+      bugAttackModifier: 40,
+      bugDefenseModifier: 40,
+      bugMaxHealthModifier: 40,
+      bugRegenModifier: 40,
     },
 
     productionRates: {
@@ -909,10 +909,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 1.5,
-      bugDefenseModifier: 1.5,
-      bugMaxHealthModifier: 1.5,
-      bugRegenModifier: 1.2,
+      bugAttackModifier: 25,
+      bugDefenseModifier: 25,
+      bugMaxHealthModifier: 25,
+      bugRegenModifier: 25,
     },
 
     productionRates: {
@@ -982,10 +982,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 2.2,
-      bugDefenseModifier: 2.2,
-      bugMaxHealthModifier: 2.2,
-      bugRegenModifier: 2.0,
+      bugAttackModifier: 25,
+      bugDefenseModifier: 25,
+      bugMaxHealthModifier: 25,
+      bugRegenModifier: 25,
     },
 
     productionRates: {
@@ -1055,10 +1055,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 1.7,
-      bugDefenseModifier: 1.7,
-      bugMaxHealthModifier: 1.5,
-      bugRegenModifier: 1.4,
+      bugAttackModifier: 23,
+      bugDefenseModifier: 23,
+      bugMaxHealthModifier: 23,
+      bugRegenModifier: 23,
     },
 
     productionRates: {
@@ -1128,10 +1128,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 2.5,
-      bugDefenseModifier: 2.5,
-      bugMaxHealthModifier: 2.5,
-      bugRegenModifier: 2.3,
+      bugAttackModifier: 23,
+      bugDefenseModifier: 23,
+      bugMaxHealthModifier: 23,
+      bugRegenModifier: 23,
     },
 
     productionRates: {
@@ -1201,10 +1201,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 1.8,
-      bugDefenseModifier: 1.8,
-      bugMaxHealthModifier: 1.7,
-      bugRegenModifier: 1.5,
+      bugAttackModifier: 23,
+      bugDefenseModifier: 23,
+      bugMaxHealthModifier: 23,
+      bugRegenModifier: 23,
     },
 
     productionRates: {
@@ -1274,10 +1274,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 2.6,
-      bugDefenseModifier: 2.6,
-      bugMaxHealthModifier: 2.6,
-      bugRegenModifier: 2.3,
+      bugAttackModifier: 27,
+      bugDefenseModifier: 27,
+      bugMaxHealthModifier: 27,
+      bugRegenModifier: 27,
     },
 
     productionRates: {
@@ -1347,10 +1347,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 3.0,
-      bugDefenseModifier: 2.5,
-      bugMaxHealthModifier: 2.5,
-      bugRegenModifier: 2.0,
+      bugAttackModifier: 50,
+      bugDefenseModifier: 50,
+      bugMaxHealthModifier: 50,
+      bugRegenModifier: 50,
     },
 
     productionRates: {
@@ -1420,10 +1420,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 2.1,
-      bugDefenseModifier: 2.2,
-      bugMaxHealthModifier: 2.2,
-      bugRegenModifier: 2.0,
+      bugAttackModifier: 25,
+      bugDefenseModifier: 55,
+      bugMaxHealthModifier: 25,
+      bugRegenModifier: 25,
     },
 
     productionRates: {
@@ -1493,10 +1493,10 @@ export const evolutions = [
     },
 
     bugModifiers: {
-      bugAttackModifier: 3.2,
-      bugDefenseModifier: 3.0,
-      bugMaxHealthModifier: 3.0,
-      bugRegenModifier: 2.5,
+      bugAttackModifier: 30,
+      bugDefenseModifier: 30,
+      bugMaxHealthModifier: 30,
+      bugRegenModifier: 30,
     },
 
     productionRates: {

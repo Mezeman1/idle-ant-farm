@@ -15,7 +15,7 @@ import {
 import {miningResources} from '@/types/miningResources'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {useSettingsStore} from '@/stores/settingsStore'
-import {foragingResources} from '@/types/foragingResources'
+import {foragingMilestones, foragingResources} from '@/types/foragingResources'
 import {SeedNames, seeds} from '@/types/farmingSeeds'
 import {toast} from 'vue3-toastify'
 import {useBossStore} from '@/stores/bossStore'
@@ -1075,12 +1075,13 @@ export const useTrainingStore = defineStore({
       }
 
       const foragedZones = this.foragedZones
+
       Object.keys(foragedZones).forEach(zone => {
         const amountForaged = foragedZones[zone]
         const foragingResource = this.foragingResources.find(res => res.name === zone)
         if (!foragingResource) return
 
-        foragingResource.milestones.forEach(milestone => {
+        foragingMilestones.forEach(milestone => {
           if (amountForaged >= milestone.amountForaged) {
             Object.keys(modifiers).forEach(modifier => {
               modifiers[modifier] += milestone[modifier] ?? 0

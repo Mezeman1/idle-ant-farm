@@ -25,7 +25,6 @@ export const soldierSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
-
   },
   {
     id: 'soldier-body',

@@ -72,7 +72,7 @@
           </h4>
           <ul class="mt-2 max-h-[200px] overflow-y-auto">
             <li
-              v-for="milestone in resource.milestones"
+              v-for="milestone in foragingMilestones"
               :key="milestone.amountForaged"
               class="flex justify-between items-center text-gray-700 py-2 border-b border-gray-200"
               :class="{'text-green-600 font-bold': trainingStore.amountForagedZones(resource.name) >= milestone.amountForaged, 'text-gray-500': trainingStore.amountForagedZones(resource.name) < milestone.amountForaged}"
@@ -131,6 +131,7 @@ import {computed, ref} from 'vue'
 import SkillDisplay from '@/components/SkillDisplay.vue'
 import {useGameStore} from '@/stores/gameStore'
 import {toPercentage} from '@/utils'
+import {foragingMilestones} from '@/types/foragingResources'
 
 const trainingStore = useTrainingStore()
 const gameStore = useGameStore()
