@@ -64,7 +64,7 @@
           <p class="text-sm">
             HP: {{ formatNumber(armyStats.health) }} / {{ formatNumber(armyStats.maxHealth * armyStats.healthMultiplier * bossStore.combatModifiers.health) }}
             <span class="text-xs text-gray-500">
-              ({{ toPercentage(bossStore.combatModifiers.health, 1) }}%)
+              ({{ toPercentage(armyStats.healthMultiplier * bossStore.combatModifiers.health, 1) }}%)
             </span>
           </p>
         </div>
@@ -158,7 +158,7 @@ const bossHealthPercentage = computed(() => {
 })
 
 const armyHealthPercentage = computed(() => {
-  return toPercentage(armyStats.value.health, armyStats.value.maxHealth * bossStore.combatModifiers.health)
+  return toPercentage(armyStats.value.health, armyStats.value.maxHealth * bossStore.combatModifiers.health * armyStats.value.healthMultiplier)
 })
 </script>
 
