@@ -98,9 +98,9 @@
                   >
                     <span class="font-semibold">{{ effect.name }}</span> - {{ Math.round(effect.duration) }}s remaining
                     <!-- Display damage per second if it's a damaging effect -->
-                    <span v-if="effect.damagePerSecond"> (DPS: {{ effect.damagePerSecond }})</span>
+                    <span v-if="effect.damagePerSecond"> (DPS: {{ formatNumber(effect.damagePerSecond) }})</span>
                     <!-- Display healing per second if it's a healing effect -->
-                    <span v-if="effect.healingPerSecond"> (HPS: {{ effect.healingPerSecond }})</span>
+                    <span v-if="effect.healingPerSecond"> (HPS: {{ formatNumber(effect.healingPerSecond) }})</span>
                   </li>
                 </ul>
                 <p
@@ -173,9 +173,9 @@
                   >
                     <span class="font-semibold">{{ effect.name }}</span> - {{ Math.round(effect.duration) }}s remaining
                     <!-- Display damage per second if it's a damaging effect -->
-                    <span v-if="effect.damagePerSecond"> (DPS: {{ effect.damagePerSecond }})</span>
+                    <span v-if="effect.damagePerSecond"> (DPS: {{ formatNumber(effect.damagePerSecond) }})</span>
                     <!-- Display healing per second if it's a healing effect -->
-                    <span v-if="effect.healingPerSecond"> (HPS: {{ effect.healingPerSecond }})</span>
+                    <span v-if="effect.healingPerSecond"> (HPS: {{ formatNumber(effect.healingPerSecond) }})</span>
                   </li>
                 </ul>
                 <p
