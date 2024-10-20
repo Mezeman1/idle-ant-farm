@@ -649,6 +649,11 @@
             "name": "Volcano Chestplate",
             "chance": 0.02,
             "amountBetween": [1, 1]
+          },
+          {
+            "name": "Volcano Gloves",
+            "chance": 0.02,
+            "amountBetween": [1, 1]
           }
         ]
       },
@@ -672,6 +677,11 @@
           },
           {
             "name": "Volcano Boots",
+            "chance": 0.02,
+            "amountBetween": [1, 1]
+          },
+          {
+            "name": "Volcano Blade",
             "chance": 0.02,
             "amountBetween": [1, 1]
           }
@@ -808,7 +818,7 @@
             ]
           },
           {
-            "name": "Underworld Boots",
+            "name": "Underworld Legs",
             "chance": 0.02,
             "amountBetween": [
               1,
