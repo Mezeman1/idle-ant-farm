@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto">
+  <div>
     <!-- Legend Section -->
     <div class="mb-4 p-4 bg-gray-100 rounded-lg border-2">
       <h2 class="text-lg font-semibold mb-2">

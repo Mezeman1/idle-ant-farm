@@ -1,42 +1,30 @@
 <template>
   <div class="flex-grow overflow-y-auto">
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
-      <!-- Seeds Section -->
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-        <div>
-          <p class="font-bold text-lg">
-            {{ evolveStore.currentEvolutionData.resources.seeds.name }}
-          </p>
-          <p class="text-2xs">
-            {{ evolveStore.currentEvolutionData.resources.seeds.description }}
-          </p>
-        </div>
+      <ResourceCard
+        :title="evolveStore.currentEvolutionData.resources.seeds.name"
+        :description="evolveStore.currentEvolutionData.resources.seeds.description"
 
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2 ">
-          <!-- Left Column: Seed Count and Upgrade -->
-          <div class="flex flex-col gap-2 w-full">
-            <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.seeds, 0) }}/{{ formatNumber(resourcesStore.maxSeeds, 0) }}
-              ({{ formatNumber(resourcesStore.resources.seeds / resourcesStore.maxSeeds * 100, 1) }}%)
-            </p>
-            <p class="text-xs">
-              Rate: {{ formatNumber(resourcesStore.seedsPerSecond) }}/s ({{ formatNumber(resourcesStore.productionRates.collectionRateModifier * 100) }}% bonus)
-            </p>
-            <StorageButtons
-              :cost-string="seedStorageCostString"
-              :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
-              @upgrade="resourcesStore.upgradeSeedStorage()"
-              @upgrade-max="resourcesStore.upgradeMaxSeedStorage"
-            />
-            <p
-              v-if="resourcesStore.maxSeeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
-              class="text-xs"
-            >
-              If only there was a way to increase your {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }} storage...
-            </p>
-          </div>
+        :count="resourcesStore.resources.seeds"
+        :max-count="resourcesStore.maxSeeds"
+        :rate="resourcesStore.seedsPerSecond"
+        :bonus="resourcesStore.productionRates.collectionRateModifier"
+      >
+        <template #actions>
+          <StorageButtons
+            :cost-string="seedStorageCostString"
+            :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
+            @upgrade="resourcesStore.upgradeSeedStorage()"
+            @upgrade-max="resourcesStore.upgradeMaxSeedStorage"
+          />
 
-          <!-- Right Column: Collect Button -->
+          <p
+            v-if="resourcesStore.maxSeeds < resourcesStore.upgradeCosts.seedStorageUpgradeCost"
+            class="text-xs"
+          >
+            If only there was a way to increase your {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }} storage...
+          </p>
+
           <div class="w-full">
             <button
               :disabled="seedCollectingDisabled"
@@ -51,75 +39,36 @@
               Hold to collect {{ evolveStore.currentEvolutionData.resources.seeds.emoji }}
             </button>
           </div>
+          <AutoToggle
+            v-model="prestigeStore.autoSeedStorageUpgrade"
+            :is-unlocked="prestigeStore.upgradePurchased('autoSeedStorageUpgrade')"
+            label="Auto upgrade storage"
+          />
+        </template>
+      </ResourceCard>
 
-          <div class="w-full flex">
-            <label
-              v-if="prestigeStore.upgradePurchased('autoSeedStorageUpgrade')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto upgrade storage</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoSeedStorageUpgrade"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoSeedStorageUpgrade,
-                    'bg-red-500': !prestigeStore.autoSeedStorageUpgrade
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoSeedStorageUpgrade,
-                    'translate-x-0': !prestigeStore.autoSeedStorageUpgrade,
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
+      <ResourceCard
+        :title="evolveStore.currentEvolutionData.resources.larvae.name"
+        :description="evolveStore.currentEvolutionData.resources.larvae.description"
 
-      <!-- Larvae Section -->
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-        <div class="flex items-center">
-          <div>
-            <p class="font-bold text-lg">
-              Larvae
-            </p>
-            <p class="text-2xs">
-              Larvae are the main resource used to create {{ evolveStore.currentEvolutionData.resources.ants.lowerName }}.
-            </p>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full">
-            <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.larvae, 0) }}/{{ formatNumber(resourcesStore.maxLarvae, 0) }}
-              ({{ formatNumber(resourcesStore.resources.larvae / resourcesStore.maxLarvae * 100, 1) }}%)
-            </p>
-            <p class="text-xs">
-              Rate: {{ formatNumber(resourcesStore.larvaePerMinute) }}/m ({{ formatNumber(resourcesStore.productionRates.larvaeProductionModifier * 100) }}% bonus)
-            </p>
-            <StorageButtons
-              :cost-string="larvaeStorageCostString"
-              :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
-              @upgrade="resourcesStore.upgradeLarvaeStorage()"
-              @upgrade-max="resourcesStore.upgradeMaxLarvaeStorage"
-            />
-            <p
-              v-if="resourcesStore.maxSeeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
-              class="text-xs"
-            >
-              If only there was a way to increase your {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }} storage...
-            </p>
-          </div>
-
+        :count="resourcesStore.resources.larvae"
+        :max-count="resourcesStore.maxLarvae"
+        :rate="resourcesStore.larvaePerMinute"
+        :bonus="resourcesStore.productionRates.larvaeProductionModifier"
+      >
+        <template #actions>
+          <StorageButtons
+            :cost-string="larvaeStorageCostString"
+            :disabled="resourcesStore.resources.seeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
+            @upgrade="resourcesStore.upgradeLarvaeStorage()"
+            @upgrade-max="resourcesStore.upgradeMaxLarvaeStorage"
+          />
+          <p
+            v-if="resourcesStore.maxSeeds < resourcesStore.upgradeCosts.larvaeStorageUpgradeCost"
+            class="text-xs"
+          >
+            If only there was a way to increase your {{ evolveStore.currentEvolutionData.resources.seeds.lowerName }} storage...
+          </p>
           <div class="w-full flex gap-2">
             <button
               :disabled="createLarvaeDisabled"
@@ -136,61 +85,23 @@
               Max
             </button>
           </div>
-          <div class="w-full flex">
-            <label
-              v-if="prestigeStore.upgradePurchased('autoLarvaeStorageUpgrade')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto upgrade storage</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoLarvaeStorageUpgrade"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoLarvaeStorageUpgrade,
-                    'bg-red-500': !prestigeStore.autoLarvaeStorageUpgrade
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoLarvaeStorageUpgrade,
-                    'translate-x-0': !prestigeStore.autoLarvaeStorageUpgrade,
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
+          <AutoToggle
+            v-model="prestigeStore.autoLarvaeStorageUpgrade"
+            :is-unlocked="prestigeStore.upgradePurchased('autoLarvaeStorageUpgrade')"
+            label="Auto upgrade storage"
+          />
+        </template>
+      </ResourceCard>
 
-      <!-- Ant Section -->
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-        <div>
-          <p class="font-bold text-lg">
-            {{ evolveStore.currentEvolutionData.resources.ants.name }}
-          </p>
-          <p class="text-2xs">
-            {{ evolveStore.currentEvolutionData.resources.ants.description }}
-          </p>
-        </div>
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full">
-            <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.ants, 0) }}/{{ formatNumber(resourcesStore.maxAnts, 0) }}
-              ({{ formatNumber(resourcesStore.resources.ants / resourcesStore.maxAnts * 100, 1) }}%)
-            </p>
-            <p
-              v-if="resourcesStore.productionRates.antsGenerationRate > 0"
-              class="text-xs"
-            >
-              Rate: {{ formatNumber(resourcesStore.antsPerSecond) }}/s
-            </p>
-          </div>
+      <ResourceCard
+        :title="evolveStore.currentEvolutionData.resources.ants.name"
+        :description="evolveStore.currentEvolutionData.resources.ants.description"
+
+        :count="resourcesStore.resources.ants"
+        :max-count="resourcesStore.maxAnts"
+        :rate="resourcesStore.antsPerSecond"
+      >
+        <template #actions>
           <div class="w-full flex flex-wrap gap-2">
             <button
               class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
@@ -225,87 +136,29 @@
               Max
             </button>
           </div>
-          <div class="w-full flex">
-            <label
-              v-if="prestigeStore.upgradePurchased('autoAnts')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto create ants</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoAntCreation"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoAntCreation,
-                    'bg-red-500': !prestigeStore.autoAntCreation
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoAntCreation,
-                    'translate-x-0': !prestigeStore.autoAntCreation
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-          <div class="w-full flex">
-            <label
-              v-if="prestigeStore.upgradePurchased('autoCreateHousing')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto create housing</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoCreateHousing"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoCreateHousing,
-                    'bg-red-500': !prestigeStore.autoCreateHousing
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoCreateHousing,
-                    'translate-x-0': !prestigeStore.autoCreateHousing,
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
 
-      <!-- Elite Ant Section -->
-      <div
-        v-if="gameStore.eliteAntsUnlocked"
-        class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
+          <AutoToggle
+            v-model="prestigeStore.autoAntCreation"
+            :is-unlocked="prestigeStore.upgradePurchased('autoAnts')"
+            label="Auto create ants"
+          />
+
+          <AutoToggle
+            v-model="prestigeStore.autoCreateHousing"
+            :is-unlocked="prestigeStore.upgradePurchased('autoCreateHousing')"
+            label="Auto create housing"
+          />
+        </template>
+      </ResourceCard>
+
+      <ResourceCard
+        title="Elite Ants"
+        description="Elite Ants help the ants to collect resources faster."
+        :count="resourcesStore.resources.eliteAnts"
+        :max-count="resourcesStore.storage.maxEliteAnts"
+        :unlocked="prestigeStore.upgradePurchased('eliteAnts')"
       >
-        <div>
-          <p class="font-bold text-lg">
-            Elite Ants
-          </p>
-          <p class="text-2xs">
-            Elite Ants help the ants to collect resources faster.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full">
-            <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.eliteAnts, 0) }}/{{ formatNumber(resourcesStore.storage.maxEliteAnts, 0) }}
-              ({{ formatNumber(resourcesStore.resources.eliteAnts / resourcesStore.storage.maxEliteAnts * 100, 1) }}%)
-            </p>
-          </div>
+        <template #actions>
           <div class="w-full flex flex-wrap gap-2">
             <button
               :disabled="createEliteAntDisabled"
@@ -324,64 +177,23 @@
               Max
             </button>
           </div>
-          <div class="w-full flex">
-            <label
-              v-if="prestigeStore.upgradePurchased('autoEliteAntsCreation')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto creating</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoEliteAntsCreation"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoEliteAntsCreation,
-                    'bg-red-500': !prestigeStore.autoEliteAntsCreation,
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoEliteAntsCreation,
-                    'translate-x-0': !prestigeStore.autoEliteAntsCreation,
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
-      >
-        <h2>
-          LOCKED (Unlocked through prestige shop)
-        </h2>
-      </div>
+          <AutoToggle
+            v-model="prestigeStore.autoEliteAntsCreation"
+            :is-unlocked="prestigeStore.upgradePurchased('autoEliteAntsCreation')"
+            label="Auto creating"
+          />
+        </template>
+      </ResourceCard>
 
-      <!-- Queen Section -->
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
-        <div>
-          <p class="font-bold text-lg">
-            {{ evolveStore.currentEvolutionData.resources.queens.name }}
-          </p>
-          <p class="text-2xs">
-            {{ evolveStore.currentEvolutionData.resources.queens.description }}
-          </p>
-        </div>
-        <div class="flex flex-wrap items-start justify-between w-full space-y-2">
-          <div class="flex flex-col gap-2 w-full ">
-            <p class="text-sm">
-              Count: {{ formatNumber(resourcesStore.resources.queens, 0) }}/{{ formatNumber(resourcesStore.maxQueens, 0) }}
-              ({{ formatNumber(resourcesStore.resources.queens / resourcesStore.maxQueens * 100, 1) }}%)
-            </p>
-          </div>
-          <div class="w-full md:w-auto flex flex-wrap justify-center gap-2">
+      <ResourceCard
+        :title="evolveStore.currentEvolutionData.resources.queens.name"
+        :description="evolveStore.currentEvolutionData.resources.queens.description"
+
+        :count="resourcesStore.resources.queens"
+        :max-count="resourcesStore.maxQueens"
+      >
+        <template #actions>
+          <div class="flex flex-wrap gap-2">
             <button
               :disabled="createQueenDisabled"
               class="flex-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed text-xs"
@@ -399,42 +211,18 @@
             </button>
           </div>
 
-          <div class="w-full flex">
-            <label
-              v-if="prestigeStore.upgradePurchased('autoQueens')"
-              class="flex items-center cursor-pointer"
-            >
-              <span class="mr-3 text-xs text-gray-600">Auto creating</span>
-              <div class="relative">
-                <input
-                  v-model="prestigeStore.autoQueenCreation"
-                  type="checkbox"
-                  class="sr-only"
-                >
-                <div
-                  :class="{
-                    'bg-green-500': prestigeStore.autoQueenCreation,
-                    'bg-red-500': !prestigeStore.autoQueenCreation
-                  }"
-                  class="block w-10 h-6 rounded-full shadow-inner transition-colors"
-                />
-                <div
-                  :class="{
-                    'translate-x-full': prestigeStore.autoQueenCreation,
-                    'translate-x-0': !prestigeStore.autoQueenCreation
-                  }"
-                  class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow transform transition-transform"
-                />
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
+          <AutoToggle
+            v-model="prestigeStore.autoQueenCreation"
+            :is-unlocked="prestigeStore.upgradePurchased('autoQueens')"
+            label="Auto creating"
+          />
+        </template>
+      </ResourceCard>
 
       <!-- Royal Jelly Section -->
       <div
         v-if="gameStore.royalJellyUnlocked"
-        class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2"
+        class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2 text-gray-800"
       >
         <div>
           <p class="font-bold text-lg">
@@ -604,14 +392,14 @@
       </div>
       <div
         v-else
-        class="bg-gray-300 bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
+        class="bg-gray-300 p-4 rounded-lg shadow-md flex flex-col justify-center items-center select-none"
       >
         <h2>
           LOCKED (Unlocked through prestige shop)
         </h2>
       </div>
 
-      <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-2">
+      <div class="bg-white p-4 rounded-lg shadow-md flex flex-col space-y-2 text-gray-800">
         <h2
           class="font-bold"
         >
@@ -658,6 +446,8 @@ import StorageButtons from '@/components/StorageButtons.vue'
 import {computed} from 'vue'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useEvolveStore} from '@/stores/evolveStore'
+import ResourceCard from '@/components/ResourceCard.vue'
+import AutoToggle from '@/components/AutoToggle.vue'
 
 const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()

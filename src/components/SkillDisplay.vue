@@ -3,6 +3,7 @@
     :class="{
       'bg-white shadow-lg rounded-lg mb-6 p-4': withStyling,
     }"
+    class="text-gray-800"
   >
     <h3 class="text-xl font-semibold">
       {{ skillName }}

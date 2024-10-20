@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <AvailableEquipment />
+    <AvailableEquipment class="mt-2" />
   </div>
 </template>
 

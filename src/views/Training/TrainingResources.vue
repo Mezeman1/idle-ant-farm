@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200 text-sm md:text-xl">
+  <div class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200 text-sm md:text-xl text-gray-800">
     <h2 class="font-semibold">
       Collected Resources
     </h2>

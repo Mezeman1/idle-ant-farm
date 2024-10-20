@@ -278,10 +278,17 @@
             >
               {{ settingsStore.showAnimation ? 'Hide Animation' : 'Show Animation' }}
             </button>
+
+            <button
+              class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md shadow-md w-full md:w-auto"
+              @click="settingsStore.darkMode = !settingsStore.darkMode"
+            >
+              Dark Mode
+            </button>
           </div>
         </details>
 
-        <div class="text-white flex flex-col">
+        <div class="text-white flex flex-col gap-2">
           <button
             v-if="gameStore.currentUser"
             class="flex items-center bg-red-600 hover:bg-red-500 px-3 py-2 rounded"
@@ -358,7 +365,7 @@
 </template>
 <script setup lang="ts">
 import Modal from '../components/ModalComponent.vue'
-import {ref} from 'vue'
+import {ref, watch} from 'vue'
 import {useGameStore} from '../stores/gameStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 

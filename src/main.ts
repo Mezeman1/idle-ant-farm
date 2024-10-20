@@ -20,6 +20,7 @@ import {firebaseApp, initFirebase} from './firebase'
 import {ReCaptchaV3Provider} from 'firebase/app-check'
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+import {useSettingsStore} from '@/stores/settingsStore'
 const app = createApp(App)
 
 const router = createRouter({
@@ -82,3 +83,4 @@ if ('serviceWorker' in navigator) {
     window.location.reload(true)
   })
 }
+

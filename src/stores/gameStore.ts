@@ -392,6 +392,9 @@ export const useGameStore = defineStore('gameStore', {
 
     async loginUsingGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider()
+
+      provider.addScope('email')
+
       firebase.auth().useDeviceLanguage()
       firebase.auth()
         .signInWithPopup(provider)

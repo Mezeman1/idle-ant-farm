@@ -1,33 +1,18 @@
 <template>
   <div>
-    <!-- Crafting Skill Overview -->
-    <div class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200">
-      <h2 class="text-xl font-semibold">
-        Crafting Skill
-      </h2>
-      <div class="flex justify-between items-center">
-        <p class="text-lg">
-          Level: {{ craftingLevel }}
-        </p>
-        <p class="text-lg">
-          {{ formatNumber(craftingXp) }} / {{ formatNumber(craftingXpToNextLevel) }} XP
-        </p>
-      </div>
-      <!-- XP Progress Bar -->
-      <div class="relative mt-2 w-full h-3 bg-gray-200 rounded">
-        <div
-          class="absolute top-0 left-0 h-full bg-green-500 rounded"
-          :style="{ width: `${(craftingXp / craftingXpToNextLevel) * 100}%` }"
-        />
-      </div>
-    </div>
+    <SkillDisplay
+      skill-name="Crafting"
+      :level="craftingLevel"
+      :xp="craftingXp"
+      :xp-to-next-level="craftingXpToNextLevel"
+    />
 
     <!-- Dynamic Crafting Recipes -->
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-6">
       <div
         v-for="(recipe,) in craftingRecipes"
         :key="recipe.name"
-        class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200"
+        class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200 text-gray-800"
       >
         <h2 class="text-xl font-semibold mb-2">
           {{ recipe.name }} {{ trainingStore.amountCraftedItems(recipe.name) > 0 ? `(${formatNumber(trainingStore.amountCraftedItems(recipe.name), 0)})` : '' }}
@@ -93,6 +78,7 @@
 import { computed } from 'vue'
 import { useTrainingStore } from '@/stores/trainingStore'
 import { useGameStore } from '@/stores/gameStore'
+import SkillDisplay from '@/components/SkillDisplay.vue'
 
 // Get the store
 const trainingStore = useTrainingStore()

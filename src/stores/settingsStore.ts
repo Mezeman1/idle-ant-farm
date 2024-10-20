@@ -27,6 +27,7 @@ export const useSettingsStore = defineStore('settings', {
       matureCrops: true,
     },
     notation: 'scientific',
+    darkMode: false,
   }),
   getters: {
     getNotificationSetting(): (key: string) => boolean {
@@ -34,6 +35,11 @@ export const useSettingsStore = defineStore('settings', {
     },
   },
   actions: {
+    setTheme(theme: string) {
+      console.log('Setting theme to', theme)
+      this.theme = theme
+      document.documentElement.classList.toggle('dark', theme === 'dark')
+    },
     getSettingsState() {
       return {
         settings: this.$state,

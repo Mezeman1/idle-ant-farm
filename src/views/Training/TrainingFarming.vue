@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="text-gray-800">
     <SkillDisplay
       skill-name="Farming"
       :level="trainingStore.training.farming.level"

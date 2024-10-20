@@ -2,6 +2,9 @@
   <div
     v-if="gameStore.loaded && gameStore.loggedIn"
     class="relative h-screen w-screen overflow-hidden"
+    :class="{
+      'dark': settingsStore.darkMode,
+    }"
   >
     <AntSimulation
       v-if="gameStore.loaded && settingsStore.showBackground"
@@ -16,7 +19,7 @@
       class="bg-blue-600 h-screen w-screen flex items-center justify-center"
     />
 
-    <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs">
+    <div class="top-0 left-0 absolute h-screen w-screen overflow-hidden text-xs text-gray-800">
       <div class="flex items-center justify-between bg-gray-800 p-2 text-white max-h-[65px] overflow-hidden">
         <!-- Left Side Buttons -->
         <div class="flex items-center space-x-2">

@@ -5,7 +5,7 @@
       <TrainingResources />
 
       <p
-        class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200 text-sm md:text-xl"
+        class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200 text-sm md:text-xl text-gray-800"
       >
         Please note, this is a work in progress and not all features are implemented yet.
       </p>
