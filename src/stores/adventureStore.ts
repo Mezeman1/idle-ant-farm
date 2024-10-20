@@ -89,7 +89,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     currentArea: 'Safe Zone',
     enemyWaves: [],
     areaModifiers: {
-      [ForagingArea.None]: {
+      [ForagingArea.Forest]: {
         dropChanceModifier: 1.0,
         dropAmountModifier: 1.0,
         xpModifier: 1.0,
@@ -98,6 +98,114 @@ export const useAdventureStore = defineStore('adventureStore', {
         coolDownModifier: 1.0,
       },
     },
+
+    milestones: [
+      { kills: 50, modifiers: { xpModifier: 1.1 } },
+      { kills: 100, modifiers: { xpModifier: 1.2, dropChanceModifier: 1.05 } },
+      { kills: 200, modifiers: { xpModifier: 1.3, speedModifier: 1.1 } },
+      { kills: 300, modifiers: { xpModifier: 1.4, dropAmountModifier: 1.05 } },
+      { kills: 400, modifiers: { xpModifier: 1.5, coolDownModifier: 1.1 } },
+      { kills: 500, modifiers: { xpModifier: 1.6, spawnTimeModifier: 1.1 } },
+      { kills: 600, modifiers: { xpModifier: 1.7, dropChanceModifier: 1.1 } },
+      { kills: 700, modifiers: { xpModifier: 1.8, speedModifier: 1.2 } },
+      { kills: 800, modifiers: { xpModifier: 1.9, dropAmountModifier: 1.1 } },
+      { kills: 900, modifiers: { xpModifier: 2.0, coolDownModifier: 1.2 } },
+      { kills: 1000, modifiers: { xpModifier: 2.1, spawnTimeModifier: 1.2 } },
+      { kills: 1200, modifiers: { xpModifier: 2.2, dropChanceModifier: 1.15 } },
+      { kills: 1400, modifiers: { xpModifier: 2.3, speedModifier: 1.3 } },
+      { kills: 1600, modifiers: { xpModifier: 2.4, dropAmountModifier: 1.15 } },
+      { kills: 1800, modifiers: { xpModifier: 2.5, coolDownModifier: 1.3 } },
+      { kills: 2000, modifiers: { xpModifier: 2.6, spawnTimeModifier: 1.3 } },
+      { kills: 2500, modifiers: { xpModifier: 2.7, dropChanceModifier: 1.2 } },
+      { kills: 3000, modifiers: { xpModifier: 2.8, speedModifier: 1.4 } },
+      { kills: 3500, modifiers: { xpModifier: 2.9, dropAmountModifier: 1.2 } },
+      { kills: 4000, modifiers: { xpModifier: 3.0, coolDownModifier: 1.4 } },
+      { kills: 4500, modifiers: { xpModifier: 3.1, spawnTimeModifier: 1.4 } },
+      { kills: 5000, modifiers: { xpModifier: 3.2, dropChanceModifier: 1.25 } },
+      { kills: 6000, modifiers: { xpModifier: 3.3, speedModifier: 1.5 } },
+      { kills: 7000, modifiers: { xpModifier: 3.4, dropAmountModifier: 1.25 } },
+      { kills: 8000, modifiers: { xpModifier: 3.5, coolDownModifier: 1.5 } },
+      { kills: 9000, modifiers: { xpModifier: 3.6, spawnTimeModifier: 1.5 } },
+      { kills: 10000, modifiers: { xpModifier: 3.7, dropChanceModifier: 1.3 } },
+      { kills: 12000, modifiers: { xpModifier: 3.8, speedModifier: 1.5 } },
+      { kills: 14000, modifiers: { xpModifier: 3.9, dropAmountModifier: 1.3 } },
+      { kills: 16000, modifiers: { xpModifier: 4.0, coolDownModifier: 1.5 } },
+      { kills: 18000, modifiers: { xpModifier: 4.1, spawnTimeModifier: 1.5 } },
+      { kills: 20000, modifiers: { xpModifier: 4.2, dropChanceModifier: 1.35 } },
+      { kills: 25000, modifiers: { xpModifier: 4.3, speedModifier: 1.5 } },
+      { kills: 30000, modifiers: { xpModifier: 4.4, dropAmountModifier: 1.35 } },
+      { kills: 35000, modifiers: { xpModifier: 4.5, coolDownModifier: 1.5 } },
+      { kills: 40000, modifiers: { xpModifier: 4.6, spawnTimeModifier: 1.5 } },
+      { kills: 45000, modifiers: { xpModifier: 4.7, dropChanceModifier: 1.4 } },
+      { kills: 50000, modifiers: { xpModifier: 4.8, speedModifier: 1.5 } },
+      { kills: 60000, modifiers: { xpModifier: 4.9, dropAmountModifier: 1.4 } },
+      { kills: 70000, modifiers: { xpModifier: 5.0 } },
+      { kills: 80000, modifiers: { dropChanceModifier: 1.45 } },
+      { kills: 90000, modifiers: { speedModifier: 1.6 } },
+      { kills: 100000, modifiers: { dropAmountModifier: 1.45 } },
+      { kills: 120000, modifiers: { coolDownModifier: 1.6 } },
+      { kills: 140000, modifiers: { spawnTimeModifier: 1.6 } },
+      { kills: 160000, modifiers: { dropChanceModifier: 1.5 } },
+      { kills: 180000, modifiers: { speedModifier: 1.7 } },
+      { kills: 200000, modifiers: { dropAmountModifier: 1.5 } },
+      { kills: 250000, modifiers: { coolDownModifier: 1.7 } },
+      { kills: 300000, modifiers: { spawnTimeModifier: 1.7 } },
+      { kills: 350000, modifiers: { dropChanceModifier: 1.55 } },
+      { kills: 400000, modifiers: { speedModifier: 1.8 } },
+      { kills: 450000, modifiers: { dropAmountModifier: 1.55 } },
+      { kills: 500000, modifiers: { coolDownModifier: 1.8 } },
+      { kills: 600000, modifiers: { spawnTimeModifier: 1.8 } },
+      { kills: 700000, modifiers: { dropChanceModifier: 1.6 } },
+      { kills: 800000, modifiers: { speedModifier: 1.9 } },
+      { kills: 900000, modifiers: { dropAmountModifier: 1.6 } },
+      { kills: 1000000, modifiers: { coolDownModifier: 1.9 } },
+      { kills: 1200000, modifiers: { spawnTimeModifier: 2.0 } },
+      { kills: 1400000, modifiers: { speedModifier: 2.0 } },
+      { kills: 1600000, modifiers: { dropAmountModifier: 1.65 } },
+      { kills: 1800000, modifiers: { coolDownModifier: 2.0 } },
+      { kills: 2000000, modifiers: { dropChanceModifier: 1.65 } },
+      { kills: 2500000, modifiers: { spawnTimeModifier: 2.5 } },
+      { kills: 3000000, modifiers: { speedModifier: 2.5 } },
+      { kills: 3500000, modifiers: { dropAmountModifier: 1.7 } },
+      { kills: 4000000, modifiers: { coolDownModifier: 2.5 } },
+      { kills: 4500000, modifiers: { dropChanceModifier: 1.7 } },
+      { kills: 5000000, modifiers: { spawnTimeModifier: 3.0 } },
+      { kills: 6000000, modifiers: { speedModifier: 3.0 } },
+      { kills: 7000000, modifiers: { dropAmountModifier: 1.75 } },
+      { kills: 8000000, modifiers: { coolDownModifier: 3.0 } },
+      { kills: 9000000, modifiers: { dropChanceModifier: 1.75 } },
+      { kills: 10000000, modifiers: { spawnTimeModifier: 3.5 } },
+      { kills: 12000000, modifiers: { speedModifier: 3.5 } },
+      { kills: 14000000, modifiers: { dropAmountModifier: 1.8 } },
+      { kills: 16000000, modifiers: { coolDownModifier: 3.5 } },
+      { kills: 18000000, modifiers: { dropChanceModifier: 1.8 } },
+      { kills: 20000000, modifiers: { spawnTimeModifier: 4.0 } },
+      { kills: 25000000, modifiers: { speedModifier: 4.0 } },
+      { kills: 30000000, modifiers: { dropAmountModifier: 1.85 } },
+      { kills: 35000000, modifiers: { coolDownModifier: 4.0 } },
+      { kills: 40000000, modifiers: { dropChanceModifier: 1.85 } },
+      { kills: 45000000, modifiers: { spawnTimeModifier: 4.5 } },
+      { kills: 50000000, modifiers: { speedModifier: 4.5 } },
+      { kills: 60000000, modifiers: { dropAmountModifier: 1.9 } },
+      { kills: 70000000, modifiers: { coolDownModifier: 4.5 } },
+      { kills: 80000000, modifiers: { dropChanceModifier: 1.9 } },
+      { kills: 90000000, modifiers: { spawnTimeModifier: 5.0 } },
+      { kills: 100000000, modifiers: { speedModifier: 5.0 } },
+      { kills: 120000000, modifiers: { dropAmountModifier: 1.95 } },
+      { kills: 140000000, modifiers: { coolDownModifier: 5.0 } },
+      { kills: 160000000, modifiers: { dropChanceModifier: 1.95 } },
+      { kills: 180000000, modifiers: { spawnTimeModifier: 5.0 } },
+      { kills: 200000000, modifiers: { speedModifier: 5.0 } },
+      { kills: 250000000, modifiers: { dropAmountModifier: 2.0 } },
+      { kills: 300000000, modifiers: { coolDownModifier: 5.0 } },
+      { kills: 350000000, modifiers: { dropChanceModifier: 2.0 } },
+      { kills: 400000000, modifiers: { dropAmountModifier: 2.0 } },
+      { kills: 450000000, modifiers: { dropChanceModifier: 2.0 } },
+      { kills: 500000000, modifiers: { dropAmountModifier: 2.5 } },
+      { kills: 600000000, modifiers: { dropAmountModifier: 3.0 } },
+    ],
+
+
 
     currentEnemy: null as Enemy | null,
 
@@ -135,6 +243,16 @@ export const useAdventureStore = defineStore('adventureStore', {
     remainingFightStatusTime: 1000, // Remaining time before switching to 'fighting'
 
   }),
+  getters: {
+    killCountsForCurrentArea: (state) => {
+      return state.enemyWaves
+        .find((wave) => wave.name === state.currentArea)?.enemies
+        .reduce((acc, enemy) => {
+          const killCount = state.killCounts[useAdventureStore().enemyNameToId(enemy.name) + 'Kills'] ?? 0
+          return acc + killCount
+        }, 0) ?? 0
+    },
+  },
   actions: {
     setAreaModifiers(modifiers, area) {
       this.areaModifiers[area] = modifiers
@@ -382,9 +500,18 @@ export const useAdventureStore = defineStore('adventureStore', {
       defeatRegen() // Start the regeneration loop
     },
 
-
+    enemyNameToId(name: string) {
+      return name.toLowerCase().replace(/\s+/g, '')
+    },
+    getAreaForEnemy(enemy: Enemy) {
+      return this.enemyWaves.find((wave) => wave.enemies.includes(enemy))?.name
+    },
     handleKillCount() {
-      const killKey = this.currentEnemy?.name.toLowerCase().replace(/\s+/g, '') + 'Kills'
+      if (!this.currentEnemy) {
+        return // Prevent errors if
+      }
+
+      const killKey = this.enemyNameToId(this.currentEnemy.name) + 'Kills'
       if (this.killCounts[killKey] !== undefined) {
         this.killCounts[killKey] += 1
       } else {
@@ -394,7 +521,45 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.enemyKillCount += 1
 
       useAchievementStore().addToTotal('enemyKills', 1)
+
+      this.handleAdventureMilestones()
     },
+
+    handleAdventureMilestones() {
+      const currentArea = this.currentArea
+      const totalKillsForCurrentArea = this.killCountsForCurrentArea
+
+      const milestones = this.milestones
+      // Initialize default modifiers
+      const appliedModifiers = {
+        dropChanceModifier: 1.0,
+        dropAmountModifier: 1.0,
+        xpModifier: 1.0,
+        speedModifier: 1.0,
+        spawnTimeModifier: 1.0,
+        coolDownModifier: 1.0,
+      }
+
+      // Check if there are milestones for the current area
+      if (totalKillsForCurrentArea && milestones) {
+        // Check if the total kills for the current area meet any milestones
+        for (const milestone of milestones) {
+          if (totalKillsForCurrentArea >= milestone.kills) {
+            for (const modifierKey in milestone.modifiers) {
+              // Use the higher modifier if already applied
+              appliedModifiers[modifierKey] = Math.max(
+                appliedModifiers[modifierKey],
+                milestone.modifiers[modifierKey],
+              )
+            }
+          }
+        }
+      }
+
+      // Set the updated modifiers for the current area
+      this.setAreaModifiers(appliedModifiers, currentArea)
+    },
+
     async handleEnemyDrop() {
       const settingsStore = useSettingsStore()
       if (this.currentEnemy?.dropOptions) {

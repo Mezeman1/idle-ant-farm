@@ -12,7 +12,6 @@
 
       <TrainingMining v-if="activeTab === 'mining'" />
       <TrainingCrafting v-if="activeTab === 'crafting'" />
-      <TrainingForaging v-if="activeTab === 'foraging'" />
       <TrainingCombat v-if="activeTab === 'combat'" />
       <TrainingFarming v-if="activeTab === 'farming'" />
     </div>
@@ -65,7 +64,6 @@ const trainingStore = useTrainingStore()
 const tabs = ref([
   { name: 'mining', label: 'Mining', icon: 'fas fa-pickaxe', disabled: false },
   { name: 'crafting', label: 'Crafting', icon: 'fas fa-hammer', disabled: false },
-  { name: 'foraging', label: 'Foraging', icon: 'fas fa-leaf', disabled: false },
   { name: 'combat', label: 'Combat', icon: 'fas fa-swords', disabled: false },
   {
      name: 'farming',

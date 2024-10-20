@@ -50,6 +50,7 @@
           >
             No modifiers for this area
           </p>
+          <AreaModifiersMilestones />
         </div>
 
         <!-- Ant Army and Enemy Bug Display -->
@@ -82,7 +83,10 @@
               <div class="mt-2 space-y-1 text-3xs md:text-xs">
                 <p><span class="font-semibold">⚔️ Attack:</span> {{ formatNumber(adventureStore.armyAttack) }}</p>
                 <p><span class="font-semibold">🛡️ Defense:</span> {{ formatNumber(adventureStore.armyDefense) }}</p>
-                <p><span class="font-semibold">❤️ HP Regen:</span> {{ formatNumber(adventureStore.armyRegen * (trainingStore.farmingModifiers.regenerationRate ?? 1)) }}</p>
+                <p>
+                  <span class="font-semibold">❤️ HP Regen:</span>
+                  {{ formatNumber(adventureStore.armyRegen * (trainingStore.farmingModifiers.regenerationRate ?? 1)) }}
+                </p>
               </div>
 
               <!-- Active Effects for Army -->
@@ -355,7 +359,6 @@ import {computed, onMounted, ref, watch} from 'vue'
 import {onClickOutside, useWindowSize} from '@vueuse/core'
 import ArmyImage from '../assets/army.webp'
 import Inventory from '@/views/InventoryPage.vue'
-import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import WaveSelector from '@/components/WaveSelector.vue'
 
@@ -363,6 +366,7 @@ import {Skill} from '@/types/trainingTypes'
 import {toPercentage} from '../utils'
 import {useTrainingStore} from '@/stores/trainingStore'
 import TrainingCombat from '@/views/Training/TrainingCombat.vue'
+import AreaModifiersMilestones from '@/components/AreaModifiersMilestones.vue'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
@@ -370,7 +374,7 @@ const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()
 const {width} = useWindowSize()
 const poisonChance = computed(() => formatNumber(adventureStore.poisonChance * 100), 0)
-const bugPoisonChance = computed(() => formatNumber((adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance ?? 0) * 100), 0 )
+const bugPoisonChance = computed(() => formatNumber((adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance ?? 0) * 100), 0)
 
 const bleedChance = computed(() => formatNumber(adventureStore.bleedChance * 100), 0)
 const bugBleedChance = computed(() => formatNumber((adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'bleed')?.chance ?? 0) * 100), 0)
@@ -383,10 +387,13 @@ const trainingStore = useTrainingStore()
 onMounted(() => {
   selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)
   updateCurrentAreaByIndex(selectedWaveIndex.value)
+
+  adventureStore.handleAdventureMilestones()
 })
 
 watch(() => adventureStore.currentArea, () => {
   selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)
+  adventureStore.handleAdventureMilestones()
 })
 
 const updateCurrentAreaByIndex = (index) => {
@@ -454,6 +461,7 @@ const currentAreaModifiers = computed(() => {
   return adventureStore.areaModifiers[areaName] || null
 })
 
+const showMilestoneRewards = ref(false)
 </script>
 
 <style scoped>

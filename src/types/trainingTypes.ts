@@ -9,7 +9,6 @@ export enum Skill {
 }
 
 export enum ForagingArea {
-  None = 'None',
   Wasteland = 'Wasteland',
   Forest = 'Forest',
   LeafcutterGrove = 'Leafcutter Grove',
