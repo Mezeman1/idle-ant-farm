@@ -701,7 +701,7 @@ export const evolutions = [
       collectionRatePerAnt: 100,
       collectionRatePerWorker: 15000,
       collectionRateModifier: 1.2,
-      larvaeProductionModifier: 1.1,
+      larvaeProductionModifier: 1.4,
     },
 
     resourceCosts: {
@@ -718,7 +718,7 @@ export const evolutions = [
 
     initialCaps: {
       maxSeeds: 2500,
-      maxLarvae: 12,
+      maxLarvae: 25,
       maxAnts: 450,
       maxQueens: 12,
       maxEliteAnts: 2,
