@@ -614,10 +614,10 @@ export const useAchievementStore = defineStore({
         unlockCondition: () => useAchievementStore().totals.larvae >= 1_000_000,
         progress: () => useAchievementStore().totals.larvae / 1_000_000,
         reward: {
-          description: 'Larvae storage capacity increased by 50%.',
+          description: 'Larvae storage capacity increased by 100%.',
           isClaimed: false,
           onClaim: () => {
-            useResourcesStore().achievementModifiers.storage.larvae += 0.5
+            useResourcesStore().achievementModifiers.storage.larvae += 1
           },
         },
       },
@@ -628,6 +628,13 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.larvae >= 10_000_000,
         progress: () => useAchievementStore().totals.larvae / 10_000_000,
+        reward: {
+          description: 'Larvae storage capacity increased by 150%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.larvae += 1.5
+          },
+        },
       },
       {
         id: 'produce_100_million_larvae',
@@ -636,6 +643,13 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.larvae >= 100_000_000,
         progress: () => useAchievementStore().totals.larvae / 100_000_000,
+        reward: {
+          description: 'You\'ll need this.. trust me. Increases larvae storage capacity by 500%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.larvae += 5
+          },
+        },
       },
       {
         id: 'produce_1_billion_larvae',
@@ -652,6 +666,14 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.larvae >= 10_000_000_000,
         progress: () => useAchievementStore().totals.larvae / 10_000_000_000,
+
+        reward: {
+          description: 'Larvae production is doubled!',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().productionRates.larvaeProductionModifier += 1
+          },
+        },
       },
       {
         id: 'produce_100_billion_larvae',

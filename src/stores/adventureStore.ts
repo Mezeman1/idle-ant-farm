@@ -937,7 +937,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
       // Apply modifiers
       this.armyAttack = baseAttack * this.armyAttackModifier
-      this.armyDefense = baseDefense * this.armyDefenseModifier  * useTrainingStore().farmingModifiers.defense
+      this.armyDefense = baseDefense * this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense
       this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier
       this.armyRegen = baseRegen * this.armyRegenModifier
 
