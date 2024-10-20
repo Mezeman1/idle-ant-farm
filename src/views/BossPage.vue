@@ -62,7 +62,7 @@
             Army
           </p>
           <p class="text-sm">
-            HP: {{ formatNumber(armyStats.health) }} / {{ formatNumber(armyStats.maxHealth * bossStore.combatModifiers.health) }}
+            HP: {{ formatNumber(armyStats.health) }} / {{ formatNumber(armyStats.maxHealth * armyStats.healthMultiplier * bossStore.combatModifiers.health) }}
             <span class="text-xs text-gray-500">
               ({{ toPercentage(bossStore.combatModifiers.health, 1) }}%)
             </span>

@@ -30,6 +30,7 @@ export const useBossStore = defineStore({
       damageMultiplier: new BigNumber(1),
       defenseMultiplier: new BigNumber(1),
       regenMultiplier: new BigNumber(1),
+      healthMultiplier: new BigNumber(1),
     },
 
     combatModifiers: {
@@ -62,6 +63,7 @@ export const useBossStore = defineStore({
       damageMultiplier: number
       defenseMultiplier: number
       regenMultiplier: number
+      healthMultiplier: number
     }) {
       this.armyStats = {
         health: new BigNumber(this.armyStats.health ?? 0),
@@ -72,6 +74,7 @@ export const useBossStore = defineStore({
         damageMultiplier: new BigNumber(stats.damageMultiplier),
         defenseMultiplier: new BigNumber(stats.defenseMultiplier),
         regenMultiplier: new BigNumber(stats.regenMultiplier),
+        healthMultiplier: new BigNumber(stats.healthMultiplier),
       }
     },
     generateBosses() {
@@ -106,7 +109,7 @@ export const useBossStore = defineStore({
       // Army regeneration and boss regeneration
       army.health = BigNumber.min(
         army.health.plus(army.regen.times(army.regenMultiplier).times(deltaTime)),
-        army.maxHealth.times(this.combatModifiers.health),
+        army.maxHealth.times(this.combatModifiers.health).times(army.healthMultiplier),
       )
       boss.health = BigNumber.min(
         boss.health.plus(boss.regen.times(deltaTime)),
