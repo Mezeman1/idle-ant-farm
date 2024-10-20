@@ -1,9 +1,5 @@
 <template>
   <div class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200">
-    <h2 class="text-xl font-semibold">
-      Combat Skills
-    </h2>
-
     <!-- Display each skill using the SkillDisplay component -->
     <SkillDisplay
       skill-name="Attack"
@@ -11,6 +7,7 @@
       :xp="attackXp"
       :xp-to-next-level="attackXpToNextLevel"
       :milestones="trainingStore.combatMilestones.filter(milestone => milestone.type === 'attack')"
+      :with-styling="false"
     />
 
     <SkillDisplay
@@ -18,8 +15,8 @@
       :level="defenceLevel"
       :xp="defenceXp"
       :xp-to-next-level="defenceXpToNextLevel"
-
       :milestones="trainingStore.combatMilestones.filter(milestone => milestone.type === 'defense')"
+      :with-styling="false"
     />
 
     <SkillDisplay
@@ -27,8 +24,8 @@
       :level="hitpointsLevel"
       :xp="hitpointsXp"
       :xp-to-next-level="hitpointsXpToNextLevel"
-
       :milestones="trainingStore.combatMilestones.filter(milestone => milestone.type === 'hitpoints')"
+      :with-styling="false"
     />
   </div>
 </template>

@@ -9,6 +9,7 @@ import {arcticTundraSet} from '@/types/items/sets/arcticTundraSet'
 import {consumableItems} from '@/types/items/consumableItems'
 import {passiveItems} from '@/types/items/passiveItems'
 import {useEvolveStore} from '@/stores/evolveStore'
+import {toPercentage} from '@/utils'
 
 export interface Item {
   id: string
@@ -93,7 +94,7 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const currentEvolution = useEvolveStore().currentEvolution
       const totalBonus = 0.15 + 0.05 * currentEvolution
 
-      return `Increases resource gathering by ${totalBonus * 100}%.`
+      return `Increases resource gathering by ${toPercentage(totalBonus, 1)}%.`
     },
     maxLevelsPerEvolution: {
       0: 100,
@@ -142,7 +143,12 @@ export const setBonuses: Record<SetName, SetBonus> = {
       adventureStore.armyAttackModifier -= 0.15
       adventureStore.armyDefenseModifier -= 0.15
     },
-    explanation: 'Increases army attack and defense by 15%.',
+    explanation: () => {
+      const currentEvolution = useEvolveStore().currentEvolution
+      const totalBonus = 0.15 + 0.05 * currentEvolution
+
+      return `Increases army attack and defense by ${toPercentage(totalBonus, 1)}%.`
+    },
     maxLevelsPerEvolution: {
       0: 500,
       1: 800,
@@ -170,13 +176,28 @@ export const setBonuses: Record<SetName, SetBonus> = {
   'Royal Set': {
     apply: () => {
       const resourcesStore = useResourcesStore()
-      resourcesStore.productionRates.larvaeProductionModifier += 0.20
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        resourcesStore.productionRates.larvaeProductionModifier += 0.05 * currentEvolution
+      }
+
+      resourcesStore.productionRates.larvaeProductionModifier += 0.2
     },
     remove: () => {
       const resourcesStore = useResourcesStore()
-      resourcesStore.productionRates.larvaeProductionModifier -= 0.20
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        resourcesStore.productionRates.larvaeProductionModifier -= 0.05 * currentEvolution
+      }
+
+      resourcesStore.productionRates.larvaeProductionModifier -= 0.2
     },
-    explanation: 'Increases queen larvae production by 20%.',
+    explanation: () => {
+      const currentEvolution = useEvolveStore().currentEvolution
+      const totalBonus = 0.2 + 0.05 * currentEvolution
+
+      return `Increases larvae production by ${toPercentage(totalBonus, 1)}%.`
+    },
     maxLevelsPerEvolution: {
       0: 1000,
       1: 1200,
