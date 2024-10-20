@@ -1,3 +1,5 @@
+import {useEvolveStore} from '@/stores/evolveStore'
+
 export const royalSet = [
   {
     id: 'royal-crown',
@@ -9,7 +11,10 @@ export const royalSet = [
     set: 'Royal Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 1000,
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Royal Set')
+    },
+    evolves: true,
     multiplier: 0.00112, // Refactored multiplier
     effect: ({gameStore}, item) => {
       const bonusMultiplier = item.multiplier * item.level
@@ -31,7 +36,10 @@ export const royalSet = [
     set: 'Royal Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 1000,
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Royal Set')
+    },
+    evolves: true,
     multiplier: 0.00157, // Refactored multiplier
     effect: ({gameStore}, item) => {
       const bonusMultiplier = item.multiplier * item.level
@@ -53,7 +61,10 @@ export const royalSet = [
     set: 'Royal Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 1000,
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Royal Set')
+    },
+    evolves: true,
     multiplier: 0.00067, // Refactored multiplier
     effect: ({gameStore}, item) => {
       const bonusMultiplier = item.multiplier * item.level
@@ -75,7 +86,10 @@ export const royalSet = [
     set: 'Royal Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 1000,
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Royal Set')
+    },
+    evolves: true,
     multiplier: 0.00224, // Refactored multiplier
     effect: ({gameStore}, item) => {
       const bonusMultiplier = item.multiplier * item.level
@@ -97,7 +111,10 @@ export const royalSet = [
     set: 'Royal Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 1000,
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Royal Set')
+    },
+    evolves: true,
     multiplier: 0.00223, // Refactored multiplier
     effect: ({adventureStore}, item) => {
       const bonusMultiplier = item.multiplier * item.level

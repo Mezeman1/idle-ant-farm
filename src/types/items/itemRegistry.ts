@@ -64,7 +64,6 @@ export type SetBonus = {
 export type SetName =
   'Worker Set'
   | 'Soldier Set'
-  | 'Soldier Set II'
   | 'Royal Set'
   | 'Volcano Set'
   | 'Underworld Set'
@@ -150,6 +149,14 @@ export const setBonuses: Record<SetName, SetBonus> = {
       resourcesStore.productionRates.larvaeProductionModifier -= 0.20
     },
     explanation: 'Increases queen larvae production by 20%.',
+    maxLevelsPerEvolution: {
+      0: 1000,
+      1: 1200,
+      2: 1500,
+      3: 2000,
+      4: 2500,
+      5: 3000,
+    },
   },
   'Volcano Set': {
     apply: () => {
