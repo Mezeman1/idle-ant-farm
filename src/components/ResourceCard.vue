@@ -2,47 +2,52 @@
 <template>
   <div
     v-if="unlocked"
-    :class="cardClass"
+    :class="['p-4 sm:p-6 rounded-lg shadow-lg transition-all duration-300', cardClass]"
   >
-    <div>
-      <p class="font-bold text-lg sm:text-xl text-gray-800">
+    <div class="mb-3">
+      <p class="font-bold text-lg sm:text-xl text-gray-800 mb-1">
         {{ title }}
       </p>
       <p class="text-sm sm:text-base text-gray-600">
         {{ description }}
       </p>
     </div>
-    <div class="mt-2">
-      <p class="text-sm sm:text-base text-gray-700">
-        <i class="fas fa-cubes" /> Count: {{ countFormatted }}/{{ maxCountFormatted }} ({{ percentage }}%)
+    <div class="space-y-2">
+      <p class="text-sm sm:text-base text-gray-700 flex items-center">
+        <span class="font-semibold">Count:</span> 
+        <span class="ml-1">{{ countFormatted }}/{{ maxCountFormatted }}</span>
+        <span class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+          {{ percentage }}%
+        </span>
       </p>
       <!-- Progress bar for count percentage -->
-      <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-2.5">
         <div
-          class="bg-blue-500 h-2.5 rounded-full"
+          class="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-in-out"
           :style="{ width: percentage + '%' }"
         />
       </div>
 
       <p
         v-if="rate"
-        class="text-xs sm:text-sm text-gray-500 mt-2"
+        class="text-xs sm:text-sm text-gray-600 flex items-center"
       >
-        <i class="fas fa-tachometer-alt" /> Rate: {{ formatNumber(rate, 0) }}{{ ratePer }}
+        <span class="font-semibold">Rate:</span> 
+        <span class="ml-1">{{ formatNumber(rate, 0) }}{{ ratePer }}</span>
         <span
           v-if="bonusPercentage"
-          class="ml-2 inline-block bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full"
+          class="ml-2 inline-block bg-green-100 text-green-600 text-xs px-2 py-0.5 rounded-full"
         >
           {{ bonusPercentage }}
         </span>
       </p>
       <p
         v-if="storageMultiplier"
-        class="text-xs sm:text-sm text-gray-500 mt-1"
+        class="text-xs sm:text-sm text-gray-600 flex items-center"
       >
-        <i class="fas fa-warehouse" /> Storage Multiplier:
+        <span class="font-semibold">Storage Multiplier:</span>
         <span
-          class="ml-2 inline-block bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full"
+          class="ml-2 inline-block bg-purple-100 text-purple-600 text-xs px-2 py-0.5 rounded-full"
         >
           {{ storageMultiplierFormatted }}
         </span>
@@ -54,14 +59,17 @@
       <slot name="additional-info" />
     </div>
 
-    <div class="mt-4 flex flex-col gap-1">
+    <div class="mt-4 flex flex-col gap-2">
       <!-- Actions Slot -->
       <slot name="actions" />
     </div>
   </div>
 
-  <div v-else>
-    <p class="text-gray-400">
+  <div 
+    v-else 
+    class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow-lg text-center"
+  >
+    <p class="text-gray-500 font-semibold">
       Locked (Unlocked through prestige shop)
     </p>
   </div>
