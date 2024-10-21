@@ -9,9 +9,19 @@
       class="mb-8"
     />
 
-    <p class="text-lg font-semibold mb-6 text-gray-800">
-      Active Mining Resources: {{ trainingStore.activeResources.length }} / {{ trainingStore.maxActiveResources }}
-    </p>
+    <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-6">
+      <p class="text-lg font-semibold mb-4 text-gray-800">
+        Active Mining Resources: {{ trainingStore.activeResources.length }} / {{ trainingStore.maxActiveResources }}
+      </p>
+
+      <!-- Add this new section to display the mining double chance -->
+      <div class="flex items-center">
+        <span class="text-lg font-semibold text-gray-800 mr-2">Double Loot Chance:</span>
+        <span class="inline-block px-3 py-1 text-sm font-semibold text-white bg-blue-600 rounded-full">
+          {{ toPercentageFormatted(trainingStore.miningDoubleChance) }}%
+        </span>
+      </div>
+    </div>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-6">
       <div
@@ -169,6 +179,7 @@ import {useTrainingStore} from '@/stores/trainingStore'
 import {computed, ref} from 'vue'
 import SkillDisplay from '@/components/SkillDisplay.vue'
 import {MiningResource} from '@/types/trainingTypes'
+import { toPercentageFormatted } from '@/utils'
 
 const trainingStore = useTrainingStore()
 

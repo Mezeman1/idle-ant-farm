@@ -266,6 +266,7 @@ export const useTrainingStore = defineStore({
     ],
     activeCraftingRecipes: [] as string[],
     maxActiveCraftingRecipes: 1,
+    miningDoubleChance: 0,
   }),
 
   getters: {
@@ -539,7 +540,12 @@ export const useTrainingStore = defineStore({
       this.addXp(Skill.Mining, resource.xpPerAction)
       this.addXpToMiningResource(resource, resource.xpPerAction * 2)
       if (!this.resourcesCollected[resource.name]) this.resourcesCollected[resource.name] = 0
-      this.resourcesCollected[resource.name] += resource.collectionMultiplier
+      
+      let lootMultiplier = 1
+      if (Math.random() < this.miningDoubleChance) {
+        lootMultiplier = 2
+      }
+      this.resourcesCollected[resource.name] += resource.collectionMultiplier * lootMultiplier
 
       // Mark the resource as depleted and reset timePerAction
       resource.isDepleted = true
@@ -775,6 +781,7 @@ export const useTrainingStore = defineStore({
       this.activeTrainings = state.activeTrainings ?? []
       this.activeCraftingRecipes = state.activeCraftingRecipes ?? []
       this.maxActiveCraftingRecipes = state.maxActiveCraftingRecipes ?? 1
+      this.miningDoubleChance = 0
 
       this.addMilestonesToMiningResources()
       this.applyModifiers()
@@ -818,6 +825,7 @@ export const useTrainingStore = defineStore({
       this.activeTrainings = []
       this.activeCraftingRecipes = []
       this.maxActiveCraftingRecipes = 1
+      this.miningDoubleChance = 0
 
       this.addMilestonesToMiningResources()
       this.applyModifiers()

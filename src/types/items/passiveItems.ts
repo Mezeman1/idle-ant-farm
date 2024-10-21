@@ -2,6 +2,7 @@ import {useResourcesStore} from '@/stores/resourcesStore'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {Item} from '@/types/items/itemRegistry'
 import {useEquipmentStore} from '@/stores/equipmentStore'
+import {useTrainingStore} from '@/stores/trainingStore'
 
 export const passiveItems: Item[] = [
   {
@@ -291,5 +292,24 @@ export const passiveItems: Item[] = [
       adventureStore.globalDropChanceModifier /= 2
     },
     rarity: 'legendary',
+  },
+  // Add this new item to the passiveItems array
+  {
+    id: 'miners-charm',
+    name: 'Miner\'s Charm',
+    type: 'passive',
+    description: 'Gives a 5% chance to double loot from mining.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const trainingStore = useTrainingStore()
+      trainingStore.miningDoubleChance += 0.05
+      return true
+    },
+    onRemove: () => {
+      const trainingStore = useTrainingStore()
+      trainingStore.miningDoubleChance -= 0.05
+    },
+    rarity: 'rare',
   },
 ]
