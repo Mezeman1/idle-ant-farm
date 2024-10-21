@@ -1,7 +1,10 @@
 <template>
   <div
-    class="relative flex flex-col items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden aspect-square border-2 border-gray-200"
-    :class="[itemFromRegistry?.image ? 'text-white' : rarityColorClass]"
+    class="relative flex flex-col items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden aspect-square border-2"
+    :class="[
+      itemFromRegistry?.image ? 'text-white' : rarityColorClass,
+      isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+    ]"
     :style="backgroundStyle"
     @click="$emit('click', item)"
   >
@@ -27,12 +30,12 @@
     />
 
     <!-- Item name -->
-    <div class="text-center text-sm font-medium mb-1 relative z-10 px-1">
+    <div class="text-center text-xs sm:text-sm font-medium mb-1 relative z-10 px-1 line-clamp-2">
       {{ getItemName(item) }}
     </div>
 
     <!-- Item type -->
-    <div class="text-xs opacity-75 relative z-10 bg-black bg-opacity-50 px-2 py-1 rounded-full">
+    <div class="text-2xs sm:text-xs opacity-75 relative z-10 bg-black bg-opacity-50 px-2 py-1 rounded-full truncate max-w-full">
       {{ itemFromRegistry?.type }}
     </div>
   </div>
@@ -50,6 +53,7 @@ const props = defineProps<{
     name: string;
     amount: number;
   };
+  isSelected: boolean;
 }>()
 
 const rarityColorClass = computed(() => {
@@ -81,5 +85,16 @@ defineEmits(['click'])
 </script>
 
 <style scoped>
-/* Add any additional styles here if needed */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .text-2xs {
+    font-size: 0.625rem;
+  }
+}
 </style>

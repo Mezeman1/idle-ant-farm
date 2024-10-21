@@ -3,6 +3,7 @@
     <!-- Active Item Display -->
     <div
       v-if="activeItem"
+      ref="activeItemBox"
       class="flex flex-col md:flex-row md:items-center md:justify-between p-4 border border-gray-300 rounded-lg mb-4 bg-white"
     >
       <div>
@@ -43,6 +44,7 @@
         v-for="item in filteredInventory"
         :key="item.id"
         :item="item"
+        :is-selected="activeItem?.id === item.id"
         @click="selectItem(item)"
       />
       <div
@@ -57,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { useInventoryStore } from '../stores/inventoryStore'
 import { toast } from 'vue3-toastify'
@@ -69,9 +71,15 @@ const { width } = useElementSize(gridContainer)
 const inventoryStore = useInventoryStore()
 
 const activeItem = ref(null)
+const activeItemBox = ref(null)
 
 const selectItem = (item) => {
-  activeItem.value = item
+  activeItem.value = item === activeItem.value ? null : item
+  if (activeItem.value) {
+    nextTick(() => {
+      activeItemBox.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
 }
 
 const gridColumns = computed(() => {
@@ -231,5 +239,11 @@ $columns: 10;
 .grid > *:first-child {
   grid-row: 1 / 1;
   grid-column: 1 / 1;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    gap: 0.5rem;
+  }
 }
 </style>
