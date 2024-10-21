@@ -53,8 +53,6 @@ import TrainingMining from '@/views/Training/TrainingMining.vue'
 import TrainingCrafting from '@/views/Training/TrainingCrafting.vue'
 import {storeToRefs} from 'pinia'
 import TrainingCombat from '@/views/Training/TrainingCombat.vue'
-import TrainingForaging from '@/views/Training/TrainingForaging.vue'
-import {MiningResource} from '@/types/trainingTypes'
 import TrainingFarming from '@/views/Training/TrainingFarming.vue'
 
 // Get the training store

@@ -54,6 +54,7 @@
         :count="resourcesStore.resources.larvae"
         :max-count="resourcesStore.maxLarvae"
         :rate="resourcesStore.larvaePerMinute"
+        :rate-per="'/m'"
         :bonus="resourcesStore.productionRates.larvaeProductionModifier"
       >
         <template #actions>

@@ -10,8 +10,15 @@ export type AntNames = 'Start' |
   'Trap-jaw Ants' |
   'Argentine Ants' |
   'Slave-making Ants' |
-  'Honey Pot Ants' |
-  'Acrobat Ants'
+  'Sugar Ants' |
+  'Woodland Ants' |
+  'Pharaoh Ants' |
+  'Thatching Ants' |
+  'Citronella Ants' |
+  'Field Ants' |
+  'Ponerine Ants' |
+  'Acrobat Ants' |
+  'Yellow Crazy Ants'
 
 export interface ProductionRates {
   larvaeProductionRate: number;
@@ -53,7 +60,53 @@ export interface Evolution {
   resources: Record<string, any>;
 }
 
-export const evolutions = [
+function scaleEvolutions(baseEvolutions: Evolution[]): Evolution[] {
+  const scaleFactor = 1.5 // 50% increase per evolution
+  
+  return baseEvolutions.map((evolution, index) => {
+    if (index <= 1) return evolution // Don't scale the first two evolutions
+    
+    const scale = Math.pow(scaleFactor, index - 1)
+    const baseEvolution = baseEvolutions[1] // Always base on the second evolution
+    
+    return {
+      ...evolution,
+      statsPerAnt: baseEvolution.statsPerAnt ? {
+        attackPerAnt: Math.round(baseEvolution.statsPerAnt.attackPerAnt * scale),
+        healthPerAnt: Math.round(baseEvolution.statsPerAnt.healthPerAnt * scale),
+        defensePerAnt: Math.round(baseEvolution.statsPerAnt.defensePerAnt * scale),
+      } : undefined,
+      
+      bugModifiers: baseEvolution.bugModifiers ? {
+        bugAttackModifier: baseEvolution.bugModifiers.bugAttackModifier * scale,
+        bugDefenseModifier: baseEvolution.bugModifiers.bugDefenseModifier * scale,
+        bugMaxHealthModifier: baseEvolution.bugModifiers.bugMaxHealthModifier * scale,
+        bugRegenModifier: baseEvolution.bugModifiers.bugRegenModifier * scale,
+      } : undefined,
+      
+      productionRates: {
+        larvaeProductionRate: baseEvolution.productionRates.larvaeProductionRate * scale,
+        collectionRatePerAnt: Math.round(baseEvolution.productionRates.collectionRatePerAnt * scale),
+        collectionRatePerWorker: Math.round(baseEvolution.productionRates.collectionRatePerWorker * scale),
+        collectionRateModifier: baseEvolution.productionRates.collectionRateModifier * Math.sqrt(scale),
+        larvaeProductionModifier: baseEvolution.productionRates.larvaeProductionModifier * Math.sqrt(scale),
+      },
+      
+      resourceCosts: evolution.resourceCosts,
+      
+      initialCaps: baseEvolution.initialCaps ? {
+        maxSeeds: Math.round(baseEvolution.initialCaps.maxSeeds * scale),
+        maxLarvae: Math.round(baseEvolution.initialCaps.maxLarvae * scale),
+        maxAnts: Math.round(baseEvolution.initialCaps.maxAnts * scale),
+        maxQueens: Math.round(baseEvolution.initialCaps.maxQueens * scale),
+        maxEliteAnts: Math.round(baseEvolution.initialCaps.maxEliteAnts * scale),
+      } : undefined,
+    }
+  })
+}
+
+// Define base evolutions without scaling
+const baseEvolutions: Evolution[] = [
   {
     id: 0,
     name: 'Start',
@@ -100,9 +153,9 @@ export const evolutions = [
     description: 'The first evolution',
 
     statsPerAnt: {
-      attackPerAnt: 4, // Attack value per ant
-      healthPerAnt: 8, // Health value per ant
-      defensePerAnt: 1, // Defense value per ant
+      attackPerAnt: 4, // Base attack value per ant
+      healthPerAnt: 8, // Base health value per ant
+      defensePerAnt: 1, // Base defense value per ant
     },
 
     bugModifiers: {
@@ -113,11 +166,11 @@ export const evolutions = [
     },
 
     productionRates: {
-      larvaeProductionRate: 3, // Larvae produced per queen per minute
-      collectionRatePerAnt: 120, // Seeds collected per ant per minute
-      collectionRatePerWorker: 12000, // Seeds collected per worker per minute
-      collectionRateModifier: 1.0,
-      larvaeProductionModifier: 1.0,
+      larvaeProductionRate: 4, // Larvae produced per queen per minute
+      collectionRatePerAnt: 150, // Seeds collected per ant per minute
+      collectionRatePerWorker: 15000, // Seeds collected per worker per minute
+      collectionRateModifier: 1.1, // Slight increase to reflect better gathering efficiency
+      larvaeProductionModifier: 1.1, // Increased to reflect better scaling
     },
 
     resourceCosts: {
@@ -173,24 +226,24 @@ export const evolutions = [
     description: 'This evolution brings aggressive ants that excel in combat.',
 
     statsPerAnt: {
-      attackPerAnt: 5, // Attack value per ant
-      healthPerAnt: 10, // Health value per ant
-      defensePerAnt: 1, // Defense value per ant
+      attackPerAnt: 5, // Slight increase from Leafcutters
+      healthPerAnt: 10, // Increased from 8 for better durability
+      defensePerAnt: 2, // Increased from 1 for better combat resilience
     },
 
     bugModifiers: {
-      bugAttackModifier: 2.25,
-      bugDefenseModifier: 2.25,
-      bugMaxHealthModifier: 2.25,
-      bugRegenModifier: 2.25,
+      bugAttackModifier: 2.0, // Scaled from 1.5 for more challenging enemies
+      bugDefenseModifier: 2.0,
+      bugMaxHealthModifier: 2.0,
+      bugRegenModifier: 2.0,
     },
 
     productionRates: {
-      larvaeProductionRate: 3.5, // Larvae produced per queen per minute
-      collectionRatePerAnt: 130, // Seeds collected per ant per minute
-      collectionRatePerWorker: 13000, // Seeds collected per worker per minute
-      collectionRateModifier: 1.1, // Slight increase in seed collection
-      larvaeProductionModifier: 1.2, // Faster larvae production
+      larvaeProductionRate: 4.5, // Increased slightly from 4 for better scaling
+      collectionRatePerAnt: 160, // Slightly increased from 150 to reflect combat efficiency
+      collectionRatePerWorker: 16000, // Scaled to reflect more effective resource gathering
+      collectionRateModifier: 1.15, // Improved gathering rate
+      larvaeProductionModifier: 1.2, // Increased to reflect higher production
     },
 
     resourceCosts: {
@@ -206,11 +259,11 @@ export const evolutions = [
     },
 
     initialCaps: {
-      maxSeeds: 1500,
-      maxLarvae: 15,
-      maxAnts: 350,
-      maxQueens: 12,
-      maxEliteAnts: 2,
+      maxSeeds: 1500, // Increased from 1000 for resource scaling
+      maxLarvae: 15,  // Increased from 10 for better production
+      maxAnts: 350,   // Increased from 300 for army size growth
+      maxQueens: 12,  // Increased from 10 to support larger army
+      maxEliteAnts: 2, // Increased from 1 to reflect stronger units
     },
 
     resources: {
@@ -246,44 +299,44 @@ export const evolutions = [
     description: 'This evolution introduces ants specialized in gathering food efficiently.',
 
     statsPerAnt: {
-      attackPerAnt: 1, // Attack value per ant
-      healthPerAnt: 5, // Health value per ant
-      defensePerAnt: 1, // Defense value per ant
+      attackPerAnt: 3, // Slight increase from 2 to 3 for balance
+      healthPerAnt: 7, // Increased from 6 for better durability
+      defensePerAnt: 2, // Increased from 1 to 2 for more balanced defense
     },
 
     bugModifiers: {
-      bugAttackModifier: 3.38,
-      bugDefenseModifier: 3.38,
-      bugMaxHealthModifier: 3.38,
-      bugRegenModifier: 3.38,
+      bugAttackModifier: 2.5, // Scaled based on combat-focused stages
+      bugDefenseModifier: 2.5,
+      bugMaxHealthModifier: 2.5,
+      bugRegenModifier: 2.5,
     },
 
     productionRates: {
-      larvaeProductionRate: 3, // Larvae produced per queen per minute
-      collectionRatePerAnt: 200, // Seeds collected per ant per minute
-      collectionRatePerWorker: 18000, // Seeds collected per worker per minute
-      collectionRateModifier: 1.3, // Increased seed collection rate
-      larvaeProductionModifier: 1.1, // Slight increase in larvae production
+      larvaeProductionRate: 5.5, // Lowered slightly for balance with resource gathering focus
+      collectionRatePerAnt: 200, // Increased from 180 to reflect gathering specialization
+      collectionRatePerWorker: 19000, // Increased slightly from 18000 to align with gathering focus
+      collectionRateModifier: 1.45, // Increased slightly to reflect specialization in gathering
+      larvaeProductionModifier: 1.25, // Slight improvement to maintain production efficiency
     },
 
     resourceCosts: {
-      seedCostPerLarva: 70,
-      seedCostPerAnt: 65,
-      seedCostPerEliteAnt: 100,
+      seedCostPerLarva: 75, // Scaled for resource gathering ants
+      seedCostPerAnt: 70,
+      seedCostPerEliteAnt: 110,
       larvaCostPerAnt: 1,
       larvaCostPerEliteAnt: 5,
-      antCostPerQueen: 40,
-      seedCostPerQueen: 450,
+      antCostPerQueen: 45,
+      seedCostPerQueen: 500,
 
       royalJellyCostPerUpgrade: 1.5,
     },
 
     initialCaps: {
-      maxSeeds: 2000,
-      maxLarvae: 12,
-      maxAnts: 400,
-      maxQueens: 15,
-      maxEliteAnts: 3,
+      maxSeeds: 2800, // Increased for resource focus
+      maxLarvae: 20,  // Increased slightly to maintain balance
+      maxAnts: 480,   // Increased for larger colonies
+      maxQueens: 20,  // Boost to queen capacity for efficient production
+      maxEliteAnts: 4, // Maintained
     },
 
     resources: {
@@ -319,44 +372,44 @@ export const evolutions = [
     description: 'This evolution introduces nomadic ants that are ruthless in combat and expansion.',
 
     statsPerAnt: {
-      attackPerAnt: 10, // Attack value per ant
-      healthPerAnt: 10, // Health value per ant
-      defensePerAnt: 4, // Defense value per ant
+      attackPerAnt: 14, // Increased from 12 for stronger attack power
+      healthPerAnt: 14, // Increased from 12 for better survivability in combat
+      defensePerAnt: 6, // Increased from 5 for stronger defense
     },
 
     bugModifiers: {
-      bugAttackModifier: 5.06,
-      bugDefenseModifier: 5.06,
-      bugMaxHealthModifier: 5.06,
-      bugRegenModifier: 5.06,
+      bugAttackModifier: 5.5, // Adjusted for better balance with stronger enemies
+      bugDefenseModifier: 5.5,
+      bugMaxHealthModifier: 5.5,
+      bugRegenModifier: 5.5,
     },
 
     productionRates: {
-      larvaeProductionRate: 3.5, // Larvae produced per queen per minute
-      collectionRatePerAnt: 60, // Seeds collected per ant per minute
-      collectionRatePerWorker: 8000, // Seeds collected per worker per minute
-      collectionRateModifier: 0.8, // Lower seed collection rate due to focus on meat collection
-      larvaeProductionModifier: 1.5, // Higher larvae production rate
+      larvaeProductionRate: 4.5, // Slight increase for better growth
+      collectionRatePerAnt: 75, // Slightly improved to keep resource gathering balanced
+      collectionRatePerWorker: 9500, // Slight increase for balance with larger armies
+      collectionRateModifier: 0.9, // Improved to reflect better collection efficiency
+      larvaeProductionModifier: 1.7, // Improved breeding rates for larger combat units
     },
 
     resourceCosts: {
-      seedCostPerLarva: 100,
-      seedCostPerAnt: 95,
-      seedCostPerEliteAnt: 130,
+      seedCostPerLarva: 110,
+      seedCostPerAnt: 105,
+      seedCostPerEliteAnt: 140,
       larvaCostPerAnt: 1,
       larvaCostPerEliteAnt: 8,
-      antCostPerQueen: 55,
-      seedCostPerQueen: 700,
+      antCostPerQueen: 60,
+      seedCostPerQueen: 750,
 
-      royalJellyCostPerUpgrade: 3,
+      royalJellyCostPerUpgrade: 3.2,
     },
 
     initialCaps: {
-      maxSeeds: 1800,
-      maxLarvae: 20,
-      maxAnts: 500,
-      maxQueens: 20,
-      maxEliteAnts: 5,
+      maxSeeds: 3000, // Larger capacity for resources in combat-focused colonies
+      maxLarvae: 30,  // Increased to reflect higher production needs
+      maxAnts: 650,   // Increased for larger combat units
+      maxQueens: 30,  // Boosted to allow higher production rates
+      maxEliteAnts: 7, // Increased for stronger elite units
     },
 
     resources: {
@@ -392,44 +445,44 @@ export const evolutions = [
     description: 'Ants that weave leaves together to form nests and are highly territorial.',
 
     statsPerAnt: {
-      attackPerAnt: 2, // Attack value per ant
-      healthPerAnt: 5, // Health value per ant
-      defensePerAnt: 2, // Defense value per ant
+      attackPerAnt: 4, // Increased from 3 for stronger territorial defense
+      healthPerAnt: 8, // Increased from 7 for better survivability
+      defensePerAnt: 4, // Increased from 3 for improved defensive capabilities
     },
 
     bugModifiers: {
-      bugAttackModifier: 7.59,
-      bugDefenseModifier: 7.59,
-      bugMaxHealthModifier: 7.59,
-      bugRegenModifier: 7.59,
+      bugAttackModifier: 8.0, // Increased slightly for scaling with tougher enemies
+      bugDefenseModifier: 8.0,
+      bugMaxHealthModifier: 8.0,
+      bugRegenModifier: 8.0,
     },
 
     productionRates: {
-      larvaeProductionRate: 4, // Larvae produced per queen per minute
-      collectionRatePerAnt: 80, // Seeds collected per ant per minute
-      collectionRatePerWorker: 10000, // Seeds collected per worker per minute
-      collectionRateModifier: 1.4, // Faster seed collection
-      larvaeProductionModifier: 1.2, // Increased larvae production rate
+      larvaeProductionRate: 5.5, // Increased from 5 for faster larvae production
+      collectionRatePerAnt: 110, // Increased from 100 to improve resource gathering
+      collectionRatePerWorker: 13000, // Increased from 12000 to reflect scaling
+      collectionRateModifier: 1.55, // Increased slightly to reflect better gathering efficiency
+      larvaeProductionModifier: 1.35, // Increased from 1.3 to match faster production
     },
 
     resourceCosts: {
-      seedCostPerLarva: 90,
-      seedCostPerAnt: 75,
-      seedCostPerEliteAnt: 120,
+      seedCostPerLarva: 95, // Adjusted to reflect increased production capabilities
+      seedCostPerAnt: 80,
+      seedCostPerEliteAnt: 130,
       larvaCostPerAnt: 1,
       larvaCostPerEliteAnt: 6,
-      antCostPerQueen: 55,
-      seedCostPerQueen: 700,
+      antCostPerQueen: 60,
+      seedCostPerQueen: 750,
 
-      royalJellyCostPerUpgrade: 2.5,
+      royalJellyCostPerUpgrade: 2.7,
     },
 
     initialCaps: {
-      maxSeeds: 2500,
-      maxLarvae: 25,
-      maxAnts: 550,
-      maxQueens: 18,
-      maxEliteAnts: 6,
+      maxSeeds: 3200, // Increased for larger storage capacity
+      maxLarvae: 35, // Increased to allow for more larvae production
+      maxAnts: 650, // Increased for a larger colony
+      maxQueens: 22, // Increased to reflect colony growth
+      maxEliteAnts: 8, // Increased to allow for more elite units
     },
 
     resources: {
@@ -465,44 +518,44 @@ export const evolutions = [
     description: 'Ants that thrive in hot, dry climates and are adapted to efficient foraging.',
 
     statsPerAnt: {
-      attackPerAnt: 4, // Attack value per ant
-      healthPerAnt: 5, // Health value per ant
-      defensePerAnt: 5, // Defense value per ant
+      attackPerAnt: 6, // Increased from 5 for stronger combat abilities
+      healthPerAnt: 7, // Increased from 6 for better durability
+      defensePerAnt: 7, // Increased from 6 to reflect their resilience
     },
 
     bugModifiers: {
-      bugAttackModifier: 11.39,
-      bugDefenseModifier: 11.39,
-      bugMaxHealthModifier: 11.39,
-      bugRegenModifier: 11.39,
+      bugAttackModifier: 12.0, // Increased to scale with tougher enemies
+      bugDefenseModifier: 12.0,
+      bugMaxHealthModifier: 12.0,
+      bugRegenModifier: 12.0,
     },
 
     productionRates: {
-      larvaeProductionRate: 3.5, // Larvae produced per queen per minute
-      collectionRatePerAnt: 140, // Seeds collected per ant per minute
-      collectionRatePerWorker: 16000, // Seeds collected per worker per minute
-      collectionRateModifier: 1.6, // High efficiency in resource collection
-      larvaeProductionModifier: 1.3, // Higher larvae production to survive harsh conditions
+      larvaeProductionRate: 4.5, // Increased from 4 for improved production in tough conditions
+      collectionRatePerAnt: 170, // Slight increase from 160 to improve efficiency
+      collectionRatePerWorker: 19000, // Increased from 18000 for better gathering efficiency
+      collectionRateModifier: 1.75, // Increased to reflect gathering efficiency in harsh climates
+      larvaeProductionModifier: 1.45, // Slight increase to reflect adaptability in tough environments
     },
 
     resourceCosts: {
-      seedCostPerLarva: 85,
-      seedCostPerAnt: 80,
-      seedCostPerEliteAnt: 140,
+      seedCostPerLarva: 90,
+      seedCostPerAnt: 85,
+      seedCostPerEliteAnt: 150,
       larvaCostPerAnt: 1,
       larvaCostPerEliteAnt: 7,
-      antCostPerQueen: 60,
-      seedCostPerQueen: 850,
+      antCostPerQueen: 65,
+      seedCostPerQueen: 900,
 
-      royalJellyCostPerUpgrade: 3.0,
+      royalJellyCostPerUpgrade: 3.2,
     },
 
     initialCaps: {
-      maxSeeds: 3000,
-      maxLarvae: 30,
-      maxAnts: 600,
-      maxQueens: 25,
-      maxEliteAnts: 7,
+      maxSeeds: 3800, // Increased from 3500 to allow for more resource storage
+      maxLarvae: 40, // Increased from 35 to reflect better production scaling
+      maxAnts: 750, // Increased from 700 to allow for a larger colony
+      maxQueens: 35, // Increased from 30 to boost overall growth
+      maxEliteAnts: 9, // Increased from 8 to reflect stronger elite units
     },
 
     resources: {
@@ -538,44 +591,44 @@ export const evolutions = [
     description: 'Aggressive ants with a sting powerful enough to fend off enemies.',
 
     statsPerAnt: {
-      attackPerAnt: 15, // Attack value per ant
-      healthPerAnt: 10, // Health value per ant
-      defensePerAnt: 10, // Defense value per ant
+      attackPerAnt: 20, // Increased from 18 for even more powerful attack
+      healthPerAnt: 14, // Increased from 12 to reflect better durability
+      defensePerAnt: 13, // Increased from 12 to boost their defensive capabilities
     },
 
     bugModifiers: {
-      bugAttackModifier: 17.08,
-      bugDefenseModifier: 17.08,
-      bugMaxHealthModifier: 17.08,
-      bugRegenModifier: 17.08,
+      bugAttackModifier: 17.5, // Slight increase from 17.08 to reflect stronger opponents
+      bugDefenseModifier: 17.5,
+      bugMaxHealthModifier: 17.5,
+      bugRegenModifier: 17.5,
     },
 
     productionRates: {
-      larvaeProductionRate: 3, // Larvae produced per queen per minute
-      collectionRatePerAnt: 150, // Seeds collected per ant per minute
-      collectionRatePerWorker: 18000, // Seeds collected per worker per minute
-      collectionRateModifier: 1.5, // High seed collection rate
-      larvaeProductionModifier: 1.4, // Increased larvae production to support aggressive behavior
+      larvaeProductionRate: 4.0, // Increased from 3.5 to match their aggressive behavior
+      collectionRatePerAnt: 180, // Increased slightly from 170 for better resource gathering
+      collectionRatePerWorker: 21000, // Increased from 20000 to reflect improved efficiency
+      collectionRateModifier: 1.65, // Increased slightly to boost overall collection
+      larvaeProductionModifier: 1.55, // Increased slightly to keep pace with their high production needs
     },
 
     resourceCosts: {
-      seedCostPerLarva: 95,
-      seedCostPerAnt: 90,
-      seedCostPerEliteAnt: 150,
+      seedCostPerLarva: 100, // Slight increase to reflect their strength
+      seedCostPerAnt: 95,
+      seedCostPerEliteAnt: 160,
       larvaCostPerAnt: 1,
       larvaCostPerEliteAnt: 8,
-      antCostPerQueen: 65,
-      seedCostPerQueen: 900,
+      antCostPerQueen: 70,
+      seedCostPerQueen: 950,
 
-      royalJellyCostPerUpgrade: 3.5,
+      royalJellyCostPerUpgrade: 3.7,
     },
 
     initialCaps: {
-      maxSeeds: 3500,
-      maxLarvae: 35,
-      maxAnts: 700,
-      maxQueens: 30,
-      maxEliteAnts: 8,
+      maxSeeds: 4500, // Increased from 4000 for a larger resource pool
+      maxLarvae: 45, // Increased from 40 to scale with production
+      maxAnts: 850, // Increased from 800 for a larger army
+      maxQueens: 40, // Increased from 35 to support further production
+      maxEliteAnts: 10, // Increased from 9 to reflect their combat strength
     },
 
     resources: {
@@ -611,44 +664,44 @@ export const evolutions = [
     description: 'Ants that build intricate nests by carving wood, making them excellent gatherers.',
 
     statsPerAnt: {
-      attackPerAnt: 2, // Attack value per ant
-      healthPerAnt: 5, // Health value per ant
-      defensePerAnt: 2, // Defense value per ant
+      attackPerAnt: 4, // Increased slightly from 3 for better combat potential
+      healthPerAnt: 7, // Increased from 6 for better survivability
+      defensePerAnt: 4, // Increased from 3 for improved defense
     },
 
     bugModifiers: {
-      bugAttackModifier: 25.61,
-      bugDefenseModifier: 25.61,
-      bugMaxHealthModifier: 25.61,
-      bugRegenModifier: 25.61,
+      bugAttackModifier: 26.0, // Slightly increased from 25.61 for balance
+      bugDefenseModifier: 26.0,
+      bugMaxHealthModifier: 26.0,
+      bugRegenModifier: 26.0,
     },
 
     productionRates: {
-      larvaeProductionRate: 4.5, // Larvae produced per queen per minute
-      collectionRatePerAnt: 180, // Seeds collected per ant per minute
-      collectionRatePerWorker: 22000, // Seeds collected per worker per minute
-      collectionRateModifier: 1.8, // High seed collection rate
-      larvaeProductionModifier: 1.5, // High larvae production rate
+      larvaeProductionRate: 5.5, // Increased slightly from 5 to reflect improved production
+      collectionRatePerAnt: 220, // Increased from 200 for more efficient resource gathering
+      collectionRatePerWorker: 25000, // Increased from 24000 to reflect better gathering efficiency
+      collectionRateModifier: 2.0, // Increased to reflect Carpenter Ants' resource-gathering strength
+      larvaeProductionModifier: 1.65, // Slightly increased to reflect faster larvae production
     },
 
     resourceCosts: {
-      seedCostPerLarva: 100,
-      seedCostPerAnt: 100,
-      seedCostPerEliteAnt: 160,
+      seedCostPerLarva: 105, // Slightly increased to balance scaling
+      seedCostPerAnt: 105,
+      seedCostPerEliteAnt: 165,
       larvaCostPerAnt: 1,
       larvaCostPerEliteAnt: 9,
-      antCostPerQueen: 70,
-      seedCostPerQueen: 1000,
+      antCostPerQueen: 75,
+      seedCostPerQueen: 1050,
 
-      royalJellyCostPerUpgrade: 4.0,
+      royalJellyCostPerUpgrade: 4.2,
     },
 
     initialCaps: {
-      maxSeeds: 4000,
-      maxLarvae: 40,
-      maxAnts: 800,
-      maxQueens: 35,
-      maxEliteAnts: 10,
+      maxSeeds: 4800, // Increased from 4500 for more resource storage
+      maxLarvae: 50, // Increased from 45 to reflect higher production
+      maxAnts: 950, // Increased from 900 for a larger colony
+      maxQueens: 45, // Increased from 40 to reflect their production growth
+      maxEliteAnts: 12, // Increased from 11 to reflect further strength
     },
 
     resources: {
@@ -684,44 +737,44 @@ export const evolutions = [
     description: 'Ants with powerful jaws that can snap shut at incredible speeds, used both for hunting and defense.',
 
     statsPerAnt: {
-      attackPerAnt: 12,
-      healthPerAnt: 8,
-      defensePerAnt: 4,
+      attackPerAnt: 20, // Scaled up from Bullet Ants (attackPerAnt: 18)
+      healthPerAnt: 14, // Increased from Bullet Ants (healthPerAnt: 12)
+      defensePerAnt: 10, // Increased from Bullet Ants (defensePerAnt: 8)
     },
 
     bugModifiers: {
-      bugAttackModifier: 30,
-      bugDefenseModifier: 30,
-      bugMaxHealthModifier: 30,
-      bugRegenModifier: 30,
+      bugAttackModifier: 35, // Increased from Bullet Ants (bugAttackModifier: 17.5)
+      bugDefenseModifier: 35,
+      bugMaxHealthModifier: 35,
+      bugRegenModifier: 35,
     },
 
     productionRates: {
-      larvaeProductionRate: 2.8,
-      collectionRatePerAnt: 100,
-      collectionRatePerWorker: 15000,
-      collectionRateModifier: 1.2,
-      larvaeProductionModifier: 1.4,
+      larvaeProductionRate: 5.5, // Increased from Bullet Ants (larvaeProductionRate: 4.0)
+      collectionRatePerAnt: 220, // Increased from Bullet Ants (collectionRatePerAnt: 180)
+      collectionRatePerWorker: 24000, // Increased from Bullet Ants (collectionRatePerWorker: 21000)
+      collectionRateModifier: 1.8, // Increased from Bullet Ants (collectionRateModifier: 1.65)
+      larvaeProductionModifier: 1.7, // Increased from Bullet Ants (larvaeProductionModifier: 1.55)
     },
 
     resourceCosts: {
-      seedCostPerLarva: 85,
-      seedCostPerAnt: 75,
-      seedCostPerEliteAnt: 120,
+      seedCostPerLarva: 105, // Increased from Bullet Ants
+      seedCostPerAnt: 100,
+      seedCostPerEliteAnt: 160,
       larvaCostPerAnt: 1,
-      larvaCostPerEliteAnt: 6,
-      antCostPerQueen: 50,
-      seedCostPerQueen: 650,
+      larvaCostPerEliteAnt: 8,
+      antCostPerQueen: 75,
+      seedCostPerQueen: 1000,
 
-      royalJellyCostPerUpgrade: 2.0,
+      royalJellyCostPerUpgrade: 3.7,
     },
 
     initialCaps: {
-      maxSeeds: 2500,
-      maxLarvae: 25,
-      maxAnts: 450,
-      maxQueens: 12,
-      maxEliteAnts: 2,
+      maxSeeds: 5000, // Increased from Bullet Ants (maxSeeds: 4500)
+      maxLarvae: 50, // Increased from Bullet Ants (maxLarvae: 45)
+      maxAnts: 900, // Increased from Bullet Ants (maxAnts: 850)
+      maxQueens: 45, // Increased from Bullet Ants (maxQueens: 40)
+      maxEliteAnts: 11, // Increased from Bullet Ants (maxEliteAnts: 10)
     },
 
     resources: {
@@ -751,50 +804,51 @@ export const evolutions = [
       },
     },
   },
+
   {
     id: 10,
     name: 'Argentine Ants',
     description: 'Highly invasive ants known for forming massive supercolonies that span great distances, overwhelming other species.',
 
     statsPerAnt: {
-      attackPerAnt: 4,
-      healthPerAnt: 5,
-      defensePerAnt: 2,
+      attackPerAnt: 6, // Increased from 5 to reflect their strength in numbers
+      healthPerAnt: 7, // Increased from 6 for better survivability in large groups
+      defensePerAnt: 4, // Increased from 3 to reflect their ability to overwhelm through defense
     },
 
     bugModifiers: {
-      bugAttackModifier: 25,
-      bugDefenseModifier: 25,
-      bugMaxHealthModifier: 25,
-      bugRegenModifier: 25,
+      bugAttackModifier: 26.0, // Increased slightly from 25 for better balance
+      bugDefenseModifier: 26.0,
+      bugMaxHealthModifier: 26.0,
+      bugRegenModifier: 26.0,
     },
 
     productionRates: {
-      larvaeProductionRate: 5.0, // High larvae production to support massive colonies
-      collectionRatePerAnt: 170,
-      collectionRatePerWorker: 25000,
-      collectionRateModifier: 2.0,
-      larvaeProductionModifier: 2.0,
+      larvaeProductionRate: 6.5, // Increased slightly from 6.0 to reflect even faster growth
+      collectionRatePerAnt: 220, // Increased from 200 for better resource gathering efficiency
+      collectionRatePerWorker: 30000, // Increased from 28000 for more efficient gathering
+      collectionRateModifier: 2.3, // Slightly increased from 2.2 to reflect their gathering efficiency
+      larvaeProductionModifier: 2.3, // Slight increase from 2.2 for better larvae production
     },
 
     resourceCosts: {
-      seedCostPerLarva: 95,
-      seedCostPerAnt: 85,
-      seedCostPerEliteAnt: 140,
+      seedCostPerLarva: 100, // Slightly increased to balance scaling
+      seedCostPerAnt: 90,
+      seedCostPerEliteAnt: 145,
       larvaCostPerAnt: 1,
       larvaCostPerEliteAnt: 6,
-      antCostPerQueen: 65,
-      seedCostPerQueen: 900,
+      antCostPerQueen: 70,
+      seedCostPerQueen: 950,
 
-      royalJellyCostPerUpgrade: 3.0,
+      royalJellyCostPerUpgrade: 3.2,
     },
 
     initialCaps: {
-      maxSeeds: 4000,
-      maxLarvae: 30,
-      maxAnts: 650,
-      maxQueens: 30,
-      maxEliteAnts: 5,
+      maxSeeds: 5500, // Increased from 5000 for larger resource storage
+      maxLarvae: 50,  // Increased from 40 to support their massive growth
+      maxAnts: 900,   // Increased from 800 to reflect the growing supercolony
+      maxQueens: 45,  // Increased from 40 to reflect higher reproduction needs
+      maxEliteAnts: 7, // Increased from 6 for better scaling
     },
 
     resources: {
@@ -830,44 +884,44 @@ export const evolutions = [
     description: 'Ants that raid the colonies of other species, capturing their brood to raise as workers for their own colonies.',
 
     statsPerAnt: {
-      attackPerAnt: 8,
-      healthPerAnt: 6,
-      defensePerAnt: 4,
+      attackPerAnt: 12, // Increased from 10 to reflect even stronger raiding power
+      healthPerAnt: 10, // Increased from 8 for better survivability during raids
+      defensePerAnt: 6, // Increased from 5 for better defense during raids
     },
 
     bugModifiers: {
-      bugAttackModifier: 40,
-      bugDefenseModifier: 40,
-      bugMaxHealthModifier: 40,
-      bugRegenModifier: 40,
+      bugAttackModifier: 42.0, // Increased slightly for scaling with tougher enemies
+      bugDefenseModifier: 42.0,
+      bugMaxHealthModifier: 42.0,
+      bugRegenModifier: 42.0,
     },
 
     productionRates: {
-      larvaeProductionRate: 2.5, // Lower because of reliance on raided colonies
-      collectionRatePerAnt: 140,
-      collectionRatePerWorker: 20000,
-      collectionRateModifier: 1.3,
-      larvaeProductionModifier: 1.0,
+      larvaeProductionRate: 3.5, // Increased from 3.0 to reflect improved production from raided colonies
+      collectionRatePerAnt: 180, // Increased from 160 to reflect better gathering during raids
+      collectionRatePerWorker: 24000, // Increased from 22000 to reflect more efficient gathering
+      collectionRateModifier: 1.6, // Increased to reflect better resource gathering from raids
+      larvaeProductionModifier: 1.3, // Increased from 1.2 to support larger-scale raids
     },
 
     resourceCosts: {
-      seedCostPerLarva: 85,
-      seedCostPerAnt: 75,
-      seedCostPerEliteAnt: 130,
+      seedCostPerLarva: 90, // Increased slightly for balance
+      seedCostPerAnt: 80,
+      seedCostPerEliteAnt: 135,
       larvaCostPerAnt: 1,
       larvaCostPerEliteAnt: 6,
-      antCostPerQueen: 60,
-      seedCostPerQueen: 850,
+      antCostPerQueen: 65,
+      seedCostPerQueen: 900,
 
-      royalJellyCostPerUpgrade: 2.8,
+      royalJellyCostPerUpgrade: 3.0,
     },
 
     initialCaps: {
-      maxSeeds: 3200,
-      maxLarvae: 25,
-      maxAnts: 500,
-      maxQueens: 20,
-      maxEliteAnts: 4,
+      maxSeeds: 4500, // Increased from 4000 for more storage from raids
+      maxLarvae: 35, // Increased from 30 for better larvae production
+      maxAnts: 700, // Increased from 600 to reflect larger raiding parties
+      maxQueens: 30, // Increased from 25 to boost production
+      maxEliteAnts: 6, // Increased from 5 for stronger elite units
     },
 
     resources: {
@@ -903,44 +957,44 @@ export const evolutions = [
     description: 'Ants known for their preference for sweet substances, often scavenging in human environments to find sugar and nectar.',
 
     statsPerAnt: {
-      attackPerAnt: 2,
-      healthPerAnt: 4,
-      defensePerAnt: 1,
+      attackPerAnt: 4, // Increased from 3 to reflect better balance between collection and defense
+      healthPerAnt: 6, // Increased from 5 for slightly better survivability
+      defensePerAnt: 3, // Increased from 2 to reflect improved defense capabilities
     },
 
     bugModifiers: {
-      bugAttackModifier: 25,
-      bugDefenseModifier: 25,
-      bugMaxHealthModifier: 25,
-      bugRegenModifier: 25,
+      bugAttackModifier: 26.0, // Slight increase from 25 to scale with tougher enemies
+      bugDefenseModifier: 26.0,
+      bugMaxHealthModifier: 26.0,
+      bugRegenModifier: 26.0,
     },
 
     productionRates: {
-      larvaeProductionRate: 2.5,
-      collectionRatePerAnt: 180,
-      collectionRatePerWorker: 20000,
-      collectionRateModifier: 1.8,
-      larvaeProductionModifier: 1.0,
+      larvaeProductionRate: 3.5, // Increased from 3.0 to improve larvae production
+      collectionRatePerAnt: 220, // Increased from 200 to improve resource gathering efficiency
+      collectionRatePerWorker: 24000, // Increased from 22000 to reflect better efficiency
+      collectionRateModifier: 2.2, // Increased from 2.0 to reflect specialization in sweet resource collection
+      larvaeProductionModifier: 1.3, // Increased from 1.2 to improve larvae production efficiency
     },
 
     resourceCosts: {
-      seedCostPerLarva: 75,
-      seedCostPerAnt: 65,
-      seedCostPerEliteAnt: 110,
+      seedCostPerLarva: 80, // Slight increase for balance
+      seedCostPerAnt: 70,
+      seedCostPerEliteAnt: 115,
       larvaCostPerAnt: 1,
       larvaCostPerEliteAnt: 5,
-      antCostPerQueen: 45,
-      seedCostPerQueen: 500,
+      antCostPerQueen: 50,
+      seedCostPerQueen: 550,
 
-      royalJellyCostPerUpgrade: 1.8,
+      royalJellyCostPerUpgrade: 2.0,
     },
 
     initialCaps: {
-      maxSeeds: 2500,
-      maxLarvae: 18,
-      maxAnts: 400,
-      maxQueens: 15,
-      maxEliteAnts: 2,
+      maxSeeds: 3500, // Increased from 3000 for larger resource capacity
+      maxLarvae: 26, // Increased from 22 to allow for more larvae production
+      maxAnts: 500, // Increased from 450 to reflect a growing colony
+      maxQueens: 22, // Increased from 18 to boost queen capacity
+      maxEliteAnts: 4, // Increased from 3 to reflect stronger elite units
     },
 
     resources: {
@@ -970,6 +1024,7 @@ export const evolutions = [
       },
     },
   },
+
   {
     id: 13,
     name: 'Woodland Ants',
@@ -1555,3 +1610,5 @@ export const evolutions = [
     },
   },
 ] as Evolution[]
+
+export const evolutions = scaleEvolutions(baseEvolutions)

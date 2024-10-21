@@ -50,6 +50,10 @@
           >
             No modifiers for this area
           </p>
+          <!-- Current kill count for the area -->
+          <p class="text-gray-500 mt-2">
+            Kill Count: {{ formatNumber(adventureStore.killCountsForCurrentArea) }}
+          </p>
           <AreaModifiersMilestones />
         </div>
 

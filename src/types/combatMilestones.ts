@@ -1,9 +1,10 @@
-interface CombatMilestone {
+export interface CombatMilestone {
   levelRequired: number,
   type: 'attack' | 'defense' | 'hitpoints',
   effect: object,
   description: string,
   appliedTo?: string,
+  multiplyModifier?: boolean,
 }
 
 const bossCombatMilestones =
@@ -268,6 +269,7 @@ const bossCombatMilestones =
       description: 'Increase damage to bosses by 100%',
       type: 'attack',
       appliedTo: 'bosses',
+      multiplyModifier: true,
     },
     {
       levelRequired: 50,
@@ -277,6 +279,7 @@ const bossCombatMilestones =
       description: 'Increase defense against bosses by 100%',
       type: 'defense',
       appliedTo: 'bosses',
+      multiplyModifier: true,
     },
     {
       levelRequired: 50,
@@ -287,6 +290,7 @@ const bossCombatMilestones =
       description: 'Increase hitpoints by 50% and regeneration by 50% when fighting bosses',
       type: 'hitpoints',
       appliedTo: 'bosses',
+      multiplyModifier: true,
     },
     {
       levelRequired: 60,
@@ -408,6 +412,7 @@ const bossCombatMilestones =
       description: 'Increase damage to bosses by 200%',
       type: 'attack',
       appliedTo: 'bosses',
+      multiplyModifier: true,
     },
     {
       levelRequired: 100,
@@ -417,7 +422,8 @@ const bossCombatMilestones =
       description: 'Increase defense against bosses by 200%',
       type: 'defense',
       appliedTo: 'bosses',
-    },
+      multiplyModifier: true,
+      },
     {
       levelRequired: 100,
       effect: {
@@ -427,6 +433,7 @@ const bossCombatMilestones =
       description: 'Increase hitpoints by 100% and regeneration by 100% when fighting bosses',
       type: 'hitpoints',
       appliedTo: 'bosses',
+      multiplyModifier: true,
     },
     {
       levelRequired: 120,
@@ -747,6 +754,7 @@ const armyCombatMilestones = [
     description: 'Increase damage by 100% for both army and bosses',
     type: 'attack',
     appliedTo: 'army',
+    multiplyModifier: true,
   },
   {
     levelRequired: 50,
@@ -756,6 +764,7 @@ const armyCombatMilestones = [
     description: 'Increase defense by 100% for both army and bosses',
     type: 'defense',
     appliedTo: 'army',
+    multiplyModifier: true,
   },
   {
     levelRequired: 50,
@@ -764,8 +773,9 @@ const armyCombatMilestones = [
       regen: 1.5,
     },
     description: 'Increase hitpoints by 50% and regeneration by 50% for both army and bosses',
-    type: 'hitpoints',
+    type: 'hitpoints',	
     appliedTo: 'army',
+    multiplyModifier: true,
   },
   {
     levelRequired: 60,
@@ -887,6 +897,7 @@ const armyCombatMilestones = [
     description: 'Increase damage by 200% for both army and bosses',
     type: 'attack',
     appliedTo: 'army',
+    multiplyModifier: true,
   },
   {
     levelRequired: 100,
@@ -896,6 +907,7 @@ const armyCombatMilestones = [
     description: 'Increase defense by 200% for both army and bosses',
     type: 'defense',
     appliedTo: 'army',
+    multiplyModifier: true,
   },
   {
     levelRequired: 100,
@@ -906,6 +918,7 @@ const armyCombatMilestones = [
     description: 'Increase hitpoints by 100% and regeneration by 100% for both army and bosses',
     type: 'hitpoints',
     appliedTo: 'army',
+    multiplyModifier: true,
   },
   {
     levelRequired: 120,
@@ -960,6 +973,93 @@ const armyCombatMilestones = [
       regen: 3.0,
     },
     description: 'Increase hitpoints by 200% and regeneration by 200% for both army and bosses',
+    type: 'hitpoints',
+    appliedTo: 'army',
+  },
+  {
+    levelRequired: 200,
+    effect: {
+      attack: 3.5,
+    },
+    description: 'Increase damage by 350% for both army and bosses',
+    type: 'attack',
+    appliedTo: 'army',
+  },
+  {
+    levelRequired: 200,
+    effect: {
+      defense: 3.5,
+    },
+    description: 'Increase defense by 350% for both army and bosses',
+    type: 'defense',
+    appliedTo: 'army',
+  },
+  {
+    levelRequired: 200,
+    effect: {
+      health: 3.5,
+      regen: 3.5,
+    },
+    description: 'Increase hitpoints by 250% and regeneration by 250% for both army and bosses',
+    type: 'hitpoints',
+    appliedTo: 'army',
+  },
+  {
+    levelRequired: 250,
+    effect: {
+      attack: 4.0,
+    },
+    description: 'Increase damage by 400% for both army and bosses',
+    type: 'attack',
+    appliedTo: 'army',
+    multiplyModifier: true,
+  },
+  {
+    levelRequired: 250,
+    effect: {
+      defense: 4.0,
+    },
+    description: 'Increase defense by 400% for both army and bosses',
+    type: 'defense',
+    appliedTo: 'army',
+    multiplyModifier: true,
+  },
+  {
+    levelRequired: 250,
+    effect: {
+      health: 4.0,
+      regen: 4.0,
+    },
+    description: 'Increase hitpoints by 300% and regeneration by 300% for both army and bosses',
+    type: 'hitpoints',
+    appliedTo: 'army',
+    multiplyModifier: true,
+  },
+  {
+    levelRequired: 300,
+    effect: {
+      attack: 4.5,
+    },
+    description: 'Increase damage by 450% for both army and bosses',
+    type: 'attack',
+    appliedTo: 'army',
+  },
+  {
+    levelRequired: 300,
+    effect: {
+      defense: 4.5,
+    },
+    description: 'Increase defense by 450% for both army and bosses',
+    type: 'defense',
+    appliedTo: 'army',
+  },
+  {
+    levelRequired: 300,
+    effect: {
+      health: 4.5,
+      regen: 4.5,
+    },
+    description: 'Increase hitpoints by 350% and regeneration by 350% for both army and bosses',
     type: 'hitpoints',
     appliedTo: 'army',
   },

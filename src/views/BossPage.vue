@@ -64,7 +64,7 @@
           <p class="text-sm">
             HP: {{ formatNumber(armyStats.health) }} / {{ formatNumber(armyStats.maxHealth * armyStats.healthMultiplier * bossStore.combatModifiers.health) }}
             <span class="text-xs text-gray-500">
-              ({{ toPercentage(armyStats.healthMultiplier * bossStore.combatModifiers.health, 1) }}%)
+              ({{ toPercentageFormatted(armyStats.healthMultiplier * bossStore.combatModifiers.health, 1) }}%)
             </span>
           </p>
         </div>
@@ -88,7 +88,7 @@
               <p class="font-semibold">
                 {{ formatNumber(armyStats.damage * armyStats.damageMultiplier * bossStore.combatModifiers.damage) }}
                 <span class="text-xs text-gray-500">
-                  ({{ toPercentage(armyStats.damageMultiplier * bossStore.combatModifiers.damage, 1) }}%)
+                  ({{ toPercentageFormatted(armyStats.damageMultiplier * bossStore.combatModifiers.damage, 1) }}%)
                 </span>
               </p>
             </div>
@@ -99,7 +99,7 @@
               <p class="font-semibold">
                 {{ formatNumber(armyStats.defense * armyStats.defenseMultiplier * bossStore.combatModifiers.defense) }}
                 <span class="text-xs text-gray-500">
-                  ({{ toPercentage(armyStats.defenseMultiplier * bossStore.combatModifiers.defense, 1) }}%)
+                  ({{ toPercentageFormatted(armyStats.defenseMultiplier * bossStore.combatModifiers.defense, 1) }}%)
                 </span>
               </p>
             </div>
@@ -110,7 +110,7 @@
               <p class="font-semibold">
                 {{ formatNumber(armyStats.regen * armyStats.regenMultiplier * bossStore.combatModifiers.regen) }}
                 <span class="text-xs text-gray-500">
-                  ({{ toPercentage(armyStats.regenMultiplier * bossStore.combatModifiers.regen, 1) }}%)
+                  ({{ toPercentageFormatted(armyStats.regenMultiplier * bossStore.combatModifiers.regen, 1) }}%)
                 </span>
               </p>
             </div>
@@ -144,7 +144,7 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useBossStore } from '@/stores/bossStore'
 import { useGameStore } from '@/stores/gameStore'
-import { toPercentage } from '@/utils'
+import { toPercentage, toPercentageFormatted } from '@/utils'
 
 const bossStore = useBossStore()
 const gameStore = useGameStore()

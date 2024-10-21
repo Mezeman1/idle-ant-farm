@@ -17,14 +17,15 @@ import {useSettingsStore} from '@/stores/settingsStore'
 import {SeedNames, seeds} from '@/types/farmingSeeds'
 import {toast} from 'vue3-toastify'
 import {useBossStore} from '@/stores/bossStore'
-import combatMilestones from '@/types/combatMilestones'
+import combatMilestones, { CombatMilestone } from '@/types/combatMilestones'
+import { useEvolveStore } from './evolveStore'
+import { useGameStore } from './gameStore'
 
 export const useTrainingStore = defineStore({
   id: 'Training',
   state: () => ({
     activeTab: 'mining',
 
-    activeTraining: Skill.None,
     training: {
       mining: {
         level: 1,
@@ -65,6 +66,13 @@ export const useTrainingStore = defineStore({
           maxActiveResources: 2,
         },
         description: 'Unlocks the ability to mine 2 resources at once',
+      },
+      {
+        levelRequired: 150,
+        effect: {
+          maxActiveResources: 3,
+        },
+        description: 'Unlocks the ability to mine 3 resources at once',
       },
     ],
     activeResources: [] as ResourceType[],
@@ -236,6 +244,28 @@ export const useTrainingStore = defineStore({
     combatMilestones: combatMilestones,
 
     pastNotifications: {},
+
+    activeTrainings: [] as Skill[],
+
+    // Crafting
+    craftingMilestones: [
+      {
+        levelRequired: 50,
+        effect: {
+          maxActiveCraftingRecipes: 2,
+        },
+        description: 'Unlocks the ability to craft 2 recipes at once',
+      },
+      {
+        levelRequired: 100,
+        effect: {
+          maxActiveCraftingRecipes: 3,
+        },
+        description: 'Unlocks the ability to craft 3 recipes at once',
+      },
+    ],
+    activeCraftingRecipes: [] as string[],
+    maxActiveCraftingRecipes: 1,
   }),
 
   getters: {
@@ -257,8 +287,8 @@ export const useTrainingStore = defineStore({
     },
 
     processTraining(deltaTime: number) {
-      if (this.activeTraining === Skill.Mining) this.processMining(deltaTime)
-      if (this.activeTraining === Skill.Crafting) this.processCrafting(deltaTime)
+      if (this.activeTrainings.includes(Skill.Mining)) this.processMining(deltaTime)
+      if (this.activeTrainings.includes(Skill.Crafting)) this.processCrafting(deltaTime)
       this.processFarming(deltaTime)
     },
 
@@ -376,27 +406,29 @@ export const useTrainingStore = defineStore({
 
 
     processCrafting(deltaTime: number) {
-      const activeRecipe = this.craftingRecipes.find(recipe => recipe.name === this.activeCraftingRecipe)
-      if (!activeRecipe) return
+      this.activeCraftingRecipes.forEach(recipeName => {
+        const activeRecipe = this.craftingRecipes.find(recipe => recipe.name === recipeName)
+        if (!activeRecipe) return
 
-      if (this.training.crafting.level < activeRecipe.levelRequired) return
+        if (this.training.crafting.level < activeRecipe.levelRequired) return
 
-      if (!this.canCraft(activeRecipe)) {
-        this.stopCrafting()
-        return
-      }
+        if (!this.canCraft(activeRecipe)) {
+          this.stopCrafting(recipeName)
+          return
+        }
 
-      activeRecipe.timePerAction -= deltaTime * this.farmingModifiers.craftingRate
+        activeRecipe.timePerAction -= deltaTime * this.farmingModifiers.craftingRate
 
-      if (activeRecipe.timePerAction > 0) return
+        if (activeRecipe.timePerAction > 0) return
 
-      // Crafting is complete, add XP and increase storage
-      this.addXp(Skill.Crafting, activeRecipe.xpPerAction)
-      this.increaseStorage(activeRecipe.name)
-      this.subtractResources(activeRecipe.cost)
+        // Crafting is complete, add XP and increase storage
+        this.addXp(Skill.Crafting, activeRecipe.xpPerAction)
+        this.increaseStorage(activeRecipe.name)
+        this.subtractResources(activeRecipe.cost)
 
-      // Reset timePerAction
-      activeRecipe.timePerAction = activeRecipe.initialTimePerAction
+        // Reset timePerAction
+        activeRecipe.timePerAction = activeRecipe.initialTimePerAction
+      })
     },
 
     subtractResources(cost: Record<ResourceType, number>) {
@@ -446,25 +478,52 @@ export const useTrainingStore = defineStore({
     },
 
     startCrafting(recipeName: string) {
+      if (this.activeCraftingRecipes.length >= this.maxActiveCraftingRecipes) {
+        // If we're at the limit, remove the oldest crafting recipe
+        this.stopCrafting(this.activeCraftingRecipes[0])
+      }
+
       this.setActiveTraining(Skill.Crafting)
-      this.setActiveCraftingRecipe(recipeName)
+      this.activeCraftingRecipes.push(recipeName)
     },
 
-    stopCrafting() {
-      this.resetCraftingRecipe()
-      this.setActiveCraftingRecipe('')
-      this.setActiveTraining(Skill.None)
+    stopCrafting(recipeName?: string) {
+      if (!recipeName) {
+        // Stop all crafting
+        this.activeCraftingRecipes.forEach(recipe => this.resetCraftingRecipe(recipe))
+        this.activeCraftingRecipes = []
+        this.removeActiveTraining(Skill.Crafting)
+        return
+      }
+
+      const index = this.activeCraftingRecipes.indexOf(recipeName)
+      if (index !== -1) {
+        this.activeCraftingRecipes.splice(index, 1)
+        this.resetCraftingRecipe(recipeName)
+      }
+
+      if (this.activeCraftingRecipes.length === 0) {
+        this.removeActiveTraining(Skill.Crafting)
+      }
     },
 
-    resetCraftingRecipe() {
-      const activeRecipe = this.craftingRecipes.find(recipe => recipe.name === this.activeCraftingRecipe)
-      if (!activeRecipe) return
-
-      activeRecipe.timePerAction = activeRecipe.initialTimePerAction
+    resetCraftingRecipe(recipeName: string) {
+      const recipe = this.craftingRecipes.find(r => r.name === recipeName)
+      if (recipe) {
+        recipe.timePerAction = recipe.initialTimePerAction
+      }
     },
 
-    setActiveCraftingRecipe(recipe: string) {
-      this.activeCraftingRecipe = recipe
+    checkCraftingMilestones() {
+      this.craftingMilestones.forEach(milestone => {
+        if (this.training.crafting.level >= milestone.levelRequired) {
+          this.applyCraftingMilestone(milestone)
+        }
+      })
+    },
+
+    applyCraftingMilestone(milestone: { effect: { maxActiveCraftingRecipes: number } }) {
+      this.maxActiveCraftingRecipes = milestone.effect.maxActiveCraftingRecipes
     },
 
     handleMining(resource: MiningResource, deltaTime: number) {
@@ -531,7 +590,6 @@ export const useTrainingStore = defineStore({
 
     startMining(resource: MiningResource) {
       this.setActiveTraining(Skill.Mining)
-
       this.resetOreNode(resource)
       this.setActiveResource(resource.name)
       this.resetNoneActiveOreNodes()
@@ -555,7 +613,7 @@ export const useTrainingStore = defineStore({
 
       const resourceIndex = this.activeResources.indexOf(resourceName)
       if (resourceIndex !== -1) {
-        this.activeResources.splice(resourceIndex, 1) // Remove resource from active list
+        this.activeResources.splice(resourceIndex, 1)
       }
 
       const activeResource = this.miningResources.find(res => res.name === resourceName)
@@ -564,7 +622,7 @@ export const useTrainingStore = defineStore({
       }
 
       if (this.activeResources.length === 0) {
-        this.setActiveTraining(Skill.None) // Stop training if no active mining resources
+        this.removeActiveTraining(Skill.Mining)
       }
     },
 
@@ -575,8 +633,18 @@ export const useTrainingStore = defineStore({
     },
 
     setActiveTraining(skill: Skill) {
-      if (skill !== Skill.None) this.stopEverything(skill)
-      this.activeTraining = skill
+      if (!this.activeTrainings.includes(skill) && skill !== Skill.None) {
+        this.activeTrainings.push(skill)
+      } else if (skill === Skill.None) {
+        this.activeTrainings = []
+      }
+    },
+
+    removeActiveTraining(skill: Skill) {
+      const index = this.activeTrainings.indexOf(skill)
+      if (index !== -1) {
+        this.activeTrainings.splice(index, 1)
+      }
     },
 
     stopEverything(skill: Skill) {
@@ -652,7 +720,6 @@ export const useTrainingStore = defineStore({
         activeTab: this.activeTab,
 
         training: this.training,
-        activeTraining: this.activeTraining,
         activeResources: this.activeResources,
         activeCraftingRecipe: this.activeCraftingRecipe,
         resourcesCollected: this.resourcesCollected,
@@ -668,6 +735,10 @@ export const useTrainingStore = defineStore({
           xp: resource.xp,
           xpToNextLevel: resource.xpToNextLevel,
         })),
+
+        activeTrainings: this.activeTrainings,
+        activeCraftingRecipes: this.activeCraftingRecipes,
+        maxActiveCraftingRecipes: this.maxActiveCraftingRecipes,
       }
     },
     loadTrainingState(state) {
@@ -678,7 +749,6 @@ export const useTrainingStore = defineStore({
         ...state.training ?? {},
       }
 
-      this.activeTraining = state.activeTraining ?? this.activeTraining
       this.activeResources = state.activeResources ?? this.activeResources
       this.activeCraftingRecipe = state.activeCraftingRecipe ?? this.activeCraftingRecipe
       this.resourcesCollected = state.resourcesCollected ?? this.resourcesCollected
@@ -698,16 +768,20 @@ export const useTrainingStore = defineStore({
         }
       })
 
+      this.activeTrainings = state.activeTrainings ?? []
+      this.activeCraftingRecipes = state.activeCraftingRecipes ?? []
+      this.maxActiveCraftingRecipes = state.maxActiveCraftingRecipes ?? 1
+
       this.addMilestonesToMiningResources()
       this.applyModifiers()
       this.applyMiningMilestoneBonusses()
       this.applyCombatMilestones()
       this.checkMiningMilestones()
+      this.checkCraftingMilestones()
       this.resetAllOreNodes()
     },
     resetTrainingState() {
       this.activeTab = 'mining'
-      this.activeTraining = Skill.None
       Object.keys(this.training).forEach(key => {
         this.training[key].level = 1
         this.training[key].xp = 0
@@ -737,11 +811,16 @@ export const useTrainingStore = defineStore({
         resource.xpToNextLevel = BASE_XP
       })
 
+      this.activeTrainings = []
+      this.activeCraftingRecipes = []
+      this.maxActiveCraftingRecipes = 1
+
       this.addMilestonesToMiningResources()
       this.applyModifiers()
       this.applyMiningMilestoneBonusses()
       this.applyCombatMilestones()
       this.checkMiningMilestones()
+      this.checkCraftingMilestones()
       this.resetAllOreNodes()
     },
     resetAllOreNodes() {
@@ -825,6 +904,13 @@ export const useTrainingStore = defineStore({
     },
 
     applyCombatMilestones() {
+      const evolveStore = useEvolveStore()
+      const gameStore = useGameStore()
+      const adventureStore = useAdventureStore()
+      const currentEvolution = evolveStore.currentEvolutionData
+
+      evolveStore.applyArmyAntsStats(currentEvolution.statsPerAnt, gameStore)
+      evolveStore.applyArmyModifiers(currentEvolution.armyModifiers, adventureStore)
       this.combatMilestones.forEach(milestone => {
         if (this.training[milestone.type].level >= milestone.levelRequired) {
           this.applyCombatMilestone(milestone)
@@ -832,30 +918,36 @@ export const useTrainingStore = defineStore({
       })
     },
 
-    applyCombatMilestone(milestone) {
+    applyCombatMilestone(milestone: CombatMilestone) {
       if (milestone.appliedTo === 'bosses') {
         const bossStore = useBossStore()
-        Object.keys(milestone.effect).forEach(effect => {
-          bossStore.combatModifiers[effect] = milestone.effect[effect]
+        Object.entries(milestone.effect).forEach(([effect, value]) => {
+          if (effect in bossStore.combatModifiers) {
+            const key = effect as keyof typeof bossStore.combatModifiers
+            if (milestone.multiplyModifier) {
+              bossStore.combatModifiers[key] = bossStore.combatModifiers[key] * (value as number) + 1
+            } else {
+              bossStore.combatModifiers[key] = value as number
+            }
+          }
         })
       }
 
       if (milestone.appliedTo === 'army') {
         const adventureStore = useAdventureStore()
-        Object.keys(milestone.effect).forEach(effect => {
-          const modifier = milestone.effect[effect]
+        Object.entries(milestone.effect).forEach(([effect, modifier]) => {
           switch (effect) {
             case 'attack':
-              adventureStore.armyAttackModifier += modifier
+              adventureStore.armyAttackModifier = milestone.multiplyModifier ? adventureStore.armyAttackModifier * (modifier + 1) : adventureStore.armyAttackModifier + modifier 
               break
             case 'defense':
-              adventureStore.armyDefenseModifier += modifier
+              adventureStore.armyDefenseModifier = milestone.multiplyModifier ? adventureStore.armyDefenseModifier * (modifier + 1) : adventureStore.armyDefenseModifier + modifier 
               break
             case 'health':
-              adventureStore.armyMaxHealthModifier += modifier
+              adventureStore.armyMaxHealthModifier = milestone.multiplyModifier ? adventureStore.armyMaxHealthModifier * (modifier + 1) : adventureStore.armyMaxHealthModifier + modifier 
               break
             case 'regen':
-              adventureStore.armyRegenModifier += modifier
+              adventureStore.armyRegenModifier = milestone.multiplyModifier ? adventureStore.armyRegenModifier * (modifier + 1) : adventureStore.armyRegenModifier + modifier 
               break
           }
         })

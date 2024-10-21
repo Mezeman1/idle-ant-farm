@@ -60,9 +60,17 @@
             'text-gray-400': level < milestone.levelRequired,
           }"
         >
-          <p>
-            {{ milestone.description }}
-          </p>
+          <div class="flex items-center">
+            <p>
+              {{ milestone.description }}
+            </p>
+            <span
+              v-if="milestone.multiplyModifier"
+              class="ml-2 text-xs font-semibold bg-yellow-200 text-yellow-800 px-2 py-1 rounded"
+            >
+              Multiplier
+            </span>
+          </div>
           <p>
             Level: {{ milestone.levelRequired }}
           </p>
@@ -79,6 +87,7 @@ import { useGameStore } from '@/stores/gameStore'
 interface Milestone {
   description: string
   levelRequired: number
+  multiplyModifier?: boolean
 }
 
 const props = withDefaults(defineProps<{

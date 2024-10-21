@@ -671,7 +671,7 @@ export const useAchievementStore = defineStore({
           description: 'Larvae production is doubled!',
           isClaimed: false,
           onClaim: () => {
-            useResourcesStore().productionRates.larvaeProductionModifier += 1
+            useResourcesStore().productionRates.larvaeProductionModifier *= 2
           },
         },
       },
@@ -711,7 +711,7 @@ export const useAchievementStore = defineStore({
           description: 'Ha, you\'re still here? Production of larvae increased by 100%.',
           isClaimed: false,
           onClaim: () => {
-            useResourcesStore().productionRates.larvaeProductionModifier += 1
+            useResourcesStore().productionRates.larvaeProductionModifier *= 2
           },
         },
       },

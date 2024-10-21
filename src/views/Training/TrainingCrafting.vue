@@ -5,12 +5,17 @@
       :level="craftingLevel"
       :xp="craftingXp"
       :xp-to-next-level="craftingXpToNextLevel"
+      :milestones="trainingStore.craftingMilestones"
     />
+
+    <p class="text-lg font-semibold mb-4">
+      Active Crafting Recipes: {{ trainingStore.activeCraftingRecipes.length }} / {{ trainingStore.maxActiveCraftingRecipes }}
+    </p>
 
     <!-- Dynamic Crafting Recipes -->
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-6">
       <div
-        v-for="(recipe,) in craftingRecipes"
+        v-for="recipe in craftingRecipes"
         :key="recipe.name"
         class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200 text-gray-800"
       >
@@ -29,13 +34,12 @@
         <p class="text-gray-700">
           Time per Action: {{ formatNumber(recipe.initialTimePerAction, 1) }}s
         </p>
-        <p
-          class="text-gray-700"
-        >
+        <p class="text-gray-700">
           Costs: {{ formattedCosts(recipe) }}
         </p>
 
         <div
+          v-if="isRecipeActive(recipe.name)"
           class="my-4"
         >
           <p class="text-gray-500">
@@ -44,7 +48,7 @@
           <div class="relative mt-1 w-full h-6 bg-gray-200 rounded-lg">
             <div
               class="absolute top-0 left-0 h-full bg-green-500 rounded-lg"
-              :style="{ width: `${(recipe.timePerAction / recipe.initialTimePerAction) * 100}%` }"
+              :style="{ width: `${(1 - recipe.timePerAction / recipe.initialTimePerAction) * 100}%` }"
             />
             <p class="absolute inset-0 text-center text-sm text-gray-800 leading-7">
               {{ formatNumber(recipe.timePerAction, 1) }}s remaining
@@ -52,9 +56,8 @@
           </div>
         </div>
 
-
         <button
-          v-if="trainingStore.activeCraftingRecipe !== recipe.name"
+          v-if="!isRecipeActive(recipe.name)"
           class="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="!trainingStore.canCraft(recipe)"
           @click="startCrafting(recipe.name)"
@@ -63,9 +66,9 @@
         </button>
 
         <button
-          v-if="trainingStore.activeCraftingRecipe === recipe.name"
+          v-if="isRecipeActive(recipe.name)"
           class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-600"
-          @click="trainingStore.stopCrafting"
+          @click="stopCrafting(recipe.name)"
         >
           Stop Crafting
         </button>
@@ -97,9 +100,19 @@ const formattedCosts = (recipe) => {
     .join(', ')
 }
 
+// Check if a recipe is currently being crafted
+const isRecipeActive = (recipeName: string) => {
+  return trainingStore.activeCraftingRecipes.includes(recipeName)
+}
+
 // Start crafting action
 function startCrafting(recipeName: string) {
   trainingStore.startCrafting(recipeName)
+}
+
+// Stop crafting action
+function stopCrafting(recipeName: string) {
+  trainingStore.stopCrafting(recipeName)
 }
 </script>
 

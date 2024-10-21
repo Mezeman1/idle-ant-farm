@@ -28,7 +28,7 @@
         v-if="rate"
         class="text-xs sm:text-sm text-gray-500 mt-2"
       >
-        <i class="fas fa-tachometer-alt" /> Rate: {{ formatNumber(rate, 0) }}
+        <i class="fas fa-tachometer-alt" /> Rate: {{ formatNumber(rate, 0) }}{{ ratePer }}
         <span
           v-if="bonusPercentage"
           class="ml-2 inline-block bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full"
@@ -70,10 +70,12 @@ const props = withDefaults(defineProps<{
   count: number
   maxCount: number
   rate?: number
+  ratePer?: string
   bonus?: number
   cardClass?: string
   unlocked?: boolean
 }>(), {
+  ratePer: '/s',
   rate: undefined,
   bonus: undefined,
   cardClass: 'bg-white p-4 sm:p-6 rounded-lg shadow-lg',
