@@ -242,6 +242,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     fightStatusChangeTime: 1000, // Time until battle status changes to 'fighting' after cooldown
     remainingFightStatusTime: 1000, // Remaining time before switching to 'fighting'
 
+    globalDropChanceModifier: 1,
   }),
   getters: {
     killCountsForCurrentArea: (state) => {
@@ -572,8 +573,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           const dropChanceModifier = this.areaModifiers[this.currentArea as keyof typeof this.areaModifiers]?.dropChanceModifier ?? 1.0
           const dropAmountModifier = this.areaModifiers[this.currentArea as keyof typeof this.areaModifiers]?.dropAmountModifier ?? 1.0
 
-          // Check the drop chance
-          if (Math.random() < drop.chance * dropChanceModifier) {
+          // Check the drop chance, now including the global modifier
+          if (Math.random() < drop.chance * dropChanceModifier * this.globalDropChanceModifier) {
             const amount =
               Math.floor(
                 (Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1) +
@@ -785,6 +786,8 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.poisonDamage = 10
       this.poisonDuration = 2
 
+      this.globalDropChanceModifier = 1
+
       this.bleedChance = 0.0
       this.bleedDamage = 100
       this.bleedDuration = 2
@@ -926,6 +929,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.enemySpawned = false
       this.currentEnemy = null
       this.battleStatus = 'idle'
+      this.globalDropChanceModifier = 1
     },
 
     // Offline progress calculation

@@ -273,4 +273,23 @@ export const passiveItems: Item[] = [
     rarity: 'legendary',
     applyOnLoad: true,
   },
+  // Add this new item to the passiveItems array
+  {
+    id: 'lucky-charm',
+    name: 'Lucky Charm',
+    type: 'passive',
+    description: 'Doubles the drop chance of all items.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.globalDropChanceModifier *= 2
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.globalDropChanceModifier /= 2
+    },
+    rarity: 'legendary',
+  },
 ]

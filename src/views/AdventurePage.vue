@@ -37,6 +37,13 @@
             Kill Count: {{ formatNumber(adventureStore.killCountsForCurrentArea) }}
           </p>
           <AreaModifiersMilestones class="mt-4" />
+
+          <h2 class="text-gray-600 mt-4 font-semibold flex items-center">
+            Global Drop Chance Modifier: 
+            <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+              {{ toPercentageFormatted(adventureStore.globalDropChanceModifier) }}%
+            </span>
+          </h2>
         </div>
       </div>
 
@@ -136,7 +143,7 @@ import BattleStyleButton from '@/components/BattleStyleButton.vue'
 import ModifierItem from '@/components/ModifierItem.vue'
 
 import {Skill} from '@/types/trainingTypes'
-import {toPercentage} from '../utils'
+import {toPercentage, toPercentageFormatted} from '../utils'
 import {useTrainingStore} from '@/stores/trainingStore'
 import TrainingCombat from '@/views/Training/TrainingCombat.vue'
 import AreaModifiersMilestones from '@/components/AreaModifiersMilestones.vue'

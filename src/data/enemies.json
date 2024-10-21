@@ -436,6 +436,11 @@
             "name": "Royal Robe",
             "chance": 0.02,
             "amountBetween": [1, 1]
+          },
+          {
+            "name": "Lucky Charm",
+            "chance": 0.005,
+            "amountBetween": [1, 1]
           }
         ]
       },
