@@ -730,6 +730,7 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     async loadStateFromFirebase(savedState) {
+      console.log('Loading game state from Firebase...')
       const resourcesStore = useResourcesStore()
       resourcesStore.resetResourcesState()
       resourcesStore.loadResourcesState(savedState)

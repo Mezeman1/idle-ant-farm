@@ -1057,7 +1057,7 @@ export const useAchievementStore = defineStore({
 
       this.achievements.forEach((achievement) => {
         if (achievement.isUnlocked) {
-          if (achievement.reward && !achievement.reward.claimed) {
+          if (achievement.reward) {
             this.claimReward(achievement.reward)
           }
         }

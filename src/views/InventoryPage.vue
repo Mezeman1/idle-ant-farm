@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col overflow-y-auto">
-    <!-- Show the current selected item and action buttons -->
+  <div class="flex flex-col h-full overflow-hidden">
+    <!-- Active Item Display -->
     <div
       v-if="activeItem"
       class="flex flex-col md:flex-row md:items-center md:justify-between p-4 border border-gray-300 rounded-lg mb-4 bg-white"
@@ -24,7 +24,6 @@
         >
           Use
         </button>
-
         <button
           class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow"
           @click="useItem(activeItem.id, 10)"
@@ -33,134 +32,74 @@
         </button>
       </div>
     </div>
-    <section
+
+    <!-- Inventory Grid -->
+    <div 
       ref="gridContainer"
-      class="grid-stack overflow-y-auto"
+      class="grid gap-3 p-4 overflow-y-auto"
+      :class="gridClass"
     >
-      <!-- Loop through all slots, including empty slots -->
+      <InventoryItem
+        v-for="item in filteredInventory"
+        :key="item.id"
+        :item="item"
+        @click="selectItem(item)"
+      />
       <div
-        v-for="(slot, index) in gridSlots"
-        :key="'component'+index"
-        :gs-id="index"
-        class="grid-stack-item"
-        :gs-x="slot.gridPosition.x"
-        :gs-y="slot.gridPosition.y"
-        :gs-h="slot.gridPosition.h"
-        :gs-w="slot.gridPosition.w"
-        gs-auto-position="true"
+        v-for="emptySlot in emptySlots"
+        :key="'empty-' + emptySlot"
+        class="bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 aspect-square flex items-center justify-center"
       >
-        <div
-          v-if="slot.component"
-          class="grid-stack-item-content bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300 border border-gray-300"
-        >
-          <component
-            :is="slot.component.name"
-            v-bind="{ ...slot.component.props }"
-            v-on="{ ...slot.component.on }"
-          />
-        </div>
-        <div
-          v-else
-          class="grid-stack-item-content empty-slot border border-gray-300"
-        />
+        <span class="text-gray-400 text-2xl">+</span>
       </div>
-    </section>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import 'gridstack/dist/gridstack.min.css'
-import {GridStack} from 'gridstack'
-import {computed, onMounted, ref, watch} from 'vue'
+import { ref, computed } from 'vue'
+import { useElementSize } from '@vueuse/core'
+import { useInventoryStore } from '../stores/inventoryStore'
+import { toast } from 'vue3-toastify'
+import { getItemName } from '@/types/items/itemRegistry'
 import InventoryItem from '../components/InventoryItem.vue'
-import {useElementSize} from '@vueuse/core'
-import {useInventoryStore} from '../stores/inventoryStore'
-import {toast} from 'vue3-toastify'
-import {v4 as uuidv4} from 'uuid'
-import {getItemName} from '@/types/items/itemRegistry'
 
-const gridContainer = ref<HTMLElement>(null) // Reference to the scrollable grid container
-const {width} = useElementSize(gridContainer)
-const inventoryStore = useInventoryStore() // Use the inventory store to get the items
-const totalSlots = computed(() => inventoryStore.maxInventory) // Total slots in the grid
+const gridContainer = ref<HTMLElement | null>(null)
+const { width } = useElementSize(gridContainer)
+const inventoryStore = useInventoryStore()
 
-// Determine the number of columns based on screen size (responsive)
-const amountOfColumns = computed(() => {
-  if (width.value > 1200) {
-    return 10 // Large screens (desktops and larger)
-  } else if (width.value > 800) {
-    return 5 // Medium screens (tablets, smaller laptops)
-  } else {
-    return 3 // Small screens (mobile devices)
-  }
-})
-
-const activeItem = ref(null) // Reference to the active item
+const activeItem = ref(null)
 
 const selectItem = (item) => {
   activeItem.value = item
 }
 
-const gridSlots = computed(() => {
-  const slots = []
-  const inventory = inventoryStore.inventory.filter(item => {
-    if (props.onlyConsumables && item.type !== 'consumable') {
-      return false
-    }
+const gridColumns = computed(() => {
+  if (width.value > 1200) return 10
+  if (width.value > 800) return 6
+  if (width.value > 600) return 4
+  return 3
+})
 
-    if (props.onlyPassive && item.type !== 'passive') {
-      return false
-    }
+const gridClass = computed(() => {
+  return `grid-cols-${gridColumns.value}`
+})
 
+const filteredInventory = computed(() => {
+  return inventoryStore.inventory.filter(item => {
+    if (props.onlyConsumables && item.type !== 'consumable') return false
+    if (props.onlyPassive && item.type !== 'passive') return false
     return true
   })
-
-  for (let i = 0; i < totalSlots.value; i++) {
-    const item = inventory[i]
-    const x = i % amountOfColumns.value // Calculate column
-    const y = Math.floor(i / amountOfColumns.value) // Calculate row
-    slots.push({
-      component: item ? {
-        name: InventoryItem,
-        props: {
-          item,
-        },
-        on: {
-          setActiveItem: (item) => {
-            selectItem(item)
-          },
-        },
-      } : null,
-      gridPosition: {x, y, w: 1, h: 1},
-      uuid: uuidv4(),
-    })
-  }
-
-  return slots
 })
 
-// GridStack Initialization
-const grid = ref<any>(null)
-
-onMounted(() => {
-  grid.value = GridStack.addGrid(gridContainer.value, {
-    column: amountOfColumns.value,
-    disableResize: true,
-    disableDrag: true,
-    float: false,
-    staticGrid: true,
-    auto: true,
-  })
-})
-
-
-// Watch to update grid when window size changes
-watch([amountOfColumns], () => {
-  grid.value.column(amountOfColumns.value, 'list')
+const emptySlots = computed(() => {
+  const emptyCount = inventoryStore.maxInventory - filteredInventory.value.length
+  return emptyCount > 0 ? Array(emptyCount).fill(null) : []
 })
 
 const useItem = (itemId: string, amount = 1) => {
-  if (useInventoryStore().useItem(itemId, amount)) {
+  if (inventoryStore.useItem(itemId, amount)) {
     toast.success('Item used successfully', {
       position: 'top-left',
       toastId: 'use-item-toast',
@@ -275,5 +214,22 @@ $columns: 10;
       width: fixed((100% / $columns) * ($i+1));
     }
   }
+}
+
+.grid {
+  grid-auto-rows: 1fr;
+}
+
+.grid::before {
+  content: '';
+  width: 0;
+  padding-bottom: 100%;
+  grid-row: 1 / 1;
+  grid-column: 1 / 1;
+}
+
+.grid > *:first-child {
+  grid-row: 1 / 1;
+  grid-column: 1 / 1;
 }
 </style>

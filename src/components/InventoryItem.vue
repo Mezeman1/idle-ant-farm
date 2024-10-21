@@ -1,52 +1,48 @@
 <template>
-  <button
-    :class="[
-      'p-2 flex flex-col items-center h-full w-full cursor-pointer relative overflow-hidden rounded-lg transition-all duration-200 shadow-md hover:shadow-lg',
-      itemFromRegistry?.image ? 'text-white' : rarityColorClass(itemFromRegistry?.rarity)
-    ]"
-    :style="{
-      backgroundImage: itemFromRegistry?.image ? `url(${itemFromRegistry.image})` : '',
-      backgroundSize: itemFromRegistry?.image ? 'cover' : '',
-      backgroundPosition: itemFromRegistry?.image ? 'center' : '',
-    }"
-    @click="$emit('setActiveItem', item)"
+  <div
+    class="relative flex flex-col items-center justify-center p-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden aspect-square border-2 border-gray-200"
+    :class="[itemFromRegistry?.image ? 'text-white' : rarityColorClass]"
+    :style="backgroundStyle"
+    @click="$emit('click', item)"
   >
-    <!-- Amount badge in the top-right corner -->
+    <!-- Overlay for better text readability when there's a background image -->
+    <div
+      v-if="itemFromRegistry?.image"
+      class="absolute inset-0 bg-black bg-opacity-40"
+    />
+
+    <!-- Amount badge -->
     <div
       v-if="itemFromRegistry?.type !== 'passive'"
-      class="absolute text-3xs sm:text-2xs md:text-xs lg:text-sm top-1 right-1 bg-gray-200 text-gray-900 rounded-full z-10 py-1 px-2 shadow"
+      class="absolute top-1 right-1 bg-gray-800 text-white text-xs px-2 py-1 rounded-full z-10 font-semibold"
     >
       {{ formatNumber(item.amount, 0) }}
     </div>
 
-    <!-- Overlay to darken the background for better text readability -->
+    <!-- Item icon (if available) -->
     <div
-      v-if="itemFromRegistry?.image"
-      class="absolute inset-0 bg-black bg-opacity-50 rounded-lg"
+      v-if="itemFromRegistry?.icon"
+      class="text-4xl mb-2 relative z-10"
+      v-html="itemFromRegistry.icon"
     />
 
     <!-- Item name -->
-    <div
-      class="text-3xs sm:text-2xs md:text-xs lg:text-sm text-center break-words relative z-10"
-      :class="{
-        'mt-6': itemFromRegistry?.type !== 'passive',
-      }"
-    >
+    <div class="text-center text-sm font-medium mb-1 relative z-10 px-1">
       {{ getItemName(item) }}
     </div>
 
     <!-- Item type -->
-    <span class="text-3xs sm:text-2xs md:text-xs lg:text-sm mt-1 relative z-10">
+    <div class="text-xs opacity-75 relative z-10 bg-black bg-opacity-50 px-2 py-1 rounded-full">
       {{ itemFromRegistry?.type }}
-    </span>
-  </button>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import {useGameStore} from '@/stores/gameStore'
-import {useInventoryStore} from '@/stores/inventoryStore'
-import {computed} from 'vue'
-import {getItemName} from '@/types/items/itemRegistry'
+import { computed } from 'vue'
+import { useGameStore } from '@/stores/gameStore'
+import { useInventoryStore } from '@/stores/inventoryStore'
+import { getItemName } from '@/types/items/itemRegistry'
 
 const props = defineProps<{
   item: {
@@ -56,26 +52,34 @@ const props = defineProps<{
   };
 }>()
 
-const rarityColorClass = (rarity) => {
+const rarityColorClass = computed(() => {
+  const rarity = itemFromRegistry.value?.rarity
   switch (rarity) {
-    case 'common':
-      return 'bg-gray-100 text-gray-900 border border-gray-200'
-    case 'uncommon':
-      return 'bg-green-100 text-green-900 border border-green-200'
-    case 'rare':
-      return 'bg-blue-100 text-blue-900 border border-blue-200'
-    case 'legendary':
-      return 'bg-yellow-100 text-yellow-900 border border-yellow-200'
-    default:
-      return 'bg-white text-gray-900 border border-gray-200'
+    case 'common': return 'bg-gray-100 text-gray-900 border-gray-300'
+    case 'uncommon': return 'bg-green-100 text-green-900 border-green-300'
+    case 'rare': return 'bg-blue-100 text-blue-900 border-blue-300'
+    case 'legendary': return 'bg-yellow-100 text-yellow-900 border-yellow-300'
+    default: return 'bg-white text-gray-900 border-gray-200'
   }
-}
+})
+
+const backgroundStyle = computed(() => {
+  if (itemFromRegistry.value?.image) {
+    return {
+      backgroundImage: `url(${itemFromRegistry.value.image})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }
+  }
+  return {}
+})
 
 const formatNumber = useGameStore().formatNumber
 const itemFromRegistry = computed(() => useInventoryStore().getItemById(props.item.id))
-defineEmits(['setActiveItem'])
+
+defineEmits(['click'])
 </script>
 
 <style scoped>
-/* Optional extra styles for items if necessary */
+/* Add any additional styles here if needed */
 </style>
