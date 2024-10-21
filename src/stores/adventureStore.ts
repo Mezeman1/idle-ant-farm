@@ -3,7 +3,7 @@ import {useGameStore} from './gameStore'
 import {useInventoryStore} from './inventoryStore'
 import {adventureEnemyWaves, Enemy} from '../types/AdventureEnemyWaves'
 import {useResourcesStore} from '@/stores/resourcesStore'
-import {getItemName, itemRegistry} from '@/types/items/itemRegistry'
+import {getItemName, Item, itemRegistry} from '@/types/items/itemRegistry'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {toast} from 'vue3-toastify'
 import {useSettingsStore} from '@/stores/settingsStore'
@@ -569,14 +569,16 @@ export const useAdventureStore = defineStore('adventureStore', {
             continue
           }
 
-          const dropChanceModifier = this.areaModifiers[this.currentArea]?.dropChanceModifier ?? 1.0
-          const dropAmountModifier = this.areaModifiers[this.currentArea]?.dropAmountModifier ?? 1.0
+          const dropChanceModifier = this.areaModifiers[this.currentArea as keyof typeof this.areaModifiers]?.dropChanceModifier ?? 1.0
+          const dropAmountModifier = this.areaModifiers[this.currentArea as keyof typeof this.areaModifiers]?.dropAmountModifier ?? 1.0
 
           // Check the drop chance
           if (Math.random() < drop.chance * dropChanceModifier) {
             const amount =
-              Math.floor(Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1)) +
-              drop.amountBetween[0] * dropAmountModifier
+              Math.floor(
+                (Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1) +
+                drop.amountBetween[0]) * dropAmountModifier,
+              )
 
             if (drop.name === 'Seeds') {
               // Add seeds to gameStore
@@ -613,7 +615,9 @@ export const useAdventureStore = defineStore('adventureStore', {
       // Update kill counts and handle loot
       this.handleKillCount()
       this.handleEnemyDrop()
-      useTrainingStore().processCombat(this.battleStyle, this.getXpForEnemy(this.currentEnemy))
+      if (this.currentEnemy) {
+        useTrainingStore().processCombat(this.battleStyle, this.getXpForEnemy(this.currentEnemy))
+      }
 
       // Set the initial spawn time and fight status change timers
       this.enemySpawnCooldownTime = this.spawnTime * this.spawnTimeModifier
@@ -632,7 +636,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       // If it's a boss, apply a multiplier (e.g., 1.2x)
       const xp = enemy.isBoss ? baseXp * 1.2 : baseXp
 
-      const xpModifier = this.areaModifiers[this.currentArea]?.xpModifier ?? 1.0
+      const xpModifier = this.areaModifiers[this.currentArea as keyof typeof this.areaModifiers]?.xpModifier ?? 1.0
 
       // Return the XP, making sure it doesn't exceed the max XP cap
       return Math.floor(xp * xpModifier)
@@ -670,7 +674,7 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     // Apply effects based on item type
-    async handleItemDrop(item, amount) {
+    async handleItemDrop(item: Item, amount: number) {
       const inventoryStore = useInventoryStore()
       await inventoryStore.addItemToInventory({
         id: item.id,

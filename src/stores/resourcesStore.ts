@@ -500,6 +500,7 @@ export const useResourcesStore = defineStore('resources', {
 
         // Apply the total number of upgrades
         this.upgrades.maxSeedStorage += affordableUpgrades
+        
       }
     },
     upgradeSeedStorageEffect(amount = 1) {
@@ -723,7 +724,6 @@ export const useResourcesStore = defineStore('resources', {
         eliteAnts: 0,
         seeds: this.initialCaps.maxSeeds,
         queens: 1,
-        mineralShards: isDebug ? 0 : this.resources.mineralShards ?? 0,
         royalJelly: isDebug ? 0 : this.resources.royalJelly ?? 0,
 
         royalJellyAnts: isDebug ? 0 : this.resources.royalJellyAnts,

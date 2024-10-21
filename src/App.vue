@@ -1,14 +1,12 @@
 <template>
   <div>
     <router-view />
-    <OfflineSummary />
   </div>
 </template>
 
 <script lang="ts" setup>
 import {onMounted} from 'vue'
 import {toast} from 'vue3-toastify'
-import OfflineSummary from './components/OfflineSummary.vue'
 
 
 onMounted(() => {
@@ -19,7 +17,6 @@ onMounted(() => {
     document.documentElement.requestFullscreen()
   }
 })
-
 
 const isMobile = window.innerWidth < 640
 </script>

@@ -6,14 +6,11 @@ export const consumableItems: Item[] = [
     id: 'grasshopper-leg',
     name: 'Grasshopper Leg',
     type: 'consumable',
-    description: 'Heals the army by 20 points.',
+    description: 'Heals the army by 5% of its maximum health.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      if (adventureStore.armyHealth + 20 > adventureStore.armyMaxHealth) {
-        adventureStore.armyHealth = adventureStore.armyMaxHealth
-        return false
-      }
-      adventureStore.armyHealth += 20
+      const healAmount = adventureStore.armyMaxHealth * 0.05
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + healAmount, adventureStore.armyMaxHealth)
       return true
     },
     rarity: 'common',
@@ -22,14 +19,11 @@ export const consumableItems: Item[] = [
     id: 'termite-mandible',
     name: 'Termite Mandible',
     type: 'consumable',
-    description: 'Heals the army by 30 points.',
+    description: 'Heals the army by 7.5% of its maximum health.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      if (adventureStore.armyHealth + 30 > adventureStore.armyMaxHealth) {
-        adventureStore.armyHealth = adventureStore.armyMaxHealth
-        return false
-      }
-      adventureStore.armyHealth += 30
+      const healAmount = adventureStore.armyMaxHealth * 0.075
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + healAmount, adventureStore.armyMaxHealth)
       return true
     },
     rarity: 'common',
@@ -89,14 +83,11 @@ export const consumableItems: Item[] = [
     id: 'centipede-leg',
     name: 'Centipede Leg',
     type: 'consumable',
-    description: 'Heals the army by 50 points.',
+    description: 'Heals the army by 10% of its maximum health.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      if (adventureStore.armyHealth + 50 > adventureStore.armyMaxHealth) {
-        adventureStore.armyHealth = adventureStore.armyMaxHealth
-        return false
-      }
-      adventureStore.armyHealth += 50
+      const healAmount = adventureStore.armyMaxHealth * 0.10
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + healAmount, adventureStore.armyMaxHealth)
       return true
     },
     rarity: 'uncommon',
@@ -105,14 +96,11 @@ export const consumableItems: Item[] = [
     id: 'moth-dust',
     name: 'Moth Dust',
     type: 'consumable',
-    description: 'Heals the army by 100 points.',
+    description: 'Heals the army by 15% of its maximum health.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      if (adventureStore.armyHealth + 100 > adventureStore.armyMaxHealth) {
-        adventureStore.armyHealth = adventureStore.armyMaxHealth
-        return false
-      }
-      adventureStore.armyHealth += 100
+      const healAmount = adventureStore.armyMaxHealth * 0.15
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + healAmount, adventureStore.armyMaxHealth)
       return true
     },
     rarity: 'rare',
@@ -121,14 +109,11 @@ export const consumableItems: Item[] = [
     id: 'butterfly-dust',
     name: 'Butterfly Dust',
     type: 'consumable',
-    description: 'Heals the army by 200 points.',
+    description: 'Heals the army by 20% of its maximum health.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      if (adventureStore.armyHealth + 200 > adventureStore.armyMaxHealth) {
-        adventureStore.armyHealth = adventureStore.armyMaxHealth
-        return false
-      }
-      adventureStore.armyHealth += 200
+      const healAmount = adventureStore.armyMaxHealth * 0.20
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + healAmount, adventureStore.armyMaxHealth)
       return true
     },
     rarity: 'rare',
@@ -208,10 +193,11 @@ export const consumableItems: Item[] = [
     id: 'scorpion-tail',
     name: 'Scorpion Tail',
     type: 'consumable',
-    description: 'Heals the army by 2500 points.',
+    description: 'Heals the army by 30% of its maximum health.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + 2500, adventureStore.armyMaxHealth)
+      const healAmount = adventureStore.armyMaxHealth * 0.30
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + healAmount, adventureStore.armyMaxHealth)
       return true
     },
     rarity: 'rare',
@@ -256,10 +242,11 @@ export const consumableItems: Item[] = [
     id: 'frost-scorpion-tail',
     name: 'Frost Scorpion Tail',
     type: 'consumable',
-    description: 'Heals the army by 5000 points.',
+    description: 'Heals the army by 40% of its maximum health.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + 5000, adventureStore.armyMaxHealth)
+      const healAmount = adventureStore.armyMaxHealth * 0.40
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + healAmount, adventureStore.armyMaxHealth)
       return true
     },
     rarity: 'epic',
@@ -302,10 +289,11 @@ export const consumableItems: Item[] = [
     id: 'leviathan-scale',
     name: 'Leviathan Scale',
     type: 'consumable',
-    description: 'Heals the army by 10000 points.',
+    description: 'Heals the army by 50% of its maximum health.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + 10000, adventureStore.armyMaxHealth)
+      const healAmount = adventureStore.armyMaxHealth * 0.50
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + healAmount, adventureStore.armyMaxHealth)
       return true
     },
     rarity: 'epic',
@@ -331,10 +319,11 @@ export const consumableItems: Item[] = [
     name: 'Celestial Scale',
     id: 'celestial-scale',
     type: 'consumable',
-    description: 'Heals the army by 25000 points.',
+    description: 'Heals the army by 75% of its maximum health.',
     effect: () => {
       const adventureStore = useAdventureStore()
-      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + 25000, adventureStore.armyMaxHealth)
+      const healAmount = adventureStore.armyMaxHealth * 0.75
+      adventureStore.armyHealth = Math.min(adventureStore.armyHealth + healAmount, adventureStore.armyMaxHealth)
       return true
     },
     rarity: 'legendary',
