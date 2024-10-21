@@ -14,7 +14,6 @@ import LZString from 'lz-string'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {useBossStore} from '@/stores/bossStore'
-import {useStatStore} from '@/stores/statStore'
 import FirestoreError = firebase.firestore.FirestoreError;
 import {useTrainingStore} from '@/stores/trainingStore'
 import BigNumber from 'bignumber.js'
@@ -70,12 +69,6 @@ export const useGameStore = defineStore('gameStore', {
         seeds: 0,
         larvae: 0,
         ants: 0,
-      },
-      autoCreations: {
-        larvae: 0,
-        ants: 0,
-        queens: 0,
-        eliteAnts: 0,
       },
       xp: {
         mining: 0,
@@ -212,12 +205,14 @@ export const useGameStore = defineStore('gameStore', {
         },
       }
 
+      this.previousSaveTime = this.lastSavedTime // Update previousSaveTime
+
       return new Promise((resolve, reject) => {
         try {
           const resourceStore = useResourcesStore()
           const trainingStore = useTrainingStore()
           const currentTime = Date.now()
-          let timeElapsed = (currentTime - this.previousSaveTime) / 1000 // Use previousSaveTime here
+          let timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Use previousSaveTime here
 
           // Define the offline cap (24 hours = 86400 seconds)
           const OFFLINE_CAP = 86400
@@ -261,7 +256,7 @@ export const useGameStore = defineStore('gameStore', {
                 this.offlineGains.xp[skill] = trainingStore.training[skill].xp - initialTraining[skill].xp
               })
 
-              this.previousSaveTime = this.lastSavedTime // Update previousSaveTime
+              
               this.lastSavedTime = currentTime
               this.progress = 100
               console.log('Offline progress simulation complete.')
@@ -311,7 +306,10 @@ export const useGameStore = defineStore('gameStore', {
           console.error('Error during offline progress simulation:', error)
           reject(error)
         }
-      }).finally(() => this.simulatingOfflineProgress = false)
+      }).finally(() => {
+        this.simulatingOfflineProgress = false
+        this.saveGameState()
+    })
     },
 
     // Start the game loop for real-time resource generation, respecting caps
@@ -614,7 +612,6 @@ export const useGameStore = defineStore('gameStore', {
           this.showSaveToast()
         }
 
-        this.previousSaveTime = this.lastSavedTime // Store the previous save time
         this.lastSavedTime = Date.now()
       } catch (error: FirestoreError | any) {
         toast.error('Failed to save game state', {
@@ -656,6 +653,7 @@ export const useGameStore = defineStore('gameStore', {
       return {
         ...resourcesStore.getResourcesState(),
         lastSavedTime: Date.now(),
+        previousSaveTime: this.previousSaveTime,
         mainActiveTab: this.activeTab,
         userId,
 
@@ -738,7 +736,7 @@ export const useGameStore = defineStore('gameStore', {
       evolveStore.loadEvolveState(savedState)
 
       this.previousSaveTime = savedState.lastSavedTime ?? this.previousSaveTime
-      this.lastSavedTime = Date.now() // Set lastSavedTime to current time on load
+      this.lastSavedTime = savedState.lastSavedTime ?? Date.now()
 
       const adventureStore = useAdventureStore()
       await adventureStore.loadAdventureState(savedState)
