@@ -308,8 +308,7 @@ export const useGameStore = defineStore('gameStore', {
         }
       }).finally(() => {
         this.simulatingOfflineProgress = false
-        this.saveGameState()
-    })
+      })
     },
 
     // Start the game loop for real-time resource generation, respecting caps
