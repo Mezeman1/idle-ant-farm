@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col p-2">
-    <div :class="isLargeScreen ? 'grid grid-cols-2 gap-4' : 'flex flex-col'">
-      <!-- Left Column: Adventure Mode -->
-      <div class="space-y-4 mb-4">
+  <div class="flex flex-col p-4">
+    <div :class="isLargeScreen ? 'grid grid-cols-3 gap-6' : 'flex flex-col space-y-6'">
+      <!-- Left Column: Wave Selector and Area Info -->
+      <div class="space-y-4">
         <WaveSelector
           :selected-wave="selectedWave"
           :can-go-next="canGoNext"
@@ -11,38 +11,21 @@
           @nextWave="nextWave"
         />
 
-        <!-- Optional display for locked wave details -->
-        <div
-          v-if="!getAreaByIndex(selectedWaveIndex + 1)?.unlockedWhen()"
-          class="text-xs text-gray-700"
-        >
-          Next Area: {{ getAreaByIndex(selectedWaveIndex + 1)?.unlockText }} 🔒
-        </div>
-
         <!-- Area Modifiers Section -->
-        <div class="bg-white rounded-lg shadow flex flex-col p-6 my-2">
-          <h2 class="text-xl font-semibold mb-2">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold mb-4 text-gray-800">
             Area Modifiers
           </h2>
-          <div v-if="currentAreaModifiers">
-            <p v-if="currentAreaModifiers.dropChanceModifier">
-              Drop Chance Modifier: {{ toPercentage(currentAreaModifiers.dropChanceModifier, 1) }}%
-            </p>
-            <p v-if="currentAreaModifiers.dropAmountModifier">
-              Drop Amount Modifier: {{ toPercentage(currentAreaModifiers.dropAmountModifier, 1) }}%
-            </p>
-            <p v-if="currentAreaModifiers.xpModifier">
-              XP Modifier: {{ toPercentage(currentAreaModifiers.xpModifier, 1) }}%
-            </p>
-            <p v-if="currentAreaModifiers.speedModifier">
-              Speed Modifier: {{ toPercentage(currentAreaModifiers.speedModifier, 1) }}%
-            </p>
-            <p v-if="currentAreaModifiers.spawnTimeModifier">
-              Spawn Time Modifier: {{ toPercentage(currentAreaModifiers.spawnTimeModifier, 1) }}%
-            </p>
-            <p v-if="currentAreaModifiers.coolDownModifier">
-              Cooldown Modifier: {{ toPercentage(currentAreaModifiers.coolDownModifier, 1) }}%
-            </p>
+          <div
+            v-if="currentAreaModifiers"
+            class="space-y-2"
+          >
+            <ModifierItem
+              v-for="(value, key) in currentAreaModifiers"
+              :key="key"
+              :name="formatModifierName(key)"
+              :value="toPercentage(value, 1)"
+            />
           </div>
           <p
             v-else
@@ -50,308 +33,90 @@
           >
             No modifiers for this area
           </p>
-          <!-- Current kill count for the area -->
-          <p class="text-gray-500 mt-2">
+          <p class="text-gray-600 mt-4 font-semibold">
             Kill Count: {{ formatNumber(adventureStore.killCountsForCurrentArea) }}
           </p>
-          <AreaModifiersMilestones />
+          <AreaModifiersMilestones class="mt-4" />
         </div>
+      </div>
 
+      <!-- Middle Column: Battle Arena -->
+      <div class="space-y-4">
         <!-- Ant Army and Enemy Bug Display -->
-        <div class="grid grid-cols-2 gap-2">
-          <!-- Ant Army Side -->
-          <div class="bg-white rounded-lg shadow flex flex-col">
-            <!-- Top Half: Background Image -->
-            <div
-              class="h-[100px] md:h-[200px] bg-cover bg-center rounded-t-lg"
-              :style="{ backgroundImage: `url(${ArmyImage})` }"
-            >
-              <!-- The image here is used as a background -->
-            </div>
-
-            <!-- Bottom Half: Info and Progress Bar -->
-            <div class="h-full bg-white bg-opacity-80 p-2 rounded-b-lg text-center text-2xs md:text-sm flex-1">
-              <p class="font-bold">
-                Ant Army
-              </p>
-              <p>
-                Health: <br>{{ formatNumber(adventureStore.armyHealth) }} /
-                {{ formatNumber(adventureStore.armyMaxHealth) }}
-              </p>
-              <div class="progress-container h-1 bg-gray-300 rounded">
-                <div
-                  class="progress-bar bg-green-500 h-full rounded"
-                  :style="{ width: (adventureStore.armyHealth / adventureStore.armyMaxHealth) * 100 + '%' }"
-                />
-              </div>
-              <div class="mt-2 space-y-1 text-3xs md:text-xs">
-                <p><span class="font-semibold">⚔️ Attack:</span> {{ formatNumber(adventureStore.armyAttack) }}</p>
-                <p><span class="font-semibold">🛡️ Defense:</span> {{ formatNumber(adventureStore.armyDefense) }}</p>
-                <p>
-                  <span class="font-semibold">❤️ HP Regen:</span>
-                  {{ formatNumber(adventureStore.armyRegen * (trainingStore.farmingModifiers.regenerationRate ?? 1)) }}
-                </p>
-              </div>
-
-              <!-- Active Effects for Army -->
-              <div class="mt-2 text-3xs md:text-xs space-y-1">
-                <p class="font-semibold">
-                  🧪 Active Effects:
-                </p>
-                <ul v-if="adventureStore.armyActiveEffects.length > 0">
-                  <li
-                    v-for="effect in adventureStore.armyActiveEffects"
-                    :key="effect.id"
-                    class="text-3xs md:text-xs"
-                  >
-                    <span class="font-semibold">{{ effect.name }}</span> - {{ Math.round(effect.duration) }}s remaining
-                    <!-- Display damage per second if it's a damaging effect -->
-                    <span v-if="effect.damagePerSecond"> (DPS: {{ formatNumber(effect.damagePerSecond) }})</span>
-                    <!-- Display healing per second if it's a healing effect -->
-                    <span v-if="effect.healingPerSecond"> (HPS: {{ formatNumber(effect.healingPerSecond) }})</span>
-                  </li>
-                </ul>
-                <p
-                  v-else
-                  class="text-gray-500"
-                >
-                  No active effects
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Enemy Bug Side -->
-          <div
+        <div class="grid grid-cols-2 gap-4">
+          <BattleCard
+            title="Ant Army"
+            :image="ArmyImage"
+            :health="adventureStore.armyHealth"
+            :max-health="adventureStore.armyMaxHealth"
+            :attack="adventureStore.armyAttack"
+            :defense="adventureStore.armyDefense"
+            :regen="adventureStore.armyRegen * (trainingStore.farmingModifiers.regenerationRate ?? 1)"
+            :active-effects="adventureStore.armyActiveEffects"
+          />
+          <BattleCard
             v-if="adventureStore.currentEnemy"
-            class="bg-white rounded-lg shadow flex flex-col relative"
+            :title="adventureStore.currentEnemy.name"
+            :image="adventureStore.currentEnemy.image"
+            :health="adventureStore.bugHealth"
+            :max-health="adventureStore.bugMaxHealth"
+            :attack="adventureStore.bugAttack"
+            :defense="adventureStore.bugDefense"
+            :regen="adventureStore.bugRegen"
+            :active-effects="adventureStore.bugActiveEffects"
+            :is-boss="adventureStore.currentEnemy.isBoss"
+            :cooldown-progress="cooldownProgress"
+          />
+          <div
+            v-else
+            class="bg-white rounded-lg shadow-md flex items-center justify-center h-64"
           >
-            <!-- Top Half: Background Image -->
-            <div
-              class="h-[100px] md:h-[200px] bg-cover bg-center rounded-t-lg relative"
-              :style="{ backgroundImage: `url(${adventureStore.currentEnemy?.image ?? 'https://via.placeholder.com/150'})` }"
-            >
-              <!-- The image here is used as a background -->
-              <div
-                v-if="adventureStore.currentEnemy && adventureStore.enemySpawnCooldownTime > 0"
-                class="absolute bottom-0 w-full h-[5px] bg-gray-300 rounded"
-              >
-                <!-- Green progress bar (dynamic width) -->
-                <div
-                  class="bg-blue-500 h-full rounded"
-                  :style="{ width: cooldownProgress + '%' }"
-                />
-              </div>
-            </div>
-
-            <!-- Bottom Half: Info and Progress Bar -->
-            <div class="h-full bg-white bg-opacity-80 p-2 rounded-b-lg text-center text-2xs md:text-sm flex-1">
-              <!-- Gray background (full width) -->
-
-              <p class="font-bold">
-                {{ adventureStore.currentEnemy?.name ?? 'Start battle to spawn' }}
-                {{ adventureStore.currentEnemy?.isBoss ? '👑' : '' }}
-              </p>
-              <p>
-                Health: <br>{{ formatNumber(adventureStore.bugHealth) }} /
-                {{ formatNumber(adventureStore.bugMaxHealth) }}
-              </p>
-              <div class="progress-container h-1 bg-gray-300 rounded">
-                <div
-                  class="progress-bar bg-red-500 h-full rounded"
-                  :style="{ width: (adventureStore.bugHealth / adventureStore.bugMaxHealth) * 100 + '%' }"
-                />
-              </div>
-              <div class="mt-2 space-y-1 text-3xs md:text-xs">
-                <p><span class="font-semibold">⚔️ Attack:</span> {{ formatNumber(adventureStore.bugAttack) }}</p>
-                <p><span class="font-semibold">🛡️ Defense:</span> {{ formatNumber(adventureStore.bugDefense) }}</p>
-                <p><span class="font-semibold">❤️ HP Regen:</span> {{ formatNumber(adventureStore.bugRegen) }}</p>
-              </div>
-
-              <!-- Active Effects for Bug -->
-              <div class="mt-2 text-3xs md:text-xs space-y-1">
-                <p class="font-semibold">
-                  🧪 Active Effects:
-                </p>
-                <ul v-if="adventureStore.bugActiveEffects.length > 0">
-                  <li
-                    v-for="effect in adventureStore.bugActiveEffects"
-                    :key="effect.id"
-                    class="text-3xs md:text-xs"
-                  >
-                    <span class="font-semibold">{{ effect.name }}</span> - {{ Math.round(effect.duration) }}s remaining
-                    <!-- Display damage per second if it's a damaging effect -->
-                    <span v-if="effect.damagePerSecond"> (DPS: {{ formatNumber(effect.damagePerSecond) }})</span>
-                    <!-- Display healing per second if it's a healing effect -->
-                    <span v-if="effect.healingPerSecond"> (HPS: {{ formatNumber(effect.healingPerSecond) }})</span>
-                  </li>
-                </ul>
-                <p
-                  v-else
-                  class="text-gray-500"
-                >
-                  No active effects
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div v-else>
-            <div class="bg-white rounded-lg shadow flex flex-col h-52 sm:h-64 md:h-96">
-              <div class="h-1/4 md:h-1/2 bg-cover bg-center rounded-t-lg">
-                <div class="flex items-center justify-center h-full text-sm text-gray-400">
-                  You're safe for now
-                </div>
-              </div>
-            </div>
+            <p class="text-gray-500 text-lg">
+              You're safe for now
+            </p>
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4 m-2">
-          <!-- Attack Button -->
-          <button
-            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
-            :class="{
-              'bg-blue-700 border-2 border-blue-900': battleStyle === 'attack',
-              'bg-blue-500 hover:bg-blue-600': battleStyle !== 'attack'
-            }"
+        <!-- Battle Style Buttons -->
+        <div class="grid grid-cols-3 gap-4">
+          <BattleStyleButton
+            style-name="Attack"
+            :is-active="battleStyle === 'attack'"
             @click="setBattleStyle('Attack')"
-          >
-            Attack
-          </button>
-
-          <!-- Defense Button -->
-          <button
-            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
-            :class="{
-              'bg-green-700 border-2 border-green-900': battleStyle === 'defense',
-              'bg-green-500 hover:bg-green-600': battleStyle !== 'defense'
-            }"
+          />
+          <BattleStyleButton
+            style-name="Block"
+            :is-active="battleStyle === 'defense'"
             @click="setBattleStyle('Defense')"
-          >
-            Block
-          </button>
-
-          <!-- Hitpoints (Endure) Button -->
-          <button
-            class="px-4 py-2 rounded-lg font-bold text-white transition duration-200"
-            :class="{
-              'bg-red-700 border-2 border-red-900': battleStyle === 'hitpoints',
-              'bg-red-500 hover:bg-red-600': battleStyle !== 'hitpoints'
-            }"
+          />
+          <BattleStyleButton
+            style-name="Endure"
+            :is-active="battleStyle === 'hitpoints'"
             @click="setBattleStyle('Hitpoints')"
-          >
-            Endure
-          </button>
+          />
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <!-- Army effects chances         -->
-          <div class="bg-white rounded-lg">
-            <!-- Header for the Effects Chance -->
-            <div class="bg-gray-200 px-6 py-4">
-              <h2 class="text-xl font-semibold text-gray-800">
-                Status Effect Chances
-              </h2>
-              <p class="text-gray-600 text-sm">
-                Your army's chances to apply different status effects.
-              </p>
-            </div>
-
-            <!-- Body showing each effect and its chance -->
-            <div class="px-6 py-4 space-y-4">
-              <!-- Poison Chance -->
-              <div>
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-green-600">Poison</span>
-                  <span class="text-sm font-medium text-gray-600">{{ poisonChance }}%</span>
-                </div>
-                <div class="w-full bg-gray-200 h-2 rounded">
-                  <div
-                    class="bg-green-600 h-2 rounded"
-                    :style="{ width: `${poisonChance}%` }"
-                  />
-                </div>
-              </div>
-
-              <!-- Bleed Chance -->
-              <div>
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-red-600">Bleed</span>
-                  <span class="text-sm font-medium text-gray-600">{{ bleedChance }}%</span>
-                </div>
-                <div class="w-full bg-gray-200 h-2 rounded">
-                  <div
-                    class="bg-red-600 h-2 rounded"
-                    :style="{ width: `${bleedChance}%` }"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Bug effects chances         -->
-          <div class="bg-white rounded-lg">
-            <!-- Header for the Effects Chance -->
-            <div class="bg-gray-200 px-6 py-4">
-              <h2 class="text-xl font-semibold text-gray-800">
-                Status Effect Chances
-              </h2>
-              <p class="text-gray-600 text-sm">
-                The bugs chances to apply different status effects.
-              </p>
-            </div>
-
-            <!-- Body showing each effect and its chance -->
-            <div class="px-6 py-4 space-y-4">
-              <!-- Poison Chance -->
-              <div>
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-green-600">Poison</span>
-                  <span class="text-sm font-medium text-gray-600">{{ bugPoisonChance }}%</span>
-                </div>
-                <div class="w-full bg-gray-200 h-2 rounded">
-                  <div
-                    class="bg-green-600 h-2 rounded"
-                    :style="{ width: `${bugPoisonChance}%` }"
-                  />
-                </div>
-              </div>
-
-              <!-- Bleed Chance -->
-              <div>
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-red-600">Bleed</span>
-                  <span class="text-sm font-medium text-gray-600">{{ bugBleedChance }}%</span>
-                </div>
-                <div class="w-full bg-gray-200 h-2 rounded">
-                  <div
-                    class="bg-red-600 h-2 rounded"
-                    :style="{ width: `${bugBleedChance}%` }"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- Status Effect Chances -->
+        <div class="grid grid-cols-2 gap-4">
+          <StatusEffectCard
+            title="Your Army's Effects"
+            :poison-chance="poisonChance"
+            :bleed-chance="bleedChance"
+          />
+          <StatusEffectCard
+            title="Enemy's Effects"
+            :poison-chance="bugPoisonChance"
+            :bleed-chance="bugBleedChance"
+          />
         </div>
 
         <TrainingCombat />
       </div>
 
-      <!-- Right Column: Inventory (on large screens) -->
-      <div
-        v-if="isLargeScreen"
-        class="flex-shrink-0"
-      >
+      <!-- Right Column: Inventory -->
+      <div class="flex-shrink-0">
         <Inventory only-consumables />
       </div>
-    </div>
-
-    <!-- Inventory below Adventure Mode for smaller screens -->
-    <div
-      v-if="isLargeScreen === false"
-      class="overflow-y-auto"
-    >
-      <Inventory only-consumables />
     </div>
   </div>
 </template>
@@ -365,6 +130,10 @@ import ArmyImage from '../assets/army.webp'
 import Inventory from '@/views/InventoryPage.vue'
 import {useResourcesStore} from '@/stores/resourcesStore'
 import WaveSelector from '@/components/WaveSelector.vue'
+import StatusEffectCard from '@/components/StatusEffectCard.vue'
+import BattleCard from '@/components/BattleCard.vue'
+import BattleStyleButton from '@/components/BattleStyleButton.vue'
+import ModifierItem from '@/components/ModifierItem.vue'
 
 import {Skill} from '@/types/trainingTypes'
 import {toPercentage} from '../utils'
@@ -466,6 +235,11 @@ const currentAreaModifiers = computed(() => {
 })
 
 const showMilestoneRewards = ref(false)
+
+// New helper function
+const formatModifierName = (key: string) => {
+  return key.split(/(?=[A-Z])/).join(' ')
+}
 </script>
 
 <style scoped>

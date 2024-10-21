@@ -48,12 +48,18 @@
 <script setup lang="ts">
 import { useGameStore } from '@/stores/gameStore'
 import { formatTime, formatNumber, capitalize } from '@/utils'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 
 const gameStore = useGameStore()
 
 const offlineTime = computed(() => {
   return gameStore.lastSavedTime - gameStore.previousSaveTime
+})
+
+onMounted(() => {
+  if (offlineTime.value < 5000) {
+    closeOfflineSummary()
+  }
 })
 
 function closeOfflineSummary() {
