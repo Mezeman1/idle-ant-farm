@@ -9,6 +9,7 @@
         :max-count="resourcesStore.maxSeeds"
         :rate="resourcesStore.seedsPerSecond"
         :bonus="resourcesStore.productionRates.collectionRateModifier"
+        :storage-multiplier="resourcesStore.storageModifiers.seed * resourcesStore.achievementModifiers.storage.seed"
       >
         <template #actions>
           <StorageButtons
@@ -56,6 +57,7 @@
         :rate="resourcesStore.larvaePerMinute"
         :rate-per="'/m'"
         :bonus="resourcesStore.productionRates.larvaeProductionModifier"
+        :storage-multiplier="resourcesStore.storageModifiers.larvae * resourcesStore.achievementModifiers.storage.larvae"
       >
         <template #actions>
           <StorageButtons
@@ -101,6 +103,7 @@
         :count="resourcesStore.resources.ants"
         :max-count="resourcesStore.maxAnts"
         :rate="resourcesStore.antsPerSecond"
+        :storage-multiplier="resourcesStore.storageModifiers.ant * resourcesStore.achievementModifiers.storage.ant"
       >
         <template #actions>
           <div class="w-full flex flex-wrap gap-2">
@@ -192,6 +195,7 @@
 
         :count="resourcesStore.resources.queens"
         :max-count="resourcesStore.maxQueens"
+        :storage-multiplier="resourcesStore.storageModifiers.queen * resourcesStore.achievementModifiers.storage.queen"
       >
         <template #actions>
           <div class="flex flex-wrap gap-2">
@@ -491,3 +495,4 @@ const createQueenDisabled = computed(() => resourcesStore.resources.ants < 50 ||
 <style scoped>
 
 </style>
+

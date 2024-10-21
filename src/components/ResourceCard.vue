@@ -36,6 +36,17 @@
           {{ bonusPercentage }}
         </span>
       </p>
+      <p
+        v-if="storageMultiplier"
+        class="text-xs sm:text-sm text-gray-500 mt-1"
+      >
+        <i class="fas fa-warehouse" /> Storage Multiplier:
+        <span
+          class="ml-2 inline-block bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full"
+        >
+          {{ storageMultiplierFormatted }}
+        </span>
+      </p>
     </div>
 
     <div class="mt-4">
@@ -72,12 +83,14 @@ const props = withDefaults(defineProps<{
   rate?: number
   ratePer?: string
   bonus?: number
+  storageMultiplier?: number
   cardClass?: string
   unlocked?: boolean
 }>(), {
   ratePer: '/s',
   rate: undefined,
   bonus: undefined,
+  storageMultiplier: undefined,
   cardClass: 'bg-white p-4 sm:p-6 rounded-lg shadow-lg',
   unlocked: true,
 })
@@ -96,6 +109,10 @@ const maxCountFormatted = computed(() => {
 
 const bonusPercentage = computed(() => {
   return props.bonus ? `(+${toPercentage(props.bonus, 1)}%)` : ''
+})
+
+const storageMultiplierFormatted = computed(() => {
+  return props.storageMultiplier ? `x${gameStore.formatNumber(props.storageMultiplier, 2)}` : ''
 })
 </script>
 
