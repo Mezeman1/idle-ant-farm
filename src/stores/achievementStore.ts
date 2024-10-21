@@ -66,7 +66,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.collectionRateModifier += 0.1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -82,7 +81,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.collectionRateModifier += 1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -479,7 +477,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.larvaeProductionModifier += 0.1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -530,7 +527,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.larvaeProductionModifier += 0.5
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -701,7 +697,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.larvaeProductionModifier *= 2
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -742,7 +737,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.larvaeProductionModifier *= 2
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
