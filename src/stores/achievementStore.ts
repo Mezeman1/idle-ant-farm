@@ -272,7 +272,7 @@ export const useAchievementStore = defineStore({
             adventureStore.armyAttackModifier += 0.1
             adventureStore.armyDefenseModifier += 0.1
             adventureStore.armyMaxHealthModifier += 0.1
-            adventureStore.regenMultiplier += 0.1
+            adventureStore.armyRegenModifier += 0.1
           },
         },
       },
@@ -293,7 +293,7 @@ export const useAchievementStore = defineStore({
             adventureStore.armyAttackModifier += 0.1
             adventureStore.armyDefenseModifier += 0.1
             adventureStore.armyMaxHealthModifier += 0.1
-            adventureStore.regenMultiplier += 0.1
+            adventureStore.armyRegenModifier += 0.1
           },
         },
       },
@@ -313,7 +313,7 @@ export const useAchievementStore = defineStore({
             adventureStore.armyAttackModifier += 1
             adventureStore.armyDefenseModifier += 1
             adventureStore.armyMaxHealthModifier += 1
-            adventureStore.regenMultiplier += 1
+            adventureStore.armyRegenModifier += 1
           },
         },
       },
@@ -810,7 +810,7 @@ export const useAchievementStore = defineStore({
             adventureStore.armyAttackModifier += 0.1
             adventureStore.armyDefenseModifier += 0.1
             adventureStore.armyMaxHealthModifier += 0.1
-            adventureStore.regenMultiplier += 0.1
+            adventureStore.armyRegenModifier += 0.1
           },
         },
       },
@@ -837,7 +837,7 @@ export const useAchievementStore = defineStore({
             adventureStore.armyAttackModifier += 0.15
             adventureStore.armyDefenseModifier += 0.15
             adventureStore.armyMaxHealthModifier += 0.15
-            adventureStore.regenMultiplier += 0.15
+            adventureStore.armyRegenModifier += 0.15
           },
         },
       },
@@ -856,7 +856,7 @@ export const useAchievementStore = defineStore({
             adventureStore.armyAttackModifier += 1
             adventureStore.armyDefenseModifier += 1
             adventureStore.armyMaxHealthModifier += 1
-            adventureStore.regenMultiplier += 1
+            adventureStore.armyRegenModifier += 1
           },
         },
       },
