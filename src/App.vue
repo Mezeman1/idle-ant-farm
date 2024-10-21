@@ -1,10 +1,14 @@
 <template>
-  <router-view />
+  <div>
+    <router-view />
+    <OfflineSummary />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import {onMounted} from 'vue'
 import {toast} from 'vue3-toastify'
+import OfflineSummary from './components/OfflineSummary.vue'
 
 
 onMounted(() => {

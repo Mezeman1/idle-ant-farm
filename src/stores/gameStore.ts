@@ -59,6 +59,33 @@ export const useGameStore = defineStore('gameStore', {
 
     lastToastShownTime: 0, // Track last toast show time
     toastCooldown: 5000,   // Cooldown in ms for toast notifications
+
+    offlineGains: {
+      seeds: 0,
+      larvae: 0,
+      ants: 0,
+      eliteAnts: 0,
+      storage: {
+        seeds: 0,
+        larvae: 0,
+        ants: 0,
+      },
+      autoCreations: {
+        larvae: 0,
+        ants: 0,
+        queens: 0,
+        eliteAnts: 0,
+      },
+      xp: {
+        mining: 0,
+        crafting: 0,
+        attack: 0,
+        defense: 0,
+        hitpoints: 0,
+        farming: 0,
+      },
+    },
+    showOfflineSummary: false,
   }),
   actions: {
     // Import game data from a string (decrypt and load into state)
@@ -164,6 +191,25 @@ export const useGameStore = defineStore('gameStore', {
     },
     async calculateOfflineProgress() {
       this.simulatingOfflineProgress = true
+      this.offlineGains = {
+        seeds: 0,
+        larvae: 0,
+        ants: 0,
+        eliteAnts: 0,
+        storage: {
+          seeds: 0,
+          larvae: 0,
+          ants: 0,
+        },
+        xp: {
+          mining: 0,
+          crafting: 0,
+          attack: 0,
+          defense: 0,
+          hitpoints: 0,
+          farming: 0,
+        },
+      }
 
       return new Promise((resolve, reject) => {
         try {
@@ -194,13 +240,31 @@ export const useGameStore = defineStore('gameStore', {
           let offlineTimeAccumulatorTraining = 0 // Track offline time for training
           const logInterval = 600 // Log progress every 10 minutes for less spam
 
+          const initialResources = { ...resourceStore.resources }
+          const initialStorage = { ...resourceStore.storage }
+          const initialTraining = JSON.parse(JSON.stringify(trainingStore.training))
+
           const simulateOffline = () => {
             if (remainingTime <= 0) {
-              // All offline progress has been simulated, resolve the promise
+              // Calculate total gains
+              this.offlineGains.seeds = resourceStore.resources.seeds - initialResources.seeds
+              this.offlineGains.larvae = resourceStore.resources.larvae - initialResources.larvae
+              this.offlineGains.ants = resourceStore.resources.ants - initialResources.ants
+              this.offlineGains.eliteAnts = resourceStore.resources.eliteAnts - initialResources.eliteAnts
+
+              this.offlineGains.storage.seeds = resourceStore.storage.maxSeeds - initialStorage.maxSeeds
+              this.offlineGains.storage.larvae = resourceStore.storage.maxLarvae - initialStorage.maxLarvae
+              this.offlineGains.storage.ants = resourceStore.storage.maxAnts - initialStorage.maxAnts
+
+              Object.keys(this.offlineGains.xp).forEach(skill => {
+                this.offlineGains.xp[skill] = trainingStore.training[skill].xp - initialTraining[skill].xp
+              })
+
               this.lastSavedTime = currentTime
-              this.progress = 100 // Set progress to 100% when done
+              this.progress = 100
               console.log('Offline progress simulation complete.')
               console.log(`New lastSavedTime: ${this.lastSavedTime}`)
+              this.showOfflineSummary = true
               resolve(null)
               return
             }
@@ -212,10 +276,10 @@ export const useGameStore = defineStore('gameStore', {
             // Accumulate the offline time for auto actions (resources)
             offlineTimeAccumulatorResources += deltaTimeResources
 
-            // Trigger auto-actions for resources after accumulating sufficient time
+            // Track auto-creations
             if (offlineTimeAccumulatorResources >= 60) {
               resourceStore.handleAutoCreations()
-              offlineTimeAccumulatorResources = 0 // Reset accumulator after triggering auto actions
+              offlineTimeAccumulatorResources = 0
             }
 
             // Simulate training in 10-second chunks
@@ -243,11 +307,9 @@ export const useGameStore = defineStore('gameStore', {
           simulateOffline()
         } catch (error) {
           console.error('Error during offline progress simulation:', error)
-          // Reject the promise if an error occurs
           reject(error)
         }
       }).finally(() => this.simulatingOfflineProgress = false)
-
     },
 
     // Start the game loop for real-time resource generation, respecting caps
