@@ -11,128 +11,132 @@
     />
 
     <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-4 flex-grow">
-      <p class="font-bold text-lg">
-        Prestige
-      </p>
-
-      <div class="bg-gray-800 text-white p-4 rounded-lg shadow-md max-w-sm mx-auto">
-        <h2 class="text-base font-semibold mb-2 text-center">
+      <div class="bg-blue-100 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-2 text-center text-blue-800">
           Prestige Point Calculation
         </h2>
-        <ul class="space-y-2 text-xs text-center">
-          <li>
-            Calculated based on amount of ants and time since last prestige.
-          </li>
-          <li>
-            Time since last prestige: {{ timeSinceLastPrestige }}
-          </li>
-        </ul>
+        <p class="text-sm text-blue-700 mb-2">
+          Calculated based on amount of ants and time since last prestige.
+        </p>
+        <p class="text-sm text-blue-700">
+          Time since last prestige: {{ timeSinceLastPrestige }}
+        </p>
+        <div class="flex justify-between items-center mt-4">
+          <p class="text-blue-800 font-medium">
+            Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }}
+          </p>
+          <p class="text-blue-800 font-medium">
+            Prestige Times: {{ formatNumber(prestigeStore.timesPrestiged) }}
+          </p>
+        </div>
       </div>
 
-      <div class="flex flex-col items-center justify-between space-y-2 w-full">
-        <p class="text-center">
-          Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }} <br>Prestige Times:
-          {{ formatNumber(prestigeStore.timesPrestiged) }}
-        </p>
+      <!-- Prestige Button -->
+      <div class="flex flex-col items-center space-y-2">
         <button
           :disabled="prestigeStore.calculatePrestigePoints() < 1 || waitTime > 0"
-          class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
+          class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
           @click="confirmPrestige()"
         >
           Prestige for {{ formatNumber(prestigeStore.calculatePrestigePoints()) }} Points
         </button>
-        <p v-if="waitTime > 0">
+        <p
+          v-if="waitTime > 0"
+          class="text-sm text-gray-600"
+        >
           You can prestige in {{ waitTime }} seconds
         </p>
       </div>
 
-      <div class="flex w-full justify-end gap-2">
+      <!-- Category Controls -->
+      <div class="flex justify-end space-x-2">
         <button
-          class="small bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md shadow-md text-sm transition duration-300 ease-in-out"
           @click="toggleAll(false)"
         >
           Collapse All
         </button>
         <button
-          class="small bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md shadow-md text-sm transition duration-300 ease-in-out"
           @click="toggleAll(true)"
         >
           Expand All
         </button>
       </div>
 
-      <!-- This section is scrollable -->
-      <div class="flex-grow overflow-y-auto flex flex-col gap-2">
-        <!-- Collapsible Upgrade Sections -->
+      <!-- Upgrade Categories -->
+      <div class="flex-grow overflow-y-auto space-y-4">
         <div
           v-for="category in categorizedUpgrades"
           :key="category.name"
-          class="category-section"
+          class="bg-gray-100 rounded-lg shadow-md overflow-hidden"
         >
           <button
-            class="w-full flex items-center justify-between bg-blue-500 hover:bg-blue-600 p-2 rounded font-bold text-white"
+            class="w-full flex items-center justify-between bg-gray-200 p-3 font-bold text-gray-800 hover:bg-gray-300 transition duration-300 ease-in-out"
             @click="toggleCategory(category.name)"
           >
             <span>{{ category.name }}</span>
-            <span v-if="!category.expanded">+</span>
-            <span v-if="category.expanded">-</span>
+            <span class="text-xl">{{ category.expanded ? '−' : '+' }}</span>
           </button>
 
-          <!-- Upgrade List (shown when expanded) -->
-          <ul
+          <!-- Upgrade List -->
+          <div
             v-if="category.expanded"
-            class="space-y-2 mt-2"
+            class="p-3 space-y-3"
           >
-            <li
+            <div
               v-for="upgrade in category.upgrades"
               :key="upgrade.id"
+              class="bg-white p-3 rounded-md shadow-sm"
             >
-              <div
-                class="flex flex-col bg-white p-2 rounded shadow mx-1"
-              >
-                <p>{{ upgrade.name }} {{ getUpgradeCount(upgrade) }} {{ !isUpgradeUnlocked(upgrade) ? '(Locked)' : '' }}</p>
-                <p
+              <h3 class="font-semibold text-gray-800">
+                {{ upgrade.name }} {{ getUpgradeCount(upgrade) }}
+                <span
                   v-if="!isUpgradeUnlocked(upgrade)"
-                  class="text-xs text-gray-500"
-                >
-                  Unlocked by:
-                  {{ typeof upgrade.unlockedWhenDescription === 'function'
-                    ? upgrade.unlockedWhenDescription()
-                    : upgrade.unlockedWhenDescription
-                  }}
-                </p>
-                <p class="text-xs text-gray-500">
-                  {{ upgrade.description }}
-                </p>
-                <p
-                  v-if="isUpgradeMaxed(upgrade)"
-                  class="text-xs text-blue-600"
-                >
-                  Purchased
-                </p>
-                <div
-                  v-else
-                  class="flex justify-between items-center"
-                >
-                  <button
-                    :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    @click="prestigeStore.buyUpgrade(upgrade.id)"
-                  >
-                    Buy for {{ formatNumber(upgrade.cost) }} Points
-                  </button>
-                  <button
-                    v-if="!upgrade.oneTimePurchase"
-                    :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
-                    class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    @click="prestigeStore.buyMaxUpgrade(upgrade.id)"
-                  >
-                    Buy max
-                  </button>
-                </div>
+                  class="text-red-500 text-sm"
+                >(Locked)</span>
+              </h3>
+              <p
+                v-if="!isUpgradeUnlocked(upgrade)"
+                class="text-sm text-gray-600 mt-1"
+              >
+                Unlocked by:
+                {{ typeof upgrade.unlockedWhenDescription === 'function'
+                  ? upgrade.unlockedWhenDescription()
+                  : upgrade.unlockedWhenDescription
+                }}
+              </p>
+              <p class="text-sm text-gray-600 mt-1">
+                {{ upgrade.description }}
+              </p>
+              <div
+                v-if="isUpgradeMaxed(upgrade)"
+                class="text-sm text-blue-600 mt-2 font-medium"
+              >
+                Purchased
               </div>
-            </li>
-          </ul>
+              <div
+                v-else
+                class="flex justify-between items-center mt-2 space-x-2"
+              >
+                <button
+                  :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
+                  class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md shadow-sm text-sm transition duration-300 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed flex-grow"
+                  @click="prestigeStore.buyUpgrade(upgrade.id)"
+                >
+                  Buy for {{ formatNumber(upgrade.cost) }} Points
+                </button>
+                <button
+                  v-if="!upgrade.oneTimePurchase"
+                  :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
+                  class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md shadow-sm text-sm transition duration-300 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  @click="prestigeStore.buyMaxUpgrade(upgrade.id)"
+                >
+                  Buy max
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -270,5 +274,5 @@ const toggleAll = (value) => {
 </script>
 
 <style scoped>
-
+/* Add any additional styles here if needed */
 </style>
