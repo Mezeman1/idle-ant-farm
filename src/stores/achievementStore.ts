@@ -21,6 +21,7 @@ interface AchievementReward {
   description: string;
   isClaimed: boolean;
   onClaim: () => void;
+  shouldOnlyClaimOnce?: boolean
 }
 
 export const useAchievementStore = defineStore({
@@ -65,6 +66,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.collectionRateModifier += 0.1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -80,6 +82,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.collectionRateModifier += 1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -96,6 +99,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 0.1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -112,6 +116,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 0.1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -128,6 +133,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 0.5
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -144,6 +150,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -184,6 +191,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -201,6 +209,15 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.seeds >= 1_000_000_000_000_000,
         progress: () => useAchievementStore().totals.seeds / 1_000_000_000_000_000,
+
+        reward: {
+          description: 'How many larvae do you need? Larvae storage increased by 1000%.',
+          isClaimed: false,
+          onClaim: () => {
+            useResourcesStore().achievementModifiers.storage.larvae += 10
+          },
+          shouldOnlyClaimOnce: true,
+        },
       },
 
       // Ant Creation Achievements
@@ -218,6 +235,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.ant += 0.05
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -234,6 +252,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.ant += 0.05
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -443,6 +462,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.queen += 0.1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -459,6 +479,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.larvaeProductionModifier += 0.1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -475,6 +496,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.queen += 0.1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -491,6 +513,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.queen += 0.5
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -507,6 +530,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.larvaeProductionModifier += 0.5
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -581,6 +605,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 0.1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -596,6 +621,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 0.1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -619,6 +645,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 1
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -634,6 +661,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 1.5
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -649,6 +677,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 5
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -666,13 +695,13 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.larvae >= 10_000_000_000,
         progress: () => useAchievementStore().totals.larvae / 10_000_000_000,
-
         reward: {
           description: 'Larvae production is doubled!',
           isClaimed: false,
           onClaim: () => {
             useResourcesStore().productionRates.larvaeProductionModifier *= 2
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -690,7 +719,6 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.larvae >= 1_000_000_000_000,
         progress: () => useAchievementStore().totals.larvae / 1_000_000_000_000,
-
         reward: {
           description: 'You\'re an achievement hunter, ha? Increases both larvae storage capacity and larvae production by 250%.',
           isClaimed: false,
@@ -698,6 +726,7 @@ export const useAchievementStore = defineStore({
             useResourcesStore().achievementModifiers.storage.larvae += 2.5
             useResourcesStore().productionRates.larvaeProductionModifier += 2.5
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -713,6 +742,7 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().productionRates.larvaeProductionModifier *= 2
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -730,13 +760,13 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAchievementStore().totals.larvae >= 1_000_000_000_000_000,
         progress: () => useAchievementStore().totals.larvae / 1_000_000_000_000_000,
-
         reward: {
           description: 'How many larvae do you need? Larvae storage increased by 1000%.',
           isClaimed: false,
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 10
           },
+          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -772,7 +802,6 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAdventureStore().enemyKillCount >= 1000,
         progress: () => useAdventureStore().enemyKillCount / 1000,
-
         reward: {
           description: 'Ants are now 10% stronger.',
           isClaimed: false,
@@ -800,7 +829,6 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAdventureStore().enemyKillCount >= 100000,
         progress: () => useAdventureStore().enemyKillCount / 100000,
-
         reward: {
           description: 'Ants are now 15% stronger.',
           isClaimed: false,
@@ -820,7 +848,6 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => useAdventureStore().enemyKillCount >= 1_000_000,
         progress: () => useAdventureStore().enemyKillCount / 1_000_000,
-
         reward: {
           description: 'Ants are now 100% stronger.',
           isClaimed: false,
@@ -945,7 +972,6 @@ export const useAchievementStore = defineStore({
         isUnlocked: false,
         unlockCondition: () => usePrestigeStore().timesPrestiged >= 100,
         progress: () => usePrestigeStore().timesPrestiged / 100,
-
         reward: {
           description: 'Prestige now grans 50% more mutagen',
           isClaimed: false,
@@ -1008,10 +1034,15 @@ export const useAchievementStore = defineStore({
   }),
   actions: {
     claimReward(reward: AchievementReward) {
-      reward.claimed = true
-      reward.onClaim()
+      reward.isClaimed = true
+      
+      if (reward.shouldOnlyClaimOnce) {
+        reward.shouldOnlyClaimOnce = false
+        reward.onClaim()
 
-      this.rewards.push(reward)
+        this.rewards.push(reward)
+      }
+    
     },
     addToTotal(type: string, amount: BigNumber) {
       if (!this.totals[type]) {
@@ -1032,7 +1063,7 @@ export const useAchievementStore = defineStore({
             })
           }
 
-          if (achievement.reward && !achievement.reward.claimed) {
+          if (achievement.reward && !achievement.reward.isClaimed) {
             this.claimReward(achievement.reward)
           }
         }
