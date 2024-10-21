@@ -163,10 +163,12 @@ const useItem = (itemId: string, amount = 1) => {
   if (useInventoryStore().useItem(itemId, amount)) {
     toast.success('Item used successfully', {
       position: 'top-left',
+      toastId: 'use-item-toast',
     })
   } else {
     toast.error('Failed to use item', {
       position: 'top-left',
+      toastId: 'use-item-toast',
     })
   }
 

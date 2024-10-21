@@ -6,6 +6,7 @@
       'dark': settingsStore.darkMode,
     }"
   >
+    <OfflineSummary />
     <AntSimulation
       v-if="gameStore.loaded && settingsStore.showBackground"
       :show-animation="settingsStore.showAnimation"
@@ -342,6 +343,7 @@ import {toast} from 'vue3-toastify'
 import BossPage from '@/views/BossPage.vue'
 import AntTraining from '@/views/AntTraining.vue'
 import {storeToRefs} from 'pinia'
+import OfflineSummary from '@/components/OfflineSummary.vue'
 
 const deferredPrompt = ref(null)
 const gameStore = useGameStore()

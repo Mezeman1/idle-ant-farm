@@ -35,6 +35,7 @@ export const useGameStore = defineStore('gameStore', {
     loaded: false,
     loggedIn: false,
     lastSavedTime: Date.now(),
+    previousSaveTime: Date.now(), // Add this new property
 
     deltaMultiplier: 1,
 
@@ -216,7 +217,7 @@ export const useGameStore = defineStore('gameStore', {
           const resourceStore = useResourcesStore()
           const trainingStore = useTrainingStore()
           const currentTime = Date.now()
-          let timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
+          let timeElapsed = (currentTime - this.previousSaveTime) / 1000 // Use previousSaveTime here
 
           // Define the offline cap (24 hours = 86400 seconds)
           const OFFLINE_CAP = 86400
@@ -260,6 +261,7 @@ export const useGameStore = defineStore('gameStore', {
                 this.offlineGains.xp[skill] = trainingStore.training[skill].xp - initialTraining[skill].xp
               })
 
+              this.previousSaveTime = this.lastSavedTime // Update previousSaveTime
               this.lastSavedTime = currentTime
               this.progress = 100
               console.log('Offline progress simulation complete.')
@@ -612,6 +614,7 @@ export const useGameStore = defineStore('gameStore', {
           this.showSaveToast()
         }
 
+        this.previousSaveTime = this.lastSavedTime // Store the previous save time
         this.lastSavedTime = Date.now()
       } catch (error: FirestoreError | any) {
         toast.error('Failed to save game state', {
@@ -717,13 +720,13 @@ export const useGameStore = defineStore('gameStore', {
             position: 'top-left',
           })
         }
+
+        this.saveGameState({
+          force: true,
+        })
       } catch (error) {
         console.error('Error loading game state from Firestore:', error)
       }
-
-      this.saveGameState({
-        force: true,
-      })
     },
 
     async loadStateFromFirebase(savedState) {
@@ -734,7 +737,8 @@ export const useGameStore = defineStore('gameStore', {
       const evolveStore = useEvolveStore()
       evolveStore.loadEvolveState(savedState)
 
-      this.lastSavedTime = savedState.lastSavedTime ?? this.lastSavedTime
+      this.previousSaveTime = savedState.lastSavedTime ?? this.previousSaveTime
+      this.lastSavedTime = Date.now() // Set lastSavedTime to current time on load
 
       const adventureStore = useAdventureStore()
       await adventureStore.loadAdventureState(savedState)

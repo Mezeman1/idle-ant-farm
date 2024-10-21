@@ -53,7 +53,7 @@ import { computed } from 'vue'
 const gameStore = useGameStore()
 
 const offlineTime = computed(() => {
-  return Date.now() - gameStore.lastSavedTime
+  return Date.now() - gameStore.previousSaveTime
 })
 
 function closeOfflineSummary() {
