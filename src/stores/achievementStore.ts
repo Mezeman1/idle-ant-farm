@@ -1029,14 +1029,17 @@ export const useAchievementStore = defineStore({
   actions: {
     claimReward(reward: AchievementReward) {
       reward.isClaimed = true
+      if (reward.shouldOnlyClaimOnce === false) {
+        return
+      }
       
+      reward.onClaim()
+      this.rewards.push(reward)
+
       if (reward.shouldOnlyClaimOnce) {
         reward.shouldOnlyClaimOnce = false
-        reward.onClaim()
-
-        this.rewards.push(reward)
       }
-    
+
     },
     addToTotal(type: string, amount: BigNumber) {
       if (!this.totals[type]) {
