@@ -13,18 +13,26 @@
       </p>
     </div>
     <div class="space-y-2">
-      <p class="text-sm sm:text-base text-gray-700 flex items-center">
-        <span class="font-semibold">Count:</span> 
-        <span class="ml-1">{{ countFormatted }}/{{ maxCountFormatted }}</span>
-        <span class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-          {{ percentage }}%
-        </span>
-      </p>
+      <div class="flex flex-row gap-1 items-center">
+        <p class="text-sm sm:text-base text-gray-700 flex items-center">
+          <span class="font-semibold">Count:</span> 
+          <span class="ml-1">{{ countFormatted }}/{{ maxCountFormatted }}</span>
+        </p>
+        <p class="text-xs sm:text-sm text-gray-600">
+          <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+            {{ percentage }}%
+          </span>
+        </p>
+      </div>
       <!-- Progress bar for count percentage -->
       <div class="w-full bg-gray-200 rounded-full h-2.5">
         <div
           class="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-in-out"
           :style="{ width: percentage + '%' }"
+          :aria-valuenow="percentage"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          role="progressbar"
         />
       </div>
 
