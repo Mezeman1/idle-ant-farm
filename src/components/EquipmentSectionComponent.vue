@@ -1,73 +1,75 @@
 <template>
-  <div>
-    <div class="max-w-screen-lg mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="max-w-md mx-auto p-4">
+    <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:grid-rows-3">
+      <!-- Head Slot -->
+      <SlotComponent
+        :item="headSlot"
+        slot-type="head"
+        :is-desktop="isDesktop"
+        :is-mobile="isMobile"
+        class="md:col-start-2"
+        @click="openModal('head')"
+      />
+      
+      <!-- Weapon Slot -->
+      <SlotComponent
+        :item="weaponSlot"
+        slot-type="weapon"
+        :is-desktop="isDesktop"
+        :is-mobile="isMobile"
+        class="md:col-start-3"
+        @click="openModal('weapon')"
+      />
+      
+      <!-- Body Slot -->
+      <SlotComponent
+        :item="bodySlot"
+        slot-type="body"
+        :is-desktop="isDesktop"
+        :is-mobile="isMobile"
+        class="md:col-start-2 md:row-start-2"
+        @click="openModal('body')"
+      />
+      
+      <!-- Legs Slot -->
+      <SlotComponent
+        :item="legSlot"
+        slot-type="legs"
+        :is-desktop="isDesktop"
+        :is-mobile="isMobile"
+        class="md:col-start-2 md:row-start-3"
+        @click="openModal('legs')"
+      />
+      
       <!-- Accessory Slots -->
-      <div class="grid grid-rows-3 grid-flow-col gap-2">
-        <div
-          v-for="index in accessorySlotCount"
-          :key="index"
-          @click="openModal('accessory', index - 1)"
-        >
-          <SlotComponent
-            :item="accessorySlots[index - 1]"
-            slot-type="accessory"
-            :is-desktop="isDesktop"
-            :is-mobile="isMobile"
-          />
-        </div>
-      </div>
-      <!-- Main Equipment Slots (Head, Body, Legs, Weapon) -->
-      <div class="grid grid-cols-2 gap-2">
-        <div class="flex flex-col gap-1">
-          <div @click="openModal('head')">
-            <SlotComponent
-              :item="headSlot"
-              slot-type="head"
-              :is-desktop="isDesktop"
-              :is-mobile="isMobile"
-            />
-          </div>
-          <div @click="openModal('body')">
-            <SlotComponent
-              :item="bodySlot"
-              slot-type="body"
-              :is-desktop="isDesktop"
-              :is-mobile="isMobile"
-            />
-          </div>
-          <div @click="openModal('legs')">
-            <SlotComponent
-              :item="legSlot"
-              slot-type="legs"
-              :is-desktop="isDesktop"
-              :is-mobile="isMobile"
-            />
-          </div>
-        </div>
-        <div class="flex flex-col gap-1">
-          <div />
-          <div @click="openModal('weapon')">
-            <SlotComponent
-              :item="weaponSlot"
-              slot-type="weapon"
-              :is-desktop="isDesktop"
-              :is-mobile="isMobile"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal to select items for a specific slot -->
-      <ItemSelectionModal
-        v-if="isModalOpen"
-        :is-open="isModalOpen"
-        :slot-type="selectedSlotType"
-        :slot-index="selectedSlotIndex"
-        :items="availableItemsForSlot"
-        @select-item="equipItem"
-        @close="closeModal"
+      <SlotComponent
+        v-for="(item, index) in accessorySlots"
+        :key="index"
+        :item="item"
+        slot-type="accessory"
+        :is-desktop="isDesktop"
+        :is-mobile="isMobile"
+        :class="{
+          'md:col-start-1': index < 3,
+          'md:col-start-4': index >= 3,
+          'md:row-start-1': index === 0 || index === 3,
+          'md:row-start-2': index === 1 || index === 4,
+          'md:row-start-3': index === 2 || index === 5
+        }"
+        @click="openModal('accessory', index)"
       />
     </div>
+
+    <!-- Modal to select items for a specific slot -->
+    <ItemSelectionModal
+      v-if="isModalOpen"
+      :is-open="isModalOpen"
+      :slot-type="selectedSlotType"
+      :slot-index="selectedSlotIndex"
+      :items="availableItemsForSlot"
+      @select-item="equipItem"
+      @close="closeModal"
+    />
   </div>
 </template>
 
@@ -132,3 +134,8 @@ const equipItem = async (item?: Item) => {
 }
 </script>
 
+<style scoped>
+.slot {
+  @apply aspect-square border-2 border-gray-300 rounded-lg flex items-center justify-center bg-black bg-opacity-10;
+}
+</style>
