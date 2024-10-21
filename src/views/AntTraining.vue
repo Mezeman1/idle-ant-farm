@@ -38,6 +38,12 @@
               :class="tab.icon ?? ''"
             />
             {{ tab.label }}
+            <span 
+              v-if="!isTrainingActive(tab.name)" 
+              class="text-xs bg-yellow-500 text-gray-800 px-1 py-0.5 rounded-full"
+            >
+              Inactive
+            </span>
           </button>
         </div>
       </div>
@@ -46,14 +52,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useTrainingStore } from '@/stores/trainingStore'
 import TrainingResources from '@/views/Training/TrainingResources.vue'
 import TrainingMining from '@/views/Training/TrainingMining.vue'
 import TrainingCrafting from '@/views/Training/TrainingCrafting.vue'
-import {storeToRefs} from 'pinia'
+import { storeToRefs } from 'pinia'
 import TrainingCombat from '@/views/Training/TrainingCombat.vue'
 import TrainingFarming from '@/views/Training/TrainingFarming.vue'
+import { Skill } from '@/types/trainingTypes'
 
 // Get the training store
 const trainingStore = useTrainingStore()
@@ -63,12 +70,7 @@ const tabs = ref([
   { name: 'mining', label: 'Mining', icon: 'fas fa-pickaxe', disabled: false },
   { name: 'crafting', label: 'Crafting', icon: 'fas fa-hammer', disabled: false },
   { name: 'combat', label: 'Combat', icon: 'fas fa-swords', disabled: false },
-  {
-     name: 'farming',
-      label: 'Farming',
-      icon: 'fas fa-seedling',
-      disabled: false,
-  },
+  { name: 'farming', label: 'Farming', icon: 'fas fa-seedling', disabled: false },
 ])
 
 const {
@@ -80,6 +82,18 @@ function setActiveTab(tabName: string) {
   activeTab.value = tabName
 }
 
-
-
+// Check if training is active for a given tab
+const isTrainingActive = computed(() => (tabName: string) => {
+  switch (tabName) {
+    case 'mining':
+      return trainingStore.activeTrainings.includes(Skill.Mining)
+    case 'crafting':
+      return trainingStore.activeTrainings.includes(Skill.Crafting)
+    case 'combat':
+    case 'farming':
+      return true
+    default:
+      return false
+  }
+})
 </script>

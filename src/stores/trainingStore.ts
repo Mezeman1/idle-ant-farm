@@ -322,15 +322,19 @@ export const useTrainingStore = defineStore({
       this.applyFungusEffects()
     },
     eatFungus(fungus: Seed) {
-      if (this.eatenFungus.find(f => f.name === fungus.name)) return
-
-      this.eatenFungus.push(
-        {
+      const existingFungus = this.eatenFungus.find(f => f.name === fungus.name)
+      
+      if (existingFungus) {
+        // If the fungus already exists, extend its duration
+        existingFungus.duration += fungus.duration
+      } else {
+        // If it's a new fungus, add it to the list
+        this.eatenFungus.push({
           name: fungus.name,
           effect: fungus.effect,
           duration: fungus.duration,
-        },
-      )
+        })
+      }
 
       this.applyFungusEffects()
       this.harvestedResources[fungus.name]--
