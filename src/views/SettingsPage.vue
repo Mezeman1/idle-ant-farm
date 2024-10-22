@@ -343,7 +343,7 @@
     <div class="bg-white shadow-md rounded-md p-4">
       <textarea
         v-model="importString"
-        class="w-full h-32 p-2 rounded-md shadow border"
+        class="w-full h-32 p-2 rounded-md shadow border text-gray-800 bg-white"
         placeholder="Paste your exported data here"
       />
       <div class="flex gap-2 mt-4">
