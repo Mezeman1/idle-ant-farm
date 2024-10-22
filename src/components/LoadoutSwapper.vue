@@ -13,7 +13,7 @@
       <input
         v-model="loadOutName"
         type="text"
-        class="border rounded px-2 py-1 mb-2 w-full text-black"
+        class="border rounded px-2 py-1 mb-2 w-full text-gray-800 bg-white"
         placeholder="Enter loadout name"
       >
       <button
