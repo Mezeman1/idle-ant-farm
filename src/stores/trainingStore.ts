@@ -771,6 +771,9 @@ export const useTrainingStore = defineStore({
       this.farmingPlots = state.farmingPlots ?? this.farmingPlots
       this.eatenFungus = state.eatenFungus ?? this.eatenFungus
 
+      this.miningDoubleChance = 1
+      this.xpMultiplier = 1
+
       this.miningResources = this.miningResources.map(resource => {
         const savedResource = state.miningResourceLevels?.find(saved => saved.name === resource.name)
         if (!savedResource) return resource
