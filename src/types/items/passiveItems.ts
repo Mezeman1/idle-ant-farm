@@ -312,4 +312,23 @@ export const passiveItems: Item[] = [
     },
     rarity: 'rare',
   },
+  // Add this new item to the passiveItems array
+  {
+    id: 'wisdom-nectar',
+    name: 'Wisdom Nectar',
+    type: 'passive',
+    description: 'Doubles XP gain for all training.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const trainingStore = useTrainingStore()
+      trainingStore.xpMultiplier *= 2
+      return true
+    },
+    onRemove: () => {
+      const trainingStore = useTrainingStore()
+      trainingStore.xpMultiplier /= 2
+    },
+    rarity: 'legendary',
+  },
 ]

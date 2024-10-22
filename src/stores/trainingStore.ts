@@ -267,6 +267,7 @@ export const useTrainingStore = defineStore({
     activeCraftingRecipes: [] as string[],
     maxActiveCraftingRecipes: 1,
     miningDoubleChance: 0,
+    xpMultiplier: 1,
   }),
 
   getters: {
@@ -707,7 +708,8 @@ export const useTrainingStore = defineStore({
       const training = this.getTrainingState(skill)
       if (!training) return
 
-      training.xp += xp
+      const multipliedXp = xp * this.xpMultiplier
+      training.xp += multipliedXp
       if (training.xp >= training.xpToNextLevel) this.addLevel(skill)
     },
 
@@ -749,6 +751,7 @@ export const useTrainingStore = defineStore({
         activeTrainings: this.activeTrainings,
         activeCraftingRecipes: this.activeCraftingRecipes,
         maxActiveCraftingRecipes: this.maxActiveCraftingRecipes,
+        xpMultiplier: this.xpMultiplier,
       }
     },
     loadTrainingState(state) {
@@ -782,6 +785,7 @@ export const useTrainingStore = defineStore({
       this.activeCraftingRecipes = state.activeCraftingRecipes ?? []
       this.maxActiveCraftingRecipes = state.maxActiveCraftingRecipes ?? 1
       this.miningDoubleChance = 0
+      this.xpMultiplier = state.xpMultiplier ?? 1
 
       this.addMilestonesToMiningResources()
       this.applyModifiers()
@@ -826,6 +830,7 @@ export const useTrainingStore = defineStore({
       this.activeCraftingRecipes = []
       this.maxActiveCraftingRecipes = 1
       this.miningDoubleChance = 0
+      this.xpMultiplier = 1
 
       this.addMilestonesToMiningResources()
       this.applyModifiers()

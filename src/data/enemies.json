@@ -304,6 +304,11 @@
             "name": "Soldier Sword",
             "chance": 0.02,
             "amountBetween": [1, 1]
+          },
+          {
+            "name": "Wisdom Nectar",
+            "chance": 0.005,
+            "amountBetween": [1, 1]
           }
         ]
       }

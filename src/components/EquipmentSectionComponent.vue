@@ -43,20 +43,20 @@
       
       <!-- Accessory Slots -->
       <SlotComponent
-        v-for="(item, index) in accessorySlots"
-        :key="index"
-        :item="item"
+        v-for="index in accessorySlotCount"
+        :key="index - 1"
+        :item="accessorySlots[index - 1]"
         slot-type="accessory"
         :is-desktop="isDesktop"
         :is-mobile="isMobile"
         :class="{
-          'md:col-start-1': index < 3,
-          'md:col-start-4': index >= 3,
-          'md:row-start-1': index === 0 || index === 3,
-          'md:row-start-2': index === 1 || index === 4,
-          'md:row-start-3': index === 2 || index === 5
+          'md:col-start-1': index <= 3,
+          'md:col-start-4': index > 3,
+          'md:row-start-1': index === 1 || index === 4,
+          'md:row-start-2': index === 2 || index === 5,
+          'md:row-start-3': index === 3 || index === 6
         }"
-        @click="openModal('accessory', index)"
+        @click="openModal('accessory', index - 1)"
       />
     </div>
 

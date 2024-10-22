@@ -21,7 +21,6 @@ interface AchievementReward {
   description: string;
   isClaimed: boolean;
   onClaim: () => void;
-  shouldOnlyClaimOnce?: boolean
 }
 
 export const useAchievementStore = defineStore({
@@ -97,7 +96,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 0.1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -114,7 +112,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 0.1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -131,7 +128,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 0.5
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -148,7 +144,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -189,7 +184,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.seed += 1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -214,7 +208,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 10
           },
-          shouldOnlyClaimOnce: true,
         },
       },
 
@@ -233,7 +226,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.ant += 0.05
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -250,7 +242,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.ant += 0.05
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -460,7 +451,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.queen += 0.1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -493,7 +483,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.queen += 0.1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -510,7 +499,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.queen += 0.5
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -601,7 +589,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 0.1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -617,7 +604,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 0.1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -641,7 +627,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 1
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -657,7 +642,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 1.5
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -673,7 +657,6 @@ export const useAchievementStore = defineStore({
           onClaim: () => {
             useResourcesStore().achievementModifiers.storage.larvae += 5
           },
-          shouldOnlyClaimOnce: true,
         },
       },
       {
@@ -1029,17 +1012,8 @@ export const useAchievementStore = defineStore({
   actions: {
     claimReward(reward: AchievementReward) {
       reward.isClaimed = true
-      if (reward.shouldOnlyClaimOnce === false) {
-        return
-      }
-      
       reward.onClaim()
       this.rewards.push(reward)
-
-      if (reward.shouldOnlyClaimOnce) {
-        reward.shouldOnlyClaimOnce = false
-      }
-
     },
     addToTotal(type: string, amount: BigNumber) {
       if (!this.totals[type]) {
@@ -1076,6 +1050,15 @@ export const useAchievementStore = defineStore({
       }
     },
     loadAchievementState(state) {
+      const achievementModifiers = useResourcesStore().achievementModifiers
+      
+      // Reset all achievement modifiers to 1
+      Object.keys(achievementModifiers).forEach((category) => {
+        Object.keys(achievementModifiers[category]).forEach((modifier) => {
+          achievementModifiers[category][modifier] = 1
+        })
+      })
+
       this.achievements.forEach((achievement) => {
         const savedAchievement = state?.achievements?.find((saved) => saved.id === achievement.id)
         if (savedAchievement) {
