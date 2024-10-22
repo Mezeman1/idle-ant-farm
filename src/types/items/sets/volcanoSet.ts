@@ -1,4 +1,5 @@
 import {Item} from '@/types/items/itemRegistry'
+import {useEvolveStore} from '@/stores/evolveStore'
 
 export const volcanoSet = [
   {
@@ -11,8 +12,10 @@ export const volcanoSet = [
     set: 'Volcano Set',
     rarity: 'rare',
     level: 1,
-    maxLevel: 500,
-    multiplier: 0.005, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Volcano Set')
+    },
+    multiplier: 0.005,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
@@ -22,6 +25,7 @@ export const volcanoSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'volcano-chestplate',
@@ -33,8 +37,10 @@ export const volcanoSet = [
     set: 'Volcano Set',
     rarity: 'rare',
     level: 1,
-    maxLevel: 500,
-    multiplier: 0.0075, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Volcano Set')
+    },
+    multiplier: 0.0075,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier += bonusMultiplier
@@ -44,6 +50,7 @@ export const volcanoSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'volcano-boots',
@@ -55,8 +62,10 @@ export const volcanoSet = [
     set: 'Volcano Set',
     rarity: 'rare',
     level: 1,
-    maxLevel: 500,
-    multiplier: 0.006, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Volcano Set')
+    },
+    multiplier: 0.006,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier += bonusMultiplier
@@ -66,6 +75,7 @@ export const volcanoSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'volcano-gloves',
@@ -77,8 +87,10 @@ export const volcanoSet = [
     set: 'Volcano Set',
     rarity: 'rare',
     level: 1,
-    maxLevel: 500,
-    multiplier: 0.008, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Volcano Set')
+    },
+    multiplier: 0.008,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
@@ -90,6 +102,7 @@ export const volcanoSet = [
       adventureStore.armyAttackModifier -= bonusMultiplier
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'volcano-blade',
@@ -100,8 +113,10 @@ export const volcanoSet = [
     slotType: 'weapon',
     rarity: 'rare',
     level: 1,
-    maxLevel: 500,
-    multiplier: 0.01, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Volcano Set')
+    },
+    multiplier: 0.01,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
@@ -111,6 +126,7 @@ export const volcanoSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'volcano-ring',
@@ -122,8 +138,10 @@ export const volcanoSet = [
     set: 'Volcano Set',
     rarity: 'rare',
     level: 1,
-    maxLevel: 500,
-    multiplier: 0.012, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Volcano Set')
+    },
+    multiplier: 0.012,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyMaxHealthModifier += bonusMultiplier
@@ -133,6 +151,7 @@ export const volcanoSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyMaxHealthModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'volcano-scepter',
@@ -143,8 +162,10 @@ export const volcanoSet = [
     slotType: 'weapon',
     rarity: 'rare',
     level: 1,
-    maxLevel: 500,
-    multiplier: 0.015, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Volcano Set')
+    },
+    multiplier: 0.015,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
@@ -154,5 +175,6 @@ export const volcanoSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
     },
+    evolves: true,
   },
 ]

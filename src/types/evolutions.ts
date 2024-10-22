@@ -109,8 +109,8 @@ function scaleEvolutions(baseEvolutions: Evolution[]): Evolution[] {
 const baseEvolutions: Evolution[] = [
   {
     id: 0,
-    name: 'Start',
-    description: 'The start of the game',
+    name: 'Seed Gatherers',
+    description: 'The humble beginnings of your ant colony',
 
     productionRates: {
       larvaeProductionRate: 2.5, // Larvae produced per queen per minute

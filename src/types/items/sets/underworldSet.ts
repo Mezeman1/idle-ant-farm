@@ -1,4 +1,5 @@
 import {Item} from '@/types/items/itemRegistry'
+import {useEvolveStore} from '@/stores/evolveStore'
 
 export const underworldSet = [
   {
@@ -11,8 +12,10 @@ export const underworldSet = [
     set: 'Underworld Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 750,
-    multiplier: 0.009, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Underworld Set')
+    },
+    multiplier: 0.009,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier += bonusMultiplier
@@ -22,6 +25,7 @@ export const underworldSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'underworld-chestplate',
@@ -33,8 +37,10 @@ export const underworldSet = [
     set: 'Underworld Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 750,
-    multiplier: 0.012, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Underworld Set')
+    },
+    multiplier: 0.012,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyMaxHealthModifier += bonusMultiplier
@@ -44,6 +50,7 @@ export const underworldSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyMaxHealthModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'underworld-legs',
@@ -55,8 +62,10 @@ export const underworldSet = [
     set: 'Underworld Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 750,
-    multiplier: 0.006, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Underworld Set')
+    },
+    multiplier: 0.006,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier += bonusMultiplier
@@ -66,6 +75,7 @@ export const underworldSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'underworld-cloak',
@@ -77,8 +87,10 @@ export const underworldSet = [
     set: 'Underworld Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 750,
-    multiplier: 0.009, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Underworld Set')
+    },
+    multiplier: 0.009,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier += bonusMultiplier
@@ -88,6 +100,7 @@ export const underworldSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'underworld-blade',
@@ -99,8 +112,10 @@ export const underworldSet = [
     set: 'Underworld Set',
     rarity: 'legendary',
     level: 1,
-    maxLevel: 750,
-    multiplier: 0.015, // Refactored multiplier
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Underworld Set')
+    },
+    multiplier: 0.015,
     effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
@@ -110,5 +125,6 @@ export const underworldSet = [
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
     },
+    evolves: true,
   },
 ]

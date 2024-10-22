@@ -40,6 +40,10 @@ export const useEvolveStore = defineStore({
     },
 
     getMaxEvolutionsForSet(set: SetName) {
+      if (set === 'Default') {
+        return this.evolutions.length
+      }
+      
       if (setBonuses[set] && setBonuses[set].maxLevelsPerEvolution) {
         return Object.keys(setBonuses[set].maxLevelsPerEvolution).length
       }

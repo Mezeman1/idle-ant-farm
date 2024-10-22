@@ -63,7 +63,8 @@ export type SetBonus = {
 };
 
 export type SetName =
-  'Worker Set'
+  'Default'
+  | 'Worker Set'
   | 'Soldier Set'
   | 'Royal Set'
   | 'Volcano Set'
@@ -225,37 +226,144 @@ export const setBonuses: Record<SetName, SetBonus> = {
   'Volcano Set': {
     apply: () => {
       const adventureStore = useAdventureStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        adventureStore.armyAttackModifier += 0.05 * currentEvolution
+      }
       adventureStore.armyAttackModifier += 0.25
     },
     remove: () => {
       const adventureStore = useAdventureStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        adventureStore.armyAttackModifier -= 0.05 * currentEvolution
+      }
       adventureStore.armyAttackModifier -= 0.25
     },
-    explanation: 'Increases army attack by 25%.',
+    explanation: () => {
+      const currentEvolution = useEvolveStore().currentEvolution
+      const totalBonus = 0.25 + 0.05 * currentEvolution
+      return `Increases army attack by ${toPercentage(totalBonus, 1)}%.`
+    },
+    maxLevelsPerEvolution: {
+      0: 500,
+      1: 750,
+      2: 1000,
+      3: 1250,
+      4: 1500,
+      5: 1750,
+      6: 2000,
+      7: 2250,
+      8: 2500,
+      9: 2750,
+      10: 3000,
+      11: 3250,
+      12: 3500,
+      13: 3750,
+      14: 4000,
+      15: 4250,
+      16: 4500,
+      17: 4750,
+      18: 5000,
+      19: 5250,
+      20: 5500,
+    },
   },
   'Underworld Set': {
     apply: () => {
       const adventureStore = useAdventureStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        adventureStore.armyMaxHealthModifier += 0.06 * currentEvolution
+      }
       adventureStore.armyMaxHealthModifier += 0.30
     },
     remove: () => {
       const adventureStore = useAdventureStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        adventureStore.armyMaxHealthModifier -= 0.06 * currentEvolution
+      }
       adventureStore.armyMaxHealthModifier -= 0.30
     },
-    explanation: 'Increases max health of the army by 30%.',
+    explanation: () => {
+      const currentEvolution = useEvolveStore().currentEvolution
+      const totalBonus = 0.30 + 0.06 * currentEvolution
+      return `Increases max health of the army by ${toPercentage(totalBonus, 1)}%.`
+    },
+    maxLevelsPerEvolution: {
+      0: 750,
+      1: 1000,
+      2: 1250,
+      3: 1500,
+      4: 1750,
+      5: 2000,
+      6: 2250,
+      7: 2500,
+      8: 2750,
+      9: 3000,
+      10: 3250,
+      11: 3500,
+      12: 3750,
+      13: 4000,
+      14: 4250,
+      15: 4500,
+      16: 4750,
+      17: 5000,
+      18: 5250,
+      19: 5500,
+      20: 5750,
+    },
   },
   'Arctic Tundra Set': {
     apply: () => {
       const adventureStore = useAdventureStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        adventureStore.armyDefenseModifier += 0.04 * currentEvolution
+        adventureStore.armyRegenModifier += 0.04 * currentEvolution
+      }
       adventureStore.armyDefenseModifier += 0.20
       adventureStore.armyRegenModifier += 0.20
     },
     remove: () => {
       const adventureStore = useAdventureStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        adventureStore.armyDefenseModifier -= 0.04 * currentEvolution
+        adventureStore.armyRegenModifier -= 0.04 * currentEvolution
+      }
       adventureStore.armyDefenseModifier -= 0.20
       adventureStore.armyRegenModifier -= 0.20
     },
-    explanation: 'Increases army defense and regeneration by 20%.',
+    explanation: () => {
+      const currentEvolution = useEvolveStore().currentEvolution
+      const totalBonus = 0.20 + 0.04 * currentEvolution
+      return `Increases army defense and regeneration by ${toPercentage(totalBonus, 1)}%.`
+    },
+    maxLevelsPerEvolution: {
+      0: 300,
+      1: 500,
+      2: 700,
+      3: 900,
+      4: 1100,
+      5: 1300,
+      6: 1500,
+      7: 1700,
+      8: 1900,
+      9: 2100,
+      10: 2300,
+      11: 2500,
+      12: 2700,
+      13: 2900,
+      14: 3100,
+      15: 3300,
+      16: 3500,
+      17: 3700,
+      18: 3900,
+      19: 4100,
+      20: 4300,
+    },
   },
 }
 

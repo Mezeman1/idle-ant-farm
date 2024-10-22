@@ -1,3 +1,6 @@
+import {Item} from '@/types/items/itemRegistry'
+import {useEvolveStore} from '@/stores/evolveStore'
+
 export const arcticTundraSet = [
   {
     id: 'tundra-helm',
@@ -9,17 +12,20 @@ export const arcticTundraSet = [
     set: 'Arctic Tundra Set',
     rarity: 'epic',
     level: 1,
-    maxLevel: 300,
-    multiplier: 0.007, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Arctic Tundra Set')
+    },
+    multiplier: 0.007,
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'tundra-armor',
@@ -31,17 +37,20 @@ export const arcticTundraSet = [
     set: 'Arctic Tundra Set',
     rarity: 'epic',
     level: 1,
-    maxLevel: 300,
-    multiplier: 0.011, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Arctic Tundra Set')
+    },
+    multiplier: 0.011,
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyDefenseModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'tundra-greaves',
@@ -53,17 +62,20 @@ export const arcticTundraSet = [
     set: 'Arctic Tundra Set',
     rarity: 'epic',
     level: 1,
-    maxLevel: 300,
-    multiplier: 0.006, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Arctic Tundra Set')
+    },
+    multiplier: 0.006,
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armySpeedModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armySpeedModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'tundra-cloak',
@@ -75,17 +87,20 @@ export const arcticTundraSet = [
     set: 'Arctic Tundra Set',
     rarity: 'epic',
     level: 1,
-    maxLevel: 300,
-    multiplier: 0.013, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Arctic Tundra Set')
+    },
+    multiplier: 0.013,
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyRegenModifier -= bonusMultiplier
     },
+    evolves: true,
   },
   {
     id: 'tundra-blade',
@@ -97,16 +112,19 @@ export const arcticTundraSet = [
     set: 'Arctic Tundra Set',
     rarity: 'epic',
     level: 1,
-    maxLevel: 300,
-    multiplier: 0.008, // Refactored multiplier
-    effect: ({adventureStore}, item) => {
+    maxLevel: () => {
+      return useEvolveStore().getMaxItemLevel('Arctic Tundra Set')
+    },
+    multiplier: 0.008,
+    effect: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier += bonusMultiplier
       return true
     },
-    onRemove: ({adventureStore}, item) => {
+    onRemove: ({adventureStore}, item: Item) => {
       const bonusMultiplier = item.multiplier * item.level
       adventureStore.armyAttackModifier -= bonusMultiplier
     },
+    evolves: true,
   },
 ]
