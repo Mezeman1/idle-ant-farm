@@ -234,6 +234,7 @@ export const useTrainingStore = defineStore({
       craftingRate: 1,
       regenerationRate: 1,
       spawnRate: 1,
+      defense: 1,
     },
     eatenFungus: [] as {
       name: SeedNames,

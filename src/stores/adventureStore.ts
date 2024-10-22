@@ -1095,11 +1095,6 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier
       this.armyRegen = baseRegen * this.armyRegenModifier
 
-      // Ensure current health does not exceed max health
-      if (this.armyHealth > this.armyMaxHealth) {
-        this.armyHealth = this.armyMaxHealth
-      }
-
       bossStore.setArmyStats({
         damage: baseAttack,
         defense: baseDefense,
@@ -1120,7 +1115,6 @@ export const useAdventureStore = defineStore('adventureStore', {
       })
 
       inventoryStore.reApplyPassiveEffects()
-      this.armyHealth = Math.min(this.armyHealth, this.armyMaxHealth)
     },
   },
 })
