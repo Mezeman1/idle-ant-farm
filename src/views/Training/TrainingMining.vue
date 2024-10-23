@@ -156,6 +156,7 @@
                 <strong>Level {{ milestone.level }}</strong>:
                 Collect x{{ milestone.collectionMultiplierBonus + 1 }}
                 {{ milestone.timeReductionBonus > 0 ? `and reduce time by ${milestone.timeReductionBonus}s` : '' }}
+                {{ milestone.respawnReductionBonus > 0 ? `and reduce respawn time by ${milestone.respawnReductionBonus}s` : '' }}
               </div>
               <div class="flex-shrink-0 ml-2">
                 <span
