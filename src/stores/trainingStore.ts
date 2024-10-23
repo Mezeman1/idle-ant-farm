@@ -934,6 +934,10 @@ export const useTrainingStore = defineStore({
           this.applyCombatMilestone(milestone)
         }
       })
+
+      useAdventureStore().activeBuffs.map(buff => {
+        buff.active = false
+      })
     },
 
     applyCombatMilestone(milestone: CombatMilestone) {
