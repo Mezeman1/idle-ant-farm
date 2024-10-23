@@ -25,15 +25,7 @@ export const useEvolveStore = defineStore({
 
       // Check if the set exists in setBonuses and has maxLevelsPerEvolution
       if (setBonuses[set] && setBonuses[set].maxLevelsPerEvolution) {
-        const levels = setBonuses[set].maxLevelsPerEvolution
-
-        // Find the maximum level for the current evolution
-        const evolutionLevels = Object.keys(levels).map(Number).sort((a, b) => b - a) // Sort evolutions in descending order
-        for (const evolution of evolutionLevels) {
-          if (currentEvolution >= evolution) {
-            return levels[evolution] // Return the max level for the current evolution
-          }
-        }
+        return setBonuses[set].maxLevelsPerEvolution[currentEvolution]
       }
 
       return 0 // Default value if no match is found
