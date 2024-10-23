@@ -271,8 +271,6 @@ export const useAdventureStore = defineStore('adventureStore', {
           this.activeBuffs = this.activeBuffs.filter((activeBuff) => activeBuff.id !== buff.id)
         }
       })
-
-      this.activeBuffs = this.activeBuffs.filter((buff) => buff.duration <= 0)
     },
 
     processCombat(deltaTime) {

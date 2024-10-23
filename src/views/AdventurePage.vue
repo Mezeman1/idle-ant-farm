@@ -118,6 +118,42 @@
         </div>
 
         <TrainingCombat />
+
+        <!-- New Active Buffs Section -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold mb-4 text-gray-800">
+            Active Buffs
+          </h2>
+          <div class="overflow-y-auto max-h-60 pr-2">
+            <div
+              v-if="groupedActiveBuffs.length > 0"
+              class="space-y-2"
+            >
+              <div
+                v-for="buff in groupedActiveBuffs"
+                :key="buff.name"
+                class="flex items-center justify-between bg-gray-100 p-2 rounded"
+              >
+                <span class="font-medium text-gray-700">
+                  {{ buff.name }}
+                  <span
+                    v-if="buff.count > 1"
+                    class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs"
+                  >
+                    x{{ buff.count }}
+                  </span>
+                </span>
+                <span class="text-sm text-gray-500">{{ formatBuffDuration(buff.longestDuration) }}</span>
+              </div>
+            </div>
+            <p
+              v-else
+              class="text-gray-500"
+            >
+              No active buffs
+            </p>
+          </div>
+        </div>
       </div>
 
       <!-- Right Column: Inventory -->
@@ -143,7 +179,7 @@ import BattleStyleButton from '@/components/BattleStyleButton.vue'
 import ModifierItem from '@/components/ModifierItem.vue'
 
 import {Skill} from '@/types/trainingTypes'
-import {toPercentage, toPercentageFormatted} from '../utils'
+import {toPercentage, toPercentageFormatted, formatTime} from '@/utils/index'
 import {useTrainingStore} from '@/stores/trainingStore'
 import TrainingCombat from '@/views/Training/TrainingCombat.vue'
 import AreaModifiersMilestones from '@/components/AreaModifiersMilestones.vue'
@@ -247,6 +283,27 @@ const showMilestoneRewards = ref(false)
 const formatModifierName = (key: string) => {
   return key.split(/(?=[A-Z])/).join(' ')
 }
+
+// New helper function to format buff duration
+const formatBuffDuration = (duration: number) => {
+  return formatTime(duration * 1000, true) // Convert seconds to milliseconds and hide zeros
+}
+
+// New computed property to group buffs
+const groupedActiveBuffs = computed(() => {
+  const groupedBuffs = adventureStore.activeBuffs.reduce((acc, buff) => {
+    const existingBuff = acc.find(b => b.name === buff.name)
+    if (existingBuff) {
+      existingBuff.count++
+      existingBuff.longestDuration = Math.max(existingBuff.longestDuration, buff.duration)
+    } else {
+      acc.push({ ...buff, count: 1, longestDuration: buff.duration })
+    }
+    return acc
+  }, [] as Array<{ name: string; count: number; longestDuration: number }>)
+
+  return groupedBuffs.sort((a, b) => b.longestDuration - a.longestDuration)
+})
 </script>
 
 <style scoped>
@@ -265,5 +322,24 @@ const formatModifierName = (key: string) => {
   height: 100%;
   background-color: #34d399; /* Green progress fill */
   transition: width 0.1s ease; /* Smooth transition for progress changes */
+}
+
+/* Custom scrollbar for webkit browsers */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>

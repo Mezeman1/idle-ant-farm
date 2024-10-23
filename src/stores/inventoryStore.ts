@@ -146,6 +146,7 @@ export const useInventoryStore = defineStore('inventoryStore', {
 
     // Apply the effect of an item (passive or buffs)
     applyItemEffect(item, amount = 1) {
+
       const adventureStore = useAdventureStore()
       if (this.appliedPassiveEffects.includes(item.id) && item.type === 'passive') {
         return false // Effect already applied

@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import {capitalize} from '../utils'
+import {capitalize} from  '@/utils/index'
 import {getItemName, getMaxItemLevel, Item} from '@/types/items/itemRegistry'
 import {useEquipmentStore} from '@/stores/equipmentStore'
 import {computed, ref, watch} from 'vue'

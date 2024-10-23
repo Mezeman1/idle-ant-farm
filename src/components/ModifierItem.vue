@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { capitalize } from '@/utils'
+import { capitalize } from '@/utils/index'
 
 defineProps<{
   name: string

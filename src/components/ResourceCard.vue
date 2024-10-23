@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
-import { toPercentage } from '@/utils'
+import { toPercentage } from '@/utils/index'
 
 const gameStore = useGameStore()
 const formatNumber = gameStore.formatNumber

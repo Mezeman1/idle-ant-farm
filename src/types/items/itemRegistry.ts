@@ -9,7 +9,7 @@ import {arcticTundraSet} from '@/types/items/sets/arcticTundraSet'
 import {consumableItems} from '@/types/items/consumableItems'
 import {passiveItems} from '@/types/items/passiveItems'
 import {useEvolveStore} from '@/stores/evolveStore'
-import {toPercentage} from '@/utils'
+import {toPercentage} from '@/utils/index'
 
 export interface Item {
   id: string

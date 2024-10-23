@@ -100,7 +100,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import {equipmentSets, getItemName, getMaxItemLevel, Item} from '@/types/items/itemRegistry'
-import { capitalize } from '../utils'
+import { capitalize } from '@/utils/index'
 import { useEquipmentStore } from '@/stores/equipmentStore'
 import { useInventoryStore } from '@/stores/inventoryStore'
 import { useAdventureStore } from '@/stores/adventureStore'
