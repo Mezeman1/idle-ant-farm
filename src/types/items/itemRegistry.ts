@@ -10,6 +10,7 @@ import {consumableItems} from '@/types/items/consumableItems'
 import {passiveItems} from '@/types/items/passiveItems'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {toPercentage} from '@/utils/index'
+import { useInventoryStore } from '@/stores/inventoryStore'
 
 export interface Item {
   id: string
@@ -36,6 +37,11 @@ export interface Item {
 }
 
 export function getMaxItemLevel(item: Item): number|null {
+  const itemFromRegistry = useInventoryStore().getItemById(item.id)
+  if (itemFromRegistry) {
+    item = itemFromRegistry
+  }
+
   if (item.maxLevel) {
     if (typeof item.maxLevel === 'function') {
       return item.maxLevel()

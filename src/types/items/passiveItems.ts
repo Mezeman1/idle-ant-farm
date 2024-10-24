@@ -331,4 +331,113 @@ export const passiveItems: Item[] = [
     },
     rarity: 'legendary',
   },
+  {
+    id: 'crystal-focus',
+    name: 'Crystal Focus',
+    type: 'passive',
+    description: 'Increases army attack by 100%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier *= 2
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyAttackModifier /= 2
+    },
+    rarity: 'rare',
+  },
+  {
+    id: 'ethereal-shield',
+    name: 'Ethereal Shield',
+    type: 'passive',
+    description: 'Increases army defense by 100%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefenseModifier *= 2
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyDefenseModifier /= 2
+    },
+    rarity: 'rare',
+  },
+  {
+    id: 'vitality-stone',
+    name: 'Vitality Stone',
+    type: 'passive',
+    description: 'Increases max health of the army by 100%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyMaxHealthModifier *= 2
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.armyMaxHealthModifier /= 2
+    },
+    rarity: 'epic',
+  },
+  {
+    id: 'essence-amplifier',
+    name: 'Essence Amplifier',
+    type: 'passive',
+    description: 'Increases resource gathering by 50%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.collectionRateModifier += 0.5
+      return true
+    },
+    onRemove: () => {
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.collectionRateModifier -= 0.5
+    },
+    rarity: 'epic',
+  },
+  {
+    id: 'queens-blessing',
+    name: 'Queen\'s Blessing',
+    type: 'passive',
+    description: 'Increases queen larvae production by 50%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.larvaeProductionModifier += 0.5
+      return true
+    },
+    onRemove: () => {
+      const resourcesStore = useResourcesStore()
+      resourcesStore.productionRates.larvaeProductionModifier -= 0.5
+    },
+    rarity: 'legendary',
+  },
+  // Add this new item to the passiveItems array
+  {
+    id: 'fortunes-favor',
+    name: 'Fortune\'s Favor',
+    type: 'passive',
+    description: 'Increases the drop chance of all items by 100%.',
+    applyOnLoad: true,
+    applyOnPrestige: true,
+    effect: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.globalDropChanceModifier *= 2
+      return true
+    },
+    onRemove: () => {
+      const adventureStore = useAdventureStore()
+      adventureStore.globalDropChanceModifier /= 2
+    },
+    rarity: 'legendary',
+  },
 ]

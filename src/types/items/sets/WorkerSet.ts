@@ -17,15 +17,14 @@ export const workerSet = [
     multiplier: 0.001035313244622532,
     effect: ({gameStore}, item) => {
       // Increase resource gathering by 0.1035% per level
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
-
     evolves: true,
   },
   {
@@ -41,17 +40,16 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.0015529698669337984, // Already done
+    multiplier: 0.0015529698669337984,
     effect: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
-
     evolves: true,
   },
   {
@@ -67,17 +65,16 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.0007758055940675406, // Refactored multiplier
+    multiplier: 0.0007758055940675406,
     effect: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
-
     evolves: true,
   },
   {
@@ -93,17 +90,16 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.0012934622163788066, // Refactored multiplier
+    multiplier: 0.0012934622163788066,
     effect: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
-
     evolves: true,
   },
   {
@@ -119,17 +115,16 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.002070626489245064, // Refactored multiplier
+    multiplier: 0.002070626489245064,
     effect: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
-
     evolves: true,
   },
   {
@@ -145,17 +140,16 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.0015529698669337984, // Refactored multiplier
+    multiplier: 0.0015529698669337984,
     effect: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.collectionRateModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.collectionRateModifier /= bonusMultiplier
     },
-
     evolves: true,
   },
 ]

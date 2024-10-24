@@ -847,18 +847,26 @@ export const useGameStore = defineStore('gameStore', {
         if (isEvolution) {
           const prestigeStore = usePrestigeStore()
           prestigeStore.prestigePoints = 0
-          prestigeStore.purchasedUpgrades = []
+          const upgradesToKeep = [
+            'autoAnts',
+            'autoQueens',
+            'autoSeedStorageUpgrade',
+            'autoLarvaeStorageUpgrade',
+            'autoEliteAntsCreation',
+            'autoCreateHousing',
+            'autoAdventure',
+
+            'leafcutterGrove',
+            'mountains',
+            'volcano',
+            'underworld',
+            'arcticTundra',
+            'abyssalDepths',
+          ]
+
+          prestigeStore.purchasedUpgrades = prestigeStore.purchasedUpgrades.filter(upgrade => upgradesToKeep.includes(upgrade))
 
           prestigeStore.resetPrestigeShopCosts()
-
-          prestigeStore.autoQueenCreation = false
-          prestigeStore.autoAntCreation = false
-          prestigeStore.autoLarvaeCreation = false
-          prestigeStore.autoSeedStorageUpgrade = false
-          prestigeStore.autoLarvaeStorageUpgrade = false
-          prestigeStore.autoEliteAntsCreation = false
-          prestigeStore.autoCreateHousing = false
-
           useBossStore().resetBossState()
         }
 

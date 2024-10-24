@@ -309,6 +309,11 @@
             "name": "Wisdom Nectar",
             "chance": 0.005,
             "amountBetween": [1, 1]
+          },
+          {
+            "name": "Crystal Focus",
+            "chance": 0.01,
+            "amountBetween": [1, 1]
           }
         ]
       }
@@ -507,6 +512,11 @@
             "name": "Royal Ring",
             "chance": 0.005,
             "amountBetween": [1, 1]
+          },
+          {
+            "name": "Ethereal Shield",
+            "chance": 0.01,
+            "amountBetween": [1, 1]
           }
         ]
       },
@@ -651,6 +661,11 @@
           },
           {
             "name": "Volcano Ring",
+            "chance": 0.005,
+            "amountBetween": [1, 1]
+          },
+          {
+            "name": "Vitality Stone",
             "chance": 0.005,
             "amountBetween": [1, 1]
           }
@@ -804,6 +819,11 @@
               1,
               1
             ]
+          },
+          {
+            "name": "Essence Amplifier",
+            "chance": 0.005,
+            "amountBetween": [1, 1]
           }
         ]
       }
@@ -1066,6 +1086,16 @@
               100000,
               150000
             ]
+          },
+          {
+            "name": "Queens Blessing",
+            "chance": 0.001,
+            "amountBetween": [1, 1]
+          },
+          {
+            "name": "Fortunes Favor",
+            "chance": 0.0009,
+            "amountBetween": [1, 1]
           }
         ]
       }

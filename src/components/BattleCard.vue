@@ -69,7 +69,7 @@ const { formatNumber } = useGameStore()
 
 defineProps<{
   title: string
-  image: string
+  image?: string
   health: number
   maxHealth: number
   attack: number
