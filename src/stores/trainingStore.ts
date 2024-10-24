@@ -247,10 +247,10 @@ export const useTrainingStore = defineStore({
 
     modifiers: {
       army: {
-        attack: 0,
-        defense: 0,
-        health: 0,
-        regen: 0,
+        attack: 1,
+        defense: 1,
+        health: 1,
+        regen: 1,
       },
     },
 
