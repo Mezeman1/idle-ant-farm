@@ -933,6 +933,7 @@ export const useTrainingStore = defineStore({
 
     applyCombatMilestones() {
       this.resetArmyModifiers()
+  
       this.combatMilestones.forEach(milestone => {
         if (this.training[milestone.type].level >= milestone.levelRequired) {
           this.applyCombatMilestone(milestone)

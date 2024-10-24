@@ -256,20 +256,24 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.battleStatus = 'idle'
     },
     applyBuffs(deltaTime) {
-      this.activeBuffs.forEach((buff) => {
-        if (buff.active) {
+      this.activeBuffs.map((buff) => {
+        if (buff.active && buff.duration > 0) {
           buff.duration -= deltaTime
+          return buff
         }
 
         if (buff.duration > 0 && !buff.active) {
           buff.effect()
           buff.active = true
+          return buff
         }
 
-        if (buff.duration <= 0 && buff.active && buff.onRemove) {
+        if (buff.duration <= 0 && buff.onRemove) {
           buff.onRemove()
           this.activeBuffs = this.activeBuffs.filter((activeBuff) => activeBuff.id !== buff.id)
         }
+
+        return buff
       })
     },
 
@@ -774,13 +778,20 @@ export const useAdventureStore = defineStore('adventureStore', {
       const inventoryStore = useInventoryStore()
       this.activeBuffs = adventureState.activeBuffs?.map((buff) => {
         const itemFromName = inventoryStore.getItemById(buff.name)
+        if (itemFromName) {
+          return {
+          ...buff,
+          effect: itemFromName?.effect,
+          onRemove: itemFromName?.onRemove,
+          }
+        }
+
         return {
           ...buff,
           active: false,
-          effect: itemFromName?.effect,
-          onRemove: itemFromName?.onRemove,
         }
       }) ?? []
+      
 
       this.battleStatus = adventureState.battleStatus ?? 'idle'
       this.lastSavedTime = adventureState.lastSavedTime ?? Date.now()
@@ -1103,17 +1114,10 @@ export const useAdventureStore = defineStore('adventureStore', {
         maxHealth: baseHealth,
         regen: baseRegen,
 
-        damageMultiplier: this.armyAttackModifier,
-        defenseMultiplier: this.armyDefenseModifier,
+        damageMultiplier: this.armyAttackModifier * trainingStore.modifiers.army.attack,
+        defenseMultiplier: this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense * trainingStore.modifiers.army.defense,
         healthMultiplier: this.armyMaxHealthModifier * trainingStore.modifiers.army.health,
-        regenMultiplier: this.armyRegenModifier,
-      })
-
-      this.activeBuffs = this.activeBuffs?.map((buff) => {
-        return {
-          ...buff,
-          active: false,
-        }
+        regenMultiplier: this.armyRegenModifier * trainingStore.modifiers.army.regen,
       })
 
       inventoryStore.reApplyPassiveEffects()
