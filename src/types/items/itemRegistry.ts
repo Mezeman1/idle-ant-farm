@@ -36,11 +36,18 @@ export interface Item {
   evolves?: boolean;
 }
 
-export function getMaxItemLevel(item: Item): number|null {
-  const itemFromRegistry = useInventoryStore().getItemById(item.id)
+export function getItemFromRegistry(item: Item): Item {  
+  const itemFromRegistry = useInventoryStore().getItemById(item.id ?? item.name)
+
   if (itemFromRegistry) {
-    item = itemFromRegistry
+    return itemFromRegistry
   }
+
+  return item
+}
+
+export function getMaxItemLevel(item: Item): number|null {
+  item = getItemFromRegistry(item)
 
   if (item.maxLevel) {
     if (typeof item.maxLevel === 'function') {
@@ -54,6 +61,7 @@ export function getMaxItemLevel(item: Item): number|null {
 }
 
 export function getItemName(item: Item): string {
+  item = getItemFromRegistry(item)
   if (item.evolves) {
     return `${item.name} ${useEvolveStore().getCurrentEvolutionInRomanLetters(item.set)}`
   }
@@ -83,19 +91,19 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const resourcesStore = useResourcesStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        resourcesStore.productionRates.collectionRateModifier += 0.05 * currentEvolution
+        resourcesStore.productionRates.collectionRateModifier *= 1 + (0.05 * currentEvolution)
       }
 
-      resourcesStore.productionRates.collectionRateModifier += 0.15
+      resourcesStore.productionRates.collectionRateModifier *= 1.15
     },
     remove: () => {
       const resourcesStore = useResourcesStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        resourcesStore.productionRates.collectionRateModifier -= 0.05 * currentEvolution
+        resourcesStore.productionRates.collectionRateModifier /= 1 + (0.05 * currentEvolution)
       }
 
-      resourcesStore.productionRates.collectionRateModifier -= 0.15
+      resourcesStore.productionRates.collectionRateModifier /= 1.15
     },
     explanation: () => {
       const currentEvolution = useEvolveStore().currentEvolution
@@ -132,23 +140,23 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const adventureStore = useAdventureStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        adventureStore.armyAttackModifier += 0.05 * currentEvolution
-        adventureStore.armyDefenseModifier += 0.05 * currentEvolution
+        adventureStore.armyAttackModifier *= 1 + (0.05 * currentEvolution)
+        adventureStore.armyDefenseModifier *= 1 + (0.05 * currentEvolution)
       }
 
-      adventureStore.armyAttackModifier += 0.15
-      adventureStore.armyDefenseModifier += 0.15
+      adventureStore.armyAttackModifier *= 1.15
+      adventureStore.armyDefenseModifier *= 1.15
     },
     remove: () => {
       const adventureStore = useAdventureStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        adventureStore.armyAttackModifier -= 0.05 * currentEvolution
-        adventureStore.armyDefenseModifier -= 0.05 * currentEvolution
+        adventureStore.armyAttackModifier /= 1 + (0.05 * currentEvolution)
+        adventureStore.armyDefenseModifier /= 1 + (0.05 * currentEvolution)
       }
 
-      adventureStore.armyAttackModifier -= 0.15
-      adventureStore.armyDefenseModifier -= 0.15
+      adventureStore.armyAttackModifier /= 1.15
+      adventureStore.armyDefenseModifier /= 1.15
     },
     explanation: () => {
       const currentEvolution = useEvolveStore().currentEvolution
@@ -185,19 +193,19 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const resourcesStore = useResourcesStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        resourcesStore.productionRates.larvaeProductionModifier += 0.05 * currentEvolution
+        resourcesStore.productionRates.larvaeProductionModifier *= 1 + (0.05 * currentEvolution)
       }
 
-      resourcesStore.productionRates.larvaeProductionModifier += 0.2
+      resourcesStore.productionRates.larvaeProductionModifier *= 1.2
     },
     remove: () => {
       const resourcesStore = useResourcesStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        resourcesStore.productionRates.larvaeProductionModifier -= 0.05 * currentEvolution
+        resourcesStore.productionRates.larvaeProductionModifier /= 1 + (0.05 * currentEvolution)
       }
 
-      resourcesStore.productionRates.larvaeProductionModifier -= 0.2
+      resourcesStore.productionRates.larvaeProductionModifier /= 1.2
     },
     explanation: () => {
       const currentEvolution = useEvolveStore().currentEvolution
@@ -234,17 +242,17 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const adventureStore = useAdventureStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        adventureStore.armyAttackModifier += 0.05 * currentEvolution
+        adventureStore.armyAttackModifier *= 1 + (0.05 * currentEvolution)
       }
-      adventureStore.armyAttackModifier += 0.25
+      adventureStore.armyAttackModifier *= 1.25
     },
     remove: () => {
       const adventureStore = useAdventureStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        adventureStore.armyAttackModifier -= 0.05 * currentEvolution
+        adventureStore.armyAttackModifier /= 1 + (0.05 * currentEvolution)
       }
-      adventureStore.armyAttackModifier -= 0.25
+      adventureStore.armyAttackModifier /= 1.25
     },
     explanation: () => {
       const currentEvolution = useEvolveStore().currentEvolution
@@ -280,17 +288,17 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const adventureStore = useAdventureStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        adventureStore.armyMaxHealthModifier += 0.06 * currentEvolution
+        adventureStore.armyMaxHealthModifier *= 1 + (0.06 * currentEvolution)
       }
-      adventureStore.armyMaxHealthModifier += 0.30
+      adventureStore.armyMaxHealthModifier *= 1.30
     },
     remove: () => {
       const adventureStore = useAdventureStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        adventureStore.armyMaxHealthModifier -= 0.06 * currentEvolution
+        adventureStore.armyMaxHealthModifier /= 1 + (0.06 * currentEvolution)
       }
-      adventureStore.armyMaxHealthModifier -= 0.30
+      adventureStore.armyMaxHealthModifier /= 1.30
     },
     explanation: () => {
       const currentEvolution = useEvolveStore().currentEvolution
@@ -326,21 +334,21 @@ export const setBonuses: Record<SetName, SetBonus> = {
       const adventureStore = useAdventureStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        adventureStore.armyDefenseModifier += 0.04 * currentEvolution
-        adventureStore.armyRegenModifier += 0.04 * currentEvolution
+        adventureStore.armyDefenseModifier *= 1 + (0.04 * currentEvolution)
+        adventureStore.armyRegenModifier *= 1 + (0.04 * currentEvolution)
       }
-      adventureStore.armyDefenseModifier += 0.20
-      adventureStore.armyRegenModifier += 0.20
+      adventureStore.armyDefenseModifier *= 1.20
+      adventureStore.armyRegenModifier *= 1.20
     },
     remove: () => {
       const adventureStore = useAdventureStore()
       const currentEvolution = useEvolveStore().currentEvolution
       if (currentEvolution >= 1) {
-        adventureStore.armyDefenseModifier -= 0.04 * currentEvolution
-        adventureStore.armyRegenModifier -= 0.04 * currentEvolution
+        adventureStore.armyDefenseModifier /= 1 + (0.04 * currentEvolution)
+        adventureStore.armyRegenModifier /= 1 + (0.04 * currentEvolution)
       }
-      adventureStore.armyDefenseModifier -= 0.20
-      adventureStore.armyRegenModifier -= 0.20
+      adventureStore.armyDefenseModifier /= 1.20
+      adventureStore.armyRegenModifier /= 1.20
     },
     explanation: () => {
       const currentEvolution = useEvolveStore().currentEvolution

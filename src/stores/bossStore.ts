@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import BigNumber from 'bignumber.js'
 import { useAdventureStore } from '@/stores/adventureStore'
+import { useTrainingStore } from './trainingStore'
 
 interface Boss {
   id: number
@@ -46,6 +47,30 @@ export const useBossStore = defineStore({
     currentBossData: (state) => {
       return state.bosses[state.currentBoss]
     },
+    maxArmyHealth: (state) => {
+      return state.armyStats.maxHealth.times(state.combatModifiers.health).times(state.armyStats.healthMultiplier).times(useTrainingStore().modifiers.army.health)
+    },
+    maxArmyBonusHealth: (state) => {
+      return state.combatModifiers.health.times(state.armyStats.healthMultiplier).times(useTrainingStore().modifiers.army.health)	
+    },
+    armyAttack: (state) => {
+      return state.armyStats.damage.times(state.armyStats.damageMultiplier).times(state.combatModifiers.damage).times(useTrainingStore().modifiers.army.attack)
+    },
+    armyAttackBonus: (state) => {
+      return state.armyStats.damageMultiplier.times(state.combatModifiers.damage).times(useTrainingStore().modifiers.army.attack)
+    },
+    armyDefense: (state) => {
+      return state.armyStats.defense.times(state.armyStats.defenseMultiplier).times(state.combatModifiers.defense).times(useTrainingStore().modifiers.army.defense)
+    },
+    armyDefenseBonus: (state) => {
+      return state.armyStats.defenseMultiplier.times(state.combatModifiers.defense).times(useTrainingStore().modifiers.army.defense)
+    },
+    armyRegen: (state) => {
+      return state.armyStats.regen.times(state.armyStats.regenMultiplier).times(state.combatModifiers.regen).times(useTrainingStore().modifiers.army.regen)
+    },
+    armyRegenBonus: (state) => {
+      return state.armyStats.regenMultiplier.times(state.combatModifiers.regen).times(useTrainingStore().modifiers.army.regen)
+    },
   },
   actions: {
     setBattleState(battleState: string) {
@@ -53,6 +78,14 @@ export const useBossStore = defineStore({
     },
     setCurrentBoss(boss: number) {
       this.currentBoss = boss
+    },
+    resetCombatModifiers() {
+      this.combatModifiers = {
+        damage: new BigNumber(1),
+        defense: new BigNumber(1),
+        regen: new BigNumber(1),
+        health: new BigNumber(1),
+      }
     },
     setArmyStats(stats: {
       maxHealth: number
@@ -108,8 +141,8 @@ export const useBossStore = defineStore({
 
       // Army regeneration and boss regeneration
       army.health = BigNumber.min(
-        army.health.plus(army.regen.times(army.regenMultiplier).times(deltaTime)),
-        army.maxHealth.times(this.combatModifiers.health).times(army.healthMultiplier),
+        army.health.plus(this.armyRegen.times(deltaTime)),
+        this.maxArmyHealth,
       )
       boss.health = BigNumber.min(
         boss.health.plus(boss.regen.times(deltaTime)),
@@ -119,11 +152,11 @@ export const useBossStore = defineStore({
       if (this.battleState === 'idle') return
 
       const bossDamage = BigNumber.max(
-        boss.damage.minus(army.defense.times(army.defenseMultiplier).times(this.combatModifiers.defense)),
+        boss.damage.minus(this.armyDefense),
         new BigNumber(0),
       )
       const armyDamage = BigNumber.max(
-        army.damage.times(army.damageMultiplier).times(this.combatModifiers.damage).minus(boss.defense),
+        this.armyAttack.minus(boss.defense),
         new BigNumber(0),
       )
 
@@ -148,6 +181,8 @@ export const useBossStore = defineStore({
     },
     loadBossState(state: { boss?: number }) {
       this.currentBoss = state.boss ?? 0
+      this.resetCombatModifiers()
+      useTrainingStore().applyCombatMilestones()
     },
     resetBossState() {
       this.currentBoss = 0

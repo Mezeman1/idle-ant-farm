@@ -20,6 +20,7 @@ import {useBossStore} from '@/stores/bossStore'
 import combatMilestones, { CombatMilestone } from '@/types/combatMilestones'
 import { useEvolveStore } from './evolveStore'
 import { useGameStore } from './gameStore'
+import BigNumber from 'bignumber.js'
 
 export const useTrainingStore = defineStore({
   id: 'Training',
@@ -243,6 +244,15 @@ export const useTrainingStore = defineStore({
     }[],
 
     combatMilestones: combatMilestones,
+
+    modifiers: {
+      army: {
+        attack: 0,
+        defense: 0,
+        health: 0,
+        regen: 0,
+      },
+    },
 
     pastNotifications: {},
 
@@ -922,21 +932,11 @@ export const useTrainingStore = defineStore({
     },
 
     applyCombatMilestones() {
-      const evolveStore = useEvolveStore()
-      const gameStore = useGameStore()
-      const adventureStore = useAdventureStore()
-      const currentEvolution = evolveStore.currentEvolutionData
-
-      evolveStore.applyArmyAntsStats(currentEvolution.statsPerAnt, gameStore)
-      evolveStore.applyArmyModifiers(currentEvolution.armyModifiers, adventureStore)
+      this.resetArmyModifiers()
       this.combatMilestones.forEach(milestone => {
         if (this.training[milestone.type].level >= milestone.levelRequired) {
           this.applyCombatMilestone(milestone)
         }
-      })
-
-      useAdventureStore().activeBuffs.map(buff => {
-        buff.active = false
       })
     },
 
@@ -947,34 +947,34 @@ export const useTrainingStore = defineStore({
           if (effect in bossStore.combatModifiers) {
             const key = effect as keyof typeof bossStore.combatModifiers
             if (milestone.multiplyModifier) {
-              bossStore.combatModifiers[key] = bossStore.combatModifiers[key] * (value as number) + 1
+              bossStore.combatModifiers[key] = bossStore.combatModifiers[key].times(new BigNumber(1).plus(value as number))
             } else {
-              bossStore.combatModifiers[key] = value as number
+              bossStore.combatModifiers[key] = bossStore.combatModifiers[key].plus(new BigNumber(value as number))
             }
           }
         })
       }
 
       if (milestone.appliedTo === 'army') {
-        const adventureStore = useAdventureStore()
-        Object.entries(milestone.effect).forEach(([effect, modifier]) => {
-          switch (effect) {
-            case 'attack':
-              adventureStore.armyAttackModifier = milestone.multiplyModifier ? adventureStore.armyAttackModifier * (modifier + 1) : adventureStore.armyAttackModifier + modifier 
-              break
-            case 'defense':
-              adventureStore.armyDefenseModifier = milestone.multiplyModifier ? adventureStore.armyDefenseModifier * (modifier + 1) : adventureStore.armyDefenseModifier + modifier 
-              break
-            case 'health':
-              adventureStore.armyMaxHealthModifier = milestone.multiplyModifier ? adventureStore.armyMaxHealthModifier * (modifier + 1) : adventureStore.armyMaxHealthModifier + modifier 
-              break
-            case 'regen':
-              adventureStore.armyRegenModifier = milestone.multiplyModifier ? adventureStore.armyRegenModifier * (modifier + 1) : adventureStore.armyRegenModifier + modifier 
-              break
+        Object.entries(milestone.effect).forEach(([effect, value]) => {
+          const key = effect as keyof typeof this.modifiers.army
+          if (milestone.multiplyModifier) {
+            this.modifiers.army[key] *= value as number
+          } else {
+            this.modifiers.army[key] += value as number
           }
         })
+      }
 
-        adventureStore.setupAdventureStats()
+      useAdventureStore().setupAdventureStats()
+    },
+
+    resetArmyModifiers() {
+      this.modifiers.army = {
+        attack: 0,
+        defense: 0,
+        health: 0,
+        regen: 0,
       }
     },
 

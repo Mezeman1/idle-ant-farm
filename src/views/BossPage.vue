@@ -62,9 +62,9 @@
             Army
           </p>
           <p class="text-sm">
-            HP: {{ formatNumber(armyStats.health) }} / {{ formatNumber(armyStats.maxHealth * armyStats.healthMultiplier * bossStore.combatModifiers.health) }}
+            HP: {{ formatNumber(armyStats.health) }} / {{ formatNumber(bossStore.maxArmyHealth) }}
             <span class="text-xs text-gray-500">
-              ({{ toPercentageFormatted(armyStats.healthMultiplier * bossStore.combatModifiers.health, 1) }}%)
+              ({{ toPercentageFormatted(bossStore.maxArmyBonusHealth, 1) }}%)
             </span>
           </p>
         </div>
@@ -86,9 +86,9 @@
                 Attack
               </p>
               <p class="font-semibold">
-                {{ formatNumber(armyStats.damage * armyStats.damageMultiplier * bossStore.combatModifiers.damage) }}
+                {{ formatNumber(bossStore.armyAttack) }}
                 <span class="text-xs text-gray-500">
-                  ({{ toPercentageFormatted(armyStats.damageMultiplier * bossStore.combatModifiers.damage, 1) }}%)
+                  ({{ toPercentageFormatted(bossStore.armyAttackBonus, 1) }}%)
                 </span>
               </p>
             </div>
@@ -97,9 +97,9 @@
                 Defense
               </p>
               <p class="font-semibold">
-                {{ formatNumber(armyStats.defense * armyStats.defenseMultiplier * bossStore.combatModifiers.defense) }}
+                {{ formatNumber(bossStore.armyDefense) }}
                 <span class="text-xs text-gray-500">
-                  ({{ toPercentageFormatted(armyStats.defenseMultiplier * bossStore.combatModifiers.defense, 1) }}%)
+                  ({{ toPercentageFormatted(bossStore.armyDefenseBonus, 1) }}%)
                 </span>
               </p>
             </div>
@@ -108,9 +108,9 @@
                 Regen
               </p>
               <p class="font-semibold">
-                {{ formatNumber(armyStats.regen * armyStats.regenMultiplier * bossStore.combatModifiers.regen) }}
+                {{ formatNumber(bossStore.armyRegen) }}
                 <span class="text-xs text-gray-500">
-                  ({{ toPercentageFormatted(armyStats.regenMultiplier * bossStore.combatModifiers.regen, 1) }}%)
+                  ({{ toPercentageFormatted(bossStore.armyRegenBonus, 1) }}%)
                 </span>
               </p>
             </div>

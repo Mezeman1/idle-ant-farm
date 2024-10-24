@@ -1060,6 +1060,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       const resourcesStore = useResourcesStore()
       const inventoryStore = useInventoryStore()
       const bossStore = useBossStore()
+      const trainingStore = useTrainingStore()
       if (resourcesStore.resources.ants === 0 && resourcesStore.resources.queens <= 1) return
 
       const baseAttack =
@@ -1068,18 +1069,21 @@ export const useAdventureStore = defineStore('adventureStore', {
         gameStore.attackPerAnt *
         resourcesStore.resourceCosts.antCostPerQueen +
         resourcesStore.resources.soldiers * gameStore.attackPerSoldier
+      
       const baseDefense =
         resourcesStore.resources.ants * gameStore.defensePerAnt +
         (resourcesStore.resources.queens - 1) *
         gameStore.defensePerAnt *
         resourcesStore.resourceCosts.antCostPerQueen +
         resourcesStore.resources.soldiers * gameStore.defensePerSoldier
+  
       const baseHealth =
         resourcesStore.resources.ants * gameStore.healthPerAnt +
         (resourcesStore.resources.queens - 1) *
         gameStore.healthPerAnt *
         resourcesStore.resourceCosts.antCostPerQueen +
         resourcesStore.resources.soldiers * gameStore.healthPerSoldier
+
       const baseRegen =
         resourcesStore.resources.ants * gameStore.regenPerAnt +
         (resourcesStore.resources.queens - 1) *
@@ -1088,10 +1092,10 @@ export const useAdventureStore = defineStore('adventureStore', {
         resourcesStore.resources.soldiers * gameStore.regenPerSoldier
 
       // Apply modifiers
-      this.armyAttack = baseAttack * this.armyAttackModifier
-      this.armyDefense = baseDefense * this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense
-      this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier
-      this.armyRegen = baseRegen * this.armyRegenModifier
+      this.armyAttack = baseAttack * this.armyAttackModifier * trainingStore.modifiers.army.attack
+      this.armyDefense = baseDefense * this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense * trainingStore.modifiers.army.defense
+      this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier * trainingStore.modifiers.army.health
+      this.armyRegen = baseRegen * this.armyRegenModifier * trainingStore.modifiers.army.regen
 
       bossStore.setArmyStats({
         damage: baseAttack,
@@ -1101,7 +1105,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
         damageMultiplier: this.armyAttackModifier,
         defenseMultiplier: this.armyDefenseModifier,
-        healthMultiplier: this.armyMaxHealthModifier,
+        healthMultiplier: this.armyMaxHealthModifier * trainingStore.modifiers.army.health,
         regenMultiplier: this.armyRegenModifier,
       })
 

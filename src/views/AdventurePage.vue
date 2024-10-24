@@ -45,6 +45,64 @@
             </span>
           </h2>
         </div>
+
+        <!-- New Armor Modifiers Section -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold mb-4 text-gray-800">
+            Modifiers
+          </h2>
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-700 mb-2">
+                Training Modifiers
+              </h3>
+              <div class="space-y-2">
+                <ModifierItem
+                  v-for="(value, key) in trainingStore.modifiers.army"
+                  :key="key"
+                  :name="formatModifierName(key) + ' from Training'"
+                  :value="toPercentageFormatted(value, 1)"
+                />
+              </div>
+            </div>
+            <hr class="border-gray-200">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-700 mb-2">
+                Item Modifiers
+              </h3>
+              <div class="space-y-2">
+                <ModifierItem
+                  name="Attack from Items"
+                  :value="toPercentageFormatted(adventureStore.armyAttackModifier, 1)"
+                />
+                <ModifierItem
+                  name="Defense from Items"
+                  :value="toPercentageFormatted(adventureStore.armyDefenseModifier, 1)"
+                />
+                <ModifierItem
+                  name="Health from Items"
+                  :value="toPercentageFormatted(adventureStore.armyMaxHealthModifier, 1)"
+                />
+                <ModifierItem
+                  name="Regen from Items"
+                  :value="toPercentageFormatted(adventureStore.armyRegenModifier, 1)"
+                />
+              </div>
+            </div>
+            <hr class="border-gray-200 my-4">
+            <div v-if="trainingStore.farmingModifiers.defense > 1">
+              <h3 class="text-lg font-semibold text-gray-700 mb-2">
+                Farming Modifiers
+              </h3>
+              <div class="space-y-2">
+                <ModifierItem
+                  name="Defense from Farming"
+                  :value="toPercentageFormatted(trainingStore.farmingModifiers.defense, 1)"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Middle Column: Battle Arena -->
@@ -171,7 +229,6 @@ import {computed, onMounted, ref, watch} from 'vue'
 import {onClickOutside, useWindowSize} from '@vueuse/core'
 import ArmyImage from '../assets/army.webp'
 import Inventory from '@/views/InventoryPage.vue'
-import {useResourcesStore} from '@/stores/resourcesStore'
 import WaveSelector from '@/components/WaveSelector.vue'
 import StatusEffectCard from '@/components/StatusEffectCard.vue'
 import BattleCard from '@/components/BattleCard.vue'
@@ -183,11 +240,12 @@ import {toPercentage, toPercentageFormatted, formatTime} from '@/utils/index'
 import {useTrainingStore} from '@/stores/trainingStore'
 import TrainingCombat from '@/views/Training/TrainingCombat.vue'
 import AreaModifiersMilestones from '@/components/AreaModifiersMilestones.vue'
+import {useEquipmentStore} from '@/stores/equipmentStore'
+import {setBonuses} from '@/types/items/itemRegistry'
 
 const formatNumber = useGameStore().formatNumber
 const adventureStore = useAdventureStore()
-const gameStore = useGameStore()
-const resourcesStore = useResourcesStore()
+const equipmentStore = useEquipmentStore()
 const {width} = useWindowSize()
 const poisonChance = computed(() => formatNumber(adventureStore.poisonChance * 100), 0)
 const bugPoisonChance = computed(() => formatNumber((adventureStore.currentEnemy?.effectChances?.find(effect => effect.effect === 'poison')?.chance ?? 0) * 100), 0)
@@ -304,6 +362,15 @@ const groupedActiveBuffs = computed(() => {
 
   return groupedBuffs.sort((a, b) => b.longestDuration - a.longestDuration)
 })
+
+const getSetBonusExplanation = () => {
+  const activeSetBonus = equipmentStore.activeSetBonus
+  if (activeSetBonus && setBonuses[activeSetBonus]) {
+    const explanation = setBonuses[activeSetBonus].explanation
+    return typeof explanation === 'function' ? explanation() : explanation
+  }
+  return ''
+}
 </script>
 
 <style scoped>

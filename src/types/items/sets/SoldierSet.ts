@@ -17,13 +17,13 @@ export const soldierSet = [
     evolves: true,
     multiplier: 0.0031, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyDefenseModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyDefenseModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
   {
@@ -42,13 +42,13 @@ export const soldierSet = [
     evolves: true,
     multiplier: 0.0062, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyDefenseModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyDefenseModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
   {
@@ -67,13 +67,13 @@ export const soldierSet = [
     evolves: true,
     multiplier: 0.0031, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyAttackModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyAttackModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyAttackModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
   {
@@ -92,13 +92,13 @@ export const soldierSet = [
     evolves: true,
     multiplier: 0.0077, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyDefenseModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyDefenseModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyDefenseModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyDefenseModifier /= bonusMultiplier
     },
   },
   {
@@ -117,13 +117,13 @@ export const soldierSet = [
     evolves: true,
     multiplier: 0.0077, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyAttackModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyAttackModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyAttackModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyAttackModifier /= bonusMultiplier
     },
   },
 ]

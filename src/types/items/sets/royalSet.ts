@@ -17,13 +17,13 @@ export const royalSet = [
     evolves: true,
     multiplier: 0.00112, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.larvaeProductionModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.larvaeProductionModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
   {
@@ -42,13 +42,13 @@ export const royalSet = [
     evolves: true,
     multiplier: 0.00157, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.larvaeProductionModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.larvaeProductionModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
   {
@@ -67,13 +67,13 @@ export const royalSet = [
     evolves: true,
     multiplier: 0.00067, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.larvaeProductionModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.larvaeProductionModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
   {
@@ -92,13 +92,13 @@ export const royalSet = [
     evolves: true,
     multiplier: 0.00224, // Refactored multiplier
     effect: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.larvaeProductionModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.larvaeProductionModifier *= bonusMultiplier
       return true
     },
     onRemove: ({gameStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      gameStore.productionRates.larvaeProductionModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      gameStore.productionRates.larvaeProductionModifier /= bonusMultiplier
     },
   },
   {
@@ -117,17 +117,17 @@ export const royalSet = [
     evolves: true,
     multiplier: 0.00223, // Refactored multiplier
     effect: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyAttackModifier += bonusMultiplier
-      adventureStore.armyDefenseModifier += bonusMultiplier
-      adventureStore.armyMaxHealthModifier += bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyAttackModifier *= bonusMultiplier
+      adventureStore.armyDefenseModifier *= bonusMultiplier
+      adventureStore.armyMaxHealthModifier *= bonusMultiplier
       return true
     },
     onRemove: ({adventureStore}, item) => {
-      const bonusMultiplier = item.multiplier * item.level
-      adventureStore.armyAttackModifier -= bonusMultiplier
-      adventureStore.armyDefenseModifier -= bonusMultiplier
-      adventureStore.armyMaxHealthModifier -= bonusMultiplier
+      const bonusMultiplier = 1 + (item.multiplier * item.level)
+      adventureStore.armyAttackModifier /= bonusMultiplier
+      adventureStore.armyDefenseModifier /= bonusMultiplier
+      adventureStore.armyMaxHealthModifier /= bonusMultiplier
     },
   },
 ]
