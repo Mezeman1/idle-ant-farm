@@ -21,6 +21,8 @@ import BigNumber from 'bignumber.js'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
+    remainingTime: 0,
+
     compressedData: '',
     email: '',
     password: '',
@@ -228,20 +230,26 @@ export const useGameStore = defineStore('gameStore', {
           console.log(`currentTime: ${currentTime}`)
           console.log(`Time elapsed (offline): ${timeElapsed} seconds`)
 
-          let remainingTime = timeElapsed
+          this.remainingTime = timeElapsed
           const totalTime = timeElapsed // Store total offline time for progress calculation
-          const chunkDurationResources = 60 // Simulate resources in 60-second chunks
-          const chunkDurationTraining = 10 // Simulate training in 10-second chunks
+
+          // Adjust chunk durations based on total elapsed time
+          const chunkDurationResources = timeElapsed <= 300 ? 1 : // 5 mins or less: 1s chunks
+                                       timeElapsed <= 3600 ? 10 : // 1 hour or less: 10s chunks
+                                       60 // More than 1 hour: 60s chunks
+          
+          const chunkDurationTraining = chunkDurationResources // Match training chunks to resource chunks
+          
           let offlineTimeAccumulatorResources = 0 // Track offline time for auto-actions (resources)
           let offlineTimeAccumulatorTraining = 0 // Track offline time for training
-          const logInterval = 600 // Log progress every 10 minutes for less spam
+          const logInterval = Math.max(60, timeElapsed / 10) // Scale logging interval with total time
 
           const initialResources = { ...resourceStore.resources }
           const initialStorage = { ...resourceStore.storage }
           const initialTraining = JSON.parse(JSON.stringify(trainingStore.training))
 
           const simulateOffline = () => {
-            if (remainingTime <= 0) {
+            if (this.remainingTime <= 0) {
               // Calculate total gains
               this.offlineGains.seeds = resourceStore.resources.seeds - initialResources.seeds
               this.offlineGains.larvae = resourceStore.resources.larvae - initialResources.larvae
@@ -256,7 +264,6 @@ export const useGameStore = defineStore('gameStore', {
                 this.offlineGains.xp[skill] = trainingStore.training[skill].xp - initialTraining[skill].xp
               })
 
-              
               this.lastSavedTime = currentTime
               this.progress = 100
               console.log('Offline progress simulation complete.')
@@ -266,42 +273,42 @@ export const useGameStore = defineStore('gameStore', {
               return
             }
 
-            // Simulate resource updates in 60-second chunks
-            const deltaTimeResources = Math.min(chunkDurationResources, remainingTime) * this.deltaMultiplier
+            // Simulate resource updates
+            const deltaTimeResources = Math.min(chunkDurationResources, this.remainingTime) * this.deltaMultiplier
             resourceStore.updateResources(deltaTimeResources)
 
             // Accumulate the offline time for auto actions (resources)
             offlineTimeAccumulatorResources += deltaTimeResources
 
             // Track auto-creations
-            if (offlineTimeAccumulatorResources >= 60) {
+            if (offlineTimeAccumulatorResources >= chunkDurationResources) {
               resourceStore.handleAutoCreations()
               offlineTimeAccumulatorResources = 0
             }
 
-            // Simulate training in 10-second chunks
-            const deltaTimeTraining = Math.min(chunkDurationTraining, remainingTime) * this.deltaMultiplier
+            // Simulate training
+            const deltaTimeTraining = Math.min(chunkDurationTraining, this.remainingTime) * this.deltaMultiplier
             trainingStore.processTraining(deltaTimeTraining)
 
             // Accumulate the offline time for training
             offlineTimeAccumulatorTraining += deltaTimeTraining
 
             // Reduce remaining time and update progress
-            remainingTime -= Math.min(chunkDurationResources, chunkDurationTraining) * this.deltaMultiplier
-            this.progress = Math.min(100, ((totalTime - remainingTime) / totalTime) * 100) // Update progress
+            this.remainingTime -= Math.min(chunkDurationResources, chunkDurationTraining) * this.deltaMultiplier
+            this.progress = Math.min(100, ((totalTime - this.remainingTime) / totalTime) * 100)
 
-            // Log progress every `logInterval` seconds to avoid spamming
-            if (totalTime - remainingTime % logInterval === 0) {
-              console.log(`Offline time remaining: ${remainingTime}s`)
+            // Log progress at scaled intervals
+            if (totalTime - this.remainingTime % logInterval === 0) {
+              console.log(`Offline time remaining: ${this.remainingTime}s`)
               console.log(`Progress: ${this.progress}%`)
             }
 
-            // Continue simulating in the next event loop cycle
-            setTimeout(simulateOffline, 0) // Allows for async behavior
+            // Continue simulating in the next animation frame
+            requestAnimationFrame(simulateOffline)
           }
 
           // Start the simulation
-          simulateOffline()
+          requestAnimationFrame(simulateOffline)
         } catch (error) {
           console.error('Error during offline progress simulation:', error)
           reject(error)
@@ -723,6 +730,15 @@ export const useGameStore = defineStore('gameStore', {
         })
       } catch (error) {
         console.error('Error loading game state from Firestore:', error)
+        toast.error('Failed to load game state', {
+          position: 'top-left',
+        })
+
+        if (error?.message) {
+          toast.error(error?.message, {
+            position: 'top-left',
+          })
+        }
       }
     },
 

@@ -571,7 +571,7 @@ export const useResourcesStore = defineStore('resources', {
     },
     updateResources(deltaTime: number) {
       // Update larvae, but only if there are queens
-      if (this.resources.queens > 0) {
+      if (this.resources.queens > 0 && this.resources.larvae + 1 < this.maxLarvae) {
         const larvaePerSecond = this.larvaePerSecond // Use the larvaePerSecond calculation
 
         // Calculate how many larvae to add based on deltaTime
@@ -590,7 +590,7 @@ export const useResourcesStore = defineStore('resources', {
       }
 
       // Update seeds, but only if there are ants
-      if (this.resources.ants > 0) {
+      if (this.resources.ants > 0 && this.resources.seeds + 1 < this.maxSeeds) {
         const seedsPerSecond = this.seedsPerSecond // Use the seedsPerSecond calculation
 
         // Calculate how many seeds to add based on deltaTime
@@ -607,17 +607,18 @@ export const useResourcesStore = defineStore('resources', {
         }
       }
 
-      const antsPerSecond = this.antsPerSecond
+      if (this.resources.ants + 1 < this.maxAnts) {
+        const antsPerSecond = this.antsPerSecond
+        const antsToAdd = antsPerSecond * deltaTime
+        this.accumulators.antAccumulator += antsToAdd
 
-      const antsToAdd = antsPerSecond * deltaTime
-      this.accumulators.antAccumulator += antsToAdd
+        const wholeAnts = Math.floor(this.accumulators.antAccumulator)
+        if (wholeAnts > 0) {
+          this.resources.ants = Math.min(this.resources.ants + wholeAnts, this.maxAnts)
+          this.accumulators.antAccumulator -= wholeAnts
 
-      const wholeAnts = Math.floor(this.accumulators.antAccumulator)
-      if (wholeAnts > 0) {
-        this.resources.ants = Math.min(this.resources.ants + wholeAnts, this.maxAnts)
-        this.accumulators.antAccumulator -= wholeAnts
-
-        useAchievementStore().addToTotal('ants', wholeAnts)
+          useAchievementStore().addToTotal('ants', wholeAnts)
+        }
       }
     },
 

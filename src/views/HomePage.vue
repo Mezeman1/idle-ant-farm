@@ -131,7 +131,7 @@
           />
         </div>
         <p class="mt-2 text-gray-700 font-semibold">
-          Loading... {{ progress.toFixed(0) }}%
+          Loading... {{ progress.toFixed(0) }}% ({{ formatTime(remainingTime * 1000) }})
         </p>
       </div>
     </div>
@@ -344,6 +344,7 @@ import BossPage from '@/views/BossPage.vue'
 import AntTraining from '@/views/AntTraining.vue'
 import {storeToRefs} from 'pinia'
 import OfflineSummary from '@/components/OfflineSummary.vue'
+import { formatTime } from '@/utils'
 
 const deferredPrompt = ref(null)
 const gameStore = useGameStore()
@@ -354,6 +355,7 @@ const isMinimized = ref(false) // Minimized state
 const settingsStore = useSettingsStore()
 const {
   activeTab,
+  remainingTime,
 } = storeToRefs(gameStore)
 const progress = computed(() => {
   // const gameProgress = gameStore.loaded ? 50 : (gameStore.progress / 2) // Half for game progress
