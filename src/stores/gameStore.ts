@@ -234,7 +234,7 @@ export const useGameStore = defineStore('gameStore', {
           const totalTime = timeElapsed // Store total offline time for progress calculation
 
           // Adjust chunk durations based on total elapsed time
-          const chunkDurationResources = timeElapsed <= 300 ? 1 : // 5 mins or less: 1s chunks
+          const chunkDurationResources = timeElapsed <= 300 * 3 ? 1 : // 5 mins or less: 1s chunks
                                        timeElapsed <= 3600 ? 10 : // 1 hour or less: 10s chunks
                                        60 // More than 1 hour: 60s chunks
           
