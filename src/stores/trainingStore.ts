@@ -1024,5 +1024,65 @@ export const useTrainingStore = defineStore({
         resourcesStore.addAnts(effect.antGeneration * amountOfUpgrade)
       }
     },
+
+    calculateOfflineMiningProgress(deltaTime: number, resource: MiningResource) {
+      // If the resource level requirement isn't met, no progress
+      if (this.training.mining.level < resource.levelRequired) return 0
+
+      const totalTime = deltaTime
+      const miningCycleTime = (resource.initialTimePerAction - resource.timeReduction) + 
+                             (resource.initialRespawnTime - resource.respawnReduction)
+      
+      // Calculate how many complete cycles occurred
+      const completeCycles = Math.floor(totalTime / miningCycleTime)
+      
+      // Calculate remaining time after complete cycles
+      const remainingTime = totalTime % miningCycleTime
+      
+      // Calculate resources gained from complete cycles
+      let resourcesGained = completeCycles * resource.collectionMultiplier
+      
+      // Handle remaining time
+      if (remainingTime > (resource.initialTimePerAction - resource.timeReduction)) {
+        // If remaining time is more than mining time, add one more collection
+        resourcesGained += resource.collectionMultiplier
+      }
+      
+      // Calculate XP gained
+      const xpGained = completeCycles * resource.xpPerAction
+      
+      // Apply double chance for each collection
+      if (this.miningDoubleChance > 0) {
+        const collections = completeCycles + (remainingTime > (resource.initialTimePerAction - resource.timeReduction) ? 1 : 0)
+        for (let i = 0; i < collections; i++) {
+          if (Math.random() < this.miningDoubleChance) {
+            resourcesGained += resource.collectionMultiplier
+          }
+        }
+      }
+      
+      // Add XP
+      this.addXp(Skill.Mining, xpGained)
+      this.addXpToMiningResource(resource, xpGained * 2)
+      
+      return resourcesGained
+    },
+
+    calculateOfflineTrainingProgress(deltaTime: number) {
+      if (!this.activeTrainings.includes(Skill.Mining)) return
+
+      this.activeResources.forEach((resourceName) => {
+        const resource = this.miningResources.find(res => res.name === resourceName)
+        if (!resource) return
+
+        const resourcesGained = this.calculateOfflineMiningProgress(deltaTime, resource)
+        
+        // Add the resources to collected resources
+        if (!this.resourcesCollected[resource.name]) {
+          this.resourcesCollected[resource.name] = 0
+        }
+        this.resourcesCollected[resource.name] += resourcesGained
+      })
+    },
   },
 })

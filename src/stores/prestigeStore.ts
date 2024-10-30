@@ -28,7 +28,7 @@ export const usePrestigeStore = defineStore('prestige', {
   state: () => ({
     prestigePoints: 0, // New prestige currency
     timesPrestiged: 0, // Number of times prestiged
-    lastPrestige: 0, // Timestamp of the last prestige
+    lastPrestige: Date.now(), // Timestamp of the last prestige
     purchasedUpgrades: [] as Array<string>, // List of purchased prestige upgrades
     appliedUpgrades: [] as Array<string>, // List of applied prestige upgrades
     prestigeShop: [
@@ -422,6 +422,10 @@ export const usePrestigeStore = defineStore('prestige', {
   actions: {
     timeSinceLastPrestigeFormatted(){
       const timeSinceLastPrestige = Date.now() - this.lastPrestige
+      if (timeSinceLastPrestige < 0) {
+        return formatTime(0)
+      }
+
       return formatTime(timeSinceLastPrestige)
     },
     calculatePrestigePoints() {
@@ -723,7 +727,7 @@ export const usePrestigeStore = defineStore('prestige', {
         prestigePoints: this.prestigePoints,
         timesPrestiged: this.timesPrestiged,
         purchasedUpgrades: this.purchasedUpgrades,
-        lastPrestige: this.lastPrestige,
+        lastPrestige: this.lastPrestige ? this.lastPrestige : Date.now(),
 
         autoLarvaeCreation: this.autoLarvaeCreation,
         autoAntCreation: this.autoAntCreation,

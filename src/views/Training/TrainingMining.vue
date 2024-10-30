@@ -63,11 +63,17 @@
             </p>
             <p>{{ resource.initialRespawnTime.toFixed(1) }}s - {{ resource.respawnReduction.toFixed(1) }}s</p>
           </div>
-          <div class="text-sm col-span-2">
+          <div class="text-sm">
             <p class="font-semibold text-gray-700">
               Collecting
             </p>
             <p>{{ resource.collectionMultiplier.toFixed(1) }}x</p>
+          </div>
+          <div class="text-sm">
+            <p class="font-semibold text-gray-700">
+              Collected
+            </p>
+            <p>{{ formatNumber(trainingStore.resourcesCollected[resource.name] || 0, 0) }}</p>
           </div>
         </div>
 
@@ -180,7 +186,7 @@ import {useTrainingStore} from '@/stores/trainingStore'
 import {computed, ref} from 'vue'
 import SkillDisplay from '@/components/SkillDisplay.vue'
 import {MiningResource} from '@/types/trainingTypes'
-import { toPercentageFormatted } from '@/utils'
+import { toPercentageFormatted, formatNumber } from '@/utils'
 
 const trainingStore = useTrainingStore()
 

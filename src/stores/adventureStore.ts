@@ -558,11 +558,10 @@ export const useAdventureStore = defineStore('adventureStore', {
 
           // Check the drop chance, now including the global modifier
           if (Math.random() < drop.chance * dropChanceModifier * this.globalDropChanceModifier) {
-            const amount =
-              Math.floor(
-                (Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1) +
+            const amount = Math.floor(
+              (Math.random() * (drop.amountBetween[1] - drop.amountBetween[0] + 1) +
                 drop.amountBetween[0]) * dropAmountModifier,
-              )
+            )
 
             if (drop.name === 'Seeds') {
               // Add seeds to gameStore
@@ -572,15 +571,14 @@ export const useAdventureStore = defineStore('adventureStore', {
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
               const item = useInventoryStore().getItemById(itemId)
               if (item) {
+                // Only show notification if not simulating offline progress
                 if (!this.isSimulatingOffline && settingsStore.getNotificationSetting('loot')) {
                   toast.success(`Loot: +${amount} ${drop.name}`, {
                     position: toast.POSITION.TOP_LEFT,
                   })
                 }
                 // Await the item drop handling
-                this.handleItemDrop(item, amount)
-              } else {
-
+                await this.handleItemDrop(item, amount)
               }
             }
           }
@@ -920,85 +918,6 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.currentEnemy = null
       this.battleStatus = 'idle'
       this.globalDropChanceModifier = 1
-    },
-
-    // Offline progress calculation
-    async calculateOfflineProgress() {
-      this.loaded = false // Mark as not loaded
-
-      // Turning off offline progress simulation for now
-      this.loaded = true
-      this.isSimulatingOffline = false
-      return Promise.resolve()
-
-      if (!this.currentArea || this.currentArea === '') {
-        this.loaded = true
-        this.isSimulatingOffline = false
-        return Promise.resolve()
-      }
-
-      try {
-        return await new Promise((resolve, reject) => {
-          try {
-            const currentTime = Date.now()
-            let timeElapsed = (currentTime - this.lastSavedTime) / 1000 // Total offline time in seconds
-
-            // Define the offline cap (24 hours = 86400 seconds)
-            const OFFLINE_CAP = 86400
-
-            // Cap the offline time to 24 hours
-            if (timeElapsed > OFFLINE_CAP) {
-              console.log('Offline time capped to 24 hours (86400 seconds)')
-              timeElapsed = OFFLINE_CAP
-            }
-
-            console.log(`Time elapsed (offline): ${timeElapsed} seconds`)
-
-            let remainingTime = timeElapsed
-            const chunkDuration = 60 // Simulate in chunks of 60 seconds
-
-            this.isSimulatingOffline = true
-            this.progress = 0 // Initialize progress
-
-            const simulateOffline = () => {
-              if (remainingTime <= 0) {
-                this.lastSavedTime = currentTime
-                console.log('Offline progress simulation complete.')
-                this.isSimulatingOffline = false
-                this.progress = 100 // Set progress to 100%
-                resolve(null)
-                return
-              }
-
-              const deltaTime = Math.min(chunkDuration, remainingTime)
-              const playerDied = this.updateCombat(deltaTime)
-
-              if (playerDied) {
-                console.log('Player died during offline progress. Stopping simulation.')
-                this.isSimulatingOffline = false
-                resolve(null) // End the simulation early
-                return
-              }
-
-              this.handleLoot() // Simulate loot collection
-
-              remainingTime -= deltaTime
-              this.progress = Math.min(100, ((timeElapsed - remainingTime) / timeElapsed) * 100) // Update progress
-
-              setTimeout(simulateOffline, 0) // Continue simulating in the next event loop cycle
-            }
-
-            simulateOffline()
-          } catch (error) {
-            console.error('Error during offline progress simulation:', error)
-            this.isSimulatingOffline = false
-            reject(error)
-          }
-        })
-      } finally {
-        this.isSimulatingOffline = false
-        this.loaded = true // Mark as loaded
-      }
     },
 
     updateCombat(deltaTime) {

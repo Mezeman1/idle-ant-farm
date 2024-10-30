@@ -10,6 +10,13 @@
       @cancel="handleCancel"
     />
 
+    <!-- Fixed prestige points display -->
+    <div class="bg-purple-100 border-l-4 border-purple-500 text-purple-700 p-4 sticky top-0 z-10 shadow-md">
+      <p class="font-bold">
+        Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }}
+      </p>
+    </div>
+
     <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-4 flex-grow">
       <div class="bg-blue-100 p-4 rounded-lg shadow-md">
         <h2 class="text-lg font-semibold mb-2 text-center text-blue-800">
@@ -76,7 +83,13 @@
             @click="toggleCategory(category.name)"
           >
             <span>{{ category.name }}</span>
-            <span class="text-xl">{{ category.expanded ? '−' : '+' }}</span>
+            <div class="flex items-center">
+              <span
+                v-if="category.allBought"
+                class="text-green-600 text-sm mr-2"
+              >✓ Complete</span>
+              <span class="text-xl">{{ category.expanded ? '−' : '+' }}</span>
+            </div>
           </button>
 
           <!-- Upgrade List -->
@@ -111,9 +124,9 @@
               </p>
               <div
                 v-if="isUpgradeMaxed(upgrade)"
-                class="text-sm text-blue-600 mt-2 font-medium"
+                class="text-sm text-green-600 mt-2 font-medium flex items-center"
               >
-                Purchased
+                <span class="mr-1">✓</span> Purchased
               </div>
               <div
                 v-else
@@ -155,31 +168,56 @@ const gameStore = useGameStore()
 const prestigeStore = usePrestigeStore()
 const formatNumber = (num: number) => gameStore.formatNumber(num, 0)
 
+// Function to check if an upgrade is maxed out
+const isUpgradeMaxed = (upgrade) => {
+  if (upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id)) return true
+
+  // Check if the upgrade has a max purchase limit and if it's been reached
+  return upgrade.maxPurchases !== undefined && prestigeStore.amountOfUpgrade(upgrade.id) >= upgrade.maxPurchases
+}
 
 const categories = [
   {
     name: 'Auto Features',
     upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'auto'),
+    allBought: prestigeStore.prestigeShop
+      .filter(upgrade => upgrade.category === 'auto')
+      .every(upgrade => isUpgradeMaxed(upgrade)),
   },
   {
-    name: 'Storage Upgrades',
+    name: 'Storage Upgrades', 
     upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'storage'),
+    allBought: prestigeStore.prestigeShop
+      .filter(upgrade => upgrade.category === 'storage')
+      .every(upgrade => isUpgradeMaxed(upgrade)),
   },
   {
     name: 'Production Upgrades',
     upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'production'),
+    allBought: prestigeStore.prestigeShop
+      .filter(upgrade => upgrade.category === 'production')
+      .every(upgrade => isUpgradeMaxed(upgrade)),
   },
   {
     name: 'Combat Upgrades',
     upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'combat'),
+    allBought: prestigeStore.prestigeShop
+      .filter(upgrade => upgrade.category === 'combat')
+      .every(upgrade => isUpgradeMaxed(upgrade)),
   },
   {
     name: 'Adventure Upgrades',
     upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'adventure'),
+    allBought: prestigeStore.prestigeShop
+      .filter(upgrade => upgrade.category === 'adventure')
+      .every(upgrade => isUpgradeMaxed(upgrade)),
   },
   {
     name: 'Expansion Upgrades',
     upgrades: prestigeStore.prestigeShop.filter(upgrade => upgrade.category === 'expansion'),
+    allBought: prestigeStore.prestigeShop
+      .filter(upgrade => upgrade.category === 'expansion')
+      .every(upgrade => isUpgradeMaxed(upgrade)),
   },
 ]
 
@@ -210,14 +248,6 @@ const isUpgradeUnlocked = (upgrade) => {
   if (!upgrade.unlockedWhen) return true
   // If there's an unlock condition, check if it returns true
   return typeof upgrade.unlockedWhen === 'function' && upgrade.unlockedWhen()
-}
-
-// Function to check if an upgrade is maxed out
-const isUpgradeMaxed = (upgrade) => {
-  if (upgrade.oneTimePurchase && prestigeStore.upgradePurchased(upgrade.id)) return true
-
-  // Check if the upgrade has a max purchase limit and if it's been reached
-  return upgrade.maxPurchases !== undefined && prestigeStore.amountOfUpgrade(upgrade.id) >= upgrade.maxPurchases
 }
 
 // Helper function to get the current upgrade count

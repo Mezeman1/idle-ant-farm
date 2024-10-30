@@ -241,7 +241,7 @@ export const useGameStore = defineStore('gameStore', {
           const chunkDurationTraining = chunkDurationResources // Match training chunks to resource chunks
           
           let offlineTimeAccumulatorResources = 0 // Track offline time for auto-actions (resources)
-          let offlineTimeAccumulatorTraining = 0 // Track offline time for training
+          const offlineTimeAccumulatorTraining = 0 // Track offline time for training
           const logInterval = Math.max(60, timeElapsed / 10) // Scale logging interval with total time
 
           const initialResources = { ...resourceStore.resources }
@@ -286,12 +286,19 @@ export const useGameStore = defineStore('gameStore', {
               offlineTimeAccumulatorResources = 0
             }
 
-            // Simulate training
+            // Process training with the new offline calculation
             const deltaTimeTraining = Math.min(chunkDurationTraining, this.remainingTime) * this.deltaMultiplier
-            trainingStore.processTraining(deltaTimeTraining)
+            trainingStore.calculateOfflineTrainingProgress(deltaTimeTraining)
+            trainingStore.processCrafting(deltaTimeTraining)
+            trainingStore.processFarming(deltaTimeTraining)
 
-            // Accumulate the offline time for training
-            offlineTimeAccumulatorTraining += deltaTimeTraining
+            // Add adventure offline processing
+            const adventureStore = useAdventureStore()
+            if (adventureStore.battleStatus !== 'idle') {
+              adventureStore.isSimulatingOffline = true
+              adventureStore.processCombat(deltaTimeTraining)
+              adventureStore.isSimulatingOffline = false
+            }
 
             // Reduce remaining time and update progress
             this.remainingTime -= Math.min(chunkDurationResources, chunkDurationTraining) * this.deltaMultiplier
@@ -715,7 +722,6 @@ export const useGameStore = defineStore('gameStore', {
         this.loaded = true
 
         const adventureStore = useAdventureStore()
-        await adventureStore.calculateOfflineProgress()
         useBossStore().generateBosses()
         adventureStore.startBattle()
         if (useSettingsStore().getNotificationSetting('load')) {
