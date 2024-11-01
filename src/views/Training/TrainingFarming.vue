@@ -86,27 +86,44 @@
         <h3 class="text-lg font-semibold mb-2">
           Select Seed
         </h3>
-        <select
-          v-model="selectedSeed"
-          class="px-4 py-2 border rounded-lg w-full bg-gray-100"
-        >
-          <option
-            disabled
-            value=""
+        <div class="flex gap-4 items-center">
+          <select
+            v-model="selectedSeed"
+            class="px-4 py-2 border rounded-lg flex-1 bg-gray-100"
           >
-            Select a seed
-          </option>
-          <option
-            v-for="seed in availableSeeds"
-            :key="seed.name"
-            :value="seed"
-            :disabled="!canPlantSeed(seed)"
+            <option
+              disabled
+              value=""
+            >
+              Select a seed
+            </option>
+            <option
+              v-for="seed in availableSeeds"
+              :key="seed.name"
+              :value="seed"
+              :disabled="!canPlantSeed(seed)"
+            >
+              {{ seed.name }} (Level {{ seed.levelRequired }}, Growth Time: {{
+                formatTime(seed.growthTime * 1000, true)
+              }})
+            </option>
+          </select>
+
+          <!-- Add Plant All and Harvest All buttons -->
+          <button
+            class="bg-green-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="!selectedSeed"
+            @click="plantAll"
           >
-            {{ seed.name }} (Level {{ seed.levelRequired }}, Growth Time: {{
-              formatTime(seed.growthTime * 1000, true)
-            }})
-          </option>
-        </select>
+            Plant All
+          </button>
+          <button
+            class="bg-amber-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-amber-600"
+            @click="harvestAll"
+          >
+            Harvest All
+          </button>
+        </div>
       </div>
 
       <!-- 3x3 Grid for Planting -->
@@ -214,6 +231,23 @@ const addFungus = (seed) => {
 }
 
 const debugMode = import.meta.env.MODE === 'localhost'
+
+// Add these functions near the other farming functions:
+function plantAll() {
+  farmingGrid.value.forEach((plot, index) => {
+    if (!plot.seed) {
+      plantSeed(index)
+    }
+  })
+}
+
+function harvestAll() {
+  farmingGrid.value.forEach((plot, index) => {
+    if (plot.growthStage === 'Mature') {
+      harvestPlant(index)
+    }
+  })
+}
 </script>
 
 <style scoped>
