@@ -53,15 +53,19 @@ export enum ResourceType {
 export enum CraftingRecipeType {
   SeedStorage = 'Seed Storage',
   AdvancedSeedStorage = 'Advanced Seed Storage',
+  MasterSeedStorage = 'Master Seed Storage',
 
   LarvaeStorage = 'Larvae Storage',
   AdvancedLarvaeStorage = 'Advanced Larvae Storage',
+  MasterLarvaeStorage = 'Master Larvae Storage',
 
   AntStorage = 'Ant Storage',
   AdvancedAntStorage = 'Advanced Ant Storage',
+  MasterAntStorage = 'Master Ant Storage',
 
   AntHill = 'Ant Hill',
   AdvancedAntHill = 'Advanced Ant Hill',
+  MasterAntHill = 'Master Ant Hill',
 }
 
 export interface TrainingState {

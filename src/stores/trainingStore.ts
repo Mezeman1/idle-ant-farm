@@ -62,18 +62,25 @@ export const useTrainingStore = defineStore({
     // Mining
     miningMilestones: [
       {
-        levelRequired: 75,
+        levelRequired: 50,
         effect: {
           maxActiveResources: 2,
         },
         description: 'Unlocks the ability to mine 2 resources at once',
       },
       {
-        levelRequired: 150,
+        levelRequired: 75,
         effect: {
           maxActiveResources: 3,
         },
         description: 'Unlocks the ability to mine 3 resources at once',
+      },
+      {
+        levelRequired: 150,
+        effect: {
+          maxActiveResources: 4,
+        },
+        description: 'Unlocks the ability to mine 4 resources at once',
       },
     ],
     activeResources: [] as ResourceType[],
@@ -215,6 +222,67 @@ export const useTrainingStore = defineStore({
         timePerAction: 20,
         effect: {
           antGeneration: 5,
+        },
+      },
+      {
+        name: CraftingRecipeType.MasterSeedStorage,
+        description: 'Increase the storage capacity for seeds by 2%',
+        cost: {
+          [ResourceType.RottenWood]: 15,
+          [ResourceType.Fungus]: 15,
+        },
+        storageIncrease: {
+          seed: 0.02,
+        },
+        xpPerAction: 150,
+        levelRequired: 75,
+        initialTimePerAction: 30,
+        timePerAction: 30,
+      },
+      {
+        name: CraftingRecipeType.MasterLarvaeStorage,
+        description: 'Increase the storage capacity for ant larvae by 2%',
+        cost: {
+          [ResourceType.Fungus]: 15,
+          [ResourceType.Resin]: 10,
+        },
+        storageIncrease: {
+          larvae: 0.02,
+        },
+        xpPerAction: 150,
+        levelRequired: 75,
+        initialTimePerAction: 30,
+        timePerAction: 30,
+      },
+      {
+        name: CraftingRecipeType.MasterAntStorage,
+        description: 'Increase the storage capacity for ants by 2%',
+        cost: {
+          [ResourceType.Pebble]: 20,
+          [ResourceType.Sap]: 15,
+        },
+        storageIncrease: {
+          ant: 0.02,
+        },
+        xpPerAction: 150,
+        levelRequired: 75,
+        initialTimePerAction: 30,
+        timePerAction: 30,
+      },
+      {
+        name: CraftingRecipeType.MasterAntHill,
+        description: 'Generates 20 ants passively per Ant Hill',
+        cost: {
+          [ResourceType.Root]: 25,
+          [ResourceType.CarapaceFragment]: 25,
+          ants: 500,
+        },
+        xpPerAction: 200,
+        levelRequired: 100,
+        initialTimePerAction: 45,
+        timePerAction: 45,
+        effect: {
+          antGeneration: 20,
         },
       },
     ],

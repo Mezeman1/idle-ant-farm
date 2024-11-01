@@ -297,7 +297,6 @@ export const useGameStore = defineStore('gameStore', {
             if (adventureStore.battleStatus !== 'idle') {
               adventureStore.isSimulatingOffline = true
               adventureStore.processCombat(deltaTimeTraining)
-              adventureStore.isSimulatingOffline = false
             }
 
             // Reduce remaining time and update progress
@@ -321,7 +320,10 @@ export const useGameStore = defineStore('gameStore', {
           reject(error)
         }
       }).finally(() => {
+        const adventureStore = useAdventureStore()
+
         this.simulatingOfflineProgress = false
+        adventureStore.isSimulatingOffline = false
       })
     },
 
