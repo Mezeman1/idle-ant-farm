@@ -888,8 +888,13 @@ export const useAdventureStore = defineStore('adventureStore', {
           const image = await import(`../assets/items/${itemRegistry[item].name.toLowerCase().replaceAll(' ', '-')}.webp`)
           itemRegistry[item].image = image.default
         } catch (error) {
-          const image = await import('../assets/items/default-item.webp')
-          itemRegistry[item].image = image.default
+          try {
+            const image = await import(`../assets/items/${itemRegistry[item].name.toLowerCase().replaceAll(' ', '-')}.png`) 
+            itemRegistry[item].image = image.default
+          } catch (error) {
+            const image = await import('../assets/items/default-item.webp')
+            itemRegistry[item].image = image.default
+          }
         }
       }
     },
