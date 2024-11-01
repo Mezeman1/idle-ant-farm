@@ -104,10 +104,10 @@ export const useBossStore = defineStore({
         damage: new BigNumber(stats.damage),
         defense: new BigNumber(stats.defense),
         regen: new BigNumber(stats.regen),
-        damageMultiplier: new BigNumber(stats.damageMultiplier),
-        defenseMultiplier: new BigNumber(stats.defenseMultiplier),
-        regenMultiplier: new BigNumber(stats.regenMultiplier),
-        healthMultiplier: new BigNumber(stats.healthMultiplier),
+        damageMultiplier: new BigNumber(stats.damageMultiplier.toString()),
+        defenseMultiplier: new BigNumber(stats.defenseMultiplier.toString()),
+        regenMultiplier: new BigNumber(stats.regenMultiplier.toString()),
+        healthMultiplier: new BigNumber(stats.healthMultiplier.toString()),
       }
     },
     generateBosses() {

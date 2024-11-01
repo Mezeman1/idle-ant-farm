@@ -63,22 +63,22 @@ export const useGameStore = defineStore('gameStore', {
     toastCooldown: 5000,   // Cooldown in ms for toast notifications
 
     offlineGains: {
-      seeds: 0,
-      larvae: 0,
-      ants: 0,
-      eliteAnts: 0,
+      seeds: new BigNumber(0),
+      larvae: new BigNumber(0),
+      ants: new BigNumber(0),
+      eliteAnts: new BigNumber(0),
       storage: {
-        seeds: 0,
-        larvae: 0,
-        ants: 0,
+        seeds: new BigNumber(0),
+        larvae: new BigNumber(0),
+        ants: new BigNumber(0),
       },
       xp: {
-        mining: 0,
-        crafting: 0,
-        attack: 0,
-        defense: 0,
-        hitpoints: 0,
-        farming: 0,
+        mining: new BigNumber(0),
+        crafting: new BigNumber(0),
+        attack: new BigNumber(0),
+        defense: new BigNumber(0),
+        hitpoints: new BigNumber(0),
+        farming: new BigNumber(0),
       },
     },
     showOfflineSummary: false,
@@ -188,22 +188,22 @@ export const useGameStore = defineStore('gameStore', {
     async calculateOfflineProgress() {
       this.simulatingOfflineProgress = true
       this.offlineGains = {
-        seeds: 0,
-        larvae: 0,
-        ants: 0,
-        eliteAnts: 0,
+        seeds: new BigNumber(0),
+        larvae: new BigNumber(0),
+        ants: new BigNumber(0),
+        eliteAnts: new BigNumber(0),
         storage: {
-          seeds: 0,
-          larvae: 0,
-          ants: 0,
+          seeds: new BigNumber(0),
+          larvae: new BigNumber(0),
+          ants: new BigNumber(0),
         },
         xp: {
-          mining: 0,
-          crafting: 0,
-          attack: 0,
-          defense: 0,
-          hitpoints: 0,
-          farming: 0,
+          mining: new BigNumber(0),
+          crafting: new BigNumber(0),
+          attack: new BigNumber(0),
+          defense: new BigNumber(0),
+          hitpoints: new BigNumber(0),
+          farming: new BigNumber(0),
         },
       }
 
@@ -251,17 +251,17 @@ export const useGameStore = defineStore('gameStore', {
           const simulateOffline = () => {
             if (this.remainingTime <= 0) {
               // Calculate total gains
-              this.offlineGains.seeds = resourceStore.resources.seeds - initialResources.seeds
-              this.offlineGains.larvae = resourceStore.resources.larvae - initialResources.larvae
-              this.offlineGains.ants = resourceStore.resources.ants - initialResources.ants
-              this.offlineGains.eliteAnts = resourceStore.resources.eliteAnts - initialResources.eliteAnts
+              this.offlineGains.seeds = resourceStore.resources.seeds.minus(initialResources.seeds)
+              this.offlineGains.larvae = resourceStore.resources.larvae.minus(initialResources.larvae)
+              this.offlineGains.ants = resourceStore.resources.ants.minus(initialResources.ants)
+              this.offlineGains.eliteAnts = resourceStore.resources.eliteAnts.minus(initialResources.eliteAnts)
 
-              this.offlineGains.storage.seeds = resourceStore.storage.maxSeeds - initialStorage.maxSeeds
-              this.offlineGains.storage.larvae = resourceStore.storage.maxLarvae - initialStorage.maxLarvae
-              this.offlineGains.storage.ants = resourceStore.storage.maxAnts - initialStorage.maxAnts
+              this.offlineGains.storage.seeds = resourceStore.storage.maxSeeds.minus(initialStorage.maxSeeds)
+              this.offlineGains.storage.larvae = resourceStore.storage.maxLarvae.minus(initialStorage.maxLarvae)
+              this.offlineGains.storage.ants = resourceStore.storage.maxAnts.minus(initialStorage.maxAnts)
 
               Object.keys(this.offlineGains.xp).forEach(skill => {
-                this.offlineGains.xp[skill] = trainingStore.training[skill].xp - initialTraining[skill].xp
+                this.offlineGains.xp[skill] = new BigNumber(trainingStore.training[skill] - initialTraining[skill].xp)
               })
 
               this.lastSavedTime = currentTime
@@ -297,7 +297,6 @@ export const useGameStore = defineStore('gameStore', {
             if (adventureStore.battleStatus !== 'idle') {
               adventureStore.isSimulatingOffline = true
               adventureStore.processCombat(deltaTimeTraining)
-              adventureStore.isSimulatingOffline = false
             }
 
             // Reduce remaining time and update progress
@@ -322,6 +321,8 @@ export const useGameStore = defineStore('gameStore', {
         }
       }).finally(() => {
         this.simulatingOfflineProgress = false
+        const adventureStore = useAdventureStore()
+        adventureStore.isSimulatingOffline = false
       })
     },
 
@@ -1009,14 +1010,16 @@ export const useGameStore = defineStore('gameStore', {
         console.error('Error updating consent:', error)
       }
     },
-    formatNumber(num: number | BigNumber, toFixed = 2): string {
+    formatNumber(num: number | BigNumber | null, toFixed = 2): string {
+      if (num === null) return '0'
+
       const isBigNumber = BigNumber.isBigNumber(num)
       let value: BigNumber
 
       // Convert to BigNumber if it's not already
       value = isBigNumber ? (num as BigNumber) : new BigNumber(num)
 
-      if (toFixed === 0) value = value.integerValue(BigNumber.ROUND_FLOOR)
+      if (toFixed === 0) value = value
 
       const notation = useSettingsStore().notation
 

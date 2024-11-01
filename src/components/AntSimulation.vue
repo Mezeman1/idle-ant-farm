@@ -26,19 +26,19 @@ import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useWindowSize} from '@vueuse/core'
 import {useEvolveStore} from '@/stores/evolveStore'
 import { useThrottleFn } from '@vueuse/core'
-
+import { BigNumber } from 'bignumber.js'
 
 const props = withDefaults(defineProps<{
-  antCount: number;
-  queenCount: number;
-  larvaeCount: number;
-  eliteCount?: number;
+  antCount: number | BigNumber;
+  queenCount: number | BigNumber;
+  larvaeCount: number | BigNumber;
+  eliteCount?: number | BigNumber;
   showAnimation: boolean;
 }>(), {
-  antCount: 100,
-  queenCount: 10,
-  larvaeCount: 50,
-  eliteCount: 0,
+  antCount: new BigNumber(100),
+  queenCount: new BigNumber(10),
+  larvaeCount: new BigNumber(50),
+  eliteCount: new BigNumber(0),
   showAnimation: true,
 })
 
@@ -114,10 +114,11 @@ watch(
 const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min
 
 // Initialize ants and queens with random positions, angles, and speeds
-const addAnts = (count: number) => {
+const addAnts = (count: number | BigNumber) => {
   const centerX = window.innerWidth / 2
   const centerY = window.innerHeight / 2
-  const antsToAdd = Math.min(count, maxAnts.value - ants.value.length)
+  const countNum = new BigNumber(count).toNumber()
+  const antsToAdd = Math.min(countNum, maxAnts.value - ants.value.length)
 
   for (let i = 0; i < antsToAdd; i++) {
     ants.value.push({
@@ -136,15 +137,16 @@ const addAnts = (count: number) => {
   }
 }
 
-const removeAnts = (count: number) => {
-  ants.value.splice(-count)
+const removeAnts = (count: number | BigNumber) => {
+  const countNum = new BigNumber(count).toNumber()
+  ants.value.splice(-countNum)
 }
 
-const addQueens = (count: number) => {
+const addQueens = (count: number | BigNumber) => {
   const centerX = window.innerWidth / 2
   const centerY = window.innerHeight / 2
-
-  const queensToAdd = Math.min(count, maxQueens.value - queens.value.length)
+  const countNum = new BigNumber(count).toNumber()
+  const queensToAdd = Math.min(countNum, maxQueens.value - queens.value.length)
 
   for (let i = 0; i < queensToAdd; i++) {
     // Generate a random angle between 0 and 2 * PI (360 degrees)
@@ -172,10 +174,11 @@ const addQueens = (count: number) => {
   }
 }
 
-const addEliteAnts = (count: number) => {
+const addEliteAnts = (count: number | BigNumber) => {
   const centerX = window.innerWidth / 2
   const centerY = window.innerHeight / 2
-  const antsToAdd = Math.min(count, maxEliteAnts.value - eliteAnts.value.length)
+  const countNum = new BigNumber(count).toNumber()
+  const antsToAdd = Math.min(countNum, maxEliteAnts.value - eliteAnts.value.length)
 
   for (let i = 0; i < antsToAdd; i++) {
     eliteAnts.value.push({
@@ -194,20 +197,22 @@ const addEliteAnts = (count: number) => {
   }
 }
 
-const removeEliteAnts = (count: number) => {
-  eliteAnts.value.splice(-count)
+const removeEliteAnts = (count: number | BigNumber) => {
+  const countNum = new BigNumber(count).toNumber()
+  eliteAnts.value.splice(-countNum)
 }
 
-const removeQueens = (count: number) => {
-  queens.value.splice(-count)
+const removeQueens = (count: number | BigNumber) => {
+  const countNum = new BigNumber(count).toNumber()
+  queens.value.splice(-countNum)
 }
 
 // Initialize and add larvae
-const addLarvae = (count: number) => {
+const addLarvae = (count: number | BigNumber) => {
   const centerX = window.innerWidth / 2
   const centerY = window.innerHeight / 2
-
-  const larvaeToAdd = Math.min(count, maxLarvae.value - larvae.value.length)
+  const countNum = new BigNumber(count).toNumber()
+  const larvaeToAdd = Math.min(countNum, maxLarvae.value - larvae.value.length)
 
   for (let i = 0; i < larvaeToAdd; i++) {
     // Generate a random angle between 0 and 2 * PI (360 degrees)
@@ -227,8 +232,9 @@ const addLarvae = (count: number) => {
   }
 }
 
-const removeLarvae = (count: number) => {
-  larvae.value.splice(-count)
+const removeLarvae = (count: number | BigNumber) => {
+  const countNum = new BigNumber(count).toNumber()
+  larvae.value.splice(-countNum)
 }
 
 // Main drawing loop for ants, queens, and larvae
@@ -405,11 +411,10 @@ const drawAll = () => {
 watch(
   () => props.antCount,
   useThrottleFn((newCount) => {
-    newCount = Math.round(newCount)
-
+    const countNum = new BigNumber(newCount).toNumber()
     const currentAntCount = ants.value.length
-    const antsToAdd = Math.min(newCount - currentAntCount, maxAnts.value - currentAntCount)
-    const antsToRemove = currentAntCount - newCount
+    const antsToAdd = Math.min(countNum - currentAntCount, maxAnts.value - currentAntCount)
+    const antsToRemove = currentAntCount - countNum
 
     if (antsToAdd > 0) {
       addAnts(antsToAdd)
@@ -423,11 +428,10 @@ watch(
 watch(
   () => props.queenCount,
   useThrottleFn((newCount) => {
-    newCount = Math.round(newCount)
-
+    const countNum = new BigNumber(newCount).toNumber()
     const currentQueenCount = queens.value.length
-    const queensToAdd = Math.min(newCount - currentQueenCount, maxQueens.value - currentQueenCount)
-    const queensToRemove = currentQueenCount - newCount
+    const queensToAdd = Math.min(countNum - currentQueenCount, maxQueens.value - currentQueenCount)
+    const queensToRemove = currentQueenCount - countNum
 
     if (queensToAdd > 0) {
       addQueens(queensToAdd)
@@ -443,11 +447,10 @@ watch(
   useThrottleFn((newCount) => {
     if (newCount === undefined) return
 
-    newCount = Math.round(newCount)
-
+    const countNum = new BigNumber(newCount).toNumber()
     const currentEliteCount = eliteAnts.value.length
-    const eliteAntsToAdd = Math.min(newCount - currentEliteCount, maxEliteAnts.value - currentEliteCount)
-    const eliteAntsToRemove = currentEliteCount - newCount
+    const eliteAntsToAdd = Math.min(countNum - currentEliteCount, maxEliteAnts.value - currentEliteCount)
+    const eliteAntsToRemove = currentEliteCount - countNum
 
     if (eliteAntsToAdd > 0) {
       addEliteAnts(eliteAntsToAdd)
@@ -461,11 +464,10 @@ watch(
 watch(
   () => props.larvaeCount,
   useThrottleFn((newCount) => {
-    newCount = Math.round(newCount)
-
+    const countNum = new BigNumber(newCount).toNumber()
     const currentLarvaeCount = larvae.value.length
-    const larvaeToAdd = Math.min(newCount - currentLarvaeCount, maxLarvae.value - currentLarvaeCount)
-    const larvaeToRemove = currentLarvaeCount - newCount
+    const larvaeToAdd = Math.min(countNum - currentLarvaeCount, maxLarvae.value - currentLarvaeCount)
+    const larvaeToRemove = currentLarvaeCount - countNum
 
     if (larvaeToAdd > 0) {
       addLarvae(larvaeToAdd)

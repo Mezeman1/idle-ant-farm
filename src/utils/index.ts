@@ -14,16 +14,14 @@ const formatTime = (milliseconds: number, hideZeros = false): string => {
   return `${days}d ${hours}h ${minutes}m ${seconds}s`
 }
 
-const toPercentage = (value?: number | BigNumber, total = 1): string => {
-  if (value instanceof BigNumber) {
-    value = value.toNumber()
-  }
-  
+const toPercentage = (value?: number | BigNumber, total = new BigNumber(1)): string => {
   if (!value) return '0'
-
-  return ((value / total) * 100).toFixed(1)
+  
+  const valueBN = BigNumber.isBigNumber(value) ? value : new BigNumber(value)
+  
+  return valueBN.dividedBy(total).multipliedBy(100).toFixed(1)
 }
-const toPercentageFormatted = (value?: number | BigNumber, total = 1): string => {
+const toPercentageFormatted = (value?: number | BigNumber, total = new BigNumber(1)): string => {
   const percentage = toPercentage(value, total)
   return formatNumber(parseFloat(percentage))
 }

@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js'
+
 export type AntNames = 'Start' |
   'Leaf cutters' |
   'Fire Ants' |
@@ -61,45 +63,45 @@ export interface Evolution {
 }
 
 function scaleEvolutions(baseEvolutions: Evolution[]): Evolution[] {
-  const scaleFactor = 1.5 // 50% increase per evolution
+  const scaleFactor = new BigNumber(1.5) // 50% increase per evolution
   
   return baseEvolutions.map((evolution, index) => {
     if (index <= 1) return evolution // Don't scale the first two evolutions
     
-    const scale = Math.pow(scaleFactor, index - 1)
+    const scale = scaleFactor.pow(index - 1)
     const baseEvolution = baseEvolutions[1] // Always base on the second evolution
     
     return {
       ...evolution,
       statsPerAnt: baseEvolution.statsPerAnt ? {
-        attackPerAnt: Math.round(baseEvolution.statsPerAnt.attackPerAnt * scale),
-        healthPerAnt: Math.round(baseEvolution.statsPerAnt.healthPerAnt * scale),
-        defensePerAnt: Math.round(baseEvolution.statsPerAnt.defensePerAnt * scale),
+        attackPerAnt: new BigNumber(baseEvolution.statsPerAnt.attackPerAnt).multipliedBy(scale),
+        healthPerAnt: new BigNumber(baseEvolution.statsPerAnt.healthPerAnt).multipliedBy(scale),
+        defensePerAnt: new BigNumber(baseEvolution.statsPerAnt.defensePerAnt).multipliedBy(scale),
       } : undefined,
       
       bugModifiers: baseEvolution.bugModifiers ? {
-        bugAttackModifier: baseEvolution.bugModifiers.bugAttackModifier * scale,
-        bugDefenseModifier: baseEvolution.bugModifiers.bugDefenseModifier * scale,
-        bugMaxHealthModifier: baseEvolution.bugModifiers.bugMaxHealthModifier * scale,
-        bugRegenModifier: baseEvolution.bugModifiers.bugRegenModifier * scale,
+        bugAttackModifier: new BigNumber(baseEvolution.bugModifiers.bugAttackModifier).multipliedBy(scale),
+        bugDefenseModifier: new BigNumber(baseEvolution.bugModifiers.bugDefenseModifier).multipliedBy(scale),
+        bugMaxHealthModifier: new BigNumber(baseEvolution.bugModifiers.bugMaxHealthModifier).multipliedBy(scale),
+        bugRegenModifier: new BigNumber(baseEvolution.bugModifiers.bugRegenModifier).multipliedBy(scale),
       } : undefined,
       
       productionRates: {
-        larvaeProductionRate: baseEvolution.productionRates.larvaeProductionRate * scale,
-        collectionRatePerAnt: Math.round(baseEvolution.productionRates.collectionRatePerAnt * scale),
-        collectionRatePerWorker: Math.round(baseEvolution.productionRates.collectionRatePerWorker * scale),
-        collectionRateModifier: baseEvolution.productionRates.collectionRateModifier * Math.sqrt(scale),
-        larvaeProductionModifier: baseEvolution.productionRates.larvaeProductionModifier * Math.sqrt(scale),
+        larvaeProductionRate: new BigNumber(baseEvolution.productionRates.larvaeProductionRate).multipliedBy(scale),
+        collectionRatePerAnt: new BigNumber(baseEvolution.productionRates.collectionRatePerAnt).multipliedBy(scale),
+        collectionRatePerWorker: new BigNumber(baseEvolution.productionRates.collectionRatePerWorker).multipliedBy(scale),
+        collectionRateModifier: new BigNumber(baseEvolution.productionRates.collectionRateModifier).multipliedBy(scale.sqrt()),
+        larvaeProductionModifier: new BigNumber(baseEvolution.productionRates.larvaeProductionModifier).multipliedBy(scale.sqrt()),
       },
       
       resourceCosts: evolution.resourceCosts,
       
       initialCaps: baseEvolution.initialCaps ? {
-        maxSeeds: Math.round(baseEvolution.initialCaps.maxSeeds * scale),
-        maxLarvae: Math.round(baseEvolution.initialCaps.maxLarvae * scale),
-        maxAnts: Math.round(baseEvolution.initialCaps.maxAnts * scale),
-        maxQueens: Math.round(baseEvolution.initialCaps.maxQueens * scale),
-        maxEliteAnts: Math.round(baseEvolution.initialCaps.maxEliteAnts * scale),
+        maxSeeds: new BigNumber(baseEvolution.initialCaps.maxSeeds).multipliedBy(scale),
+        maxLarvae: new BigNumber(baseEvolution.initialCaps.maxLarvae).multipliedBy(scale),
+        maxAnts: new BigNumber(baseEvolution.initialCaps.maxAnts).multipliedBy(scale),
+        maxQueens: new BigNumber(baseEvolution.initialCaps.maxQueens).multipliedBy(scale),
+        maxEliteAnts: new BigNumber(baseEvolution.initialCaps.maxEliteAnts).multipliedBy(scale),
       } : undefined,
     }
   })

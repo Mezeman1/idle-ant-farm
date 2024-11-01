@@ -565,7 +565,7 @@ export const useAdventureStore = defineStore('adventureStore', {
 
             if (drop.name === 'Seeds') {
               // Add seeds to gameStore
-              useResourcesStore().resources.seeds += amount * useResourcesStore().productionRates.collectionRateModifier
+              useResourcesStore().resources.seeds = useResourcesStore().resources.seeds.plus(amount * useResourcesStore().productionRates.collectionRateModifier)
             } else {
               // Handle item drops
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')

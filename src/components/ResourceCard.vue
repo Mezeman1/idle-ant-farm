@@ -87,19 +87,19 @@
 import { computed } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
 import { toPercentage } from '@/utils/index'
-
+import { BigNumber } from 'bignumber.js'
 const gameStore = useGameStore()
 const formatNumber = gameStore.formatNumber
 
 const props = withDefaults(defineProps<{
   title: string
   description: string
-  count: number
-  maxCount: number
-  rate?: number
+  count: number | BigNumber
+  maxCount: number | BigNumber
+  rate?: number | BigNumber
   ratePer?: string
-  bonus?: number
-  storageMultiplier?: number
+  bonus?: number | BigNumber | string
+  storageMultiplier?: number | BigNumber
   cardClass?: string
   unlocked?: boolean
 }>(), {

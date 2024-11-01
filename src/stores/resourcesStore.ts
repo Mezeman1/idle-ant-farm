@@ -5,35 +5,36 @@ import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 import {useTrainingStore} from '@/stores/trainingStore'
 import {useAchievementStore} from '@/stores/achievementStore'
+import BigNumber from 'bignumber.js'
 
 const MAX_SAFE_VALUE = Number.MAX_VALUE
 type AntTypes = 'workers' | 'soldiers' | 'royalQueens'
 export const useResourcesStore = defineStore('resources', {
   state: () => ({
     resources: {
-      larvae: 0,
-      ants: 0,
-      antHousing: 0,
-      eliteAnts: 0,
-      seeds: 10,
-      queens: 1,
-      royalJelly: 0,
+      larvae: new BigNumber(0),
+      ants: new BigNumber(0), 
+      antHousing: new BigNumber(0),
+      eliteAnts: new BigNumber(0),
+      seeds: new BigNumber(10),
+      queens: new BigNumber(1),
+      royalJelly: new BigNumber(0),
 
       // Evolved resources, bought using royal jelly
-      royalJellyAnts: 0,
-      workers: 0,
-      soldiers: 0,
-      royalQueens: 0,
+      royalJellyAnts: new BigNumber(0),
+      workers: new BigNumber(0),
+      soldiers: new BigNumber(0),
+      royalQueens: new BigNumber(0),
     },
 
     antsPerHousing: 1,
 
     storage: {
-      maxSeeds: 1000, // Initial seed storage capacity
-      maxLarvae: 10, // Initial larvae storage capacity
-      maxAnts: 500, // Initial ant storage capacity
-      maxQueens: 10, // Initial queen storage capacity
-      maxEliteAnts: 1,
+      maxSeeds: new BigNumber(1000), // Initial seed storage capacity
+      maxLarvae: new BigNumber(10), // Initial larvae storage capacity
+      maxAnts: new BigNumber(500), // Initial ant storage capacity
+      maxQueens: new BigNumber(10), // Initial queen storage capacity
+      maxEliteAnts: new BigNumber(1),
     },
 
     storageModifiers: {
@@ -56,162 +57,162 @@ export const useResourcesStore = defineStore('resources', {
     },
 
     upgrades: {
-      maxSeedStorage: 0,
-      maxLarvaeStorage: 0,
+      maxSeedStorage: new BigNumber(0),
+      maxLarvaeStorage: new BigNumber(0),
     },
 
     initialCaps: {
-      maxSeeds: 1000,
-      maxLarvae: 10,
-      maxAnts: 500,
-      maxQueens: 10,
-      maxEliteAnts: 1,
+      maxSeeds: new BigNumber(1000),
+      maxLarvae: new BigNumber(10),
+      maxAnts: new BigNumber(500),
+      maxQueens: new BigNumber(10),
+      maxEliteAnts: new BigNumber(1),
     },
 
     productionRates: {
-      antsGenerationRate: 0,
-      larvaeProductionRate: 2.5, // Larvae produced per queen per minute
-      collectionRatePerAnt: 60, // Seeds collected per ant per minute
+      antsGenerationRate: new BigNumber(0),
+      larvaeProductionRate: new BigNumber(2.5), // Larvae produced per queen per minute
+      collectionRatePerAnt: new BigNumber(60), // Seeds collected per ant per minute
 
-      collectionRatePerWorker: 6000, // Seeds collected per worker per minute
-      collectionRateModifier: 1.0, // Multiplicative modifier for seed collection rate
-      larvaeProductionModifier: 1.0, // Multiplicative modifier for larvae production
+      collectionRatePerWorker: new BigNumber(6000), // Seeds collected per worker per minute
+      collectionRateModifier: new BigNumber(1.0), // Multiplicative modifier for seed collection rate
+      larvaeProductionModifier: new BigNumber(1.0), // Multiplicative modifier for larvae production
     },
 
     resourceCosts: {
-      seedCostPerLarva: 100, // Cost in seeds to create one larva
-      seedCostPerAnt: 50, // Cost in seeds to create one ant
-      seedCostPerEliteAnt: 100,
-      larvaCostPerAnt: 1, // Cost in larvae to create one ant
-      larvaCostPerEliteAnt: 5,
-      antCostPerQueen: 50, // Ants required to buy one queen
-      seedCostPerQueen: 500, // Seeds required to buy one queen
+      seedCostPerLarva: new BigNumber(100), // Cost in seeds to create one larva
+      seedCostPerAnt: new BigNumber(50), // Cost in seeds to create one ant
+      seedCostPerEliteAnt: new BigNumber(100),
+      larvaCostPerAnt: new BigNumber(1), // Cost in larvae to create one ant
+      larvaCostPerEliteAnt: new BigNumber(5),
+      antCostPerQueen: new BigNumber(50), // Ants required to buy one queen
+      seedCostPerQueen: new BigNumber(500), // Seeds required to buy one queen
 
       // Costs for evolved resources
-      royalJellyCostPerUpgrade: 1,
+      royalJellyCostPerUpgrade: new BigNumber(1),
     },
 
     upgradeCosts: {
-      seedStorageUpgradeCost: 500, // Initial cost to upgrade seed storage
-      larvaeStorageUpgradeCost: 100, // Initial cost to upgrade larvae storage
+      seedStorageUpgradeCost: new BigNumber(500), // Initial cost to upgrade seed storage
+      larvaeStorageUpgradeCost: new BigNumber(100), // Initial cost to upgrade larvae storage
     },
 
     accumulators: {
-      larvaeAccumulator: 0, // To accumulate fractional larvae production
-      seedAccumulator: 0, // To accumulate fractional seed production
-      antAccumulator: 0, // To accumulate fractional ant production
+      larvaeAccumulator: new BigNumber(0), // To accumulate fractional larvae production
+      seedAccumulator: new BigNumber(0), // To accumulate fractional seed production
+      antAccumulator: new BigNumber(0), // To accumulate fractional ant production
     },
 
     royalJellyCollectionChance: 0.001, // 0.1% chance to collect royal jelly when queen produces larvae
     royalJellyCollectionModifier: 1.0, // Multiplicative modifier for royal jelly collection chance
 
     // Balancing factors
-    storageUpgradeFactor: 1.4, // How much each upgrade increases storage by (20%)
-    upgradeCostFactor: 1.5, // How much each upgrade increases the cost by (30%)
-    multiplierPerEliteAnt: 1.5,
+    storageUpgradeFactor: new BigNumber(1.4), // How much each upgrade increases storage by (20%)
+    upgradeCostFactor: new BigNumber(1.5), // How much each upgrade increases the cost by (30%)
+    multiplierPerEliteAnt: new BigNumber(1.5),
 
-    manualCollection: 10,
-    manualCollectionMultiplier: 1,
+    manualCollection: new BigNumber(10),
+    manualCollectionMultiplier: new BigNumber(1),
 
-    royalQueenMultiplier: 1000,
+    royalQueenMultiplier: new BigNumber(1000),
   }),
   getters: {
     antsPerSecond: (state) => {
       const farmingSpawnRate = useTrainingStore().farmingModifiers.spawnRate ?? 1
-      return state.productionRates.antsGenerationRate * farmingSpawnRate
+      return state.productionRates.antsGenerationRate.multipliedBy(farmingSpawnRate)
     },
     larvaePerMinute: (state) => {
-      const larvaePerQueen = state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier
+      const larvaePerQueen = state.resources.queens.multipliedBy(state.productionRates.larvaeProductionRate).multipliedBy(state.productionRates.larvaeProductionModifier)
 
-      if (state.resources.royalQueens > 0) {
-        const larvaePerRoyalQueen = state.royalQueenMultiplier * state.resources.royalQueens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier
-        return larvaePerQueen + larvaePerRoyalQueen
+      if (state.resources.royalQueens.gt(0)) {
+        const larvaePerRoyalQueen = state.royalQueenMultiplier.multipliedBy(state.resources.royalQueens).multipliedBy(state.productionRates.larvaeProductionRate).multipliedBy(state.productionRates.larvaeProductionModifier)
+        return larvaePerQueen.plus(larvaePerRoyalQueen)
       }
 
       return larvaePerQueen
     },
     // Calculate larvae production per second for real-time updates
     larvaePerSecond: (state) => {
-      const larvaeFromQueens = (state.productionRates.larvaeProductionRate * state.resources.queens * state.productionRates.larvaeProductionModifier) / 60
+      const larvaeFromQueens = state.productionRates.larvaeProductionRate.multipliedBy(state.resources.queens).multipliedBy(state.productionRates.larvaeProductionModifier).dividedBy(60)
 
-      if (state.resources.royalQueens > 0) {
-        const larvaeFromRoyalQueens = (state.productionRates.larvaeProductionRate * state.royalQueenMultiplier * state.resources.royalQueens * state.productionRates.larvaeProductionModifier) / 60
+      if (state.resources.royalQueens.gt(0)) {
+        const larvaeFromRoyalQueens = state.productionRates.larvaeProductionRate.multipliedBy(state.royalQueenMultiplier).multipliedBy(state.resources.royalQueens).multipliedBy(state.productionRates.larvaeProductionModifier).dividedBy(60)
 
-        return larvaeFromQueens + larvaeFromRoyalQueens
+        return larvaeFromQueens.plus(larvaeFromRoyalQueens)
       }
 
       return larvaeFromQueens
     },
     // Calculate seed production per second based on ants
     seedsPerSecond: (state) => {
-      const eliteMultiplier = (state.resources.eliteAnts > 0 ? (state.resources.eliteAnts * state.multiplierPerEliteAnt) : 1) * state.productionRates.collectionRateModifier
-      const seedsFromAnts = (state.productionRates.collectionRatePerAnt * state.resources.ants * eliteMultiplier) / 60 * state.productionRates.collectionRateModifier
-      if (state.resources.workers > 0) {
-        const seedsFromWorkers = (state.productionRates.collectionRatePerWorker * state.resources.workers * eliteMultiplier) / 60
-        return seedsFromAnts + seedsFromWorkers
+      const eliteMultiplier = state.resources.eliteAnts.gt(0) ? state.resources.eliteAnts.multipliedBy(state.multiplierPerEliteAnt) : new BigNumber(1)
+      const seedsFromAnts = state.productionRates.collectionRatePerAnt.multipliedBy(state.resources.ants).multipliedBy(eliteMultiplier).dividedBy(60).multipliedBy(state.productionRates.collectionRateModifier)
+      if (state.resources.workers.gt(0)) {
+        const seedsFromWorkers = state.productionRates.collectionRatePerWorker.multipliedBy(state.resources.workers).multipliedBy(eliteMultiplier).dividedBy(60)
+        return seedsFromAnts.plus(seedsFromWorkers)
       }
 
       return seedsFromAnts
     },
     maxAnts: (state) => {
-      if (state.resources.antHousing === 0) {
-        return Math.floor(state.storage.maxAnts * state.storageModifiers.ant * state.achievementModifiers.storage.ant)
+      if (state.resources.antHousing.isZero()) {
+        return state.storage.maxAnts.multipliedBy(state.storageModifiers.ant).multipliedBy(state.achievementModifiers.storage.ant)
       }
 
-      return Math.floor(state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant * state.achievementModifiers.storage.ant)
+      return state.storage.maxAnts.plus(state.resources.antHousing.multipliedBy(state.antsPerHousing).multipliedBy(state.storageModifiers.ant).multipliedBy(state.achievementModifiers.storage.ant))
     },
     maxSeeds: (state) => {
-      return Math.floor(state.storage.maxSeeds * state.storageModifiers.seed * state.achievementModifiers.storage.seed)
+      return state.storage.maxSeeds.multipliedBy(state.storageModifiers.seed).multipliedBy(state.achievementModifiers.storage.seed)
     },
     maxLarvae: (state) => {
-      return Math.floor(state.storage.maxLarvae * state.storageModifiers.larvae * state.achievementModifiers.storage.larvae)
+      return state.storage.maxLarvae.multipliedBy(state.storageModifiers.larvae).multipliedBy(state.achievementModifiers.storage.larvae)
     },
     maxQueens: (state) => {
-      return Math.floor(state.storage.maxQueens * state.storageModifiers.queen * state.achievementModifiers.storage.queen)
+      return state.storage.maxQueens.multipliedBy(state.storageModifiers.queen).multipliedBy(state.achievementModifiers.storage.queen)
     },
     maxWorkers: (state) => {
-      return Math.floor(state.storage.maxAnts * 0.01)
+      return state.storage.maxAnts.multipliedBy(0.01)
     },
     maxSoldiers: (state) => {
-      return Math.floor(state.storage.maxAnts * 0.01)
+      return state.storage.maxAnts.multipliedBy(0.01)
     },
     maxRoyalQueens: (state) => {
-      return Math.floor(state.storage.maxQueens * 0.25)
+      return state.storage.maxQueens.multipliedBy(0.25)
     },
     seedCostPerAntHousing: (state) => {
-      if (state.resources.antHousing === 0) {
+      if (state.resources.antHousing.isZero()) {
         return 1
       }
 
-      return state.resources.antHousing + 1
+      return state.resources.antHousing.plus(1)
     },
     royalJellyChance: (state) => {
       return state.royalJellyCollectionChance * state.royalJellyCollectionModifier
     },
   },
   actions: {
-    addAnts(amount: number) {
-      this.productionRates.antsGenerationRate += amount
+    addAnts(amount: BigNumber) {
+      this.productionRates.antsGenerationRate = new BigNumber(this.productionRates.antsGenerationRate).plus(amount)
     },
     applyStorageModifiers(storageModifiers: any) {
       this.storageModifiers = storageModifiers
     },
     upgradeAnt() {
-      if (useGameStore().royalJellyUnlocked && this.resources.royalJelly >= this.resourceCosts.royalJellyCostPerUpgrade) {
-        this.resources.royalJelly -= this.resourceCosts.royalJellyCostPerUpgrade
-        this.resources.royalJellyAnts += 1
+      if (useGameStore().royalJellyUnlocked && this.resources.royalJelly.gte(this.resourceCosts.royalJellyCostPerUpgrade)) {
+        this.resources.royalJelly = this.resources.royalJelly.minus(this.resourceCosts.royalJellyCostPerUpgrade)
+        this.resources.royalJellyAnts = this.resources.royalJellyAnts.plus(1)
       }
     },
     maxUpgradeAnt() {
-      if (useGameStore().royalJellyUnlocked && this.resourceCosts.royalJellyCostPerUpgrade > 0) {
-        const count = Math.floor(this.resources.royalJelly / this.resourceCosts.royalJellyCostPerUpgrade)
-        this.resources.royalJelly -= this.resourceCosts.royalJellyCostPerUpgrade * count
-        this.resources.royalJellyAnts += count
+      if (useGameStore().royalJellyUnlocked && this.resourceCosts.royalJellyCostPerUpgrade.gt(0)) {
+        const count = this.resources.royalJelly.dividedBy(this.resourceCosts.royalJellyCostPerUpgrade).floor()
+        this.resources.royalJelly = this.resources.royalJelly.minus(this.resourceCosts.royalJellyCostPerUpgrade.multipliedBy(count))
+        this.resources.royalJellyAnts = this.resources.royalJellyAnts.plus(count)
       }
     },
     upgradeAntTo(antType: AntTypes) {
-      if (this.resources.royalJellyAnts > 0) {
-        if (antType === 'workers' && this.resources.workers >= this.maxWorkers) {
+      if (this.resources.royalJellyAnts.gt(0)) {
+        if (antType === 'workers' && this.resources.workers.gte(this.maxWorkers)) {
           return
         }
 
@@ -223,13 +224,13 @@ export const useResourcesStore = defineStore('resources', {
           return
         }
 
-        this.resources.royalJellyAnts -= 1
-        this.resources[antType] += 1
+        this.resources.royalJellyAnts = this.resources.royalJellyAnts.minus(1)
+        this.resources[antType] = this.resources[antType].plus(1)
       }
     },
     maxUpgradeAntTo(antType: AntTypes) {
-      while (this.resources.royalJellyAnts > 0) {
-        if (antType === 'workers' && this.resources.workers >= this.maxWorkers) {
+      while (this.resources.royalJellyAnts.gt(0)) {
+        if (antType === 'workers' && this.resources.workers.gte(this.maxWorkers)) {
           return
         }
 
@@ -241,27 +242,27 @@ export const useResourcesStore = defineStore('resources', {
           return
         }
 
-        this.resources.royalJellyAnts -= 1
-        this.resources[antType] += 1
+        this.resources.royalJellyAnts = this.resources.royalJellyAnts.minus(1)
+        this.resources[antType] = this.resources[antType].plus(1)
       }
     },
     downgradeAntFrom(antType: AntTypes) {
-      if (this.resources[antType] > 0) {
-        this.resources[antType] -= 1
-        this.resources.royalJellyAnts += 1
+      if (this.resources[antType].gt(0)) {
+        this.resources[antType] = this.resources[antType].minus(1)
+        this.resources.royalJellyAnts = this.resources.royalJellyAnts.plus(1)
       }
     },
     maxDowngradeAntFrom(antType: AntTypes) {
-      while (this.resources[antType] > 0) {
-        this.resources[antType] -= 1
-        this.resources.royalJellyAnts += 1
+      while (this.resources[antType].gt(0)) {
+        this.resources[antType] = this.resources[antType].minus(1)
+        this.resources.royalJellyAnts = this.resources.royalJellyAnts.plus(1)
       }
     },
     // Function to create larvae using seeds, respecting the larvae cap
     createLarvae() {
-      if (this.resources.seeds >= this.resourceCosts.seedCostPerLarva && this.resources.larvae < Math.floor(this.maxLarvae)) {
-        this.resources.larvae += 1
-        this.resources.seeds -= this.resourceCosts.seedCostPerLarva
+      if (this.resources.seeds.gte(this.resourceCosts.seedCostPerLarva) && this.resources.larvae.lt(this.maxLarvae)) {
+        this.resources.larvae = this.resources.larvae.plus(1)
+        this.resources.seeds = this.resources.seeds.minus(this.resourceCosts.seedCostPerLarva)
         return true
       }
 
@@ -269,53 +270,57 @@ export const useResourcesStore = defineStore('resources', {
     },
     // Create max larvae based on available seeds and larvae cap
     createMaxLarvae() {
-      const availableLarvaeSpace = Math.floor(this.maxLarvae) - this.resources.larvae
-      const maxCreatableLarvae = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerLarva)
+      const availableLarvaeSpace = this.maxLarvae.minus(this.resources.larvae)
+      const maxCreatableLarvae = this.resources.seeds.dividedBy(this.resourceCosts.seedCostPerLarva)
 
       // Calculate how many larvae can actually be created
-      const larvaeToCreate = Math.min(availableLarvaeSpace, maxCreatableLarvae)
+      const larvaeToCreate = availableLarvaeSpace.comparedTo(maxCreatableLarvae) < 0 ? availableLarvaeSpace : maxCreatableLarvae
 
       // If there is space and enough seeds to create larvae
-      if (larvaeToCreate > 0) {
-        this.resources.larvae += larvaeToCreate
-        this.resources.seeds -= larvaeToCreate * this.resourceCosts.seedCostPerLarva
+      if (larvaeToCreate.gt(0)) {
+        this.resources.larvae = this.resources.larvae.plus(larvaeToCreate)
+        this.resources.seeds = this.resources.seeds.minus(larvaeToCreate.multipliedBy(this.resourceCosts.seedCostPerLarva))
       }
     },
 
     // Function to create ants using larvae and seeds
     createAnts() {
-      if (this.resources.larvae >= this.resourceCosts.larvaCostPerAnt && this.resources.seeds >= this.resourceCosts.seedCostPerAnt && this.resources.ants < Math.floor(this.maxAnts)) {
-        this.resources.ants += 1
+      if (this.resources.larvae.gte(this.resourceCosts.larvaCostPerAnt) && this.resources.seeds.gte(this.resourceCosts.seedCostPerAnt) && this.resources.ants.lt(this.maxAnts)) {
+        this.resources.ants = this.resources.ants.plus(1)
         useAchievementStore().addToTotal('ants', 1)
-        this.resources.larvae -= this.resourceCosts.larvaCostPerAnt
-        this.resources.seeds -= this.resourceCosts.seedCostPerAnt
+        this.resources.larvae = this.resources.larvae.minus(this.resourceCosts.larvaCostPerAnt)
+        this.resources.seeds = this.resources.seeds.minus(this.resourceCosts.seedCostPerAnt)
         return true
       }
 
       return false
     },
     createMaxAnts(fromPrestige = false) {
-      if (
-        fromPrestige
-        && this.resources.larvae < useSettingsStore().autoThresholds.autoAntCreationLarvae / 100 * this.maxLarvae
-        || fromPrestige
-        && this.resources.seeds < useSettingsStore().autoThresholds.autoAntCreationSeeds / 100 * this.maxSeeds
-      ) {
-        return
+      if (fromPrestige) {
+        const larvaeThreshold = new BigNumber(useSettingsStore().autoThresholds.autoAntCreationLarvae).dividedBy(100)
+        const seedsThreshold = new BigNumber(useSettingsStore().autoThresholds.autoAntCreationSeeds).dividedBy(100)
+
+        if (
+          this.resources.larvae.lt(this.maxLarvae.multipliedBy(larvaeThreshold)) ||
+          this.resources.seeds.lt(this.maxSeeds.multipliedBy(seedsThreshold))
+        ) {
+          return
+        }
       }
 
-      const availableAntSpace = Math.floor(this.maxAnts) - this.resources.ants
-      const maxCreatableAntsByLarvae = Math.floor(this.resources.larvae / this.resourceCosts.larvaCostPerAnt)
-      const maxCreatableAntsBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerAnt)
+      const availableAntSpace = this.maxAnts.minus(this.resources.ants)
+      const maxCreatableAntsByLarvae = this.resources.larvae.dividedBy(this.resourceCosts.larvaCostPerAnt)
+      const maxCreatableAntsBySeeds = this.resources.seeds.dividedBy(this.resourceCosts.seedCostPerAnt)
 
       // Calculate how many ants can actually be created based on both larvae and seeds
-      const antsToCreate = Math.min(availableAntSpace, maxCreatableAntsByLarvae, maxCreatableAntsBySeeds)
+      let antsToCreate = availableAntSpace.comparedTo(maxCreatableAntsByLarvae) < 0 ? availableAntSpace : maxCreatableAntsByLarvae
+      antsToCreate = antsToCreate.comparedTo(maxCreatableAntsBySeeds) < 0 ? antsToCreate : maxCreatableAntsBySeeds
 
       // If there is space and enough larvae and seeds to create ants
-      if (antsToCreate > 0) {
-        this.resources.ants += antsToCreate
-        this.resources.larvae -= antsToCreate * this.resourceCosts.larvaCostPerAnt
-        this.resources.seeds -= antsToCreate * this.resourceCosts.seedCostPerAnt
+      if (antsToCreate.gt(0)) {
+        this.resources.ants = this.resources.ants.plus(antsToCreate)
+        this.resources.larvae = this.resources.larvae.minus(antsToCreate.multipliedBy(this.resourceCosts.larvaCostPerAnt))
+        this.resources.seeds = this.resources.seeds.minus(antsToCreate.multipliedBy(this.resourceCosts.seedCostPerAnt))
 
         useAchievementStore().addToTotal('ants', antsToCreate)
       }
@@ -327,45 +332,51 @@ export const useResourcesStore = defineStore('resources', {
         return
       }
 
-      this.resources.seeds -= seedCost
-      this.resources.antHousing += 1
+      this.resources.seeds = this.resources.seeds.minus(seedCost)
+      this.resources.antHousing = this.resources.antHousing.plus(1)
     },
     createMaxAntHousing(fromPrestige = false) {
-      const threshold = useSettingsStore().autoThresholds.autoCreateHousing / 100
+      const threshold = new BigNumber(useSettingsStore().autoThresholds.autoCreateHousing / 100)
       const currentAnts = this.resources.ants
       const maxAnts = this.maxAnts
 
-      if (fromPrestige && currentAnts < threshold * maxAnts) {
+      if (fromPrestige && currentAnts.lt(threshold.multipliedBy(maxAnts))) {
         return
       }
-
 
       const seeds = this.resources.seeds
       const antHousing = this.resources.antHousing
 
       // Using a power function to calculate how many ant housings can be purchased in one go
-      const initialCost = antHousing + 1
+      const initialCost = antHousing.plus(1)
 
-      // The total cost formula is S = n * (initialCost + (initialCost + (n-1))) / 2
-      // Solving for n: n = (-initialCost + sqrt(initialCost^2 + 2 * seeds)) / 1
-      const numberOfPurchases = Math.floor((-initialCost + Math.sqrt(initialCost * initialCost + 2 * seeds)))
+      // Calculate discriminant using BigNumber
+      const discriminant = initialCost.multipliedBy(initialCost).plus(seeds.multipliedBy(2))
+      
+      // Calculate number of purchases using BigNumber
+      const numberOfPurchases = discriminant.sqrt().minus(initialCost)
 
-      // Calculate the total cost based on number of purchases
-      const totalCost = numberOfPurchases * (initialCost + (initialCost + (numberOfPurchases - 1))) / 2
+      // Calculate total cost using BigNumber
+      const n = new BigNumber(numberOfPurchases)
+      const totalCost = n.multipliedBy(
+        initialCost.plus(
+          initialCost.plus(n.minus(1)),
+        ),
+      ).dividedBy(2)
 
       // Deduct seeds and increase ant housing in bulk
-      this.resources.seeds -= totalCost
-      this.resources.antHousing += numberOfPurchases
+      this.resources.seeds = this.resources.seeds.minus(totalCost)
+      this.resources.antHousing = this.resources.antHousing.plus(numberOfPurchases)
     },
     // Function to create ants using larvae and seeds
     createEliteAnts() {
-      if (this.resources.larvae >= this.resourceCosts.larvaCostPerEliteAnt && this.resources.seeds >= this.resourceCosts.seedCostPerEliteAnt && this.resources.eliteAnts < Math.floor(this.storage.maxEliteAnts)) {
-        this.resources.eliteAnts += 1
-        this.resources.larvae -= this.resourceCosts.larvaCostPerEliteAnt
-        this.resources.seeds -= this.resourceCosts.seedCostPerEliteAnt
+      if (this.resources.larvae.gte(this.resourceCosts.larvaCostPerEliteAnt) && this.resources.seeds.gte(this.resourceCosts.seedCostPerEliteAnt) && this.resources.eliteAnts.lt(this.storage.maxEliteAnts)) {
+        this.resources.eliteAnts = this.resources.eliteAnts.plus(1)
+        this.resources.larvae = this.resources.larvae.minus(this.resourceCosts.larvaCostPerEliteAnt)
+        this.resources.seeds = this.resources.seeds.minus(this.resourceCosts.seedCostPerEliteAnt)
 
-        this.resourceCosts.larvaCostPerEliteAnt = Math.floor(this.resourceCosts.larvaCostPerEliteAnt * 5)
-        this.resourceCosts.seedCostPerEliteAnt = Math.floor(this.resourceCosts.seedCostPerEliteAnt * 5)
+        this.resourceCosts.larvaCostPerEliteAnt = this.resourceCosts.larvaCostPerEliteAnt.multipliedBy(5)
+        this.resourceCosts.seedCostPerEliteAnt = this.resourceCosts.seedCostPerEliteAnt.multipliedBy(5)
 
         return true
       }
@@ -375,33 +386,34 @@ export const useResourcesStore = defineStore('resources', {
     createEliteMaxAnts(fromPrestige = false) {
       if (
         fromPrestige
-        && this.resources.larvae < useSettingsStore().autoThresholds.autoEliteAntsCreationLarvae / 100 * this.maxLarvae
+        && this.resources.larvae.lt(new BigNumber(useSettingsStore().autoThresholds.autoEliteAntsCreationLarvae / 100).multipliedBy(this.maxLarvae))
         || fromPrestige
-        && this.resources.seeds < useSettingsStore().autoThresholds.autoEliteAntsCreationSeeds / 100 * this.maxSeeds
+        && this.resources.seeds.lt(new BigNumber(useSettingsStore().autoThresholds.autoEliteAntsCreationSeeds / 100).multipliedBy(this.maxSeeds))
       ) {
         return
       }
 
-      const availableEliteAntSpace = Math.floor(this.storage.maxEliteAnts) - this.resources.eliteAnts
-      const maxCreatableEliteAntsByLarvae = Math.floor(this.resources.larvae / this.resourceCosts.larvaCostPerEliteAnt)
-      const maxCreatableEliteAntsBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerEliteAnt)
+      const availableEliteAntSpace = this.storage.maxEliteAnts.minus(this.resources.eliteAnts)
+      const maxCreatableEliteAntsByLarvae = this.resources.larvae.dividedBy(this.resourceCosts.larvaCostPerEliteAnt)
+      const maxCreatableEliteAntsBySeeds = this.resources.seeds.dividedBy(this.resourceCosts.seedCostPerEliteAnt)
 
       // Calculate how many elite ants can actually be created based on both larvae and seeds
-      const eliteAntsToCreate = Math.min(availableEliteAntSpace, maxCreatableEliteAntsByLarvae, maxCreatableEliteAntsBySeeds)
+      let eliteAntsToCreate = availableEliteAntSpace.comparedTo(maxCreatableEliteAntsByLarvae) < 0 ? availableEliteAntSpace : maxCreatableEliteAntsByLarvae
+      eliteAntsToCreate = eliteAntsToCreate.comparedTo(maxCreatableEliteAntsBySeeds) < 0 ? eliteAntsToCreate : maxCreatableEliteAntsBySeeds
 
       // If there is space and enough larvae and seeds to create elite ants
-      if (eliteAntsToCreate > 0) {
-        for (let i = 0; i < eliteAntsToCreate; i++) {
+      if (eliteAntsToCreate.gt(0)) {
+        for (let i = new BigNumber(0); i.lt(eliteAntsToCreate); i = i.plus(1)) {
           this.createEliteAnts()
         }
       }
     },
     // Function to buy more queens
     buyQueen() {
-      if (this.resources.ants >= this.resourceCosts.antCostPerQueen && this.resources.seeds >= this.resourceCosts.seedCostPerQueen && this.resources.queens < Math.floor(this.maxQueens)) {
-        this.resources.queens += 1
-        this.resources.ants -= this.resourceCosts.antCostPerQueen
-        this.resources.seeds -= this.resourceCosts.seedCostPerQueen
+      if (this.resources.ants.gte(this.resourceCosts.antCostPerQueen) && this.resources.seeds.gte(this.resourceCosts.seedCostPerQueen) && this.resources.queens.lt(this.maxQueens)) {
+        this.resources.queens = this.resources.queens.plus(1)
+        this.resources.ants = this.resources.ants.minus(this.resourceCosts.antCostPerQueen)
+        this.resources.seeds = this.resources.seeds.minus(this.resourceCosts.seedCostPerQueen)
 
         useAchievementStore().addToTotal('queens', 1)
         return true
@@ -410,7 +422,7 @@ export const useResourcesStore = defineStore('resources', {
       return false
     },
     addQueen(amount = 1) {
-      this.resources.queens = Math.min(this.resources.queens + amount, this.maxQueens)
+      this.resources.queens = this.resources.queens.plus(amount).comparedTo(this.maxQueens) < 0 ? this.resources.queens.plus(amount) : this.maxQueens
 
       useAchievementStore().addToTotal('queens', amount)
     },
@@ -418,216 +430,207 @@ export const useResourcesStore = defineStore('resources', {
     buyMaxQueens(fromPrestige = false) {
       if (
         fromPrestige
-        && this.resources.ants < useSettingsStore().autoThresholds.autoQueenCreationAnts / 100 * this.storage.maxAnts
+        && this.resources.ants.lt(new BigNumber(useSettingsStore().autoThresholds.autoQueenCreationAnts / 100).multipliedBy(this.storage.maxAnts))
         || fromPrestige
-        && this.resources.seeds < useSettingsStore().autoThresholds.autoQueenCreationSeeds / 100 * this.maxSeeds
+        && this.resources.seeds.lt(new BigNumber(useSettingsStore().autoThresholds.autoQueenCreationSeeds / 100).multipliedBy(this.maxSeeds))
       ) {
         return
       }
 
-      const availableQueenSpace = Math.floor(this.maxQueens) - this.resources.queens
-      const maxPurchasableQueensByAnts = Math.floor(this.resources.ants / this.resourceCosts.antCostPerQueen)
-      const maxPurchasableQueensBySeeds = Math.floor(this.resources.seeds / this.resourceCosts.seedCostPerQueen)
+      const availableQueenSpace = this.maxQueens.minus(this.resources.queens)
+      const maxPurchasableQueensByAnts = this.resources.ants.dividedBy(this.resourceCosts.antCostPerQueen)
+      const maxPurchasableQueensBySeeds = this.resources.seeds.dividedBy(this.resourceCosts.seedCostPerQueen)
 
       // Calculate how many queens can actually be bought based on both ants and seeds
-      const queensToBuy = Math.min(availableQueenSpace, maxPurchasableQueensByAnts, maxPurchasableQueensBySeeds)
+      let queensToBuy = availableQueenSpace.comparedTo(maxPurchasableQueensByAnts) < 0 ? availableQueenSpace : maxPurchasableQueensByAnts
+      queensToBuy = queensToBuy.comparedTo(maxPurchasableQueensBySeeds) < 0 ? queensToBuy : maxPurchasableQueensBySeeds
 
       // If there is space and enough ants and seeds to buy queens
-      if (queensToBuy > 0) {
-        this.resources.queens += queensToBuy
-        this.resources.ants -= queensToBuy * this.resourceCosts.antCostPerQueen
-        this.resources.seeds -= queensToBuy * this.resourceCosts.seedCostPerQueen
+      if (queensToBuy.gt(0)) {
+        this.resources.queens = this.resources.queens.plus(queensToBuy)
+        this.resources.ants = this.resources.ants.minus(queensToBuy.multipliedBy(this.resourceCosts.antCostPerQueen))
+        this.resources.seeds = this.resources.seeds.minus(queensToBuy.multipliedBy(this.resourceCosts.seedCostPerQueen))
 
         useAchievementStore().addToTotal('queens', queensToBuy)
       }
     },
     // Collect seeds manually, but respect the seed cap
-    collectSeedsManually(amount = 1) {
-      const manualSeedCollectionRate = this.manualCollection * this.manualCollectionMultiplier // Number of seeds collected per click
-      const seedsToAdd = Math.min(manualSeedCollectionRate, this.maxSeeds - this.resources.seeds)
-      if (amount > 0 && this.resources.seeds + seedsToAdd <= this.maxSeeds) {
-        this.resources.seeds += amount
+    collectSeedsManually(amount = new BigNumber(1)) {
+      const manualSeedCollectionRate = this.manualCollection.multipliedBy(this.manualCollectionMultiplier) // Number of seeds collected per click
+      const seedsToAdd = manualSeedCollectionRate.comparedTo(this.maxSeeds.minus(this.resources.seeds)) < 0 ? manualSeedCollectionRate : this.maxSeeds.minus(this.resources.seeds)
+      if (amount.gt(0) && this.resources.seeds.plus(seedsToAdd).lte(this.maxSeeds)) {
+        this.resources.seeds = this.resources.seeds.plus(amount)
         return
       }
 
-      this.resources.seeds += seedsToAdd
+      this.resources.seeds = this.resources.seeds.plus(seedsToAdd)
     },
     upgradeSeedStorage() {
-      if (this.resources.seeds >= this.upgradeCosts.seedStorageUpgradeCost) {
-        this.resources.seeds -= this.upgradeCosts.seedStorageUpgradeCost
+      if (this.resources.seeds.gte(this.upgradeCosts.seedStorageUpgradeCost)) {
+        this.resources.seeds = this.resources.seeds.minus(this.upgradeCosts.seedStorageUpgradeCost)
 
         this.upgradeSeedStorageEffect(this.upgrades.maxSeedStorage)
 
-        this.upgrades.maxSeedStorage += 1
+        this.upgrades.maxSeedStorage = this.upgrades.maxSeedStorage.plus(1)
 
         // Increase the upgrade cost by 30%, but prevent it from exceeding MAX_SAFE_VALUE
-        this.upgradeCosts.seedStorageUpgradeCost = Math.min(
-          Math.floor(this.upgradeCosts.seedStorageUpgradeCost * this.upgradeCostFactor),
-          MAX_SAFE_VALUE,
-        )
+        this.upgradeCosts.seedStorageUpgradeCost = this.upgradeCosts.seedStorageUpgradeCost.multipliedBy(this.upgradeCostFactor)
       }
     },
     upgradeMaxSeedStorage(fromPrestige = false) {
-      if (fromPrestige && this.resources.seeds < useSettingsStore().autoThresholds.autoSeedStorageUpgrade / 100 * this.maxSeeds) {
+      if (fromPrestige && this.resources.seeds.lt(new BigNumber(useSettingsStore().autoThresholds.autoSeedStorageUpgrade / 100).multipliedBy(this.maxSeeds))) {
         return
       }
 
-      let affordableUpgrades = 0
-      let totalCost = 0
+      let affordableUpgrades = new BigNumber(0)
+      let totalCost = new BigNumber(0)
       let nextUpgradeCost = this.upgradeCosts.seedStorageUpgradeCost
 
       // Calculate how many upgrades can be afforded in one go
-      while (this.resources.seeds >= totalCost + nextUpgradeCost && nextUpgradeCost < MAX_SAFE_VALUE) {
-        affordableUpgrades += 1
-        totalCost += nextUpgradeCost
-        nextUpgradeCost = Math.min(
-          Math.floor(nextUpgradeCost * this.upgradeCostFactor),
-          MAX_SAFE_VALUE,
-        )
+      while (this.resources.seeds.gte(totalCost.plus(nextUpgradeCost))) {
+        affordableUpgrades = affordableUpgrades.plus(1)
+        totalCost = totalCost.plus(nextUpgradeCost)
+        nextUpgradeCost = nextUpgradeCost.multipliedBy(this.upgradeCostFactor)
       }
 
       // If there are any affordable upgrades
-      if (affordableUpgrades > 0) {
+      if (affordableUpgrades.gt(0)) {
         // Deduct the total cost
-        this.resources.seeds -= totalCost
+        this.resources.seeds = this.resources.seeds.minus(totalCost)
 
-        for (let i = 0; i < affordableUpgrades; i++) {
-          this.upgradeSeedStorageEffect(this.upgrades.maxSeedStorage + i)
+        for (let i = new BigNumber(0); i.lt(affordableUpgrades); i = i.plus(1)) {
+          this.upgradeSeedStorageEffect(this.upgrades.maxSeedStorage.plus(i))
         }
 
         // Update the upgrade cost
         this.upgradeCosts.seedStorageUpgradeCost = nextUpgradeCost
 
         // Apply the total number of upgrades
-        this.upgrades.maxSeedStorage += affordableUpgrades
-        
+        this.upgrades.maxSeedStorage = this.upgrades.maxSeedStorage.plus(affordableUpgrades)
       }
     },
-    upgradeSeedStorageEffect(amount = 1) {
-      const diminishingFactor = 1 / (1 + amount / 250)
-      const multiplier = Math.max(this.storageUpgradeFactor * diminishingFactor, 1.01)
-      const nextUpgrade = Math.floor(this.storage.maxSeeds * multiplier)
+    upgradeSeedStorageEffect(amount = new BigNumber(1)) {
+      const diminishingFactor = new BigNumber(1).dividedBy(new BigNumber(1).plus(amount.dividedBy(250)))
+      const multiplier = BigNumber.maximum(this.storageUpgradeFactor.multipliedBy(diminishingFactor), new BigNumber(1.01))
+      const nextUpgrade = this.storage.maxSeeds.multipliedBy(multiplier)
 
-      this.storage.maxSeeds = Math.min(
-        nextUpgrade,
-        MAX_SAFE_VALUE,
-      )
+      this.storage.maxSeeds = nextUpgrade
     },
-    upgradeLarvaeStorageEffect(amount = 1) {
-      const diminishingFactor = 1 / (1 + amount / 65)
-      const multiplier = Math.max(this.storageUpgradeFactor * diminishingFactor, 1.01)
-      const nextUpgrade = Math.floor(this.storage.maxLarvae * multiplier)
+    upgradeLarvaeStorageEffect(amount = new BigNumber(1)) {
+      const diminishingFactor = new BigNumber(1).dividedBy(new BigNumber(1).plus(amount.dividedBy(65)))
+      const multiplier = BigNumber.maximum(this.storageUpgradeFactor.multipliedBy(diminishingFactor), new BigNumber(1.01))
+      const nextUpgrade = this.storage.maxLarvae.multipliedBy(multiplier)
 
-      this.storage.maxLarvae = Math.min(
-        nextUpgrade,
-        MAX_SAFE_VALUE,
-      )
+      this.storage.maxLarvae = nextUpgrade
     },
     // Function to upgrade larvae storage
     upgradeLarvaeStorage() {
-      if (this.resources.seeds >= this.upgradeCosts.larvaeStorageUpgradeCost) {
-        this.resources.seeds -= this.upgradeCosts.larvaeStorageUpgradeCost
+      if (this.resources.seeds.gte(this.upgradeCosts.larvaeStorageUpgradeCost)) {
+        this.resources.seeds = this.resources.seeds.minus(this.upgradeCosts.larvaeStorageUpgradeCost)
 
         // Increase storage by 20% of the current max
         this.upgradeLarvaeStorageEffect(this.upgrades.maxLarvaeStorage)
 
         // Increase the upgrade cost by 30%
-        this.upgradeCosts.larvaeStorageUpgradeCost = Math.floor(this.upgradeCosts.larvaeStorageUpgradeCost * this.upgradeCostFactor)
+        this.upgradeCosts.larvaeStorageUpgradeCost = this.upgradeCosts.larvaeStorageUpgradeCost.multipliedBy(this.upgradeCostFactor)
 
-        this.upgrades.maxLarvaeStorage += 1
+        this.upgrades.maxLarvaeStorage = this.upgrades.maxLarvaeStorage.plus(1)
       }
     },
     upgradeMaxLarvaeStorage(fromPrestige = false) {
-      if (fromPrestige && this.resources.larvae < useSettingsStore().autoThresholds.autoLarvaeStorageUpgrade / 100 * this.maxLarvae) {
+      if (fromPrestige && this.resources.larvae.lt(new BigNumber(useSettingsStore().autoThresholds.autoLarvaeStorageUpgrade / 100).multipliedBy(this.maxLarvae))) {
         return
       }
 
-      let affordableUpgrades = 0
-      let totalCost = 0
+      let affordableUpgrades = new BigNumber(0)
+      let totalCost = new BigNumber(0)
       let nextUpgradeCost = this.upgradeCosts.larvaeStorageUpgradeCost
 
       // Calculate how many upgrades can be afforded in one go
-      while (this.resources.seeds >= totalCost + nextUpgradeCost) {
-        affordableUpgrades += 1
-        totalCost += nextUpgradeCost
-        nextUpgradeCost = Math.floor(nextUpgradeCost * this.upgradeCostFactor)
+      while (this.resources.seeds.gte(totalCost.plus(nextUpgradeCost))) {
+        affordableUpgrades = affordableUpgrades.plus(1)
+        totalCost = totalCost.plus(nextUpgradeCost)
+        nextUpgradeCost = nextUpgradeCost.multipliedBy(this.upgradeCostFactor)
       }
 
       // If there are any affordable upgrades
-      if (affordableUpgrades > 0) {
+      if (affordableUpgrades.gt(0)) {
         // Deduct the total cost
-        this.resources.seeds -= totalCost
+        this.resources.seeds = this.resources.seeds.minus(totalCost)
 
         // Apply all upgrades at once
-        for (let i = 0; i < affordableUpgrades; i++) {
-          this.upgradeLarvaeStorageEffect(this.upgrades.maxLarvaeStorage + i)
+        for (let i = new BigNumber(0); i.lt(affordableUpgrades); i = i.plus(1)) {
+          this.upgradeLarvaeStorageEffect(this.upgrades.maxLarvaeStorage.plus(i))
         }
 
         // Update the upgrade cost
         this.upgradeCosts.larvaeStorageUpgradeCost = nextUpgradeCost
 
-        this.upgrades.maxLarvaeStorage += affordableUpgrades
+        this.upgrades.maxLarvaeStorage = this.upgrades.maxLarvaeStorage.plus(affordableUpgrades)
       }
     },
     updateResources(deltaTime: number) {
       // Update larvae, but only if there are queens
-      if (this.resources.queens > 0 && this.resources.larvae + 1 < this.maxLarvae) {
+      if (this.resources.queens.gt(0) && this.resources.larvae.plus(1).lt(this.maxLarvae)) {
         const larvaePerSecond = this.larvaePerSecond // Use the larvaePerSecond calculation
 
         // Calculate how many larvae to add based on deltaTime
-        const larvaeToAdd = larvaePerSecond * deltaTime
-        this.accumulators.larvaeAccumulator += larvaeToAdd
+        const larvaeToAdd = larvaePerSecond.multipliedBy(deltaTime)
+        this.accumulators.larvaeAccumulator = new BigNumber(this.accumulators.larvaeAccumulator).plus(larvaeToAdd)
 
         // Only add full larvae units when the accumulator reaches or exceeds 1
-        const wholeLarvae = Math.floor(this.accumulators.larvaeAccumulator)
-        if (wholeLarvae > 0) {
-          this.resources.larvae = Math.min(this.resources.larvae + wholeLarvae, this.maxLarvae)
-          this.accumulators.larvaeAccumulator -= wholeLarvae // Subtract the whole units from the accumulator
-          useAchievementStore().addToTotal('larvae', wholeLarvae)
+        const wholeLarvae = this.accumulators.larvaeAccumulator
+        if (wholeLarvae.gt(0)) {
+          const newLarvae = this.resources.larvae.plus(wholeLarvae)
+          this.resources.larvae = BigNumber.minimum(newLarvae, this.maxLarvae)
+          this.accumulators.larvaeAccumulator = this.accumulators.larvaeAccumulator.minus(wholeLarvae)
+          useAchievementStore().addToTotal('larvae', wholeLarvae.toNumber())
 
           this.tryCollectJelly()
         }
       }
 
       // Update seeds, but only if there are ants
-      if (this.resources.ants > 0 && this.resources.seeds + 1 < this.maxSeeds) {
+      if (this.resources.ants.gt(0) && this.resources.seeds.plus(1).lt(this.maxSeeds)) {
         const seedsPerSecond = this.seedsPerSecond // Use the seedsPerSecond calculation
 
         // Calculate how many seeds to add based on deltaTime
-        const seedsToAdd = seedsPerSecond * deltaTime
-        this.accumulators.seedAccumulator += seedsToAdd
+        const seedsToAdd = seedsPerSecond.multipliedBy(deltaTime)
+        this.accumulators.seedAccumulator = new BigNumber(this.accumulators.seedAccumulator).plus(seedsToAdd)
 
         // Only add full seed units when the accumulator reaches or exceeds 1
-        const wholeSeeds = Math.floor(this.accumulators.seedAccumulator)
-        if (wholeSeeds > 0) {
-          this.resources.seeds = Math.min(this.resources.seeds + wholeSeeds, this.maxSeeds)
-          this.accumulators.seedAccumulator -= wholeSeeds // Subtract the whole units from the accumulator
+        const wholeSeeds = this.accumulators.seedAccumulator
+        if (wholeSeeds.gt(0)) {
+          const newSeeds = this.resources.seeds.plus(wholeSeeds)
+          this.resources.seeds = BigNumber.minimum(newSeeds, this.maxSeeds)
+          this.accumulators.seedAccumulator = this.accumulators.seedAccumulator.minus(wholeSeeds)
 
-          useAchievementStore().addToTotal('seeds', wholeSeeds)
+          useAchievementStore().addToTotal('seeds', wholeSeeds.toNumber())
         }
       }
 
-      if (this.resources.ants + 1 < this.maxAnts) {
+      if (this.resources.ants.plus(1).lt(this.maxAnts)) {
         const antsPerSecond = this.antsPerSecond
-        const antsToAdd = antsPerSecond * deltaTime
-        this.accumulators.antAccumulator += antsToAdd
+        const antsToAdd = antsPerSecond.multipliedBy(deltaTime)
+        this.accumulators.antAccumulator = new BigNumber(this.accumulators.antAccumulator).plus(antsToAdd)
 
-        const wholeAnts = Math.floor(this.accumulators.antAccumulator)
-        if (wholeAnts > 0) {
-          this.resources.ants = Math.min(this.resources.ants + wholeAnts, this.maxAnts)
-          this.accumulators.antAccumulator -= wholeAnts
+        const wholeAnts = this.accumulators.antAccumulator
+        if (wholeAnts.gt(0)) {
+          const newAnts = this.resources.ants.plus(wholeAnts)
+          this.resources.ants = BigNumber.minimum(newAnts, this.maxAnts)
+          this.accumulators.antAccumulator = this.accumulators.antAccumulator.minus(wholeAnts)
 
-          useAchievementStore().addToTotal('ants', wholeAnts)
+          useAchievementStore().addToTotal('ants', wholeAnts.toNumber())
         }
       }
     },
 
     setStorageToMax() {
-      this.resources.seeds = Math.min(this.resources.seeds, this.maxSeeds)
-      this.resources.larvae = Math.min(this.resources.larvae, this.maxLarvae)
-      this.resources.ants = Math.min(this.resources.ants, this.maxAnts)
-      this.resources.queens = Math.min(this.resources.queens, this.maxQueens)
-      this.resources.eliteAnts = Math.min(this.resources.eliteAnts, this.storage.maxEliteAnts)
+      this.resources.seeds = BigNumber.minimum(this.resources.seeds, this.maxSeeds)
+      this.resources.larvae = BigNumber.minimum(this.resources.larvae, this.maxLarvae)
+      this.resources.ants = BigNumber.minimum(this.resources.ants, this.maxAnts)
+      this.resources.queens = BigNumber.minimum(this.resources.queens, this.maxQueens)
+      this.resources.eliteAnts = BigNumber.minimum(this.resources.eliteAnts, this.storage.maxEliteAnts)
     },
 
     tryCollectJelly() {
@@ -635,7 +638,7 @@ export const useResourcesStore = defineStore('resources', {
         const royalJellyChance = this.royalJellyCollectionChance * this.royalJellyCollectionModifier
         const random = Math.random()
         if (random < royalJellyChance) {
-          this.resources.royalJelly += 1
+          this.resources.royalJelly = this.resources.royalJelly.plus(1)
           if (useSettingsStore().getNotificationSetting('royalJelly')) {
             toast.info('Royal jelly collected!', {
               position: 'top-left',
@@ -667,81 +670,120 @@ export const useResourcesStore = defineStore('resources', {
     },
 
     getResourcesState() {
+      const castResources = Object.entries(this.resources).reduce((acc, [key, value]) => {
+        acc[key] = value.toExponential()
+        return acc
+      }, {} as Record<string, string>)
+
+      const castUpgrades = Object.entries(this.upgrades).reduce((acc, [key, value]) => {
+        acc[key] = value.toExponential()
+        return acc
+      }, {} as Record<string, string>)
+
+      const castUpgradeCosts = Object.entries(this.upgradeCosts).reduce((acc, [key, value]) => {
+        acc[key] = value.toExponential()
+        return acc
+      }, {} as Record<string, string>)
+
       return {
-        resources: this.resources,
-        upgrades: this.upgrades,
-        upgradeCosts: this.upgradeCosts,
+        resources: castResources,
+        upgrades: castUpgrades,
+        upgradeCosts: castUpgradeCosts,
         resourceCosts: {
-          seedCostPerEliteAnt: this.resourceCosts.seedCostPerEliteAnt,
-          larvaCostPerEliteAnt: this.resourceCosts.larvaCostPerEliteAnt,
+          seedCostPerEliteAnt: this.resourceCosts.seedCostPerEliteAnt.toExponential(),
+          larvaCostPerEliteAnt: this.resourceCosts.larvaCostPerEliteAnt.toExponential(),
         },
 
         productionRates: {
-          larvaeProductionRate: this.productionRates.larvaeProductionRate,
-          collectionRatePerAnt: this.productionRates.collectionRatePerAnt,
-          collectionRatePerWorker: this.productionRates.collectionRatePerWorker,
+          larvaeProductionRate: this.productionRates.larvaeProductionRate.toExponential(),
+          collectionRatePerAnt: this.productionRates.collectionRatePerAnt.toExponential(), 
+          collectionRatePerWorker: this.productionRates.collectionRatePerWorker.toExponential(),
         },
       }
     },
     loadResourcesState(savedState: any) {
+      // Cast all resources to BigNumber
       this.resources = {
         ...this.resources,
-        ...savedState.resources,
+        ...Object.entries(savedState.resources).reduce((acc, [key, value]) => {
+          acc[key] = new BigNumber(value)
+          return acc
+        }, {} as Record<string, BigNumber>),
       }
 
-      this.upgradeCosts = savedState.upgradeCosts ?? this.upgradeCosts
+      // Cast all upgrade costs to BigNumber
+      this.upgradeCosts = savedState.upgradeCosts ? 
+        Object.entries(savedState.upgradeCosts).reduce((acc, [key, value]) => {
+          acc[key] = new BigNumber(value)
+          return acc
+        }, {} as Record<string, BigNumber>) :
+        this.upgradeCosts
 
-      this.upgrades = savedState.upgrades ?? this.upgrades
+      // Cast all upgrades to BigNumber  
+      this.upgrades = savedState.upgrades ?
+        Object.entries(savedState.upgrades).reduce((acc, [key, value]) => {
+          acc[key] = new BigNumber(value)
+          return acc
+        }, {} as Record<string, BigNumber>) :
+        this.upgrades
 
+      // Cast all resource costs to BigNumber
       this.resourceCosts = {
         ...this.resourceCosts,
-        ...savedState.resourceCosts,
+        ...Object.entries(savedState.resourceCosts || {}).reduce((acc, [key, value]) => {
+          acc[key] = new BigNumber(value)
+          return acc
+        }, {} as Record<string, BigNumber>),
       }
 
+      // Cast all production rates to BigNumber
       this.productionRates = {
         ...this.productionRates,
-        ...savedState.productionRates,
+        ...Object.entries(savedState.productionRates || {}).reduce((acc, [key, value]) => {
+          acc[key] = new BigNumber(value) 
+          return acc
+        }, {} as Record<string, BigNumber>),
       }
     },
 
     applyUpgrades() {
-      for (let i = 0; i < this.upgrades.maxSeedStorage; i++) {
+      for (let i = new BigNumber(0); i.lt(this.upgrades.maxSeedStorage); i = i.plus(1)) {
         this.upgradeSeedStorageEffect(i)
       }
 
-      for (let i = 0; i < this.upgrades.maxLarvaeStorage; i++) {
+      for (let i = new BigNumber(0); i.lt(this.upgrades.maxLarvaeStorage); i = i.plus(1)) {
         this.upgradeLarvaeStorageEffect(i)
       }
 
-      this.resources.seeds = Math.min(this.resources.seeds, this.maxSeeds)
-      this.resources.larvae = Math.min(this.resources.larvae, this.maxLarvae)
+      this.resources.seeds = BigNumber.minimum(this.resources.seeds, this.maxSeeds)
+      this.resources.larvae = BigNumber.minimum(this.resources.larvae, this.maxLarvae)
     },
 
     resetResourcesState(isDebug = false) {
       this.resources = {
-        larvae: 0,
-        ants: 0,
-        antHousing: 0,
-        eliteAnts: 0,
+        larvae: new BigNumber(0),
+        ants: new BigNumber(0),
+        antHousing: new BigNumber(0),
+        eliteAnts: new BigNumber(0),
         seeds: this.initialCaps.maxSeeds,
-        queens: 1,
-        royalJelly: isDebug ? 0 : this.resources.royalJelly ?? 0,
+        queens: new BigNumber(1),
+        royalJelly: isDebug ? new BigNumber(0) : this.resources.royalJelly ?? new BigNumber(0),
 
-        royalJellyAnts: isDebug ? 0 : this.resources.royalJellyAnts,
-        workers: isDebug ? 0 : this.resources.workers,
-        soldiers: isDebug ? 0 : this.resources.soldiers,
-        royalQueens: isDebug ? 0 : this.resources.royalQueens,
+        royalJellyAnts: isDebug ? new BigNumber(0) : this.resources.royalJellyAnts,
+        workers: isDebug ? new BigNumber(0) : this.resources.workers,
+        soldiers: isDebug ? new BigNumber(0) : this.resources.soldiers,
+        royalQueens: isDebug ? new BigNumber(0) : this.resources.royalQueens,
       }
 
       // Reset production rates
       this.productionRates = {
-        antsGenerationRate: 0,
-        larvaeProductionRate: 1,
-        collectionRatePerAnt: 60,
+        antsGenerationRate: new BigNumber(0),
+        larvaeProductionRate: new BigNumber(1),
+        collectionRatePerAnt: new BigNumber(60),
 
-        collectionRatePerWorker: 6000,
-        collectionRateModifier: 1,
-        larvaeProductionModifier: 1,
+        collectionRatePerWorker: new BigNumber(6000),
+        collectionRateModifier: new BigNumber(1),
+        larvaeProductionModifier: new BigNumber(1),
       }
 
       this.royalJellyCollectionChance = 0.001
@@ -758,18 +800,18 @@ export const useResourcesStore = defineStore('resources', {
       }
 
       this.upgrades = {
-        maxSeedStorage: 0,
-        maxLarvaeStorage: 0,
+        maxSeedStorage: new BigNumber(0),
+        maxLarvaeStorage: new BigNumber(0),
       }
 
       // Reset upgrade costs
       this.upgradeCosts = {
-        seedStorageUpgradeCost: 500,
-        larvaeStorageUpgradeCost: 100,
+        seedStorageUpgradeCost: new BigNumber(500),
+        larvaeStorageUpgradeCost: new BigNumber(100),
       }
 
-      this.resourceCosts.larvaCostPerEliteAnt = 5
-      this.resourceCosts.seedCostPerEliteAnt = 100
+      this.resourceCosts.larvaCostPerEliteAnt = new BigNumber(5)
+      this.resourceCosts.seedCostPerEliteAnt = new BigNumber(100)
     },
   },
 })

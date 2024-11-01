@@ -21,6 +21,8 @@ import {ReCaptchaV3Provider} from 'firebase/app-check'
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import {useSettingsStore} from '@/stores/settingsStore'
+import {BigNumber} from 'bignumber.js'
+BigNumber.DEBUG = true
 const app = createApp(App)
 
 const router = createRouter({
