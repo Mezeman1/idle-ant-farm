@@ -158,7 +158,7 @@ const bossHealthPercentage = computed(() => {
 })
 
 const armyHealthPercentage = computed(() => {
-  return toPercentage(armyStats.value.health, armyStats.value.maxHealth * bossStore.combatModifiers.health * armyStats.value.healthMultiplier)
+  return toPercentage(armyStats.value.health, bossStore.maxArmyHealth)
 })
 </script>
 
