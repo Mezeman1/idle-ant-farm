@@ -95,58 +95,63 @@
           <!-- Upgrade List -->
           <div
             v-if="category.expanded"
-            class="p-3 space-y-3"
+            class="p-3"
           >
-            <div
-              v-for="upgrade in category.upgrades"
-              :key="upgrade.id"
-              class="bg-white p-3 rounded-md shadow-sm"
-            >
-              <h3 class="font-semibold text-gray-800">
-                {{ upgrade.name }} {{ getUpgradeCount(upgrade) }}
-                <span
-                  v-if="!isUpgradeUnlocked(upgrade)"
-                  class="text-red-500 text-sm"
-                >(Locked)</span>
-              </h3>
-              <p
-                v-if="!isUpgradeUnlocked(upgrade)"
-                class="text-sm text-gray-600 mt-1"
-              >
-                Unlocked by:
-                {{ typeof upgrade.unlockedWhenDescription === 'function'
-                  ? upgrade.unlockedWhenDescription()
-                  : upgrade.unlockedWhenDescription
-                }}
-              </p>
-              <p class="text-sm text-gray-600 mt-1">
-                {{ upgrade.description }}
-              </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               <div
-                v-if="isUpgradeMaxed(upgrade)"
-                class="text-sm text-green-600 mt-2 font-medium flex items-center"
+                v-for="upgrade in category.upgrades"
+                :key="upgrade.id"
+                class="bg-white p-3 rounded-md shadow-sm flex flex-col"
               >
-                <span class="mr-1">✓</span> Purchased
-              </div>
-              <div
-                v-else
-                class="flex justify-between items-center mt-2 space-x-2"
-              >
-                <button
-                  :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
-                  class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md shadow-sm text-sm transition duration-300 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed flex-grow"
-                  @click="prestigeStore.buyUpgrade(upgrade.id)"
+                <div class="flex-grow">
+                  <h3 class="font-semibold text-gray-800">
+                    {{ upgrade.name }} {{ getUpgradeCount(upgrade) }}
+                    <span
+                      v-if="!isUpgradeUnlocked(upgrade)"
+                      class="text-red-500 text-sm"
+                    >(Locked)</span>
+                  </h3>
+                  <p
+                    v-if="!isUpgradeUnlocked(upgrade)"
+                    class="text-sm text-gray-600 mt-1"
+                  >
+                    Unlocked by:
+                    {{ typeof upgrade.unlockedWhenDescription === 'function'
+                      ? upgrade.unlockedWhenDescription()
+                      : upgrade.unlockedWhenDescription
+                    }}
+                  </p>
+                  <p class="text-sm text-gray-600 mt-1">
+                    {{ upgrade.description }}
+                  </p>
+                </div>
+
+                <div
+                  v-if="isUpgradeMaxed(upgrade)"
+                  class="text-sm text-green-600 mt-2 font-medium flex items-center"
                 >
-                  Buy for {{ formatNumber(upgrade.cost) }} Points
-                </button>
-                <button
-                  v-if="!upgrade.oneTimePurchase"
-                  :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
-                  class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md shadow-sm text-sm transition duration-300 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  @click="prestigeStore.buyMaxUpgrade(upgrade.id)"
+                  <span class="mr-1">✓</span> Purchased
+                </div>
+                <div
+                  v-else
+                  class="flex justify-between items-center mt-2 space-x-2"
                 >
-                  Buy max
-                </button>
+                  <button
+                    :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
+                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md shadow-sm text-sm transition duration-300 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed flex-grow"
+                    @click="prestigeStore.buyUpgrade(upgrade.id)"
+                  >
+                    Buy for {{ formatNumber(upgrade.cost) }} Points
+                  </button>
+                  <button
+                    v-if="!upgrade.oneTimePurchase"
+                    :disabled="prestigeStore.prestigePoints < upgrade.cost || isUpgradeUnlocked(upgrade) === false"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md shadow-sm text-sm transition duration-300 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    @click="prestigeStore.buyMaxUpgrade(upgrade.id)"
+                  >
+                    Buy max
+                  </button>
+                </div>
               </div>
             </div>
           </div>
