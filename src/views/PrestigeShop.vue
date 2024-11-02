@@ -12,9 +12,49 @@
 
     <!-- Fixed prestige points display -->
     <div class="bg-purple-100 border-l-4 border-purple-500 text-purple-700 p-4 sticky top-0 z-10 shadow-md">
-      <p class="font-bold">
-        Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }}
-      </p>
+      <div class="flex justify-between items-center">
+        <p class="font-bold">
+          Prestige Points: {{ formatNumber(prestigeStore.prestigePoints) }}
+        </p>
+        <div class="flex gap-2">
+          <button 
+            :class="[
+              'px-2 py-1 text-sm text-white rounded hover:bg-purple-600',
+              prestigeStore.buyLimit === 0.1 ? 'bg-purple-700' : 'bg-purple-500'
+            ]"
+            @click="prestigeStore.setBuyLimit(0.1)"
+          >
+            10%
+          </button>
+          <button
+            :class="[
+              'px-2 py-1 text-sm text-white rounded hover:bg-purple-600',
+              prestigeStore.buyLimit === 0.25 ? 'bg-purple-700' : 'bg-purple-500'
+            ]"
+            @click="prestigeStore.setBuyLimit(0.25)"
+          >
+            25%
+          </button>
+          <button
+            :class="[
+              'px-2 py-1 text-sm text-white rounded hover:bg-purple-600',
+              prestigeStore.buyLimit === 0.5 ? 'bg-purple-700' : 'bg-purple-500'
+            ]"
+            @click="prestigeStore.setBuyLimit(0.5)"
+          >
+            50%
+          </button>
+          <button
+            :class="[
+              'px-2 py-1 text-sm text-white rounded hover:bg-purple-600',
+              prestigeStore.buyLimit === 1 ? 'bg-purple-700' : 'bg-purple-500'
+            ]"
+            @click="prestigeStore.setBuyLimit(1)"
+          >
+            100%
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow-md flex flex-col space-y-4 flex-grow">
@@ -149,7 +189,7 @@
                     class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md shadow-sm text-sm transition duration-300 ease-in-out disabled:bg-gray-400 disabled:cursor-not-allowed"
                     @click="prestigeStore.buyMaxUpgrade(upgrade.id)"
                   >
-                    Buy max
+                    Buy {{ prestigeStore.buyLimit * 100 }}%
                   </button>
                 </div>
               </div>

@@ -26,6 +26,7 @@ interface PrestigeShopItem {
 
 export const usePrestigeStore = defineStore('prestige', {
   state: () => ({
+    buyLimit: 1,
     prestigePoints: 0, // New prestige currency
     timesPrestiged: 0, // Number of times prestiged
     lastPrestige: Date.now(), // Timestamp of the last prestige
@@ -420,6 +421,9 @@ export const usePrestigeStore = defineStore('prestige', {
     },
   },
   actions: {
+    setBuyLimit(limit: number) {
+      this.buyLimit = limit
+    },
     timeSinceLastPrestigeFormatted(){
       const timeSinceLastPrestige = Date.now() - this.lastPrestige
       if (timeSinceLastPrestige < 0) {
@@ -571,20 +575,27 @@ export const usePrestigeStore = defineStore('prestige', {
         return false
       }
 
-      // Keep buying the upgrade until you can't afford the next one
-      while (this.prestigePoints >= upgrade.cost) {
-        this.prestigePoints -= upgrade.cost
+      // Calculate max affordable purchases based on buyLimit
+      const maxAffordable = Math.floor(this.prestigePoints * this.buyLimit / upgrade.cost)
+      let purchased = 0
+      let currentCost = upgrade.cost
+
+      while (purchased < maxAffordable) {
         if (upgrade.maxPurchases && this.amountOfUpgrade(upgradeId) >= upgrade.maxPurchases) {
           break
         }
 
+        this.prestigePoints -= currentCost
         this.purchasedUpgrades.push(upgradeId)
         this.applyPrestigeUpgrade(upgradeId)
 
         // Increase the cost for the next purchase
-        upgrade.cost *= this.getCostMultiplier(upgrade)
-        upgrade.cost = Math.floor(upgrade.cost) // Round down to the nearest integer
+        currentCost *= this.getCostMultiplier(upgrade)
+        currentCost = Math.floor(currentCost)
+        upgrade.cost = currentCost
+        purchased++
       }
+
       return true
     },
     // Apply a purchased upgrade

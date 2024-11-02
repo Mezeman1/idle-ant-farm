@@ -6,6 +6,7 @@ export enum Skill {
   Attack = 'attack',
   Defense = 'defense',
   Hitpoints = 'hitpoints',
+  Farming = 'farming',
 }
 
 export enum ForagingArea {
