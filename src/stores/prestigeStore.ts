@@ -769,6 +769,10 @@ export const usePrestigeStore = defineStore('prestige', {
 
       this.lastPrestige = savedState.lastPrestige ? savedState.lastPrestige : Date.now()
       this.prestigePoints = savedState.prestigePoints ?? this.prestigePoints
+      if (this.prestigePoints < 0) {
+        this.prestigePoints = 0
+      }
+      
       this.timesPrestiged = savedState.timesPrestiged ?? this.timesPrestiged
       this.purchasedUpgrades = savedState.purchasedUpgrades ?? this.purchasedUpgrades
       this.prestigeMultiplierNumber = 1
