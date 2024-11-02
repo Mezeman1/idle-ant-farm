@@ -1043,6 +1043,14 @@
               1,
               1
             ]
+          },
+          {
+            "name": "Abyssal Shield",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
           }
         ]
       },
@@ -1063,6 +1071,14 @@
           },
           {
             "name": "Kraken Ink",
+            "chance": 0.02,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Abyssal Chestplate",
             "chance": 0.02,
             "amountBetween": [
               1,
@@ -1104,6 +1120,22 @@
             "name": "Fortunes Favor",
             "chance": 0.0009,
             "amountBetween": [1, 1]
+          },
+          {
+            "name": "Abyssal Boots",
+            "chance": 0.005,
+            "amountBetween": [
+              1,
+              1
+            ]
+          },
+          {
+            "name": "Abyssal Sword",
+            "chance": 0.01,
+            "amountBetween": [
+              1,
+              1
+            ]
           }
         ]
       }
