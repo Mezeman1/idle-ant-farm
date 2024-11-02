@@ -14,9 +14,13 @@ const formatTime = (milliseconds: number, hideZeros = false): string => {
   return `${days}d ${hours}h ${minutes}m ${seconds}s`
 }
 
-const toPercentage = (value?: number | BigNumber, total = 1): string => {
+const toPercentage = (value?: number | BigNumber, total: number | BigNumber = 1): string => {
   if (value instanceof BigNumber) {
     value = value.toNumber()
+  }
+  
+  if (total instanceof BigNumber) {
+    total = total.toNumber()
   }
   
   if (!value) return '0'
