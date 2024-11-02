@@ -234,7 +234,8 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const inventoryStore = useInventoryStore()
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
-      const context = {gameStore, adventureStore}
+      const equipmentStore = useEquipmentStore()
+      const context = {gameStore, adventureStore, equipmentStore}
       let item: Item | null = null
       // Unequip the item
       if (slotType === 'accessory') {
