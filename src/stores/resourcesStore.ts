@@ -5,7 +5,7 @@ import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useSettingsStore} from '@/stores/settingsStore'
 import {useTrainingStore} from '@/stores/trainingStore'
 import {useAchievementStore} from '@/stores/achievementStore'
-
+import {useEquipmentStore} from '@/stores/equipmentStore'
 const MAX_SAFE_VALUE = Number.MAX_VALUE
 type AntTypes = 'workers' | 'soldiers' | 'royalQueens'
 export const useResourcesStore = defineStore('resources', {
@@ -155,19 +155,19 @@ export const useResourcesStore = defineStore('resources', {
     },
     maxAnts: (state) => {
       if (state.resources.antHousing === 0) {
-        return Math.floor(state.storage.maxAnts * state.storageModifiers.ant * state.achievementModifiers.storage.ant)
+        return Math.floor(state.storage.maxAnts * state.storageModifiers.ant * state.achievementModifiers.storage.ant * useEquipmentStore().storageModifier)
       }
 
-      return Math.floor(state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant * state.achievementModifiers.storage.ant)
+      return Math.floor(state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant * state.achievementModifiers.storage.ant * useEquipmentStore().storageModifier)
     },
     maxSeeds: (state) => {
-      return Math.floor(state.storage.maxSeeds * state.storageModifiers.seed * state.achievementModifiers.storage.seed)
+      return Math.floor(state.storage.maxSeeds * state.storageModifiers.seed * state.achievementModifiers.storage.seed * useEquipmentStore().storageModifier)
     },
     maxLarvae: (state) => {
-      return Math.floor(state.storage.maxLarvae * state.storageModifiers.larvae * state.achievementModifiers.storage.larvae)
+      return Math.floor(state.storage.maxLarvae * state.storageModifiers.larvae * state.achievementModifiers.storage.larvae * useEquipmentStore().storageModifier)
     },
     maxQueens: (state) => {
-      return Math.floor(state.storage.maxQueens * state.storageModifiers.queen * state.achievementModifiers.storage.queen)
+      return Math.floor(state.storage.maxQueens * state.storageModifiers.queen * state.achievementModifiers.storage.queen * useEquipmentStore().storageModifier)
     },
     maxWorkers: (state) => {
       return Math.floor(state.storage.maxAnts * 0.01)

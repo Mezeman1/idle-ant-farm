@@ -19,6 +19,8 @@ interface EquipmentState {
 
   loadOuts: LoadOut[];
   maxLoadOuts: number;
+
+  storageModifier: number;
 }
 
 interface LoadOut {
@@ -50,6 +52,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
 
     loadOuts: [],
     maxLoadOuts: 3,
+    storageModifier: 1,
   }),
   getters: {
     getAvailableItemsForSlot: (state) => (slotType: SlotType) => {
@@ -174,7 +177,9 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       const inventoryStore = useInventoryStore()
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
-      const context = {gameStore, adventureStore}
+      const resourcesStore = useResourcesStore()
+      const equipmentStore = useEquipmentStore()
+      const context = {gameStore, adventureStore, resourcesStore, equipmentStore}
       item = inventoryStore.getItemFromInventory(item.id)
 
       // Remove the item from the inventory

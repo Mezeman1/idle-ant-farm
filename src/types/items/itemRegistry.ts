@@ -11,6 +11,8 @@ import {passiveItems} from '@/types/items/passiveItems'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {toPercentage} from '@/utils/index'
 import { useInventoryStore } from '@/stores/inventoryStore'
+import { useEquipmentStore } from '@/stores/equipmentStore'
+import { abyssalSet } from './sets/abyssalSet'
 
 export interface Item {
   id: string
@@ -83,7 +85,8 @@ export type SetName =
   | 'Royal Set'
   | 'Volcano Set'
   | 'Underworld Set'
-  | 'Arctic Tundra Set';
+  | 'Arctic Tundra Set'
+  | 'Abyssal Set';
 
 export const setBonuses: Record<SetName, SetBonus> = {
   'Worker Set': {
@@ -379,6 +382,52 @@ export const setBonuses: Record<SetName, SetBonus> = {
       20: 4300,
     },
   },
+  'Abyssal Set': {
+    apply: () => {
+      const equipmentStore = useEquipmentStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        equipmentStore.storageModifier *= 1 + (0.015 * currentEvolution)
+      }
+      equipmentStore.storageModifier *= 1.2
+    },
+    remove: () => {
+      const equipmentStore = useEquipmentStore()
+      const currentEvolution = useEvolveStore().currentEvolution
+      if (currentEvolution >= 1) {
+        equipmentStore.storageModifier /= 1 + (0.015 * currentEvolution)
+      }
+      equipmentStore.storageModifier /= 1.2
+    },
+    explanation: () => {
+      const currentEvolution = useEvolveStore().currentEvolution
+      const totalBonus = 0.20 + 0.015 * currentEvolution
+      return `Increases storage by ${toPercentage(totalBonus, 1)}%.`
+    },
+    maxLevelsPerEvolution: {
+      0: 300,
+      1: 500,
+      2: 700,
+      3: 900,
+      4: 1100,
+      5: 1300,
+      6: 1500,
+      7: 1700,
+      8: 1900,
+      9: 2100,
+      10: 2300,
+      11: 2500,
+      12: 2700,
+      13: 2900,
+      14: 3100,
+      15: 3300,
+      16: 3500,
+      17: 3700,
+      18: 3900,
+      19: 4100,
+      20: 4300,
+    },
+  },
 }
 
 export const equipmentSets: Item[] = [
@@ -420,6 +469,9 @@ export const equipmentSets: Item[] = [
 
   // Arctic Tundra Set
   ...arcticTundraSet,
+
+  // Abyssal Set
+  ...abyssalSet,
 ]
 
 export const itemRegistry: Item[] = [

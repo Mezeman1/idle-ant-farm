@@ -400,7 +400,7 @@ export const usePrestigeStore = defineStore('prestige', {
       return Date.now() - state.lastPrestige
     },
     canPrestige: (state) => {
-      return state.calculatePrestigePoints() > 0 && state.timeSinceLastPrestige > 60000
+      return state.calculatePrestigePoints() > 0 && (state.timeSinceLastPrestige > 60000 || state.timesPrestiged === 0)
     },
     prestigeShopCost: (state) => (upgradeId: string) => {
       const amountOfUpgrade = state.amountOfUpgrade(upgradeId)
@@ -461,7 +461,11 @@ export const usePrestigeStore = defineStore('prestige', {
 
       const resourcesStore = useResourcesStore()
       const now = Date.now()
-      const timeElapsed = this.lastPrestige ? (now - this.lastPrestige) / (1000 * 60) : 0
+      let timeElapsed = this.lastPrestige ? (now - this.lastPrestige) / (1000 * 60) : 0
+      if (timeElapsed <= 0) {
+        timeElapsed = 1
+      }
+
       let resourceFactor = 1
 
       if (resourcesStore.maxAnts < 10000) {

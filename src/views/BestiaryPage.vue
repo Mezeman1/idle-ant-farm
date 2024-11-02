@@ -72,7 +72,7 @@
             v-if="selectedEnemy.image"
             :src="selectedEnemy.image"
             :alt="selectedEnemy.name"
-            class="mb-4 w-full h-64 object-cover rounded-lg"
+            class="mb-4 w-full h-[128px] w-[128px] object-cover rounded-lg"
           >
           <p class="text-gray-700 mb-4">
             {{ selectedEnemy.description || 'No description available.' }}
