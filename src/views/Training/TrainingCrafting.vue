@@ -51,6 +51,12 @@
             </p>
             <p>{{ formattedCosts(recipe) }}</p>
           </div>
+          <div class="text-sm col-span-2">
+            <p class="font-semibold text-gray-700">
+              Amount Stored
+            </p>
+            <p>{{ formattedAmountStoredFromCosts(recipe) }}</p>
+          </div>
         </div>
 
         <!-- Crafting Progress Bar -->
@@ -117,6 +123,13 @@ const craftingRecipes = computed(() => trainingStore.craftingRecipes)
 const formattedCosts = (recipe) => {
   return Object.entries(recipe.cost).map(([resource, amount]) => `${formatNumber(amount, 0)} ${resource}`)
     .join(', ')
+}
+
+const formattedAmountStoredFromCosts = (recipe) => {
+  return Object.entries(recipe.cost).map(([resource, amount]) => {
+    const stored = trainingStore.resourcesCollected[resource] || 0
+    return `${formatNumber(stored, 0)} ${resource}`
+  }).join(', ')
 }
 
 // Check if a recipe is currently being crafted
