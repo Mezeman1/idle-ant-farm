@@ -438,6 +438,7 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       this.loadOuts = state.loadOuts ?? []
       this.maxLoadOuts = state.maxLoadOuts ?? this.maxLoadOuts
       this.maxAccessories = 2
+      this.storageModifier = 1
     },
 
     loadEquippedItems(equippedItems, context) {
@@ -504,6 +505,8 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       this.loadOuts = []
 
       this.maxLoadOuts = 3
+
+      this.storageModifier = 1
 
       // Recalculate set bonuses
       this.checkForSetBonus()
