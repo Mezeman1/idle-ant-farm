@@ -417,7 +417,8 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     loadEquipmentState(state) {
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
-      const context = { gameStore, adventureStore }
+      const equipmentStore = useEquipmentStore()  
+      const context = { gameStore, adventureStore, equipmentStore }
 
       this.resetState(state)
       if (!state.equippedItems) return
