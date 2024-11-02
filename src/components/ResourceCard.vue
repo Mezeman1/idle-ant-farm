@@ -112,7 +112,7 @@ const props = withDefaults(defineProps<{
 })
 
 const percentage = computed(() => {
-  return toPercentage(props.count, props.maxCount)
+  return Math.max(0, Math.min(100, toPercentage(props.count, props.maxCount)))
 })
 
 const countFormatted = computed(() => {
