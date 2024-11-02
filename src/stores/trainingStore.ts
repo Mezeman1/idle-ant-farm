@@ -270,6 +270,20 @@ export const useTrainingStore = defineStore({
         timePerAction: 30,
       },
       {
+        name: CraftingRecipeType.RoyalJellyCollector,
+        description: 'Collects 1 Royal Jelly per Royal Jelly Collector',
+        cost: {
+          [ResourceType.RoyalJelly]: 100,
+        },
+        xpPerAction: 180,
+        levelRequired: 80,
+        initialTimePerAction: 60,
+        timePerAction: 60,
+        effect: {
+          royalJellyGeneration: 1,
+        },
+      },
+      {
         name: CraftingRecipeType.MasterAntHill,
         description: 'Generates 20 ants passively per Ant Hill',
         cost: {
@@ -1090,6 +1104,10 @@ export const useTrainingStore = defineStore({
 
       if (effect.antGeneration) {
         resourcesStore.addAnts(effect.antGeneration * amountOfUpgrade)
+      }
+
+      if (effect.royalJellyGeneration) {
+        resourcesStore.addRoyalJelly(effect.royalJellyGeneration)
       }
     },
 

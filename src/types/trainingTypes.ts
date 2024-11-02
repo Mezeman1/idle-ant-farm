@@ -66,6 +66,8 @@ export enum CraftingRecipeType {
   AntHill = 'Ant Hill',
   AdvancedAntHill = 'Advanced Ant Hill',
   MasterAntHill = 'Master Ant Hill',
+
+  RoyalJellyCollector = 'Royal Jelly Collector',
 }
 
 export interface TrainingState {

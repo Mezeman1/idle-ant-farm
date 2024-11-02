@@ -193,6 +193,9 @@ export const useResourcesStore = defineStore('resources', {
     addAnts(amount: number) {
       this.productionRates.antsGenerationRate += amount
     },
+    addRoyalJelly(amount: number) {
+      this.resources.royalJelly += amount
+    },
     applyStorageModifiers(storageModifiers: any) {
       this.storageModifiers = storageModifiers
     },
