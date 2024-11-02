@@ -21,6 +21,13 @@
           {{ toPercentageFormatted(trainingStore.miningDoubleChance) }}%
         </span>
       </div>
+
+      <div class="flex items-center">
+        <span class="text-lg font-semibold text-gray-800 mr-2">Yield:</span>
+        <span class="inline-block px-3 py-1 text-sm font-semibold text-white bg-blue-600 rounded-full">
+          {{ toPercentageFormatted(trainingStore.modifiers.mining.yield) }}%
+        </span>
+      </div>
     </div>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-6">

@@ -7,6 +7,7 @@ export enum SeedNames {
   EnergyFungus = 'Energy Fungus',
   PheromoneFungus = 'Pheromone Fungus',
   DefenseFungus = 'Defense Fungus',
+  InsightFungus = 'Insight Fungus',
 }
 
 export const seeds: Seed[] = [
@@ -43,4 +44,14 @@ export const seeds: Seed[] = [
     effect: {defense: 2},
     duration: 60 * 60,
   },
+  {
+    name: SeedNames.InsightFungus,
+    levelRequired: 50,
+    growthTime: 500 * 60,
+    xpPerAction: 450,
+    description: 'A unique fungus that enhances mental acuity, doubling experience gain from actions for 1 hour.',
+    effect: {xpBoost: 2},
+    duration: 60 * 60,
+  },
+  
 ]

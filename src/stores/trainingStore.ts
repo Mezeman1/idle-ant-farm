@@ -62,6 +62,13 @@ export const useTrainingStore = defineStore({
     // Mining
     miningMilestones: [
       {
+        levelRequired: 25,
+        effect: {
+          yield: 1.1,
+        },
+        description: 'Increases the yield of all mined resources by 10%',
+      },
+      {
         levelRequired: 50,
         effect: {
           maxActiveResources: 2,
@@ -69,11 +76,25 @@ export const useTrainingStore = defineStore({
         description: 'Unlocks the ability to mine 2 resources at once',
       },
       {
+        levelRequired: 60,
+        effect: {
+          yield: 1.5,
+        },
+        description: 'Increases the yield of all mined resources by 50%',
+      },
+      {
         levelRequired: 75,
         effect: {
           maxActiveResources: 3,
         },
         description: 'Unlocks the ability to mine 3 resources at once',
+      },
+      {
+        levelRequired: 80,
+        effect: {
+          yield: 1.5,
+        },
+        description: 'Increases the yield of all mined resources by 50%',
       },
       {
         levelRequired: 150,
@@ -318,6 +339,7 @@ export const useTrainingStore = defineStore({
       regenerationRate: 1,
       spawnRate: 1,
       defense: 1,
+      xpBoost: 1,
     },
     eatenFungus: [] as {
       name: SeedNames,
@@ -328,6 +350,9 @@ export const useTrainingStore = defineStore({
     combatMilestones: combatMilestones,
 
     modifiers: {
+      mining: {
+        yield: 1,
+      },
       army: {
         attack: 1,
         defense: 1,
@@ -462,6 +487,7 @@ export const useTrainingStore = defineStore({
         regenerationRate: 1,
         spawnRate: 1,
         defense: 1,
+        xpBoost: 1,
       }
     },
 
@@ -639,7 +665,7 @@ export const useTrainingStore = defineStore({
       if (Math.random() < this.miningDoubleChance) {
         lootMultiplier = 2
       }
-      this.resourcesCollected[resource.name] += resource.collectionMultiplier * lootMultiplier
+      this.resourcesCollected[resource.name] += resource.collectionMultiplier * lootMultiplier * this.modifiers.mining.yield
 
       // Mark the resource as depleted and reset timePerAction
       resource.isDepleted = true
@@ -794,6 +820,11 @@ export const useTrainingStore = defineStore({
         if (effect === 'maxActiveResources') {
           this.maxActiveResources = milestone.effect[effect]
         }
+
+        if (effect === 'yield') {
+          this.modifiers.mining.yield *= milestone.effect[effect]
+        }
+
       })
     },
 
@@ -801,7 +832,7 @@ export const useTrainingStore = defineStore({
       const training = this.getTrainingState(skill)
       if (!training) return
 
-      const multipliedXp = xp * this.xpMultiplier
+      const multipliedXp = xp * this.xpMultiplier * this.farmingModifiers.xpBoost
       training.xp += multipliedXp
       if (training.xp >= training.xpToNextLevel) this.addLevel(skill)
     },
