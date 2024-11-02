@@ -910,6 +910,7 @@ export const useTrainingStore = defineStore({
       this.maxActiveCraftingRecipes = state.maxActiveCraftingRecipes ?? 1
       this.miningDoubleChance = 0
       this.xpMultiplier = 1
+      this.modifiers.mining.yield = 1
 
       this.addMilestonesToMiningResources()
       this.applyModifiers()
