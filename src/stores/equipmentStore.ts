@@ -160,7 +160,8 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       // Remove old effect
       const gameStore = useResourcesStore()
       const adventureStore = useAdventureStore()
-      const context = {gameStore, adventureStore}
+      const equipmentStore = useEquipmentStore()
+      const context = {gameStore, adventureStore, equipmentStore}
       if (item.onRemove) {
         item.onRemove(context, item)
       }
