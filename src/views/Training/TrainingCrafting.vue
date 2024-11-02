@@ -17,7 +17,7 @@
       <div
         v-for="recipe in craftingRecipes"
         :key="recipe.name"
-        class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200"
+        class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200 flex flex-col"
       >
         <h3 class="text-xl font-bold text-gray-800 mb-4">
           {{ recipe.name }} {{ trainingStore.amountCraftedItems(recipe.name) > 0 ? `(${formatNumber(trainingStore.amountCraftedItems(recipe.name), 0)})` : '' }}
@@ -26,32 +26,32 @@
           {{ recipe.description }}
         </p>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <div class="text-sm">
+        <div class="grid grid-cols-2 gap-2 mb-4 text-sm">
+          <div>
             <p class="font-semibold text-gray-700">
               Level Required
             </p>
             <p>{{ recipe.levelRequired }}</p>
           </div>
-          <div class="text-sm">
+          <div>
             <p class="font-semibold text-gray-700">
               XP per Action
             </p>
             <p>{{ formatNumber(recipe.xpPerAction) }}</p>
           </div>
-          <div class="text-sm">
+          <div>
             <p class="font-semibold text-gray-700">
               Time per Action
             </p>
             <p>{{ formatNumber(recipe.initialTimePerAction, 1) }}s</p>
           </div>
-          <div class="text-sm col-span-2">
+          <div>
             <p class="font-semibold text-gray-700">
               Costs
             </p>
             <p>{{ formattedCosts(recipe) }}</p>
           </div>
-          <div class="text-sm col-span-2">
+          <div class="col-span-2">
             <p class="font-semibold text-gray-700">
               Amount Stored
             </p>
@@ -79,7 +79,7 @@
         </div>
 
         <!-- Start/Stop Crafting Buttons -->
-        <div class="flex justify-between">
+        <div class="flex justify-between mt-auto">
           <button
             v-if="!isRecipeActive(recipe.name)"
             class="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
