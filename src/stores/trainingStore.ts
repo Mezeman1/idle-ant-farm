@@ -1234,7 +1234,7 @@ export const useTrainingStore = defineStore({
       }
 
       if (effect.royalJellyGeneration) {
-        resourcesStore.addRoyalJellyGeneration(effect.royalJellyGeneration * amountOfUpgrade)
+        resourcesStore.setRoyalJellyGeneration(effect.royalJellyGeneration * amountOfUpgrade)
       }
     },
 
