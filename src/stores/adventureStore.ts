@@ -12,6 +12,7 @@ import {usePrestigeStore} from '@/stores/prestigeStore'
 import {useTrainingStore} from '@/stores/trainingStore'
 import {ForagingArea, Skill} from '@/types/trainingTypes'
 import {useAchievementStore} from '@/stores/achievementStore'
+import { useThrottleFn } from '@vueuse/core'
 
 interface KillCounts {
   [key: string]: number
@@ -997,61 +998,65 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     setupAdventureStats() {
-      const gameStore = useGameStore()
-      const resourcesStore = useResourcesStore()
-      const inventoryStore = useInventoryStore()
-      const bossStore = useBossStore()
-      const trainingStore = useTrainingStore()
-      if (resourcesStore.resources.ants === 0 && resourcesStore.resources.queens <= 1) return
+      const throttledSetup = useThrottleFn(() => {
+        const gameStore = useGameStore()
+        const resourcesStore = useResourcesStore()
+        const inventoryStore = useInventoryStore()
+        const bossStore = useBossStore()
+        const trainingStore = useTrainingStore()
+        if (resourcesStore.resources.ants === 0 && resourcesStore.resources.queens <= 1) return
 
-      const baseAttack =
-        resourcesStore.resources.ants * gameStore.attackPerAnt +
-        (resourcesStore.resources.queens - 1) *
-        gameStore.attackPerAnt *
-        resourcesStore.resourceCosts.antCostPerQueen +
-        resourcesStore.resources.soldiers * gameStore.attackPerSoldier
-      
-      const baseDefense =
-        resourcesStore.resources.ants * gameStore.defensePerAnt +
-        (resourcesStore.resources.queens - 1) *
-        gameStore.defensePerAnt *
-        resourcesStore.resourceCosts.antCostPerQueen +
-        resourcesStore.resources.soldiers * gameStore.defensePerSoldier
-  
-      const baseHealth =
-        resourcesStore.resources.ants * gameStore.healthPerAnt +
-        (resourcesStore.resources.queens - 1) *
-        gameStore.healthPerAnt *
-        resourcesStore.resourceCosts.antCostPerQueen +
-        resourcesStore.resources.soldiers * gameStore.healthPerSoldier
+        const baseAttack =
+          resourcesStore.resources.ants * gameStore.attackPerAnt +
+          (resourcesStore.resources.queens - 1) *
+          gameStore.attackPerAnt *
+          resourcesStore.resourceCosts.antCostPerQueen +
+          resourcesStore.resources.soldiers * gameStore.attackPerSoldier
+        
+        const baseDefense =
+          resourcesStore.resources.ants * gameStore.defensePerAnt +
+          (resourcesStore.resources.queens - 1) *
+          gameStore.defensePerAnt *
+          resourcesStore.resourceCosts.antCostPerQueen +
+          resourcesStore.resources.soldiers * gameStore.defensePerSoldier
+    
+        const baseHealth =
+          resourcesStore.resources.ants * gameStore.healthPerAnt +
+          (resourcesStore.resources.queens - 1) *
+          gameStore.healthPerAnt *
+          resourcesStore.resourceCosts.antCostPerQueen +
+          resourcesStore.resources.soldiers * gameStore.healthPerSoldier
 
-      const baseRegen =
-        resourcesStore.resources.ants * gameStore.regenPerAnt +
-        (resourcesStore.resources.queens - 1) *
-        gameStore.regenPerAnt *
-        resourcesStore.resourceCosts.antCostPerQueen +
-        resourcesStore.resources.soldiers * gameStore.regenPerSoldier
+        const baseRegen =
+          resourcesStore.resources.ants * gameStore.regenPerAnt +
+          (resourcesStore.resources.queens - 1) *
+          gameStore.regenPerAnt *
+          resourcesStore.resourceCosts.antCostPerQueen +
+          resourcesStore.resources.soldiers * gameStore.regenPerSoldier
 
-      // Apply modifiers
-      this.armyAttack = baseAttack * this.armyAttackModifier * trainingStore.modifiers.army.attack
-      this.armyDefense = baseDefense * this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense * trainingStore.modifiers.army.defense
-      this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier * trainingStore.modifiers.army.health
-      this.armyRegen = baseRegen * this.armyRegenModifier * trainingStore.modifiers.army.regen
-      this.armyHealth = Math.min(this.armyHealth ?? 0, this.armyMaxHealth)
+        // Apply modifiers
+        this.armyAttack = baseAttack * this.armyAttackModifier * trainingStore.modifiers.army.attack
+        this.armyDefense = baseDefense * this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense * trainingStore.modifiers.army.defense
+        this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier * trainingStore.modifiers.army.health
+        this.armyRegen = baseRegen * this.armyRegenModifier * trainingStore.modifiers.army.regen
+        this.armyHealth = Math.min(this.armyHealth ?? 0, this.armyMaxHealth)
 
-      bossStore.setArmyStats({
-        damage: baseAttack,
-        defense: baseDefense,
-        maxHealth: baseHealth,
-        regen: baseRegen,
+        bossStore.setArmyStats({
+          damage: baseAttack,
+          defense: baseDefense,
+          maxHealth: baseHealth,
+          regen: baseRegen,
 
-        damageMultiplier: this.armyAttackModifier * trainingStore.modifiers.army.attack,
-        defenseMultiplier: this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense * trainingStore.modifiers.army.defense,
-        healthMultiplier: this.armyMaxHealthModifier * trainingStore.modifiers.army.health,
-        regenMultiplier: this.armyRegenModifier * trainingStore.modifiers.army.regen,
-      })
+          damageMultiplier: this.armyAttackModifier * trainingStore.modifiers.army.attack,
+          defenseMultiplier: this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense * trainingStore.modifiers.army.defense,
+          healthMultiplier: this.armyMaxHealthModifier * trainingStore.modifiers.army.health,
+          regenMultiplier: this.armyRegenModifier * trainingStore.modifiers.army.regen,
+        })
 
-      inventoryStore.reApplyPassiveEffects()
+        inventoryStore.reApplyPassiveEffects()
+      }, 100) // Throttle to once every 100ms
+
+      throttledSetup()
     },
   },
 })
