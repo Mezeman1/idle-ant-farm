@@ -51,9 +51,7 @@
             </button>
           </div>
 
-          <div
-            class="flex flex-col p-1 rounded text-3xs"
-          >
+          <div class="flex flex-col p-1 rounded text-3xs">
             <span>
               Version: {{ version }}
             </span>
@@ -73,9 +71,7 @@
           <AntTraining v-if="activeTab === 'training'" />
           <Adventure v-if="activeTab === 'adventure'" />
           <EquipmentPage v-if="activeTab === 'equipment'" />
-          <PassivePage
-            v-if="activeTab === 'passives'"
-          />
+          <PassivePage v-if="activeTab === 'passives'" />
           <AchievementPage v-if="activeTab === 'achievements'" />
           <BestiaryPage v-if="activeTab === 'bestiary'" />
           <Debugger v-if="activeTab === 'debugger'" />
@@ -84,28 +80,36 @@
         </div>
 
         <nav class="bg-gray-800 text-white">
-          <div class="flex items-center justify-between px-2 py-1 overflow-x-auto overflow-y-auto max-h-[calc(100vh-65px)]">
+          <div
+            class="flex items-center justify-between px-2 py-1 overflow-x-auto overflow-y-auto max-h-[calc(100vh-65px)]"
+          >
             <!-- Left Side Tabs -->
             <div class="flex flex-row sm:flex-col gap-2">
-              <button
+              <div
                 v-for="tab in tabs"
-                :key="tab.name"
-                :disabled="tab.disabled"
-                :class="[
-                  activeTab === tab.name
-                    ? 'bg-blue-600 hover:bg-blue-500'
-                    : 'bg-gray-700 hover:bg-gray-600',
-                  'px-3 py-2 rounded text-sm font-medium flex justify-between items-center gap-1 disabled:cursor-not-allowed disabled:opacity-50'
-                ]"
-                @click.prevent="setActiveTab(tab.name)"
+                :key="tab.name + '-div'"
+                v-tooltip="tab.tooltip && tab.disabled ? tab.tooltip : ''"
+                class="flex"
               >
-                <i
-                  class="ml-1"
-                  :class="tab.icon ?? ''"
-                />
+                <button
+                  :key="tab.name" 
+                  :disabled="tab.disabled" 
+                  :class="[
+                    activeTab === tab.name
+                      ? 'bg-blue-600 hover:bg-blue-500'
+                      : 'bg-gray-700 hover:bg-gray-600',
+                    'w-full px-3 py-2 rounded text-sm font-medium flex justify-between items-center gap-1 disabled:cursor-not-allowed disabled:opacity-50'
+                  ]"
+                  @click.prevent="setActiveTab(tab.name)"
+                >
+                  <i
+                    class="ml-1"
+                    :class="tab.icon ?? ''"
+                  />
 
-                {{ tab.label }}
-              </button>
+                  {{ tab.label }}
+                </button>
+              </div>
             </div>
           </div>
         </nav>
@@ -320,31 +324,32 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
-import {useGameStore} from '../stores/gameStore'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useGameStore } from '../stores/gameStore'
 import AntSimulation from '../components/AntSimulation.vue'
 import AntResources from './AntResources.vue'
 import Adventure from './AdventurePage.vue'
 import Debugger from './DebuggerPage.vue'
 import firebase from 'firebase/compat'
 import Settings from './SettingsPage.vue'
-import {useAdventureStore} from '../stores/adventureStore'
-import {useThrottleFn} from '@vueuse/core'
+import { useAdventureStore } from '../stores/adventureStore'
+import { useThrottleFn } from '@vueuse/core'
 import PrivacyModal from '@/components/PrivacyModal.vue'
 import PrestigeShop from '@/views/PrestigeShop.vue'
 import EquipmentPage from '@/views/EquipmentPage.vue'
 import AchievementPage from '@/views/AchievementPage.vue'
-import {useResourcesStore} from '@/stores/resourcesStore'
-import {useSettingsStore} from '@/stores/settingsStore'
+import { useResourcesStore } from '@/stores/resourcesStore'
+import { useSettingsStore } from '@/stores/settingsStore'
 import BestiaryPage from '@/views/BestiaryPage.vue'
-import {usePrestigeStore} from '@/stores/prestigeStore'
+import { usePrestigeStore } from '@/stores/prestigeStore'
 import PassivePage from '@/views/PassivePage.vue'
-import {toast} from 'vue3-toastify'
+import { toast } from 'vue3-toastify'
 import BossPage from '@/views/BossPage.vue'
 import AntTraining from '@/views/AntTraining.vue'
-import {storeToRefs} from 'pinia'
+import { storeToRefs } from 'pinia'
 import OfflineSummary from '@/components/OfflineSummary.vue'
 import { formatTime } from '@/utils'
+import { useEvolveStore } from '@/stores/evolveStore'
 
 const deferredPrompt = ref(null)
 const gameStore = useGameStore()
@@ -380,6 +385,8 @@ const tabs = computed(() => [
     name: 'training',
     label: 'Training',
     icon: 'fa-solid fa-dumbbell',
+    disabled: useEvolveStore().currentEvolution === 0,
+    tooltip: 'You need to evolve to the first evolution to access this tab.',
   },
   {
     name: 'adventure',
@@ -636,28 +643,37 @@ button {
 
 /* For Webkit browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
-  width: 8px; /* Adjust the width of the scrollbar */
-  height: 8px; /* Adjust the height of the horizontal scrollbar */
+  width: 8px;
+  /* Adjust the width of the scrollbar */
+  height: 8px;
+  /* Adjust the height of the horizontal scrollbar */
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Background of the scrollbar track */
+  background: #f1f1f1;
+  /* Background of the scrollbar track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #888; /* Scrollbar color */
-  border-radius: 10px; /* Roundness of the scrollbar */
-  border: 2px solid #f1f1f1; /* Adds padding between thumb and track */
+  background-color: #888;
+  /* Scrollbar color */
+  border-radius: 10px;
+  /* Roundness of the scrollbar */
+  border: 2px solid #f1f1f1;
+  /* Adds padding between thumb and track */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #555; /* Hover color */
+  background-color: #555;
+  /* Hover color */
 }
 
 /* For Firefox */
 * {
-  scrollbar-width: thin; /* Make the scrollbar thin */
-  scrollbar-color: #888 #f1f1f1; /* Thumb color and track color */
+  scrollbar-width: thin;
+  /* Make the scrollbar thin */
+  scrollbar-color: #888 #f1f1f1;
+  /* Thumb color and track color */
 }
 
 nav {

@@ -166,10 +166,10 @@
     "enemies": [
       {
         "name": "Spider",
-        "health": 1500,
-        "attack": 300,
-        "defense": 150,
-        "regen": 6,
+        "health": 15000,
+        "attack": 3000,
+        "defense": 1500,
+        "regen": 60,
         "xp": 100,
         "dropOptions": [
           {
@@ -191,10 +191,10 @@
       },
       {
         "name": "Centipede",
-        "health": 1600,
-        "attack": 340,
-        "defense": 160,
-        "regen": 7,
+        "health": 16000,
+        "attack": 3400,
+        "defense": 1600,
+        "regen": 70,
         "xp": 100,
         "dropOptions": [
           {
@@ -216,10 +216,10 @@
       },
       {
         "name": "Moth",
-        "health": 1400,
-        "attack": 310,
-        "defense": 140,
-        "regen": 5,
+        "health": 14000,
+        "attack": 3100,
+        "defense": 1400,
+        "regen": 50,
         "xp": 95,
         "dropOptions": [
           {
@@ -241,10 +241,10 @@
       },
       {
         "name": "Butterfly",
-        "health": 1700,
-        "attack": 360,
-        "defense": 170,
-        "regen": 8,
+        "health": 17000,
+        "attack": 3600,
+        "defense": 1700,
+        "regen": 80,
         "xp": 100,
         "dropOptions": [
           {
@@ -271,10 +271,10 @@
       },
       {
         "name": "Queen Wasp",
-        "health": 2400,
-        "attack": 400,
-        "defense": 200,
-        "regen": 10,
+        "health": 24000,
+        "attack": 4000,
+        "defense": 2000,
+        "regen": 100,
         "isBoss": true,
         "xp": 100,
         "dropOptions": [
@@ -330,10 +330,10 @@
     "enemies": [
       {
         "name": "Army of Leafcutters",
-        "health": 5000,
-        "attack": 900,
-        "defense": 800,
-        "regen": 60,
+        "health": 500000,
+        "attack": 90000,
+        "defense": 80000,
+        "regen": 6000,
         "xp": 120,
         "dropOptions": [
           {
@@ -353,10 +353,10 @@
       },
       {
         "name": "Bark Beetles",
-        "health": 6000,
-        "attack": 1000,
-        "defense": 700,
-        "regen": 85,
+        "health": 600000,
+        "attack": 100000,
+        "defense": 70000,
+        "regen": 8500,
         "xp": 120,
         "dropOptions": [
           {
@@ -368,10 +368,10 @@
       },
       {
         "name": "Mantis Hunters",
-        "health": 7000,
-        "attack": 900,
-        "defense": 1200,
-        "regen": 120,
+        "health": 700000,
+        "attack": 90000,
+        "defense": 120000,
+        "regen": 12000,
         "xp": 130,
         "dropOptions": [
           {
@@ -406,10 +406,10 @@
     "enemies": [
       {
         "name": "Mountain Ant",
-        "health": 12000,
-        "attack": 2400,
-        "defense": 1200,
-        "regen": 20,
+        "health": 12000000,
+        "attack": 2400000,
+        "defense": 1200000,
+        "regen": 20000,
         "xp": 180,
         "dropOptions": [
           {
@@ -431,10 +431,10 @@
       },
       {
         "name": "Rock Beetle",
-        "health": 13000,
-        "attack": 2600,
-        "defense": 1400,
-        "regen": 25,
+        "health": 13000000,
+        "attack": 2600000,
+        "defense": 1400000,
+        "regen": 25000,
         "xp": 190,
         "dropOptions": [
           {
@@ -461,10 +461,10 @@
       },
       {
         "name": "Giant Mantis",
-        "health": 15000,
-        "attack": 2800,
-        "defense": 1600,
-        "regen": 30,
+        "health": 15000000,
+        "attack": 2800000,
+        "defense": 1600000,
+        "regen": 30000,
         "xp": 200,
         "dropOptions": [
           {
@@ -486,10 +486,10 @@
       },
       {
         "name": "Stone Golem",
-        "health": 20000,
-        "attack": 3200,
-        "defense": 1800,
-        "regen": 50,
+        "health": 20000000,
+        "attack": 3200000,
+        "defense": 1800000,
+        "regen": 50000,
         "isBoss": true,
         "xp": 200,
         "dropOptions": [
@@ -522,10 +522,10 @@
       },
       {
         "name": "Mold Blob",
-        "health": 15000,
-        "attack": 2800,
-        "defense": 1600,
-        "regen": 30,
+        "health": 15000000,
+        "attack": 2800000,
+        "defense": 1600000,
+        "regen": 30000,
         "xp": 200,
         "dropOptions": [
           {
@@ -552,10 +552,10 @@
     "enemies": [
       {
         "name": "Lava Ant",
-        "health": 60000,
-        "attack": 12000,
-        "defense": 7000,
-        "regen": 15,
+        "health": 600000000,
+        "attack": 120000000,
+        "defense": 70000000,
+        "regen": 150000,
         "xp": 270,
         "dropOptions": [
           {
@@ -564,7 +564,7 @@
             "amountBetween": [3000, 7000]
           },
           {
-            "name": "Lava Ant Tooth",
+            "name": "Lava Ant Tooth", 
             "chance": 0.1,
             "amountBetween": [1, 2]
           },
@@ -577,10 +577,10 @@
       },
       {
         "name": "Magma Beetle",
-        "health": 70000,
-        "attack": 13000,
-        "defense": 7500,
-        "regen": 18,
+        "health": 700000000,
+        "attack": 130000000,
+        "defense": 75000000,
+        "regen": 180000,
         "xp": 285,
         "dropOptions": [
           {
@@ -607,10 +607,10 @@
       },
       {
         "name": "Fire Scorpion",
-        "health": 80000,
-        "attack": 14000,
-        "defense": 8000,
-        "regen": 20,
+        "health": 800000000,
+        "attack": 140000000,
+        "defense": 80000000,
+        "regen": 200000,
         "xp": 300,
         "dropOptions": [
           {
@@ -637,10 +637,10 @@
       },
       {
         "name": "Molten Dragon",
-        "health": 100000,
-        "attack": 16000,
-        "defense": 9000,
-        "regen": 25,
+        "health": 1000000000,
+        "attack": 160000000,
+        "defense": 90000000,
+        "regen": 250000,
         "isBoss": true,
         "xp": 300,
         "dropOptions": [
@@ -683,10 +683,10 @@
     "enemies": [
       {
         "name": "Hellfire Ant",
-        "health": 120000,
-        "attack": 30000,
-        "defense": 16000,
-        "regen": 25,
+        "health": 1200000000,
+        "attack": 300000000,
+        "defense": 160000000,
+        "regen": 250000,
         "dropOptions": [
           {
             "name": "Seeds",
@@ -716,10 +716,10 @@
       },
       {
         "name": "Demonic Beetle",
-        "health": 130000,
-        "attack": 32000,
-        "defense": 18000,
-        "regen": 30,
+        "health": 1300000000,
+        "attack": 320000000,
+        "defense": 180000000,
+        "regen": 300000,
         "dropOptions": [
           {
             "name": "Seeds",
@@ -749,10 +749,10 @@
       },
       {
         "name": "Infernal Scorpion",
-        "health": 150000,
-        "attack": 35000,
-        "defense": 20000,
-        "regen": 40,
+        "health": 1500000000,
+        "attack": 350000000,
+        "defense": 200000000,
+        "regen": 400000,
         "dropOptions": [
           {
             "name": "Seeds",
@@ -782,10 +782,10 @@
       },
       {
         "name": "Underworld Lord",
-        "health": 180000,
-        "attack": 40000,
-        "defense": 24000,
-        "regen": 50,
+        "health": 1800000000,
+        "attack": 400000000,
+        "defense": 240000000,
+        "regen": 500000,
         "isBoss": true,
         "dropOptions": [
           {
@@ -839,10 +839,10 @@
     "enemies": [
       {
         "name": "Ice Beetle",
-        "health": 240000,
-        "attack": 48000,
-        "defense": 24000,
-        "regen": 1500,
+        "health": 24000000000,
+        "attack": 4800000000,
+        "defense": 2400000000,
+        "regen": 150000000,
         "dropOptions": [
           {
             "name": "Seeds",
@@ -872,10 +872,10 @@
       },
       {
         "name": "Frost Scorpion",
-        "health": 270000,
-        "attack": 50000,
-        "defense": 25000,
-        "regen": 1800,
+        "health": 27000000000,
+        "attack": 5000000000,
+        "defense": 2500000000,
+        "regen": 180000000,
         "dropOptions": [
           {
             "name": "Seeds",
@@ -905,10 +905,10 @@
       },
       {
         "name": "Glacier Mantis",
-        "health": 300000,
-        "attack": 55000,
-        "defense": 26500,
-        "regen": 2000,
+        "health": 30000000000,
+        "attack": 5500000000,
+        "defense": 2650000000,
+        "regen": 200000000,
         "dropOptions": [
           {
             "name": "Seeds",
@@ -938,10 +938,10 @@
       },
       {
         "name": "Frost Wyrm",
-        "health": 350000,
-        "attack": 60000,
-        "defense": 28000,
-        "regen": 3000,
+        "health": 35000000000,
+        "attack": 6000000000,
+        "defense": 2800000000,
+        "regen": 300000000,
         "isBoss": true,
         "dropOptions": [
           {
@@ -990,10 +990,10 @@
     "enemies": [
       {
         "name": "Abyss Crab",
-        "health": 600000,
-        "attack": 120000,
-        "defense": 60000,
-        "regen": 40,
+        "health": 600000000000,
+        "attack": 120000000000,
+        "defense": 60000000000,
+        "regen": 40000000,
         "dropOptions": [
           {
             "name": "Seeds",
@@ -1023,10 +1023,10 @@
       },
       {
         "name": "Deep Sea Angler",
-        "health": 650000,
-        "attack": 140000,
-        "defense": 70000,
-        "regen": 50,
+        "health": 650000000000,
+        "attack": 140000000000,
+        "defense": 70000000000,
+        "regen": 50000000,
         "dropOptions": [
           {
             "name": "Seeds",
@@ -1056,10 +1056,10 @@
       },
       {
         "name": "Kraken Tentacle",
-        "health": 700000,
-        "attack": 160000,
-        "defense": 80000,
-        "regen": 60,
+        "health": 700000000000,
+        "attack": 160000000000,
+        "defense": 80000000000,
+        "regen": 60000000,
         "dropOptions": [
           {
             "name": "Seeds",
@@ -1089,10 +1089,10 @@
       },
       {
         "name": "Abyssal Leviathan",
-        "health": 800000,
-        "attack": 200000,
-        "defense": 100000,
-        "regen": 80,
+        "health": 800000000000,
+        "attack": 200000000000,
+        "defense": 100000000000,
+        "regen": 80000000,
         "isBoss": true,
         "dropOptions": [
           {

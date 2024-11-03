@@ -1137,6 +1137,8 @@ export const useTrainingStore = defineStore({
           this.applyCombatMilestone(milestone)
         }
       })
+
+      useAdventureStore().setupAdventureStats()
     },
 
     applyCombatMilestone(milestone: CombatMilestone) {
@@ -1168,8 +1170,6 @@ export const useTrainingStore = defineStore({
           }
         })
       }
-
-      useAdventureStore().setupAdventureStats()
     },
 
     resetArmyModifiers() {

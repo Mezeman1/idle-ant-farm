@@ -78,6 +78,15 @@
       </div>
 
       <div class="flex flex-col gap-2">
+        <label>Current Evolution</label>
+        <input
+          v-model="useEvolveStore().currentEvolution"
+          class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+          type="number"
+        >
+      </div>
+
+      <div class="flex flex-col gap-2">
         <div
           v-for="(value, key) in resourcesStore.resources"
           :key="key + '-' + value"

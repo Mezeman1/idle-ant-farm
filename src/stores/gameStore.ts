@@ -866,6 +866,7 @@ export const useGameStore = defineStore('gameStore', {
           trainingStore.resetTrainingState()
 
           useBossStore().resetBossState()
+          useAdventureStore().hardReset()
         }
 
         if (isEvolution) {

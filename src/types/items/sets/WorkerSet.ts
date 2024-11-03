@@ -5,7 +5,7 @@ export const workerSet = [
     id: 'worker-helm',
     name: 'Worker Helm',
     type: 'equipment',
-    description: 'Head armor for workers, increases resource gathering by 0.1035% per level.',
+    description: 'Head armor for workers, increases resource gathering by 0.1% per level. Also increases defense and health by 0.05% per level.',
     equipmentType: 'armor',
     slotType: 'head',
     set: 'Worker Set',
@@ -14,16 +14,25 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.001035313244622532,
-    effect: ({gameStore}, item) => {
+    multiplier: 0.001,
+    effect: ({gameStore, adventureStore}, item) => {
+      const modifier = {
+        defense: 0.0005,
+        health: 0.0005,
+      }
+
       // Increase resource gathering by 0.1035% per level
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      adventureStore.armyDefenseModifier *= 1 + (modifier.defense * item.level)
+      adventureStore.armyMaxHealthModifier *= 1 + (modifier.health * item.level)
       return true
     },
-    onRemove: ({gameStore}, item) => {
+    onRemove: ({gameStore, adventureStore}, item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+      adventureStore.armyDefenseModifier /= 1 + (modifier.defense * item.level)
+      adventureStore.armyMaxHealthModifier /= 1 + (modifier.health * item.level)
     },
     evolves: true,
   },
@@ -31,7 +40,7 @@ export const workerSet = [
     id: 'worker-body',
     name: 'Worker Chestplate',
     type: 'equipment',
-    description: 'Body armor for workers, increases resource gathering by 0.1553% per level.',
+    description: 'Body armor for workers, increases resource gathering by 0.1% per level. Also increases defense and health by 0.05% per level.',
     equipmentType: 'armor',
     slotType: 'body',
     set: 'Worker Set',
@@ -40,15 +49,25 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.0015529698669337984,
-    effect: ({gameStore}, item) => {
+    multiplier: 0.001,
+    effect: ({gameStore, adventureStore}, item) => {
+      const modifier = {
+        defense: 0.0005,
+        health: 0.0005,
+      }
+
+
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      adventureStore.armyDefenseModifier *= 1 + (modifier.defense * item.level)
+      adventureStore.armyMaxHealthModifier *= 1 + (modifier.health * item.level)
       return true
     },
-    onRemove: ({gameStore}, item) => {
+    onRemove: ({gameStore, adventureStore}, item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+      adventureStore.armyDefenseModifier /= 1 + (modifier.defense * item.level)
+      adventureStore.armyMaxHealthModifier /= 1 + (modifier.health * item.level)
     },
     evolves: true,
   },
@@ -56,7 +75,7 @@ export const workerSet = [
     id: 'worker-legs',
     name: 'Worker Legs',
     type: 'equipment',
-    description: 'Leg armor for workers, increases resource gathering by 0.0776% per level.',
+    description: 'Leg armor for workers, increases resource gathering by 0.08% per level.',
     equipmentType: 'armor',
     slotType: 'legs',
     set: 'Worker Set',
@@ -65,7 +84,7 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.0007758055940675406,
+    multiplier: 0.0008,
     effect: ({gameStore}, item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
@@ -81,7 +100,7 @@ export const workerSet = [
     id: 'worker-gloves',
     name: 'Worker Gloves',
     type: 'equipment',
-    description: 'Accessory for workers, increases resource gathering by 0.1293% per level.',
+    description: 'Accessory for workers, increases resource gathering by 0.13% per level.',
     equipmentType: 'accessory',
     slotType: 'accessory',
     set: 'Worker Set',
@@ -90,7 +109,7 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.0012934622163788066,
+    multiplier: 0.0013,
     effect: ({gameStore}, item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
@@ -106,7 +125,7 @@ export const workerSet = [
     id: 'worker-pickaxe',
     name: 'Worker Pickaxe',
     type: 'equipment',
-    description: 'Weapon for workers, increases resource gathering by 0.2071% per level.',
+    description: 'Weapon for workers, increases resource gathering by 0.2% per level.',
     equipmentType: 'weapon',
     slotType: 'weapon',
     set: 'Worker Set',
@@ -115,7 +134,7 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.002070626489245064,
+    multiplier: 0.002,
     effect: ({gameStore}, item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
@@ -131,7 +150,7 @@ export const workerSet = [
     id: 'worker-shield',
     name: 'Worker Shield',
     type: 'equipment',
-    description: 'Accessory for workers, increases resource gathering by 0.1553% per level.',
+    description: 'Accessory for workers, increases resource gathering by 0.16% per level.',
     equipmentType: 'accessory',
     slotType: 'accessory',
     set: 'Worker Set',
@@ -140,7 +159,7 @@ export const workerSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
-    multiplier: 0.0015529698669337984,
+    multiplier: 0.0016,
     effect: ({gameStore}, item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier

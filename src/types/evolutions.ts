@@ -78,10 +78,10 @@ function scaleEvolutions(baseEvolutions: Evolution[]): Evolution[] {
       } : undefined,
       
       bugModifiers: baseEvolution.bugModifiers ? {
-        bugAttackModifier: baseEvolution.bugModifiers.bugAttackModifier * scale,
-        bugDefenseModifier: baseEvolution.bugModifiers.bugDefenseModifier * scale,
-        bugMaxHealthModifier: baseEvolution.bugModifiers.bugMaxHealthModifier * scale,
-        bugRegenModifier: baseEvolution.bugModifiers.bugRegenModifier * scale,
+        bugAttackModifier: baseEvolution.bugModifiers.bugAttackModifier * scale / 2,
+        bugDefenseModifier: baseEvolution.bugModifiers.bugDefenseModifier * scale / 2,
+        bugMaxHealthModifier: baseEvolution.bugModifiers.bugMaxHealthModifier * scale / 2,
+        bugRegenModifier: baseEvolution.bugModifiers.bugRegenModifier * scale / 2,
       } : undefined,
       
       productionRates: {

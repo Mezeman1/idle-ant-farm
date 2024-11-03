@@ -142,6 +142,37 @@
           </div>
         </div>
 
+        <!-- Battle Logs -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold mb-4 text-gray-800">
+            Battle Logs
+          </h2>
+          <div 
+            v-if="adventureStore.logs.length"
+            ref="logContainer"
+            class="overflow-y-auto max-h-60 pr-2 space-y-2"
+          >
+            <div
+              v-for="(log, index) in adventureStore.logs"
+              :key="index"
+              class="text-gray-700 p-2 rounded"
+              :class="{
+                'bg-red-50': log.includes('damage'),
+                'bg-green-50': log.includes('loot:'),
+                'bg-yellow-50': log.includes('XP'),
+              }"
+            >
+              {{ log }}
+            </div>
+          </div>
+          <div
+            v-else
+            class="text-gray-500 text-center"
+          >
+            No battle logs yet
+          </div>
+        </div>
+
         <!-- Battle Style Buttons -->
         <div class="grid grid-cols-3 gap-4">
           <BattleStyleButton
@@ -225,7 +256,7 @@
 <script setup lang="ts">
 import {useAdventureStore} from '../stores/adventureStore'
 import {useGameStore} from '../stores/gameStore'
-import {computed, onMounted, ref, watch} from 'vue'
+import {computed, nextTick, onMounted, ref, watch} from 'vue'
 import {onClickOutside, useWindowSize} from '@vueuse/core'
 import ArmyImage from '../assets/army.webp'
 import Inventory from '@/views/InventoryPage.vue'
@@ -257,6 +288,15 @@ const bugBleedChance = computed(() => formatNumber((adventureStore.currentEnemy?
 const isLargeScreen = computed(() => width.value >= 1024)
 const battleStyle = computed(() => adventureStore.battleStyle)
 const trainingStore = useTrainingStore()
+const logContainer = ref(null)
+
+watch(() => adventureStore.logs, () => {
+  if (logContainer.value) {
+    nextTick(() => {
+      logContainer.value.scrollTop = logContainer.value.scrollHeight
+    })
+  }
+}, { deep: true })
 
 onMounted(() => {
   selectedWaveIndex.value = adventureStore.enemyWaves.findIndex(wave => wave.name === adventureStore.currentArea)

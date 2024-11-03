@@ -13,6 +13,7 @@ import {useTrainingStore} from '@/stores/trainingStore'
 import {ForagingArea, Skill} from '@/types/trainingTypes'
 import {useAchievementStore} from '@/stores/achievementStore'
 import { useThrottleFn } from '@vueuse/core'
+import { formatNumber } from '@/utils'
 
 interface KillCounts {
   [key: string]: number
@@ -45,6 +46,8 @@ export const useAdventureStore = defineStore('adventureStore', {
     progress: 0, // Track progress for offline calculation
     activeBuffs: [] as Array<ActiveBuff>,
     battleStatus: 'idle' as BattleStatus,
+
+    logs: [] as Array<string>,
 
     battleStyle: Skill.Attack as Skill.Defense | Skill.Attack | Skill.Hitpoints,
 
@@ -237,6 +240,12 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
   },
   actions: {
+    addLog(log: string) {
+      this.logs.push(log)
+      if (this.logs.length > 100) {
+        this.logs.shift() // Remove oldest log if over 100
+      }
+    },
     setAreaModifiers(modifiers, area) {
       this.areaModifiers[area] = modifiers
     },
@@ -286,8 +295,11 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.accumulatedTimeForChanceEffects += deltaTime * 1000 * speedModifier // Convert deltaTime to milliseconds
         if (this.accumulatedTimeForChanceEffects >= this.chanceEffectInterval) {
           this.applyArmyDamage(this.accumulatedTimeForChanceEffects / 1000)
-          this.applyBugDamage(this.accumulatedTimeForChanceEffects / 1000)
-          this.applyChanceEffects()
+          if (this.bugHealth > 0) {
+            this.applyBugDamage(this.accumulatedTimeForChanceEffects / 1000)
+            this.applyChanceEffects()
+          }
+
           this.accumulatedTimeForChanceEffects = 0 // Reset the accumulator after applying effects
         }
 
@@ -358,13 +370,19 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     calculateDamage(attackerAttack, defenderDefense) {
       const variation = 0.9 + Math.random() * 0.2
-      const baseDamage = attackerAttack - defenderDefense
+      const baseDamage = attackerAttack - (defenderDefense / 2)
       return Math.max(baseDamage * variation, 1)
     },
 
     applyArmyDamage(deltaTime) {
-      const damage = this.calculateDamage(this.armyAttack, this.bugDefense) * deltaTime
+      const damage = Math.floor(this.calculateDamage(this.armyAttack, this.bugDefense) * deltaTime)
       this.bugHealth = Math.max(this.bugHealth - damage, 0)
+
+      if (damage > 1) {
+        this.addLog(`The army attacked the ${this.currentEnemy.name} for ${formatNumber(damage)} damage.`)
+      } else {
+        this.addLog(`The army couldn't do any damage to the ${this.currentEnemy.name}.`)
+      }
 
       this.applyStatusEffects(deltaTime, this.bugActiveEffects, 'bug')
     },
@@ -447,8 +465,14 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     applyBugDamage(deltaTime) {
-      const damage = this.calculateDamage(this.bugAttack, this.armyDefense) * deltaTime
+      const damage = Math.floor(this.calculateDamage(this.bugAttack, this.armyDefense) * deltaTime)
       this.armyHealth = Math.max(this.armyHealth - damage, 0)
+
+      if (damage > 1) {
+        this.addLog(`The ${this.currentEnemy.name} attacked the army for ${formatNumber(damage)} damage.`)
+      } else {
+        this.addLog(`The ${this.currentEnemy.name} couldn't do any damage to the army.`)
+      }
     },
 
     handlePlayerDefeat() {
@@ -457,6 +481,8 @@ export const useAdventureStore = defineStore('adventureStore', {
           position: 'top-left',
         })
       }
+
+      this.addLog('You were defeated by the bug!')
 
       this.currentArea = 'Safe Zone' // Reset the area to the safe zone
       this.battleStatus = 'idle'
@@ -547,6 +573,8 @@ export const useAdventureStore = defineStore('adventureStore', {
 
     async handleEnemyDrop() {
       const settingsStore = useSettingsStore()
+      const lootMessages = []
+
       if (this.currentEnemy?.dropOptions) {
         for (const drop of this.currentEnemy.dropOptions) {
           // Some drops have unlockedWhen function to check if they should drop
@@ -567,23 +595,23 @@ export const useAdventureStore = defineStore('adventureStore', {
             if (drop.name === 'Seeds') {
               // Add seeds to gameStore
               useResourcesStore().resources.seeds += amount * useResourcesStore().productionRates.collectionRateModifier
+              lootMessages.push(`${formatNumber(amount)} Seeds`)
             } else {
               // Handle item drops
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
               const item = useInventoryStore().getItemById(itemId)
               if (item) {
-                // Only show notification if not simulating offline progress
-                if (!this.isSimulatingOffline && settingsStore.getNotificationSetting('loot')) {
-                  toast.success(`Loot: +${amount} ${drop.name}`, {
-                    position: toast.POSITION.TOP_LEFT,
-                  })
-                }
                 // Await the item drop handling
                 await this.handleItemDrop(item, amount)
+                lootMessages.push(`${formatNumber(amount)} ${drop.name}`)
               }
             }
           }
         }
+      }
+
+      if (lootMessages.length > 0) {
+        this.addLog(`Received loot: ${lootMessages.join(', ')}`)
       }
     },
     handleEnemyDefeat() {
@@ -600,6 +628,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.handleEnemyDrop()
       if (this.currentEnemy) {
         useTrainingStore().processCombat(this.battleStyle, this.getXpForEnemy(this.currentEnemy))
+        this.addLog(`Gained ${formatNumber(this.getXpForEnemy(this.currentEnemy))} XP from defeating the ${this.currentEnemy.name}.`)
       }
 
       // Set the initial spawn time and fight status change timers
@@ -613,15 +642,20 @@ export const useAdventureStore = defineStore('adventureStore', {
     },
 
     getXpForEnemy(enemy: Enemy): number {
-      // Calculate base XP based on enemy stats
-      const baseXp = (enemy.health * 0.05) + (enemy.attack * 0.1) + (enemy.defense * 0.07) + (enemy.regen * 0.8)
-
-      // If it's a boss, apply a multiplier (e.g., 1.2x)
-      const xp = enemy.isBoss ? baseXp * 1.2 : baseXp
-
+      // Calculate base XP with logarithmic scaling for each stat to reduce exponential growth
+      const baseXp = 
+          Math.log2(enemy.health + 1) * 0.05 + 
+          Math.log2(enemy.attack + 1) * 0.1 + 
+          Math.log2(enemy.defense + 1) * 0.07 + 
+          Math.log2(enemy.regen + 1) * 0.8
+  
+      // If it's a boss, apply a multiplier (e.g., 1.5x)
+      const xp = enemy.isBoss ? baseXp * 1.5 : baseXp
+  
+      // Apply area XP modifier
       const xpModifier = this.areaModifiers[this.currentArea as keyof typeof this.areaModifiers]?.xpModifier ?? 1.0
-
-      // Return the XP, making sure it doesn't exceed the max XP cap
+  
+      // Return the XP, ensuring it doesn't exceed a max cap
       return Math.floor(xp * xpModifier)
     },
 
@@ -717,13 +751,16 @@ export const useAdventureStore = defineStore('adventureStore', {
         return
       }
 
+      const evolution = useEvolveStore().currentEvolution
+      const evolutionScale = evolution <= 1 ? 1 : Math.pow(1.4, evolution - 1)
+
       this.currentEnemy = enemy
 
-      this.bugHealth = enemy.health * this.bugMaxHealthModifier
-      this.bugMaxHealth = enemy.health * this.bugMaxHealthModifier
-      this.bugAttack = enemy.attack * this.bugAttackModifier
-      this.bugDefense = enemy.defense * this.bugDefenseModifier
-      this.bugRegen = enemy.regen * this.bugRegenModifier
+      this.bugHealth = enemy.health * this.bugMaxHealthModifier * evolutionScale
+      this.bugMaxHealth = enemy.health * this.bugMaxHealthModifier * evolutionScale
+      this.bugAttack = enemy.attack * this.bugAttackModifier * evolutionScale
+      this.bugDefense = enemy.defense * this.bugDefenseModifier * evolutionScale
+      this.bugRegen = enemy.regen * this.bugRegenModifier * Math.sqrt(evolutionScale)
 
       this.enemySpawned = true
     },
@@ -932,6 +969,17 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.globalDropChanceModifier = 1
     },
 
+    hardReset() {
+      this.resetAdventureState()
+
+      this.armyAttackModifier = 1
+      this.armyDefenseModifier = 1
+      this.armyMaxHealthModifier = 1
+      this.armyRegenModifier = 1
+
+      this.killCounts = {}
+    },
+
     updateCombat(deltaTime) {
       const combatTicks = Math.floor(deltaTime / (this.combatTick / 1000)) // Number of combat ticks
 
@@ -979,12 +1027,6 @@ export const useAdventureStore = defineStore('adventureStore', {
               const itemId = drop.name.toLowerCase().replace(/\s+/g, '-')
               const item = useInventoryStore().getItemById(itemId)
               if (item) {
-                // Only show toast notifications if not simulating offline progress
-                if (!this.isSimulatingOffline && useSettingsStore().getNotificationSetting('loot')) {
-                  toast.success(`Loot: +${amount} ${drop.name}`, {
-                    position: 'top-left',
-                  })
-                }
                 this.handleItemDrop(item, amount)
               } else {
 
@@ -1039,7 +1081,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         this.armyDefense = baseDefense * this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense * trainingStore.modifiers.army.defense
         this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier * trainingStore.modifiers.army.health
         this.armyRegen = baseRegen * this.armyRegenModifier * trainingStore.modifiers.army.regen
-        this.armyHealth = Math.min(this.armyHealth ?? 0, this.armyMaxHealth)
+        this.armyHealth = Math.min(this.armyHealth, this.armyMaxHealth)
 
         bossStore.setArmyStats({
           damage: baseAttack,
@@ -1054,7 +1096,7 @@ export const useAdventureStore = defineStore('adventureStore', {
         })
 
         inventoryStore.reApplyPassiveEffects()
-      }, 100) // Throttle to once every 100ms
+      }, 500) // Throttle to once every 100ms
 
       throttledSetup()
     },

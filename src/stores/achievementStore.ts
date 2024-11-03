@@ -1,4 +1,3 @@
-// achievementStore.ts or gameStore.ts
 import {defineStore} from 'pinia'
 import {useAdventureStore} from '@/stores/adventureStore'
 import {usePrestigeStore} from '@/stores/prestigeStore'
@@ -23,8 +22,7 @@ interface AchievementReward {
   onClaim: () => void;
 }
 
-export const useAchievementStore = defineStore({
-  id: 'achievementStore',
+export const useAchievementStore = defineStore('achievementStore', {
   state: () => ({
     totals: {
       seeds: new BigNumber(0),
@@ -1009,6 +1007,8 @@ export const useAchievementStore = defineStore({
 
     rewards: [] as AchievementReward[],
   }),
+  getters: {
+  },
   actions: {
     claimReward(reward: AchievementReward) {
       reward.isClaimed = true
@@ -1087,6 +1087,15 @@ export const useAchievementStore = defineStore({
       })
     },
     resetAchievements() {
+      this.totals = {
+        seeds: new BigNumber(0),
+        ants: new BigNumber(0),
+        queens: new BigNumber(0),
+        larvae: new BigNumber(0),
+        enemyKills: new BigNumber(0),
+        timesPrestiged: new BigNumber(0),
+      }
+
       this.achievements.forEach((achievement) => {
         achievement.isUnlocked = false
       })

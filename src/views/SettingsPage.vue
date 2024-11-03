@@ -52,15 +52,6 @@
             </div>
 
             <div class="flex items-center">
-              <label>Loot notifications</label>
-              <input
-                v-model="settingsStore.notifications.loot"
-                type="checkbox"
-                class="ml-auto form-checkbox"
-              >
-            </div>
-
-            <div class="flex items-center">
               <label>Load game notifications</label>
               <input
                 v-model="settingsStore.notifications.load"
