@@ -1,7 +1,7 @@
 <!-- MainComponent.vue -->
 <template>
   <div class="p-4 bg-white bg-opacity-75 rounded-lg shadow-lg relative flex flex-col h-full overflow-y-auto">
-    <h2 class="text-xl font-bold mb-4 text-center">
+    <h2 class="text-xl font-bold mb-2 text-center">
       Equip Your Ant Army
     </h2>
 

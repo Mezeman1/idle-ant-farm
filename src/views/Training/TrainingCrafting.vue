@@ -9,7 +9,7 @@
       class="mb-8"
     />
 
-    <p class="text-lg font-semibold mb-6 text-gray-800">
+    <p class="text-lg font-semibold mb-2 text-gray-800">
       Active Crafting Recipes: {{ trainingStore.activeCraftingRecipes.length }} / {{ trainingStore.maxActiveCraftingRecipes }}
     </p>
 
@@ -19,14 +19,14 @@
         :key="recipe.name"
         class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200 flex flex-col"
       >
-        <h3 class="text-xl font-bold text-gray-800 mb-4">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">
           {{ recipe.name }} {{ trainingStore.amountCraftedItems(recipe.name) > 0 ? `(${formatNumber(trainingStore.amountCraftedItems(recipe.name), 0)})` : '' }}
         </h3>
-        <p class="text-sm text-gray-600 mb-4">
+        <p class="text-sm text-gray-600 mb-2">
           {{ recipe.description }}
         </p>
 
-        <div class="grid grid-cols-2 gap-2 mb-4 text-sm">
+        <div class="grid grid-cols-2 gap-2 mb-2 text-sm">
           <div>
             <p class="font-semibold text-gray-700">
               Level Required
@@ -62,7 +62,7 @@
         <!-- Crafting Progress Bar -->
         <div
           v-if="isRecipeActive(recipe.name)"
-          class="mb-4"
+          class="mb-2"
         >
           <p class="text-sm font-semibold text-gray-700 mb-1">
             Crafting Progress

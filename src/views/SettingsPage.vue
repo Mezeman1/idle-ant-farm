@@ -31,7 +31,7 @@
     </div>
 
     <div class="bg-white shadow-md rounded-md p-4">
-      <p class="text-lg md:text-2xl font-bold mb-4">
+      <p class="text-lg md:text-2xl font-bold mb-2">
         Settings
       </p>
 

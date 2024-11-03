@@ -6,11 +6,10 @@
       :xp="miningXp"
       :xp-to-next-level="miningXpToNextLevel"
       :milestones="trainingStore.miningMilestones"
-      class="mb-8"
     />
 
-    <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-6">
-      <p class="text-lg font-semibold mb-4 text-gray-800">
+    <div class="bg-white rounded-lg shadow-md p-4 border border-gray-200 mb-2">
+      <p class="text-lg font-semibold mb-2 text-gray-800">
         Active Mining Resources: {{ trainingStore.activeResources.length }} / {{ trainingStore.maxActiveResources }}
       </p>
 
@@ -42,10 +41,10 @@
           :level="resource.level"
           :xp="resource.xp"
           :xp-to-next-level="resource.xpToNextLevel"
-          class="mb-4"
+          class="mb-2"
         />
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="grid grid-cols-2 gap-4 mb-2">
           <div class="text-sm">
             <p class="font-semibold text-gray-700">
               Level Required
@@ -87,7 +86,7 @@
         <!-- Mining Progress Bar -->
         <div
           v-if="!resource.isDepleted"
-          class="mb-4"
+          class="mb-2"
         >
           <p class="text-sm font-semibold text-gray-700 mb-1">
             Mining Progress
@@ -106,7 +105,7 @@
         <!-- Respawn Progress Bar -->
         <div
           v-else
-          class="mb-4"
+          class="mb-2"
         >
           <p class="text-sm font-semibold text-gray-700 mb-1">
             Respawn Progress
@@ -123,7 +122,7 @@
         </div>
 
         <!-- Start/Stop Mining Buttons -->
-        <div class="flex justify-between mb-4">
+        <div class="flex justify-between mb-2">
           <button
             v-if="!isMiningResource(resource) && !resource.isDepleted"
             :disabled="training.mining.level < resource.levelRequired"

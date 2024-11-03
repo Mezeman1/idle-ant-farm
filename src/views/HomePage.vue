@@ -150,12 +150,12 @@
         <!-- Login/Register Card -->
         <div class="flex flex-col items-center justify-center bg-gray-50 rounded">
           <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">
+            <h2 class="text-2xl font-bold mb-2 text-center text-gray-800">
               {{ registerActive ? 'Create an Account' : 'Welcome Back' }}
             </h2>
             <form @submit.prevent="registerActive ? gameStore.register() : gameStore.login()">
               <!-- Email Field -->
-              <div class="relative mb-4">
+              <div class="relative mb-2">
                 <input
                   v-model="gameStore.email"
                   type="email"
@@ -175,7 +175,7 @@
                 </div>
               </div>
               <!-- Password Field -->
-              <div class="relative mb-4">
+              <div class="relative mb-2">
                 <input
                   v-model="gameStore.password"
                   type="password"
@@ -200,7 +200,7 @@
               <!-- Confirm Password Field -->
               <div
                 v-if="registerActive"
-                class="relative mb-4"
+                class="relative mb-2"
               >
                 <input
                   v-model="gameStore.passwordConfirm"
@@ -224,7 +224,7 @@
                 </div>
               </div>
               <!-- Privacy Agreement -->
-              <div class="flex items-center mb-4">
+              <div class="flex items-center mb-2">
                 <input
                   v-model="gameStore.privacyAgreement"
                   type="checkbox"
@@ -243,7 +243,7 @@
               <!-- Error Message -->
               <div
                 v-if="gameStore.error"
-                class="text-red-500 mb-4"
+                class="text-red-500 mb-2"
               >
                 {{ gameStore.error }}
               </div>

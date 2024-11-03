@@ -7,19 +7,13 @@
       <!-- Add this section to show the XP multiplier -->
       <div
         v-if="xpMultiplier > 1"
-        class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
+        class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-2"
       >
         <p class="font-bold">
           XP Boost Active!
         </p>
         <p>All training XP gains are multiplied by {{ xpMultiplier }}x</p>
       </div>
-
-      <p
-        class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200 text-sm md:text-xl text-gray-800"
-      >
-        Please note, this is a work in progress and not all features are implemented yet.
-      </p>
 
       <TrainingMining v-if="activeTab === 'mining'" />
       <TrainingCrafting v-if="activeTab === 'crafting'" />

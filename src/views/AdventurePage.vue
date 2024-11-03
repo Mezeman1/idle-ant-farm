@@ -13,7 +13,7 @@
 
         <!-- Area Modifiers Section -->
         <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold mb-4 text-gray-800">
+          <h2 class="text-2xl font-bold mb-2 text-gray-800">
             Area Modifiers
           </h2>
           <div
@@ -48,7 +48,7 @@
 
         <!-- New Armor Modifiers Section -->
         <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold mb-4 text-gray-800">
+          <h2 class="text-2xl font-bold mb-2 text-gray-800">
             Modifiers
           </h2>
           <div class="space-y-4">
@@ -144,7 +144,7 @@
 
         <!-- Battle Logs -->
         <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold mb-4 text-gray-800">
+          <h2 class="text-2xl font-bold mb-2 text-gray-800">
             Battle Logs
           </h2>
           <div 
@@ -210,7 +210,7 @@
 
         <!-- New Active Buffs Section -->
         <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold mb-4 text-gray-800">
+          <h2 class="text-2xl font-bold mb-2 text-gray-800">
             Active Buffs
           </h2>
           <div class="overflow-y-auto max-h-60 pr-2">

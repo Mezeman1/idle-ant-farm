@@ -4,7 +4,7 @@
     <div
       v-if="activeItem"
       ref="activeItemBox"
-      class="flex flex-col md:flex-row md:items-center md:justify-between p-4 border border-gray-300 rounded-lg mb-4 bg-white"
+      class="flex flex-col md:flex-row md:items-center md:justify-between p-4 border border-gray-300 rounded-lg mb-2 bg-white"
     >
       <div>
         <h3 class="font-bold text-lg md:text-xl">

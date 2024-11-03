@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Legend Section -->
-    <div class="mb-4 p-4 bg-gray-100 rounded-lg border-2">
+    <div class="mb-2 p-4 bg-gray-100 rounded-lg border-2">
       <h2 class="text-lg font-semibold mb-2">
         Legend
       </h2>

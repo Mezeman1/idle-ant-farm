@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 bg-gray-700 rounded-lg shadow-md text-white">
-    <h2 class="text-xl font-bold mb-4 text-center">
+    <h2 class="text-xl font-bold mb-2 text-center">
       Manage Your Loadouts
     </h2>
 
@@ -9,7 +9,7 @@
     </p>
 
     <!-- Save Current Loadout -->
-    <div class="mb-4">
+    <div class="mb-2">
       <input
         v-model="loadOutName"
         type="text"
@@ -25,7 +25,7 @@
     </div>
 
     <!-- List of Loadouts -->
-    <div class="mb-4">
+    <div class="mb-2">
       <h3 class="text-lg font-semibold mb-2">
         Saved Loadouts
       </h3>

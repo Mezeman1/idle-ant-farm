@@ -41,7 +41,7 @@
           </svg>
         </div>
         <!-- Achievement Icon -->
-        <div class="w-20 h-20 mb-4">
+        <div class="w-20 h-20 mb-2">
           <img
             v-if="achievement.image"
             :src="achievement.image"
@@ -81,7 +81,7 @@
           {{ achievement.name }}
         </h3>
         <!-- Achievement Description -->
-        <p class="text-gray-600 mb-4">
+        <p class="text-gray-600 mb-2">
           {{ achievement.description }}
         </p>
         <!-- Progress Bar -->

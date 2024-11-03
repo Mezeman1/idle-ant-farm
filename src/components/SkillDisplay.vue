@@ -1,7 +1,7 @@
 <template>
   <div
     :class="{
-      'bg-white shadow-lg rounded-lg mb-6 p-4': withStyling,
+      'bg-white shadow-lg rounded-lg mb-2 p-4': withStyling,
     }"
     class="text-gray-800"
   >

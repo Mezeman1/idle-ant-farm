@@ -5,10 +5,10 @@
     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
   >
     <div class="bg-white p-6 rounded-lg shadow-lg w-80">
-      <h2 class="text-lg font-bold mb-4">
+      <h2 class="text-lg font-bold mb-2">
         {{ title }}
       </h2>
-      <p class="mb-4">
+      <p class="mb-2">
         {{ message }}
       </p>
       <div class="flex justify-between space-x-2">

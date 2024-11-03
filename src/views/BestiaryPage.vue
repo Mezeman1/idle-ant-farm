@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col overflow-y-auto p-2">
-    <h2 class="text-2xl font-bold mb-4 text-gray-800">
+    <h2 class="text-2xl font-bold mb-2 text-gray-800">
       Bestiary
     </h2>
     <!-- Search Bar -->
-    <div class="mb-4">
+    <div class="mb-2">
       <div class="relative">
         <input
           v-model="searchQuery"
@@ -65,19 +65,19 @@
           <h3 class="text-2xl font-bold mb-2 text-gray-800">
             {{ selectedEnemy.name }}
           </h3>
-          <p class="text-sm text-gray-600 mb-4">
+          <p class="text-sm text-gray-600 mb-2">
             Area: {{ selectedEnemy.area }}
           </p>
           <img
             v-if="selectedEnemy.image"
             :src="selectedEnemy.image"
             :alt="selectedEnemy.name"
-            class="mb-4 w-full h-[128px] w-[128px] object-cover rounded-lg"
+            class="mb-2 w-full h-[128px] w-[128px] object-cover rounded-lg"
           >
-          <p class="text-gray-700 mb-4">
+          <p class="text-gray-700 mb-2">
             {{ selectedEnemy.description || 'No description available.' }}
           </p>
-          <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="grid grid-cols-2 gap-4 mb-2">
             <div>
               <div class="text-gray-600">
                 Health

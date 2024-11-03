@@ -4,10 +4,10 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
     <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full text-gray-800">
-      <h2 class="text-2xl font-bold mb-4">
+      <h2 class="text-2xl font-bold mb-2">
         Offline Gains Summary
       </h2>
-      <p class="mb-4">
+      <p class="mb-2">
         Time offline: {{ formatTime(offlineTime) }}
       </p>
       <div class="space-y-2">

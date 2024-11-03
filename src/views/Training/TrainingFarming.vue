@@ -8,15 +8,15 @@
     />
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-      <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-        <h2 class="text-lg font-semibold mb-4">
+      <div class="bg-white rounded-lg shadow-md p-4 mb-2">
+        <h2 class="text-lg font-semibold mb-2">
           Harvested Resources
         </h2>
         <ul>
           <li
             v-for="harvestedResource in harvestedResources"
             :key="harvestedResource.name"
-            class="bg-white rounded-lg shadow-md p-4 mb-4 border border-gray-200 flex justify-between items-center gap-2"
+            class="bg-white rounded-lg shadow-md p-4 mb-2 border border-gray-200 flex justify-between items-center gap-2"
           >
             <span>
               {{ harvestedResource.name }}: {{ harvestedResource.amount }}
@@ -38,7 +38,7 @@
       </div>
 
       <div
-        class="bg-white rounded-lg shadow-md p-4 mb-4"
+        class="bg-white rounded-lg shadow-md p-4 mb-2"
       >
         <h2
           class="text-lg font-semibold"
@@ -51,7 +51,7 @@
           <li
             v-for="fungus in trainingStore.eatenFungus"
             :key="fungus.name + 'modifier'"
-            class="bg-white rounded-lg shadow-md p-4 mb-4 border border-gray-200 flex flex-col justify-between gap-2"
+            class="bg-white rounded-lg shadow-md p-4 mb-2 border border-gray-200 flex flex-col justify-between gap-2"
           >
             <span class="flex-1">
               <strong>{{ fungus.name }}:</strong> <br> {{ trainingStore.getSeedByName(fungus.name).description }}
@@ -76,8 +76,8 @@
     </div>
 
 
-    <div class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200">
-      <h2 class="text-lg font-semibold mb-4">
+    <div class="bg-white rounded-lg shadow-md p-4 mb-2 border border-gray-200">
+      <h2 class="text-lg font-semibold mb-2">
         Fungus Farming Grid
       </h2>
 

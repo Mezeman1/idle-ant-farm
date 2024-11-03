@@ -14,7 +14,7 @@
         <img
           :src="item.image || defaultImage"
           :alt="item.name"
-          class="w-20 h-20 mb-4 object-contain rounded-lg"
+          class="w-20 h-20 mb-2 object-contain rounded-lg"
         >
         <h2 class="font-semibold text-lg text-gray-700">
           {{ getItemName(item) }}

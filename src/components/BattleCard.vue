@@ -22,7 +22,7 @@
         <p class="text-sm mb-1">
           Health: {{ formatNumber(health) }} / {{ formatNumber(maxHealth) }}
         </p>
-        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
           <div
             class="bg-green-600 h-2.5 rounded-full"
             :style="{ width: `${(health / maxHealth) * 100}%` }"

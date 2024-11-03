@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200">
+  <div class="bg-white rounded-lg shadow-md p-4 mb-2 border border-gray-200">
     <!-- Display each skill using the SkillDisplay component -->
     <SkillDisplay
       skill-name="Attack"
