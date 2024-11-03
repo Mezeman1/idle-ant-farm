@@ -1111,7 +1111,6 @@ export const useTrainingStore = defineStore({
     },
     applyModifiers() {
       const resourcesStore = useResourcesStore() // Access the resources store
-      resourcesStore.productionRates.antsGenerationRate = 0
       const craftedItems = this.craftedItems
 
       // Initialize the storageModifiers object
