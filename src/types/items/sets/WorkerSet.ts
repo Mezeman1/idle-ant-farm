@@ -79,7 +79,7 @@ export const workerSet = [
     id: 'worker-legs',
     name: 'Worker Legs',
     type: 'equipment',
-    description: 'Leg armor for workers, increases resource gathering by 0.08% per level.',
+    description: 'Leg armor for workers, increases resource gathering by 0.08% per level. Also increases damage by 0.05% per level.',
     equipmentType: 'armor',
     slotType: 'legs',
     set: 'Worker Set',
@@ -89,14 +89,22 @@ export const workerSet = [
       return useEvolveStore().getMaxItemLevel('Worker Set')
     },
     multiplier: 0.0008,
-    effect: ({gameStore}, item) => {
+    effect: ({gameStore, adventureStore}, item) => {
+      const modifier = {
+        damage: 0.0005,
+      }
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier *= bonusMultiplier
+      adventureStore.armyAttackModifier *= 1 + (modifier.damage * item.level)
       return true
     },
-    onRemove: ({gameStore}, item) => {
+    onRemove: ({gameStore, adventureStore}, item) => {
+      const modifier = {
+        damage: 0.0005,
+      }
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
+      adventureStore.armyAttackModifier /= 1 + (modifier.damage * item.level)
     },
     evolves: true,
   },
