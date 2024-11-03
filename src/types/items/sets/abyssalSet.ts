@@ -6,7 +6,7 @@ export const abyssalSet = [
     id: 'abyssal-helm',
     name: 'Abyssal Helm',
     type: 'equipment',
-    description: 'Helm that enhances storage by 1.5% per level.',
+    description: 'Helm that enhances seed storage by 1% per level.',
     equipmentType: 'armor',
     slotType: 'head',
     set: 'Abyssal Set',
@@ -15,22 +15,22 @@ export const abyssalSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Abyssal Set')
     },
-    multiplier: 0.015,
+    multiplier: 0.01,
     effect: ({equipmentStore}, item: Item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
-      equipmentStore.storageModifier *= bonusMultiplier
+      equipmentStore.storageModifiers.seeds *= bonusMultiplier
       return true
     },
     onRemove: ({equipmentStore}, item: Item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
-      equipmentStore.storageModifier /= bonusMultiplier
+      equipmentStore.storageModifiers.seeds /= bonusMultiplier
     },
     evolves: true,
   },
   {
     id: 'abyssal-chestplate',
     name: 'Abyssal Chestplate',
-    description: 'Chestplate that enhances storage by 1.5% per level.',
+    description: 'Chestplate that enhances larvae storage by 1% per level.',
     type: 'equipment',
     equipmentType: 'armor',
     slotType: 'body',
@@ -40,22 +40,22 @@ export const abyssalSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Abyssal Set')
     },
-    multiplier: 0.015,
+    multiplier: 0.01,
     effect: ({equipmentStore}, item: Item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
-      equipmentStore.storageModifier *= bonusMultiplier
+      equipmentStore.storageModifiers.larvae *= bonusMultiplier
       return true
     },
     onRemove: ({equipmentStore}, item: Item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
-      equipmentStore.storageModifier /= bonusMultiplier
+      equipmentStore.storageModifiers.larvae /= bonusMultiplier
     },
     evolves: true,
   },
   {
     id: 'abyssal-boots',
     name: 'Abyssal Boots',
-    description: 'Boots that enhance storage by 1.5% per level.',
+    description: 'Boots that enhance ants storage by 0.2% per level.',
     type: 'equipment',
     equipmentType: 'armor',
     slotType: 'legs',
@@ -65,15 +65,15 @@ export const abyssalSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Abyssal Set')
     },
-    multiplier: 0.015,
+    multiplier: 0.002,
     effect: ({equipmentStore}, item: Item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
-      equipmentStore.storageModifier *= bonusMultiplier
+      equipmentStore.storageModifiers.ants *= bonusMultiplier
       return true
     },
     onRemove: ({equipmentStore}, item: Item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
-      equipmentStore.storageModifier /= bonusMultiplier
+      equipmentStore.storageModifiers.ants /= bonusMultiplier
     },
     evolves: true,
   },
@@ -105,7 +105,7 @@ export const abyssalSet = [
   {
     id: 'abyssal-shield',
     name: 'Abyssal Shield',
-    description: 'Shield that enhances army defense by 1.5% per level.',
+    description: 'Shield that enhances queen storage by 0.1% per level.',
     type: 'equipment',
     equipmentType: 'accessory',
     slotType: 'accessory',
@@ -115,15 +115,15 @@ export const abyssalSet = [
     maxLevel: () => {
       return useEvolveStore().getMaxItemLevel('Abyssal Set')
     },
-    multiplier: 0.015,
+    multiplier: 0.001,
     effect: ({equipmentStore}, item: Item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
-      equipmentStore.defenseModifier *= bonusMultiplier
+      equipmentStore.storageModifiers.queen *= bonusMultiplier
       return true
     },
     onRemove: ({equipmentStore}, item: Item) => {
       const bonusMultiplier = 1 + (item.multiplier * item.level)
-      equipmentStore.defenseModifier /= bonusMultiplier
+      equipmentStore.storageModifiers.queen /= bonusMultiplier
     },
     evolves: true,
   },

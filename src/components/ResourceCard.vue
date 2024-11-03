@@ -60,6 +60,17 @@
           {{ storageMultiplierFormatted }}
         </span>
       </p>
+      <p
+        v-if="storageMultiplierEquipment > 1"
+        class="text-xs sm:text-sm text-gray-600 flex items-center"
+      >
+        <span class="font-semibold">Equipment Storage Multiplier:</span>
+        <span
+          class="ml-2 inline-block bg-purple-100 text-purple-600 text-xs px-2 py-0.5 rounded-full"
+        >
+          {{ storageMultiplierEquipmentFormatted }}
+        </span>
+      </p>
     </div>
 
     <div class="mt-4">
@@ -100,6 +111,7 @@ const props = withDefaults(defineProps<{
   ratePer?: string
   bonus?: number
   storageMultiplier?: number
+  storageMultiplierEquipment?: number
   cardClass?: string
   unlocked?: boolean
 }>(), {
@@ -107,6 +119,7 @@ const props = withDefaults(defineProps<{
   rate: undefined,
   bonus: undefined,
   storageMultiplier: undefined,
+  storageMultiplierEquipment: undefined,
   cardClass: 'bg-white p-4 sm:p-6 rounded-lg shadow-lg',
   unlocked: true,
 })
@@ -129,6 +142,10 @@ const bonusPercentage = computed(() => {
 
 const storageMultiplierFormatted = computed(() => {
   return props.storageMultiplier ? `x${gameStore.formatNumber(props.storageMultiplier, 2)}` : ''
+})
+
+const storageMultiplierEquipmentFormatted = computed(() => {
+  return props.storageMultiplierEquipment ? `x${gameStore.formatNumber(props.storageMultiplierEquipment, 2)}` : ''
 })
 </script>
 

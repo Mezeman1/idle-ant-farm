@@ -155,19 +155,19 @@ export const useResourcesStore = defineStore('resources', {
     },
     maxAnts: (state) => {
       if (state.resources.antHousing === 0) {
-        return Math.floor(state.storage.maxAnts * state.storageModifiers.ant * state.achievementModifiers.storage.ant * useEquipmentStore().storageModifier)
+        return Math.floor(state.storage.maxAnts * state.storageModifiers.ant * state.achievementModifiers.storage.ant * useEquipmentStore().storageModifiers.ants)
       }
 
-      return Math.floor(state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant * state.achievementModifiers.storage.ant * useEquipmentStore().storageModifier)
+      return Math.floor(state.storage.maxAnts + state.resources.antHousing * state.antsPerHousing * state.storageModifiers.ant * state.achievementModifiers.storage.ant * useEquipmentStore().storageModifiers.ants)
     },
     maxSeeds: (state) => {
-      return Math.floor(state.storage.maxSeeds * state.storageModifiers.seed * state.achievementModifiers.storage.seed * useEquipmentStore().storageModifier)
+      return Math.floor(state.storage.maxSeeds * state.storageModifiers.seed * state.achievementModifiers.storage.seed * useEquipmentStore().storageModifiers.seeds)
     },
     maxLarvae: (state) => {
-      return Math.floor(state.storage.maxLarvae * state.storageModifiers.larvae * state.achievementModifiers.storage.larvae * useEquipmentStore().storageModifier)
+      return Math.floor(state.storage.maxLarvae * state.storageModifiers.larvae * state.achievementModifiers.storage.larvae * useEquipmentStore().storageModifiers.larvae)
     },
     maxQueens: (state) => {
-      return Math.floor(state.storage.maxQueens * state.storageModifiers.queen * state.achievementModifiers.storage.queen * useEquipmentStore().storageModifier)
+      return Math.floor(state.storage.maxQueens * state.storageModifiers.queen * state.achievementModifiers.storage.queen * useEquipmentStore().storageModifiers.queen)
     },
     maxWorkers: (state) => {
       return Math.floor(state.storage.maxAnts * 0.01)

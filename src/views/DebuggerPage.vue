@@ -32,6 +32,13 @@
         Max all resources
       </button>
 
+      <button
+        class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+        @click="maxAllEquipped()"
+      >
+        Max all equipped
+      </button>
+
       <div class="flex flex-col gap-2">
         <div
           v-for="(value, key) in resourcesStore.resources"
@@ -134,6 +141,7 @@ import {useResourcesStore} from '@/stores/resourcesStore'
 import {useEvolveStore} from '@/stores/evolveStore'
 import {getItemName, itemRegistry} from '@/types/items/itemRegistry'
 import {ref} from 'vue'
+import { useEquipmentStore } from '@/stores/equipmentStore'
 
 const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()
@@ -166,5 +174,11 @@ const maxAllResources = () => {
   if (gameStore.eliteAntsUnlocked) {
     resourcesStore.resources.eliteAnts = resourcesStore.storage.maxEliteAnts
   }
+}
+
+const maxAllEquipped = () => {
+  const equipmentStore = useEquipmentStore()
+  equipmentStore.maxAllEquipped()
+
 }
 </script>

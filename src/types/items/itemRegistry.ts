@@ -39,6 +39,10 @@ export interface Item {
 }
 
 export function getItemFromRegistry(item: Item): Item {  
+  if (!item.id && !item.name) {
+    return item
+  }
+
   const itemFromRegistry = useInventoryStore().getItemById(item.id ?? item.name)
 
   if (itemFromRegistry) {

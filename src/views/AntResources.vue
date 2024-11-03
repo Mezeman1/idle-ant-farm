@@ -25,6 +25,7 @@
         :rate="resourcesStore.seedsPerSecond"
         :bonus="resourcesStore.productionRates.collectionRateModifier"
         :storage-multiplier="resourcesStore.storageModifiers.seed * resourcesStore.achievementModifiers.storage.seed"
+        :storage-multiplier-equipment="equipmentStore.storageModifiers.seeds"
       >
         <template #actions>
           <StorageButtons
@@ -73,6 +74,7 @@
         :rate-per="'/m'"
         :bonus="resourcesStore.productionRates.larvaeProductionModifier"
         :storage-multiplier="resourcesStore.storageModifiers.larvae * resourcesStore.achievementModifiers.storage.larvae"
+        :storage-multiplier-equipment="equipmentStore.storageModifiers.larvae"
       >
         <template #actions>
           <StorageButtons
@@ -119,6 +121,7 @@
         :max-count="resourcesStore.maxAnts"
         :rate="resourcesStore.antsPerSecond"
         :storage-multiplier="resourcesStore.storageModifiers.ant * resourcesStore.achievementModifiers.storage.ant"
+        :storage-multiplier-equipment="equipmentStore.storageModifiers.ants"
       >
         <template #actions>
           <div class="w-full flex flex-wrap gap-2">
@@ -211,6 +214,7 @@
         :count="resourcesStore.resources.queens"
         :max-count="resourcesStore.maxQueens"
         :storage-multiplier="resourcesStore.storageModifiers.queen * resourcesStore.achievementModifiers.storage.queen"
+        :storage-multiplier-equipment="equipmentStore.storageModifiers.queen"
       >
         <template #actions>
           <div class="flex flex-wrap gap-2">
@@ -468,11 +472,12 @@ import {useResourcesStore} from '@/stores/resourcesStore'
 import {useEvolveStore} from '@/stores/evolveStore'
 import ResourceCard from '@/components/ResourceCard.vue'
 import AutoToggle from '@/components/AutoToggle.vue'
-
+import {useEquipmentStore} from '@/stores/equipmentStore'
 const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
 const evolveStore = useEvolveStore()
+const equipmentStore = useEquipmentStore()
 
 // Format numbers using the store's function
 const formatNumber = gameStore.formatNumber

@@ -20,7 +20,12 @@ interface EquipmentState {
   loadOuts: LoadOut[];
   maxLoadOuts: number;
 
-  storageModifier: number;
+  storageModifiers: {
+    larvae: number;
+    seeds: number;
+    ants: number;
+    queen: number;
+  };
 }
 
 interface LoadOut {
@@ -52,7 +57,12 @@ export const useEquipmentStore = defineStore('equipmentStore', {
 
     loadOuts: [],
     maxLoadOuts: 3,
-    storageModifier: 1,
+    storageModifiers: {
+      larvae: 1,
+      seeds: 1,
+      ants: 1,
+      queen: 1,
+    },
   }),
   getters: {
     getAvailableItemsForSlot: (state) => (slotType: SlotType) => {
@@ -79,6 +89,14 @@ export const useEquipmentStore = defineStore('equipmentStore', {
     },
   },
   actions: {
+    maxAllEquipped() {
+      // Max all equipped items to the max level
+      Object.values(this.equippedItems).flat().forEach((item) => {
+        if (item) {
+          item.level = getMaxItemLevel(item)
+        }
+      })
+    },
     getItemFromEquipment(itemId: string): Item | null {
       const equippedItems = [
         this.equippedItems.head,
@@ -438,7 +456,12 @@ export const useEquipmentStore = defineStore('equipmentStore', {
       this.loadOuts = state.loadOuts ?? []
       this.maxLoadOuts = state.maxLoadOuts ?? this.maxLoadOuts
       this.maxAccessories = 2
-      this.storageModifier = 1
+      this.storageModifiers = {
+        larvae: 1,
+        seeds: 1,
+        ants: 1,
+        queen: 1,
+      }
     },
 
     loadEquippedItems(equippedItems, context) {
@@ -506,7 +529,12 @@ export const useEquipmentStore = defineStore('equipmentStore', {
 
       this.maxLoadOuts = 3
 
-      this.storageModifier = 1
+      this.storageModifiers = {
+        larvae: 1,
+        seeds: 1,
+        ants: 1,
+        queen: 1,
+      }
 
       // Recalculate set bonuses
       this.checkForSetBonus()
