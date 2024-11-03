@@ -64,6 +64,10 @@ export const workerSet = [
       return true
     },
     onRemove: ({gameStore, adventureStore}, item) => {
+      const modifier = {
+        defense: 0.0005,
+        health: 0.0005,
+      }
       const bonusMultiplier = 1 + (item.multiplier * item.level)
       gameStore.productionRates.collectionRateModifier /= bonusMultiplier
       adventureStore.armyDefenseModifier /= 1 + (modifier.defense * item.level)
