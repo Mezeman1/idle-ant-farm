@@ -228,7 +228,7 @@ export const miningResources = [
     xpToNextLevel: BASE_XP,
   },
   {
-    name: ResourceType.RoyalJelly,
+    name: ResourceType.RoyalJellyEssence,
     xpPerAction: 500,
     levelRequired: 99,
     initialTimePerAction: 19.2,

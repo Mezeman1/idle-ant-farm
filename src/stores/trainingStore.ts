@@ -295,7 +295,7 @@ export const useTrainingStore = defineStore({
         name: CraftingRecipeType.RoyalJellyCollector,
         description: 'Collects 1 Royal Jelly per Royal Jelly Collector',
         cost: {
-          [ResourceType.RoyalJelly]: 100,
+          [ResourceType.RoyalJellyEssence]: 100,
         },
         xpPerAction: 180,
         levelRequired: 80,

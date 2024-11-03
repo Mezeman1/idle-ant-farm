@@ -48,7 +48,7 @@ export enum ResourceType {
   CarapaceFragment = 'Carapace Fragment',
   AntLarvae = 'Ant Larvae',
   AntPheromones = 'Ant Pheromones',
-  RoyalJelly = 'Royal Jelly Essence',
+  RoyalJellyEssence = 'Royal Jelly Essence',
 }
 
 export enum CraftingRecipeType {
