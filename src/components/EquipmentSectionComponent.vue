@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-md mx-auto p-4">
-    <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:grid-rows-3">
+  <div class="max-w-md mx-auto">
+    <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:grid-rows-3">
       <!-- Head Slot -->
       <SlotComponent
         :item="headSlot"

@@ -50,7 +50,7 @@
     </div>
 
     <!-- Equipment Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
       <button
         v-for="item in paginatedEquipment"
         :key="item.id"
@@ -81,7 +81,7 @@
           {{ capitalize(item.rarity) }} {{ item.equipmentType }}
         </p>
         <p
-          class="text-sm text-gray-600 mt-2 text-center"
+          class="text-xs text-gray-600 mt-2 text-center"
           :class="{'text-gray-400': !hasItem(item.id)}"
         >
           {{ item.description }}

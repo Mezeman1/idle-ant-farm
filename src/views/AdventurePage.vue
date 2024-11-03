@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col p-4">
-    <div :class="isLargeScreen ? 'grid grid-cols-3 gap-6' : 'flex flex-col space-y-6'">
+    <div :class="isLargeScreen ? 'grid grid-cols-3 gap-2' : 'flex flex-col space-y-2'">
       <!-- Left Column: Wave Selector and Area Info -->
-      <div class="space-y-4">
+      <div class="space-y-2">
         <WaveSelector
           :selected-wave="selectedWave"
           :can-go-next="canGoNext"
@@ -12,7 +12,7 @@
         />
 
         <!-- Area Modifiers Section -->
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-4">
           <h2 class="text-2xl font-bold mb-2 text-gray-800">
             Area Modifiers
           </h2>
@@ -36,7 +36,7 @@
           <p class="text-gray-600 mt-4 font-semibold">
             Kill Count: {{ formatNumber(adventureStore.killCountsForCurrentArea) }}
           </p>
-          <AreaModifiersMilestones class="mt-4" />
+          <AreaModifiersMilestones class="mt-2" />
 
           <h2 class="text-gray-600 mt-4 font-semibold flex items-center">
             Global Drop Chance Modifier: 
@@ -47,7 +47,7 @@
         </div>
 
         <!-- New Armor Modifiers Section -->
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-4">
           <h2 class="text-2xl font-bold mb-2 text-gray-800">
             Modifiers
           </h2>
@@ -89,7 +89,7 @@
                 />
               </div>
             </div>
-            <hr class="border-gray-200 my-4">
+            <hr class="border-gray-200 my-2">
             <div v-if="trainingStore.farmingModifiers.defense > 1">
               <h3 class="text-lg font-semibold text-gray-700 mb-2">
                 Farming Modifiers
@@ -106,9 +106,9 @@
       </div>
 
       <!-- Middle Column: Battle Arena -->
-      <div class="space-y-4">
+      <div class="space-y-2">
         <!-- Ant Army and Enemy Bug Display -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-2">
           <BattleCard
             title="Ant Army"
             :image="ArmyImage"
@@ -143,7 +143,7 @@
         </div>
 
         <!-- Battle Logs -->
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-4">
           <h2 class="text-2xl font-bold mb-2 text-gray-800">
             Battle Logs
           </h2>
@@ -174,7 +174,7 @@
         </div>
 
         <!-- Battle Style Buttons -->
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-3 gap-2">
           <BattleStyleButton
             style-name="Attack"
             :is-active="battleStyle === 'attack'"
@@ -193,7 +193,7 @@
         </div>
 
         <!-- Status Effect Chances -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-2">
           <StatusEffectCard
             title="Your Army's Effects"
             :poison-chance="poisonChance"
@@ -209,7 +209,7 @@
         <TrainingCombat />
 
         <!-- New Active Buffs Section -->
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-4">
           <h2 class="text-2xl font-bold mb-2 text-gray-800">
             Active Buffs
           </h2>

@@ -2,7 +2,7 @@
   <div class="flex-grow overflow-y-auto">
     <!-- Add this section to show the current evolution -->
     <div
-      class="bg-purple-100 border-l-4 border-purple-500 text-purple-700 p-4 mb-2"
+      class="bg-purple-100 border-l-4 border-purple-500 text-purple-700 p-4"
     >
       <p class="font-bold">
         Current Evolution: {{ evolveStore.getCurrentEvolutionInRomanLetters('Default') }}
@@ -15,7 +15,7 @@
       </p>
     </div>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 p-4">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-2 p-2">
       <ResourceCard
         :title="evolveStore.currentEvolutionData.resources.seeds.name"
         :description="evolveStore.currentEvolutionData.resources.seeds.description"
@@ -463,6 +463,13 @@
             target="_blank"
             class="text-blue-500"
           >buying me a coffee</a> ☕️.
+        </p>
+
+        <h2 class="font-bold">
+          Made with ❤️ by Mezeman
+        </h2>
+        <p>
+          Make sure to export your save frequently in case something happens and you lose your progress.
         </p>
       </div>
     </div>

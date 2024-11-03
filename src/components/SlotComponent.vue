@@ -1,7 +1,7 @@
 <template>
   <button
     v-tooltip="tooltipText"
-    class="slot rounded-lg shadow-md flex items-center justify-center p-1 relative"
+    class="slot rounded-lg shadow-md flex items-center justify-center relative"
     :class="[
       slotClasses,
     ]"

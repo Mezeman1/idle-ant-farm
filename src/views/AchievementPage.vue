@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col overflow-y-auto p-6 bg-gray-50 bg-opacity-50">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="flex flex-col overflow-y-auto p-2 bg-gray-50 bg-opacity-50">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
       <div
         v-for="achievement in achievements"
         :key="achievement.id"

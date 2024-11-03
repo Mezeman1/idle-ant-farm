@@ -1,12 +1,12 @@
 <template>
-  <div class="p-6 bg-white bg-opacity-80 rounded-xl shadow-lg relative flex flex-col h-full overflow-y-auto">
+  <div class="p-2 bg-white bg-opacity-80 rounded-xl shadow-lg relative flex flex-col h-full overflow-y-auto">
     <!-- Passive Items Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
       <div
         v-for="item in passiveComputed"
         :key="item.id"
         :class="[
-          'border-2 p-5 rounded-xl flex flex-col items-center justify-center text-center shadow-md transition transform hover:scale-105',
+          'border-2 p-4 rounded-xl flex flex-col items-center justify-center text-center shadow-md',
           isCollected(item) ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-gray-50',
           !isCollected(item) && 'opacity-75'
         ]"

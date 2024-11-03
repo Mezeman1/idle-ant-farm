@@ -1,8 +1,5 @@
 <template>
   <div class="flex flex-col overflow-y-auto p-2">
-    <h2 class="text-2xl font-bold mb-2 text-gray-800">
-      Bestiary
-    </h2>
     <!-- Search Bar -->
     <div class="mb-2">
       <div class="relative">
@@ -72,7 +69,7 @@
             v-if="selectedEnemy.image"
             :src="selectedEnemy.image"
             :alt="selectedEnemy.name"
-            class="mb-2 w-full h-[128px] w-[128px] object-cover rounded-lg"
+            class="mb-2 h-[128px] w-[128px] rounded-lg"
           >
           <p class="text-gray-700 mb-2">
             {{ selectedEnemy.description || 'No description available.' }}
@@ -164,7 +161,7 @@
         </div>
         <div
           v-else
-          class="py-4"
+          class="p-4"
         >
           <p class="text-gray-700">
             Select an enemy from the list to view details.

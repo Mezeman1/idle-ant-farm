@@ -37,7 +37,7 @@
     <!-- Inventory Grid -->
     <div 
       ref="gridContainer"
-      class="grid gap-3 p-4 overflow-y-auto"
+      class="grid gap-2 p-1 overflow-y-auto"
       :class="gridClass"
     >
       <InventoryItem
