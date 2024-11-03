@@ -38,6 +38,44 @@
       >
         Max all equipped
       </button>
+      <div class="flex flex-col gap-2">
+        <label>Add Levels to Skill:</label>
+        <select
+          v-model="selectedSkill"
+          class="bg-gray-100 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+        >
+          <option value="none">
+            None
+          </option>
+          <option value="mining">
+            Mining
+          </option>
+          <option value="foraging">
+            Foraging
+          </option>
+          <option value="crafting">
+            Crafting
+          </option>
+          <option value="attack">
+            Attack
+          </option>
+          <option value="defense">
+            Defense
+          </option>
+          <option value="hitpoints">
+            Hitpoints
+          </option>
+          <option value="farming">
+            Farming
+          </option>
+        </select>
+        <button
+          class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+          @click="trainingStore.addLevel(selectedSkill as Skill, 10)"
+        >
+          Add 10 Levels
+        </button>
+      </div>
 
       <div class="flex flex-col gap-2">
         <div
@@ -142,16 +180,20 @@ import {useEvolveStore} from '@/stores/evolveStore'
 import {getItemName, itemRegistry} from '@/types/items/itemRegistry'
 import {ref} from 'vue'
 import { useEquipmentStore } from '@/stores/equipmentStore'
+import { useTrainingStore } from '@/stores/trainingStore'
+import { Skill } from '@/types/trainingTypes'
 
 const gameStore = useGameStore()
 const resourcesStore = useResourcesStore()
 const prestigeStore = usePrestigeStore()
 const inventoryStore = useInventoryStore()
+const trainingStore = useTrainingStore()
 const availableItems = itemRegistry
 
 // Variables for selected item and amount
 const selectedItem = ref(availableItems[0].id)
 const selectedAmount = ref(1)
+const selectedSkill = ref('crafting')
 
 // Function to add selected item to the inventory
 const addItemToInventory = () => {

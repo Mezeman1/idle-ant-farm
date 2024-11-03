@@ -837,15 +837,15 @@ export const useTrainingStore = defineStore({
       this.activeResources.push(resource)
     },
 
-    addLevel(skill: Skill) {
+    addLevel(skill: Skill, amount = 1) {
       const training = this.getTrainingState(skill)
       if (!training) return
 
-      training.level++
+      training.level += amount
       training.xp -= training.xpToNextLevel
       training.xpToNextLevel = this.getXpToNextLevel(training.level)
 
-      if (training.xp >= training.xpToNextLevel) this.addLevel(skill)
+      if (training.xp >= training.xpToNextLevel) this.addLevel(skill, amount)
 
       if (skill === Skill.Mining) this.checkMiningMilestones()
       if (
@@ -857,6 +857,8 @@ export const useTrainingStore = defineStore({
     },
 
     checkMiningMilestones() {
+      this.resetMiningMilestoneBonusses()
+
       this.miningMilestones.forEach((milestone) => {
         if (this.training.mining.level >= milestone.levelRequired) {
           this.applyMiningMilestone(milestone)
@@ -1232,7 +1234,7 @@ export const useTrainingStore = defineStore({
       }
 
       if (effect.royalJellyGeneration) {
-        resourcesStore.addRoyalJelly(effect.royalJellyGeneration)
+        resourcesStore.addRoyalJellyGeneration(effect.royalJellyGeneration * amountOfUpgrade)
       }
     },
 

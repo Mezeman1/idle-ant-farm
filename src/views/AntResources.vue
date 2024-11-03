@@ -268,6 +268,12 @@
             <p class="text-sm">
               Count: {{ formatNumber(resourcesStore.resources.royalJelly ?? 0, 1) }}/∞
             </p>
+            <p
+              v-if="resourcesStore.royalJellyPerSecond > 0"
+              class="text-xs"
+            >
+              Royal Jelly Generation Rate: {{ formatNumber(resourcesStore.royalJellyPerSecond, 2) }} per second
+            </p>
           </div>
         </div>
 

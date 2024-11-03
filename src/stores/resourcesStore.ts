@@ -70,6 +70,8 @@ export const useResourcesStore = defineStore('resources', {
 
     productionRates: {
       antsGenerationRate: 0,
+      royalJellyGenerationRate: 0,
+
       larvaeProductionRate: 2.5, // Larvae produced per queen per minute
       collectionRatePerAnt: 60, // Seeds collected per ant per minute
 
@@ -100,6 +102,7 @@ export const useResourcesStore = defineStore('resources', {
       larvaeAccumulator: 0, // To accumulate fractional larvae production
       seedAccumulator: 0, // To accumulate fractional seed production
       antAccumulator: 0, // To accumulate fractional ant production
+      royalJellyAccumulator: 0, // To accumulate fractional royal jelly production
     },
 
     royalJellyCollectionChance: 0.001, // 0.1% chance to collect royal jelly when queen produces larvae
@@ -119,6 +122,9 @@ export const useResourcesStore = defineStore('resources', {
     antsPerSecond: (state) => {
       const farmingSpawnRate = useTrainingStore().farmingModifiers.spawnRate ?? 1
       return state.productionRates.antsGenerationRate * farmingSpawnRate
+    },
+    royalJellyPerSecond: (state) => {
+      return state.productionRates.royalJellyGenerationRate / 60
     },
     larvaePerMinute: (state) => {
       const larvaePerQueen = state.resources.queens * state.productionRates.larvaeProductionRate * state.productionRates.larvaeProductionModifier
@@ -193,8 +199,8 @@ export const useResourcesStore = defineStore('resources', {
     addAnts(amount: number) {
       this.productionRates.antsGenerationRate += amount
     },
-    addRoyalJelly(amount: number) {
-      this.resources.royalJelly += amount
+    addRoyalJellyGeneration(amount: number) {
+      this.productionRates.royalJellyGenerationRate += amount
     },
     applyStorageModifiers(storageModifiers: any) {
       this.storageModifiers = storageModifiers
@@ -623,6 +629,21 @@ export const useResourcesStore = defineStore('resources', {
           useAchievementStore().addToTotal('ants', wholeAnts)
         }
       }
+
+      if (this.productionRates.royalJellyGenerationRate > 0) {
+        const royalJellyPerSecond = this.royalJellyPerSecond
+        const royalJellyToAdd = royalJellyPerSecond * deltaTime
+
+        this.accumulators.royalJellyAccumulator += royalJellyToAdd
+
+        const wholeRoyalJelly = Math.floor(this.accumulators.royalJellyAccumulator)
+        if (wholeRoyalJelly > 0) {
+          this.resources.royalJelly += wholeRoyalJelly
+          this.accumulators.royalJellyAccumulator -= wholeRoyalJelly
+
+          useAchievementStore().addToTotal('royalJelly', wholeRoyalJelly)
+        }
+      }
     },
 
     setStorageToMax() {
@@ -739,6 +760,8 @@ export const useResourcesStore = defineStore('resources', {
       // Reset production rates
       this.productionRates = {
         antsGenerationRate: 0,
+        royalJellyGenerationRate: 0,
+
         larvaeProductionRate: 1,
         collectionRatePerAnt: 60,
 
