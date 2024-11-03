@@ -127,4 +127,4 @@ export const abyssalSet = [
     },
     evolves: true,
   },
-]
+] as Item[]
