@@ -1037,6 +1037,7 @@ export const useAdventureStore = defineStore('adventureStore', {
       this.armyDefense = baseDefense * this.armyDefenseModifier * useTrainingStore().farmingModifiers.defense * trainingStore.modifiers.army.defense
       this.armyMaxHealth = baseHealth * this.armyMaxHealthModifier * trainingStore.modifiers.army.health
       this.armyRegen = baseRegen * this.armyRegenModifier * trainingStore.modifiers.army.regen
+      this.armyHealth = Math.min(this.armyHealth ?? 0, this.armyMaxHealth)
 
       bossStore.setArmyStats({
         damage: baseAttack,
