@@ -1,5 +1,5 @@
-import {defineStore} from 'pinia'
-import {useResourcesStore} from '@/stores/resourcesStore'
+import { defineStore } from 'pinia'
+import { useResourcesStore } from '@/stores/resourcesStore'
 import {
   BASE_XP,
   CraftingRecipe,
@@ -11,16 +11,17 @@ import {
   TrainingState,
   XP_MULTIPLIER,
 } from '@/types/trainingTypes'
-import {miningResources} from '@/types/miningResources'
-import {useAdventureStore} from '@/stores/adventureStore'
-import {useSettingsStore} from '@/stores/settingsStore'
-import {SeedNames, seeds} from '@/types/farmingSeeds'
-import {toast} from 'vue3-toastify'
-import {useBossStore} from '@/stores/bossStore'
+import { miningResources } from '@/types/miningResources'
+import { useAdventureStore } from '@/stores/adventureStore'
+import { useSettingsStore } from '@/stores/settingsStore'
+import { SeedNames, seeds } from '@/types/farmingSeeds'
+import { toast } from 'vue3-toastify'
+import { useBossStore } from '@/stores/bossStore'
 import combatMilestones, { CombatMilestone } from '@/types/combatMilestones'
 import { useEvolveStore } from './evolveStore'
 import { useGameStore } from './gameStore'
 import BigNumber from 'bignumber.js'
+import { migrateResourceType } from '@/utils/migrations'
 
 export const useTrainingStore = defineStore({
   id: 'Training',
@@ -120,7 +121,7 @@ export const useTrainingStore = defineStore({
       {
         name: CraftingRecipeType.SeedStorage,
         description: 'Increase the storage capacity for seeds by 0.1%',
-        cost: {[ResourceType.Dirt]: 5},
+        cost: { [ResourceType.Dirt]: 5 },
         storageIncrease: {
           seed: 0.001,
         },
@@ -133,7 +134,7 @@ export const useTrainingStore = defineStore({
       {
         name: CraftingRecipeType.LarvaeStorage,
         description: 'Increase the storage capacity for ant larvae by 0.1%',
-        cost: {[ResourceType.Clay]: 5},
+        cost: { [ResourceType.Clay]: 5 },
         storageIncrease: {
           larvae: 0.001,
         },
@@ -329,7 +330,11 @@ export const useTrainingStore = defineStore({
 
     // Farming
     selectedSeed: null,
-    farmingPlots: Array(9).fill({seed: null, growthStage: 'Empty', growthProgress: 0}),
+    farmingPlots: Array(9).fill({
+      seed: null,
+      growthStage: 'Empty',
+      growthProgress: 0,
+    }),
     harvestedResources: {
       [SeedNames.NutrientFungus]: 0,
     },
@@ -342,9 +347,9 @@ export const useTrainingStore = defineStore({
       xpBoost: 1,
     },
     eatenFungus: [] as {
-      name: SeedNames,
-      effect: object,
-      duration: number,
+      name: SeedNames;
+      effect: object;
+      duration: number;
     }[],
 
     combatMilestones: combatMilestones,
@@ -396,7 +401,7 @@ export const useTrainingStore = defineStore({
       return seeds
     },
     getSeedByName: (state) => (name: string) => {
-      return seeds.find(seed => seed.name === name)
+      return seeds.find((seed) => seed.name === name)
     },
   },
 
@@ -407,8 +412,10 @@ export const useTrainingStore = defineStore({
     },
 
     processTraining(deltaTime: number) {
-      if (this.activeTrainings.includes(Skill.Mining)) this.processMining(deltaTime)
-      if (this.activeTrainings.includes(Skill.Crafting)) this.processCrafting(deltaTime)
+      if (this.activeTrainings.includes(Skill.Mining))
+        this.processMining(deltaTime)
+      if (this.activeTrainings.includes(Skill.Crafting))
+        this.processCrafting(deltaTime)
       this.processFarming(deltaTime)
     },
 
@@ -420,12 +427,22 @@ export const useTrainingStore = defineStore({
           plot.growthProgress += growthDelta
 
           // If the growth progress exceeds the growth time, move to the next stage
-          if (plot.growthStage === 'Planted' && plot.growthProgress >= plot.seed.growthTime / 2) {
+          if (
+            plot.growthStage === 'Planted' &&
+            plot.growthProgress >= plot.seed.growthTime / 2
+          ) {
             plot.growthStage = 'Growing'
-          } else if (plot.growthStage === 'Growing' && plot.growthProgress >= plot.seed.growthTime) {
+          } else if (
+            plot.growthStage === 'Growing' &&
+            plot.growthProgress >= plot.seed.growthTime
+          ) {
             plot.growthStage = 'Mature'
             // If the setting is set and the first notification of this seed type was over 10 seconds ago
-            if (useSettingsStore().getNotificationSetting('matureCrops') && (!this.pastNotifications[plot.seed.name] || Date.now() - this.pastNotifications[plot.seed.name] > 10 * 1000)) {
+            if (
+              useSettingsStore().getNotificationSetting('matureCrops') &&
+              (!this.pastNotifications[plot.seed.name] ||
+                Date.now() - this.pastNotifications[plot.seed.name] > 10 * 1000)
+            ) {
               this.pastNotifications[plot.seed.name] = Date.now()
               toast.success(`Mature crop: ${plot.seed.name}`, {
                 position: toast.POSITION.TOP_LEFT,
@@ -438,12 +455,14 @@ export const useTrainingStore = defineStore({
       this.handleFungusDuration(deltaTime)
     },
     cancelEffect(fungus: Seed) {
-      this.eatenFungus = this.eatenFungus.filter(f => f.name !== fungus.name)
+      this.eatenFungus = this.eatenFungus.filter((f) => f.name !== fungus.name)
       this.applyFungusEffects()
     },
     eatFungus(fungus: Seed) {
-      const existingFungus = this.eatenFungus.find(f => f.name === fungus.name)
-      
+      const existingFungus = this.eatenFungus.find(
+        (f) => f.name === fungus.name,
+      )
+
       if (existingFungus) {
         // If the fungus already exists, extend its duration
         existingFungus.duration += fungus.duration
@@ -460,12 +479,13 @@ export const useTrainingStore = defineStore({
       this.harvestedResources[fungus.name]--
 
       // clear harvested resources if the amount is 0
-      Object.keys(this.harvestedResources).forEach(key => {
-        if (this.harvestedResources[key] <= 0) delete this.harvestedResources[key]
+      Object.keys(this.harvestedResources).forEach((key) => {
+        if (this.harvestedResources[key] <= 0)
+          delete this.harvestedResources[key]
       })
     },
     handleFungusDuration(deltaTime: number) {
-      this.eatenFungus = this.eatenFungus.filter(fungus => {
+      this.eatenFungus = this.eatenFungus.filter((fungus) => {
         fungus.duration -= deltaTime
         return fungus.duration > 0
       })
@@ -474,11 +494,13 @@ export const useTrainingStore = defineStore({
     },
     applyFungusEffects() {
       this.resetFarmingModifiers()
-      this.eatenFungus.filter(fungus => fungus.duration > 0).forEach(fungus => {
-        Object.keys(fungus.effect).forEach(effect => {
-          this.farmingModifiers[effect] = fungus.effect[effect]
+      this.eatenFungus
+        .filter((fungus) => fungus.duration > 0)
+        .forEach((fungus) => {
+          Object.keys(fungus.effect).forEach((effect) => {
+            this.farmingModifiers[effect] = fungus.effect[effect]
+          })
         })
-      })
     },
     resetFarmingModifiers() {
       this.farmingModifiers = {
@@ -505,17 +527,24 @@ export const useTrainingStore = defineStore({
       if (this.farmingPlots[index].growthStage === 'Mature') {
         const seed = this.farmingPlots[index].seed
         this.addXp(Skill.Farming, seed.xpPerAction)
-        if (!this.harvestedResources[seed.name]) this.harvestedResources[seed.name] = 0
+        if (!this.harvestedResources[seed.name])
+          this.harvestedResources[seed.name] = 0
         this.harvestedResources[seed.name]++
 
         // Reset the plot after harvesting
-        this.farmingPlots[index] = {seed: null, growthStage: 'Empty', growthProgress: 0}
+        this.farmingPlots[index] = {
+          seed: null,
+          growthStage: 'Empty',
+          growthProgress: 0,
+        }
       }
     },
 
     processMining(deltaTime: number) {
       this.activeResources.forEach((activeResourceName) => {
-        const activeResource = this.miningResources.find(res => res.name === activeResourceName)
+        const activeResource = this.miningResources.find(
+          (res) => res.name === activeResourceName,
+        )
         if (!activeResource) return
 
         if (this.training.mining.level < activeResource.levelRequired) return
@@ -529,10 +558,11 @@ export const useTrainingStore = defineStore({
       })
     },
 
-
     processCrafting(deltaTime: number) {
-      this.activeCraftingRecipes.forEach(recipeName => {
-        const activeRecipe = this.craftingRecipes.find(recipe => recipe.name === recipeName)
+      this.activeCraftingRecipes.forEach((recipeName) => {
+        const activeRecipe = this.craftingRecipes.find(
+          (recipe) => recipe.name === recipeName,
+        )
         if (!activeRecipe) return
 
         if (this.training.crafting.level < activeRecipe.levelRequired) return
@@ -542,7 +572,8 @@ export const useTrainingStore = defineStore({
           return
         }
 
-        activeRecipe.timePerAction -= deltaTime * this.farmingModifiers.craftingRate
+        activeRecipe.timePerAction -=
+          deltaTime * this.farmingModifiers.craftingRate
 
         if (activeRecipe.timePerAction > 0) return
 
@@ -558,9 +589,7 @@ export const useTrainingStore = defineStore({
 
     subtractResources(cost: Record<ResourceType, number>) {
       const resourceStore = useResourcesStore()
-      const resourcesToCheckInStore = [
-        'ants',
-      ]
+      const resourcesToCheckInStore = ['ants']
 
       for (const [resource, amount] of Object.entries(cost)) {
         if (resourcesToCheckInStore.includes(resource)) {
@@ -583,9 +612,7 @@ export const useTrainingStore = defineStore({
       if (this.training.crafting.level < recipe.levelRequired) return false
 
       const resourceStore = useResourcesStore()
-      const resourcesToCheckInStore = [
-        'ants',
-      ]
+      const resourcesToCheckInStore = ['ants']
       const currentResources = this.resourcesCollected
 
       for (const [resource, amount] of Object.entries(recipe.cost)) {
@@ -615,7 +642,9 @@ export const useTrainingStore = defineStore({
     stopCrafting(recipeName?: string) {
       if (!recipeName) {
         // Stop all crafting
-        this.activeCraftingRecipes.forEach(recipe => this.resetCraftingRecipe(recipe))
+        this.activeCraftingRecipes.forEach((recipe) =>
+          this.resetCraftingRecipe(recipe),
+        )
         this.activeCraftingRecipes = []
         this.removeActiveTraining(Skill.Crafting)
         return
@@ -633,21 +662,23 @@ export const useTrainingStore = defineStore({
     },
 
     resetCraftingRecipe(recipeName: string) {
-      const recipe = this.craftingRecipes.find(r => r.name === recipeName)
+      const recipe = this.craftingRecipes.find((r) => r.name === recipeName)
       if (recipe) {
         recipe.timePerAction = recipe.initialTimePerAction
       }
     },
 
     checkCraftingMilestones() {
-      this.craftingMilestones.forEach(milestone => {
+      this.craftingMilestones.forEach((milestone) => {
         if (this.training.crafting.level >= milestone.levelRequired) {
           this.applyCraftingMilestone(milestone)
         }
       })
     },
 
-    applyCraftingMilestone(milestone: { effect: { maxActiveCraftingRecipes: number } }) {
+    applyCraftingMilestone(milestone: {
+      effect: { maxActiveCraftingRecipes: number };
+    }) {
       this.maxActiveCraftingRecipes = milestone.effect.maxActiveCraftingRecipes
     },
 
@@ -659,22 +690,28 @@ export const useTrainingStore = defineStore({
       // Resource is depleted, add XP and increment resources collected
       this.addXp(Skill.Mining, resource.xpPerAction)
       this.addXpToMiningResource(resource, resource.xpPerAction * 2)
-      if (!this.resourcesCollected[resource.name]) this.resourcesCollected[resource.name] = 0
-      
+      if (!this.resourcesCollected[resource.name])
+        this.resourcesCollected[resource.name] = 0
+
       let lootMultiplier = 1
       if (Math.random() < this.miningDoubleChance) {
         lootMultiplier = 2
       }
-      this.resourcesCollected[resource.name] += resource.collectionMultiplier * lootMultiplier * this.modifiers.mining.yield
+      this.resourcesCollected[resource.name] +=
+        resource.collectionMultiplier *
+        lootMultiplier *
+        this.modifiers.mining.yield
 
       // Mark the resource as depleted and reset timePerAction
       resource.isDepleted = true
-      resource.timePerAction = resource.initialTimePerAction - resource.timeReduction
+      resource.timePerAction =
+        resource.initialTimePerAction - resource.timeReduction
     },
 
     addXpToMiningResource(resource: MiningResource, xp: number) {
       resource.xp += xp
-      if (resource.xp >= resource.xpToNextLevel) this.addLevelToMiningResource(resource)
+      if (resource.xp >= resource.xpToNextLevel)
+        this.addLevelToMiningResource(resource)
     },
 
     addLevelToMiningResource(resource: MiningResource) {
@@ -682,7 +719,8 @@ export const useTrainingStore = defineStore({
       resource.xp -= resource.xpToNextLevel
       resource.xpToNextLevel = this.getXpToNextLevel(resource.level)
 
-      if (resource.xp >= resource.xpToNextLevel) this.addLevelToMiningResource(resource)
+      if (resource.xp >= resource.xpToNextLevel)
+        this.addLevelToMiningResource(resource)
 
       this.checkAndApplyMileStoneBonusses(resource)
     },
@@ -693,9 +731,10 @@ export const useTrainingStore = defineStore({
 
       this.resetMilstoneBonusses(resource)
 
-      resourceMilestones.forEach(milestone => {
+      resourceMilestones.forEach((milestone) => {
         if (resource.level >= milestone.level) {
-          resource.collectionMultiplier *= (1 + milestone.collectionMultiplierBonus)
+          resource.collectionMultiplier *=
+            1 + milestone.collectionMultiplierBonus
           resource.timeReduction += milestone.timeReductionBonus
           resource.respawnReduction += milestone.respawnReductionBonus
         }
@@ -715,7 +754,8 @@ export const useTrainingStore = defineStore({
 
       // Resource has respawned, reset respawn time and make it available again
       resource.isDepleted = false
-      resource.respawnTime = resource.initialRespawnTime - resource.respawnReduction
+      resource.respawnTime =
+        resource.initialRespawnTime - resource.respawnReduction
     },
 
     startMining(resource: MiningResource) {
@@ -726,7 +766,7 @@ export const useTrainingStore = defineStore({
     },
 
     resetNoneActiveOreNodes() {
-      this.miningResources.forEach(resource => {
+      this.miningResources.forEach((resource) => {
         if (!this.activeResources.includes(resource.name)) {
           this.resetOreNode(resource)
         }
@@ -735,7 +775,7 @@ export const useTrainingStore = defineStore({
 
     stopMining(resourceName?: string) {
       if (!resourceName) {
-        this.activeResources.forEach(resource => {
+        this.activeResources.forEach((resource) => {
           this.stopMining(resource)
         })
         return
@@ -746,7 +786,9 @@ export const useTrainingStore = defineStore({
         this.activeResources.splice(resourceIndex, 1)
       }
 
-      const activeResource = this.miningResources.find(res => res.name === resourceName)
+      const activeResource = this.miningResources.find(
+        (res) => res.name === resourceName,
+      )
       if (activeResource) {
         this.resetOreNode(activeResource)
       }
@@ -757,8 +799,10 @@ export const useTrainingStore = defineStore({
     },
 
     resetOreNode(resource: MiningResource) {
-      resource.timePerAction = resource.initialTimePerAction - resource.timeReduction
-      resource.respawnTime = resource.initialRespawnTime - resource.respawnReduction
+      resource.timePerAction =
+        resource.initialTimePerAction - resource.timeReduction
+      resource.respawnTime =
+        resource.initialRespawnTime - resource.respawnReduction
       resource.isDepleted = false
     },
 
@@ -804,11 +848,16 @@ export const useTrainingStore = defineStore({
       if (training.xp >= training.xpToNextLevel) this.addLevel(skill)
 
       if (skill === Skill.Mining) this.checkMiningMilestones()
-      if (skill === Skill.Attack || skill === Skill.Defense || skill === Skill.Hitpoints) this.applyCombatMilestones()
+      if (
+        skill === Skill.Attack ||
+        skill === Skill.Defense ||
+        skill === Skill.Hitpoints
+      )
+        this.applyCombatMilestones()
     },
 
     checkMiningMilestones() {
-      this.miningMilestones.forEach(milestone => {
+      this.miningMilestones.forEach((milestone) => {
         if (this.training.mining.level >= milestone.levelRequired) {
           this.applyMiningMilestone(milestone)
         }
@@ -816,7 +865,7 @@ export const useTrainingStore = defineStore({
     },
 
     applyMiningMilestone(milestone) {
-      Object.keys(milestone.effect).forEach(effect => {
+      Object.keys(milestone.effect).forEach((effect) => {
         if (effect === 'maxActiveResources') {
           this.maxActiveResources = milestone.effect[effect]
         }
@@ -824,7 +873,6 @@ export const useTrainingStore = defineStore({
         if (effect === 'yield') {
           this.modifiers.mining.yield *= milestone.effect[effect]
         }
-
       })
     },
 
@@ -832,7 +880,8 @@ export const useTrainingStore = defineStore({
       const training = this.getTrainingState(skill)
       if (!training) return
 
-      const multipliedXp = xp * this.xpMultiplier * this.farmingModifiers.xpBoost
+      const multipliedXp =
+        xp * this.xpMultiplier * this.farmingModifiers.xpBoost
       training.xp += multipliedXp
       if (training.xp >= training.xpToNextLevel) this.addLevel(skill)
     },
@@ -865,7 +914,7 @@ export const useTrainingStore = defineStore({
         farmingPlots: this.farmingPlots,
         eatenFungus: this.eatenFungus,
 
-        miningResourceLevels: this.miningResources.map(resource => ({
+        miningResourceLevels: this.miningResources.map((resource) => ({
           name: resource.name,
           level: resource.level,
           xp: resource.xp,
@@ -879,24 +928,36 @@ export const useTrainingStore = defineStore({
       }
     },
     loadTrainingState(state) {
-      this.activeTab = state.activeTab ?? this.activeTab
-
-      this.training = {
-        ...this.training,
-        ...state.training ?? {},
+      // Migrate old RoyalJelly data to RoyalJellyEssence if needed
+      if (state.resourcesCollected) {
+        state.resourcesCollected = migrateResourceType(
+          state.resourcesCollected,
+          'Royal Jelly',
+          'Royal Jelly Essence',
+        )
       }
 
+      this.activeTab = state.activeTab ?? this.activeTab
+      this.training = {
+        ...this.training,
+        ...(state.training ?? {}),
+      }
       this.activeResources = state.activeResources ?? this.activeResources
-      this.activeCraftingRecipe = state.activeCraftingRecipe ?? this.activeCraftingRecipe
-      this.resourcesCollected = state.resourcesCollected ?? this.resourcesCollected
+      this.activeCraftingRecipe =
+        state.activeCraftingRecipe ?? this.activeCraftingRecipe
+      this.resourcesCollected =
+        state.resourcesCollected ?? this.resourcesCollected
       this.craftedItems = state.craftedItems ?? this.craftedItems
       this.selectedSeed = state.selectedSeed ?? this.selectedSeed
-      this.harvestedResources = state.harvestedResources ?? this.harvestedResources
+      this.harvestedResources =
+        state.harvestedResources ?? this.harvestedResources
       this.farmingPlots = state.farmingPlots ?? this.farmingPlots
       this.eatenFungus = state.eatenFungus ?? this.eatenFungus
 
-      this.miningResources = this.miningResources.map(resource => {
-        const savedResource = state.miningResourceLevels?.find(saved => saved.name === resource.name)
+      this.miningResources = this.miningResources.map((resource) => {
+        const savedResource = state.miningResourceLevels?.find(
+          (saved) => saved.name === resource.name,
+        )
         if (!savedResource) return resource
 
         return {
@@ -922,7 +983,7 @@ export const useTrainingStore = defineStore({
     },
     resetTrainingState() {
       this.activeTab = 'mining'
-      Object.keys(this.training).forEach(key => {
+      Object.keys(this.training).forEach((key) => {
         this.training[key].level = 1
         this.training[key].xp = 0
         this.training[key].xpToNextLevel = BASE_XP
@@ -939,13 +1000,17 @@ export const useTrainingStore = defineStore({
 
       this.selectedSeed = null
 
-      this.farmingPlots = Array(9).fill({seed: null, growthStage: 'Empty', growthProgress: 0})
+      this.farmingPlots = Array(9).fill({
+        seed: null,
+        growthStage: 'Empty',
+        growthProgress: 0,
+      })
 
       this.harvestedResources = {}
 
       this.eatenFungus = []
 
-      this.miningResources.forEach(resource => {
+      this.miningResources.forEach((resource) => {
         resource.level = 1
         resource.xp = 0
         resource.xpToNextLevel = BASE_XP
@@ -966,12 +1031,12 @@ export const useTrainingStore = defineStore({
       this.resetAllOreNodes()
     },
     resetAllOreNodes() {
-      this.miningResources.forEach(resource => {
+      this.miningResources.forEach((resource) => {
         this.resetOreNode(resource)
       })
     },
     addMilestonesToMiningResources() {
-      this.miningResources.forEach(resource => {
+      this.miningResources.forEach((resource) => {
         const milestones = []
         const initialCollectionMultiplierBonus = 0.05
         const collectionMultiplierIncrement = 0.05
@@ -981,12 +1046,20 @@ export const useTrainingStore = defineStore({
         let timePerAction = resource.initialTimePerAction
         let respawnPerAction = resource.initialRespawnTime
 
-        const milestoneLevels = [5, 10, 20, 30, 50, 100, 150, 200, 250, 500, 750, 1000]
+        const milestoneLevels = [
+          5, 10, 20, 30, 50, 100, 150, 200, 250, 500, 750, 1000,
+        ]
 
-        milestoneLevels.forEach(level => {
-          const collectionMultiplierBonus = initialCollectionMultiplierBonus + (Math.floor(level / 5) - 1) * collectionMultiplierIncrement
-          let timeReductionBonus = initialTimeReductionBonus + (Math.floor(level / 5) - 1) * timeReductionIncrement
-          let respawnReductionBonus = initialRespawnReductionBonus + (Math.floor(level / 5) - 1) * timeReductionIncrement
+        milestoneLevels.forEach((level) => {
+          const collectionMultiplierBonus =
+            initialCollectionMultiplierBonus +
+            (Math.floor(level / 5) - 1) * collectionMultiplierIncrement
+          let timeReductionBonus =
+            initialTimeReductionBonus +
+            (Math.floor(level / 5) - 1) * timeReductionIncrement
+          let respawnReductionBonus =
+            initialRespawnReductionBonus +
+            (Math.floor(level / 5) - 1) * timeReductionIncrement
 
           // Ensure that timePerAction never goes below 1 second
           if (timePerAction - timeReductionBonus < 1) {
@@ -1014,7 +1087,9 @@ export const useTrainingStore = defineStore({
 
           milestones.push({
             level,
-            collectionMultiplierBonus: parseFloat(collectionMultiplierBonus.toFixed(3)), // Keep precision
+            collectionMultiplierBonus: parseFloat(
+              collectionMultiplierBonus.toFixed(3),
+            ), // Keep precision
             timeReductionBonus: parseFloat(timeReductionBonus.toFixed(3)),
             respawnReductionBonus: parseFloat(respawnReductionBonus.toFixed(3)),
           })
@@ -1024,9 +1099,13 @@ export const useTrainingStore = defineStore({
       })
     },
     applyMiningMilestoneBonusses() {
-      this.miningResources.forEach(resource => {
+      this.resetMiningMilestoneBonusses()
+      this.miningResources.forEach((resource) => {
         this.checkAndApplyMileStoneBonusses(resource)
       })
+    },
+    resetMiningMilestoneBonusses() {
+      this.modifiers.mining.yield = 1
     },
     applyModifiers() {
       const resourcesStore = useResourcesStore() // Access the resources store
@@ -1038,7 +1117,11 @@ export const useTrainingStore = defineStore({
 
       // Loop through crafted items and apply modifiers
       for (const [key, amountOfUpgrade] of Object.entries(craftedItems)) {
-        this.applyCraftingRecipeModifiers(key, amountOfUpgrade, storageModifiers)
+        this.applyCraftingRecipeModifiers(
+          key,
+          amountOfUpgrade,
+          storageModifiers,
+        )
       }
 
       // Apply the updated storage modifiers to the resourcesStore
@@ -1047,8 +1130,8 @@ export const useTrainingStore = defineStore({
 
     applyCombatMilestones() {
       this.resetArmyModifiers()
-  
-      this.combatMilestones.forEach(milestone => {
+
+      this.combatMilestones.forEach((milestone) => {
         if (this.training[milestone.type].level >= milestone.levelRequired) {
           this.applyCombatMilestone(milestone)
         }
@@ -1062,9 +1145,13 @@ export const useTrainingStore = defineStore({
           if (effect in bossStore.combatModifiers) {
             const key = effect as keyof typeof bossStore.combatModifiers
             if (milestone.multiplyModifier) {
-              bossStore.combatModifiers[key] = bossStore.combatModifiers[key].times(new BigNumber(1).plus(value as number))
+              bossStore.combatModifiers[key] = bossStore.combatModifiers[
+                key
+              ].times(new BigNumber(1).plus(value as number))
             } else {
-              bossStore.combatModifiers[key] = bossStore.combatModifiers[key].plus(new BigNumber(value as number))
+              bossStore.combatModifiers[key] = bossStore.combatModifiers[
+                key
+              ].plus(new BigNumber(value as number))
             }
           }
         })
@@ -1107,12 +1194,18 @@ export const useTrainingStore = defineStore({
     // Helper method to apply modifiers from crafting recipes
     applyCraftingRecipeModifiers(key, amountOfUpgrade, storageModifiers) {
       // Find the corresponding crafting recipe
-      const craftingRecipe = this.craftingRecipes.find(recipe => recipe.name === key)
+      const craftingRecipe = this.craftingRecipes.find(
+        (recipe) => recipe.name === key,
+      )
       if (!craftingRecipe) return
 
       // Apply storage modifiers from the recipe
       if (craftingRecipe.storageIncrease) {
-        this.applyStorageIncrease(craftingRecipe.storageIncrease, amountOfUpgrade, storageModifiers)
+        this.applyStorageIncrease(
+          craftingRecipe.storageIncrease,
+          amountOfUpgrade,
+          storageModifiers,
+        )
       }
 
       // Apply other modifiers like production, resource generation, etc.
@@ -1143,46 +1236,59 @@ export const useTrainingStore = defineStore({
       }
     },
 
-    calculateOfflineMiningProgress(deltaTime: number, resource: MiningResource) {
+    calculateOfflineMiningProgress(
+      deltaTime: number,
+      resource: MiningResource,
+    ) {
       // If the resource level requirement isn't met, no progress
       if (this.training.mining.level < resource.levelRequired) return 0
 
       const totalTime = deltaTime
-      const miningCycleTime = (resource.initialTimePerAction - resource.timeReduction) + 
-                             (resource.initialRespawnTime - resource.respawnReduction)
-      
+      const miningCycleTime =
+        resource.initialTimePerAction -
+        resource.timeReduction +
+        (resource.initialRespawnTime - resource.respawnReduction)
+
       // Calculate how many complete cycles occurred
       const completeCycles = Math.floor(totalTime / miningCycleTime)
-      
+
       // Calculate remaining time after complete cycles
       const remainingTime = totalTime % miningCycleTime
-      
+
       // Calculate resources gained from complete cycles
       let resourcesGained = completeCycles * resource.collectionMultiplier
-      
+
       // Handle remaining time
-      if (remainingTime > (resource.initialTimePerAction - resource.timeReduction)) {
+      if (
+        remainingTime >
+        resource.initialTimePerAction - resource.timeReduction
+      ) {
         // If remaining time is more than mining time, add one more collection
         resourcesGained += resource.collectionMultiplier
       }
-      
+
       // Calculate XP gained
       const xpGained = completeCycles * resource.xpPerAction
-      
+
       // Apply double chance for each collection
       if (this.miningDoubleChance > 0) {
-        const collections = completeCycles + (remainingTime > (resource.initialTimePerAction - resource.timeReduction) ? 1 : 0)
+        const collections =
+          completeCycles +
+          (remainingTime >
+          resource.initialTimePerAction - resource.timeReduction
+            ? 1
+            : 0)
         for (let i = 0; i < collections; i++) {
           if (Math.random() < this.miningDoubleChance) {
             resourcesGained += resource.collectionMultiplier
           }
         }
       }
-      
+
       // Add XP
       this.addXp(Skill.Mining, xpGained)
       this.addXpToMiningResource(resource, xpGained * 2)
-      
+
       return resourcesGained
     },
 
@@ -1190,11 +1296,16 @@ export const useTrainingStore = defineStore({
       if (!this.activeTrainings.includes(Skill.Mining)) return
 
       this.activeResources.forEach((resourceName) => {
-        const resource = this.miningResources.find(res => res.name === resourceName)
+        const resource = this.miningResources.find(
+          (res) => res.name === resourceName,
+        )
         if (!resource) return
 
-        const resourcesGained = this.calculateOfflineMiningProgress(deltaTime, resource)
-        
+        const resourcesGained = this.calculateOfflineMiningProgress(
+          deltaTime,
+          resource,
+        )
+
         // Add the resources to collected resources
         if (!this.resourcesCollected[resource.name]) {
           this.resourcesCollected[resource.name] = 0

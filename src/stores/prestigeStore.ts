@@ -575,26 +575,53 @@ export const usePrestigeStore = defineStore('prestige', {
         return false
       }
 
-      // Calculate max affordable purchases based on buyLimit
-      const maxAffordable = Math.floor(this.prestigePoints * this.buyLimit / upgrade.cost)
-      let purchased = 0
-      let currentCost = upgrade.cost
+      // Get max purchases allowed based on max purchases limit and current amount owned
+      const maxPurchasesAllowed = upgrade.maxPurchases ? 
+        Math.max(0, upgrade.maxPurchases - this.amountOfUpgrade(upgradeId)) :
+        Infinity
 
-      while (purchased < maxAffordable) {
-        if (upgrade.maxPurchases && this.amountOfUpgrade(upgradeId) >= upgrade.maxPurchases) {
-          break
-        }
-
-        this.prestigePoints -= currentCost
-        this.purchasedUpgrades.push(upgradeId)
-        this.applyPrestigeUpgrade(upgradeId)
-
-        // Increase the cost for the next purchase
-        currentCost *= this.getCostMultiplier(upgrade)
-        currentCost = Math.floor(currentCost)
-        upgrade.cost = currentCost
-        purchased++
+      // Calculate cost multiplier once
+      const costMultiplier = this.getCostMultiplier(upgrade)
+      
+      // Calculate total cost for n purchases using geometric series sum formula
+      // Sum = a(1-r^n)/(1-r) where a is initial cost, r is multiplier, n is number of terms
+      const calculateTotalCost = (numPurchases: number) => {
+        return upgrade.cost * (1 - Math.pow(costMultiplier, numPurchases)) / (1 - costMultiplier)
       }
+
+      // Binary search to find max affordable purchases
+      let left = 0
+      let right = Math.min(maxPurchasesAllowed, Math.floor(this.prestigePoints * this.buyLimit / upgrade.cost))
+      let maxAffordable = 0
+
+      while (left <= right) {
+        const mid = Math.floor((left + right) / 2)
+        const totalCost = calculateTotalCost(mid)
+        
+        if (totalCost <= this.prestigePoints) {
+          maxAffordable = mid
+          left = mid + 1
+        } else {
+          right = mid - 1
+        }
+      }
+
+      if (maxAffordable === 0) return false
+
+      // Apply the purchases in bulk
+      const totalCost = calculateTotalCost(maxAffordable)
+      this.prestigePoints -= Math.floor(totalCost)
+      
+      // Add upgrades in bulk
+      this.purchasedUpgrades.push(...Array(maxAffordable).fill(upgradeId))
+      
+      // Apply upgrades
+      for (let i = 0; i < maxAffordable; i++) {
+        this.applyPrestigeUpgrade(upgradeId)
+      }
+
+      // Update final cost
+      upgrade.cost = Math.floor(upgrade.cost * Math.pow(costMultiplier, maxAffordable))
 
       return true
     },
