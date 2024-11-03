@@ -6,14 +6,13 @@
       :xp="craftingXp"
       :xp-to-next-level="craftingXpToNextLevel"
       :milestones="trainingStore.craftingMilestones"
-      class="mb-8"
     />
-
-    <p class="text-lg font-semibold mb-2 text-gray-800">
-      Active Crafting Recipes: {{ trainingStore.activeCraftingRecipes.length }} / {{ trainingStore.maxActiveCraftingRecipes }}
-    </p>
-
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-6">
+    <div class="bg-white rounded-lg shadow-md p-4 border border-gray-200 mb-2">
+      <p class="text-lg font-semibold mb-2 text-gray-800">
+        Active Crafting Recipes: {{ trainingStore.activeCraftingRecipes.length }} / {{ trainingStore.maxActiveCraftingRecipes }}
+      </p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-2">
       <div
         v-for="recipe in craftingRecipes"
         :key="recipe.name"
@@ -26,7 +25,7 @@
           {{ recipe.description }}
         </p>
 
-        <div class="grid grid-cols-2 gap-2 mb-2 text-sm">
+        <div class="grid grid-cols-2 gap-1 mb-2 text-sm">
           <div>
             <p class="font-semibold text-gray-700">
               Level Required

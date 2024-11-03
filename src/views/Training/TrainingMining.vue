@@ -29,11 +29,11 @@
       </div>
     </div>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-6">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-2">
       <div
         v-for="(resource, index) in miningResources"
         :key="resource.name"
-        class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200"
+        class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200 flex flex-col"
       >
         <SkillDisplay
           :with-styling="false"
@@ -44,7 +44,7 @@
           class="mb-2"
         />
 
-        <div class="grid grid-cols-2 gap-4 mb-2">
+        <div class="grid grid-cols-2 gap-1 mb-2">
           <div class="text-sm">
             <p class="font-semibold text-gray-700">
               Level Required
@@ -83,76 +83,50 @@
           </div>
         </div>
 
-        <!-- Mining Progress Bar -->
-        <div
-          v-if="!resource.isDepleted"
-          class="mb-2"
-        >
-          <p class="text-sm font-semibold text-gray-700 mb-1">
-            Mining Progress
-          </p>
-          <div class="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              class="absolute top-0 left-0 h-full bg-blue-500 rounded-full"
-              :style="{ width: `${(resource.timePerAction / (resource.initialTimePerAction - resource.timeReduction)) * 100}%` }"
-            />
-            <p class="absolute inset-0 text-center text-xs text-white font-semibold leading-4">
-              {{ resource.timePerAction.toFixed(1) }}s
+        <div v-if="isMiningResource(resource) || resource.isDepleted">
+          <!-- Mining Progress Bar -->
+          <div
+            v-if="!resource.isDepleted"
+            class="mb-2"
+          >
+            <p class="text-sm font-semibold text-gray-700 mb-1">
+              Mining Progress
             </p>
+            <div class="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                class="absolute top-0 left-0 h-full bg-blue-500 rounded-full"
+                :style="{ width: `${(resource.timePerAction / (resource.initialTimePerAction - resource.timeReduction)) * 100}%` }"
+              />
+              <p class="absolute inset-0 text-center text-xs text-white font-semibold leading-4">
+                {{ resource.timePerAction.toFixed(1) }}s
+              </p>
+            </div>
+          </div>
+
+          <!-- Respawn Progress Bar -->
+          <div
+            v-else
+            class="mb-2"
+          >
+            <p class="text-sm font-semibold text-gray-700 mb-1">
+              Respawn Progress
+            </p>
+            <div class="relative w-full h-4 bg-red-200 rounded-full overflow-hidden">
+              <div
+                class="absolute top-0 left-0 h-full bg-red-500 rounded-full"
+                :style="{ width: `${(resource.respawnTime / (resource.initialRespawnTime - resource.respawnReduction)) * 100}%` }"
+              />
+              <p class="absolute inset-0 text-center text-xs text-white font-semibold leading-4">
+                {{ resource.respawnTime.toFixed(1) }}s
+              </p>
+            </div>
           </div>
         </div>
-
-        <!-- Respawn Progress Bar -->
-        <div
-          v-else
-          class="mb-2"
-        >
-          <p class="text-sm font-semibold text-gray-700 mb-1">
-            Respawn Progress
-          </p>
-          <div class="relative w-full h-4 bg-red-200 rounded-full overflow-hidden">
-            <div
-              class="absolute top-0 left-0 h-full bg-red-500 rounded-full"
-              :style="{ width: `${(resource.respawnTime / (resource.initialRespawnTime - resource.respawnReduction)) * 100}%` }"
-            />
-            <p class="absolute inset-0 text-center text-xs text-white font-semibold leading-4">
-              {{ resource.respawnTime.toFixed(1) }}s
-            </p>
-          </div>
-        </div>
-
-        <!-- Start/Stop Mining Buttons -->
-        <div class="flex justify-between mb-2">
-          <button
-            v-if="!isMiningResource(resource) && !resource.isDepleted"
-            :disabled="training.mining.level < resource.levelRequired"
-            class="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
-            @click="startMining(resource)"
-          >
-            Start Mining
-          </button>
-
-          <button
-            v-if="isMiningResource(resource) || resource.isDepleted"
-            class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-600 transition-colors duration-200"
-            @click="stopMining(resource)"
-          >
-            Stop Mining
-          </button>
-        </div>
-
-        <!-- Milestones Toggle Button -->
-        <button
-          class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-bold w-full hover:bg-gray-300 transition-colors duration-200"
-          @click="toggleMilestones(index)"
-        >
-          {{ showMilestones[index] ? 'Hide' : 'Show' }} Milestones
-        </button>
 
         <!-- Milestones Section -->
         <div
           v-if="showMilestones[index]"
-          class="mt-4 border-t border-gray-200 pt-4"
+          class="border-t border-gray-200 pt-4"
         >
           <h4 class="text-lg font-semibold text-gray-800 mb-2">
             Milestones
@@ -162,13 +136,14 @@
               v-for="milestone in resource.milestones"
               :key="milestone.level"
               class="flex justify-between items-center text-sm py-2 border-b border-gray-200 last:border-b-0"
-              :class="{'text-green-600 font-semibold': resource.level >= milestone.level, 'text-gray-600': resource.level < milestone.level}"
+              :class="{ 'text-green-600 font-semibold': resource.level >= milestone.level, 'text-gray-600': resource.level < milestone.level }"
             >
               <div class="flex-1">
                 <strong>Level {{ milestone.level }}</strong>:
                 Collect x{{ milestone.collectionMultiplierBonus + 1 }}
                 {{ milestone.timeReductionBonus > 0 ? `and reduce time by ${milestone.timeReductionBonus}s` : '' }}
-                {{ milestone.respawnReductionBonus > 0 ? `and reduce respawn time by ${milestone.respawnReductionBonus}s` : '' }}
+                {{ milestone.respawnReductionBonus > 0 ? `and reduce respawn time by
+                ${milestone.respawnReductionBonus}s` : '' }}
               </div>
               <div class="flex-shrink-0 ml-2">
                 <span
@@ -181,6 +156,36 @@
             </li>
           </ul>
         </div>
+
+        <div class="mt-auto space-y-2">
+          <!-- Start/Stop Mining Buttons -->
+          <div class="flex justify-between">
+            <button
+              v-if="!isMiningResource(resource) && !resource.isDepleted"
+              :disabled="training.mining.level < resource.levelRequired"
+              class="small w-full bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+              @click="startMining(resource)"
+            >
+              Start Mining
+            </button>
+
+            <button
+              v-if="isMiningResource(resource) || resource.isDepleted"
+              class="small w-full bg-red-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-600 transition-colors duration-200"
+              @click="stopMining(resource)"
+            >
+              Stop Mining
+            </button>
+          </div>
+
+          <!-- Milestones Toggle Button -->
+          <button
+            class="small bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-bold w-full hover:bg-gray-300 transition-colors duration-200"
+            @click="toggleMilestones(index)"
+          >
+            {{ showMilestones[index] ? 'Hide' : 'Show' }} Milestones
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -188,10 +193,10 @@
 
 
 <script setup lang="ts">
-import {useTrainingStore} from '@/stores/trainingStore'
-import {computed, ref} from 'vue'
+import { useTrainingStore } from '@/stores/trainingStore'
+import { computed, ref } from 'vue'
 import SkillDisplay from '@/components/SkillDisplay.vue'
-import {MiningResource} from '@/types/trainingTypes'
+import { MiningResource } from '@/types/trainingTypes'
 import { toPercentageFormatted, formatNumber } from '@/utils'
 
 const trainingStore = useTrainingStore()
@@ -227,4 +232,3 @@ function toggleMilestones(index: number) {
   showMilestones.value[index] = !showMilestones.value[index]
 }
 </script>
-
